@@ -1,10 +1,10 @@
 __author__ = 'jt306'
 import numpy as np
-
+from Get_Full_Path import get_full_path
 
 def get_heart_data(debug=False):
     print('Reading HEART data from disk')
-    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/heart.dat", "r+") as infile:
+    with open(get_full_path("Desktop/Privileged_Data/new_data/heart.dat"), "r+") as infile:
         features_array = np.genfromtxt(infile, dtype=None)
         # print features_array.size
         features_array=np.array(str(features_array).translate(None,'()').split(","),dtype=float)
