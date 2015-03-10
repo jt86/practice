@@ -1,0 +1,29 @@
+__author__ = 'jt306'
+import numpy as np
+
+def get_arcene_data(debug=False):
+    if debug:
+
+        print('Reading Arcene SMALL data from disk')
+        with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/ARCENE/arcene_train.data-small", "r+") as infile:
+            features_array = np.genfromtxt(infile, dtype=None)
+            features_array.shape = (100, 100)
+
+
+        with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/ARCENE/arcene_train.labels", "r+") as infile:
+            labels_array = np.genfromtxt(infile, dtype=None)
+            labels_array.shape = (100)
+
+        return features_array, labels_array
+
+    print('Reading Arcene data from disk')
+    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/ARCENE/arcene_train.data", "r+") as infile:
+        features_array = np.genfromtxt(infile, dtype=None)
+        features_array.shape = (100, 10000)
+
+
+    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/ARCENE/arcene_train.labels", "r+") as infile:
+        labels_array = np.genfromtxt(infile, dtype=None)
+        labels_array.shape = (100)
+
+    return features_array, labels_array
