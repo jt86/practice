@@ -47,7 +47,6 @@ if __name__ == '__main__':
 
     parser.add_argument('--peeking', dest='peeking', action='store_true',
                         help = 'whether or not parameter estimation is performed peeking at the test data each fold')
-    parser.add_argument('--no-peeking', dest='peeking', action='store_false')
 
     parser.add_argument('--rank-metric', type=str, required=True,
                         choices = ('f','c', 'r', 'r2'), help='the method used to rank features')
