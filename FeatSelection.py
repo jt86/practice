@@ -21,6 +21,7 @@ from Musk1 import get_musk1_data
 from Ionosphere import get_ionosphere_data
 from HillValley import get_hillvalley_data
 from Wine import get_wine_data
+from ParamEstimation import get_gamma_from_c
 
 print(__doc__)
 
@@ -41,6 +42,10 @@ def recursive_elimination(feats, labels):
     return ranking
 
 def recursive_elimination2(feats,labels,num_feats_to_select):
+    c_values = [0.1, 1., 10.]
+    gamma_values = get_gamma_from_c(c_values,feats)
+    params_dict = {'C':c_values, 'Gamma':gamma_values}
+
     # print 'shape',feats.shape[1]
     if feats.shape[1]>100:
         step = 0.1
@@ -48,10 +53,17 @@ def recursive_elimination2(feats,labels,num_feats_to_select):
         step = 1
     # print 'num feats eliminated each time', step
     svc = SVC(kernel="linear", C=1)
+
+
+
+
     rfe = RFE(estimator=svc, n_features_to_select=num_feats_to_select, step=step)
     rfe.fit(feats, labels)
     ranking = np.subtract(rfe.ranking_.reshape(len(feats[0])),1)
     return ranking
+
+
+
 
 
 # feats, labels = get_heart_data()

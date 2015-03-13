@@ -144,7 +144,12 @@ if __name__ == '__main__':
         os.mkdir(output_directory)
 
     # print 'peeking=',args.peeking
-    main_function(features_array, labels_array, output_directory, args.num_folds, tuple, args.c_values,
+
+    c_values = [0.1,1.,10.]
+
+    #todo : change c_values in main function back to args.cvalues!!!
+
+    main_function(features_array, labels_array, output_directory, args.num_folds, tuple, c_values,
                   peeking=args.peeking, dataset=args.input, rank_metric = args.rank_metric, prop_priv = args.prop_priv,
                   multiplier = args.gamma_multiplier, bottom_n_percent=args.bottom_n_percent)
 

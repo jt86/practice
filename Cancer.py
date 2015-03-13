@@ -2,7 +2,7 @@ __author__ = 'jt306'
 import csv
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
-
+from Get_Full_Path import get_full_path
 
 def get_cancer_data(debug=False):
     print('Reading Cancer data from disk')

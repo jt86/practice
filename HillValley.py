@@ -2,10 +2,12 @@ __author__ = 'jt306'
 
 import csv
 import numpy as np
+from Get_Full_Path import get_full_path
 
 def get_hillvalley_data(debug=False):
     print('Reading HILLVALLEY data from disk')
-    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/hillvalley.csv", "rU") as infile:
+    #with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/hillvalley.csv", "rU") as infile:
+    with open(get_full_path("Desktop/Privileged_Data/new_data/hillvalley.csv"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile,delimiter = ',')
         next(infile)        #to skip header row
@@ -30,3 +32,14 @@ def get_hillvalley_data(debug=False):
 
 # get_hillvalley_data()
 
+#
+# def get_full_path(relative_path):
+#     from socket import gethostname
+#     import os
+#
+#     h = gethostname()
+#     if 'apollo' in h or 'node' in h:
+#         prefix = '/mnt/lustre/scratch/inf/jt306'
+#     else:
+#         prefix = '/Volumes/LocalDataHD/jt306'
+#     return os.path.join(prefix, relative_path)

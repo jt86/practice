@@ -112,7 +112,7 @@ def main_function(features_array, labels_array,output_directory, num_folds,
 
 
             if dataset == 'arcene' and sorted_features.shape[1] >9000:
-                sorted_features,number_of_features = cut_off_arcene()
+                sorted_features,number_of_features = cut_off_arcene(sorted_features)
 
 
             number_of_samples = sorted_features.shape[0]
@@ -143,9 +143,6 @@ def main_function(features_array, labels_array,output_directory, num_folds,
             print "1 or less indices remaining. Took ",len(remaining_indices)
 
 
-        # print "\n\n\n remaining indices: ", remaining_indices
-
-
         normal_features = sorted_features[:, normal_indices]
         privileged_features = sorted_features[:, remaining_indices]
 
@@ -153,8 +150,6 @@ def main_function(features_array, labels_array,output_directory, num_folds,
         print 'normal_features first item', normal_features[0]
         print 'priv features first item', privileged_features[0]
         # sys.exit(0)
-
-        # print "\n\nnormal features shape",normal_features.shape, "priv features shape",privileged_features.shape
 
         SVM_score = []
         LUPI_score = []
@@ -165,7 +160,6 @@ def main_function(features_array, labels_array,output_directory, num_folds,
         k=-1
 
         for train, test in skf:
-            t0_onefold=time.clock()
             k+=1
             param_estimation_file.write("\n\n\n n="+str(n_top_feats)+" fold = "+str(k))
 
@@ -227,14 +221,9 @@ def main_function(features_array, labels_array,output_directory, num_folds,
                 best_C_SVM, best_gamma_SVM = param_estimation(param_estimation_file, normal_training_data, training_labels, c_values, rs,
                 privileged=False, privileged_training_data=None)
 
-            # print 'best params for standard SVM: C=',best_C_SVM,'gamma =', best_gamma_SVM
+
             ############# PARAM EST FOR SVM+ ################
 
-
-            # print 'SHAPE OF PRIVILEGED TRAIN', privileged_training_data.shape
-            # print 'SHAPE OF NORMAL TRAIN', normal_training_data.shape
-            #
-            # print 'privileged \n',privileged_training_data
 
             if n_top_feats != number_of_features:
 
@@ -257,15 +246,8 @@ def main_function(features_array, labels_array,output_directory, num_folds,
                     # normal_training_data,  training_labels, c_values, rs, privileged=True, privileged_training_data=privileged_training_data)
                     # best_C_star_SVM_plus, best_gamma_star_SVM_plus = best_C_SVM_plus, best_gamma_SVM_plus
 
-                # print 'best params for SVM+: C=',best_C_SVM_plus,'gamma =', best_gamma_SVM_plus, 'C*=', best_C_star_SVM_plus, 'gamma*=', best_gamma_star_SVM_plus
 
-                privileged_information_shape = privileged_training_data.shape
-                # print "priv info shape", privileged_information_shape
-            #
-            # if privileged_information_shape[0]>5 and privileged_information_shape[1]>6:
-            #     print 'privileged information:',privileged_training_data[:5,:6]
-            # else:
-            #     print privileged_training_data
+
 
             print "best baseline params",best_C_baseline, best_gamma_baseline
             print "best SVM params", best_C_SVM, best_gamma_SVM
@@ -313,12 +295,7 @@ def main_function(features_array, labels_array,output_directory, num_folds,
 
     # print "baseline_score ", baseline_score
     baseline_results = [baseline_score]* len(numbers_of_features_list)
-    #
-    # print "numbers of features list", numbers_of_features_list
-    # print "results", results
-    # print "LUPI results", LUPI_results
-    # print "baseline results", baseline_results
-    # print "num folds", num_folds
+
 
     keyword = str(dataset)+"  (" +str(number_of_items)+ "x" + str(number_of_features) + ");\n peeking =" +str(peeking)\
               +" ; "+str(num_folds)+" folds; feat ranking by "+str(rank_metric)+"; top 1/"+str(prop_priv)+" unselected used as privileged"
@@ -329,16 +306,9 @@ def main_function(features_array, labels_array,output_directory, num_folds,
     get_figures(numbers_of_features_list, results, LUPI_results, baseline_results, num_folds, output_directory, keyword, bottom_n_percent)
 
 
-    # results_file.write(numbers_of_features_list)
     results_file.write(str(np.mean(baseline_results, axis=1)))
     results_file.write(str(np.mean(results, axis=1)))
     results_file.write(str(np.mean(LUPI_results, axis=1)))
-
-    # print "baseline results", np.mean(baseline_results, axis=1)
-    # print "results",np.mean(results, axis=1)
-    # print "LUPI results", np.mean(LUPI_results, axis=1)
-    #
-
 
 
 def cut_off_arcene(sorted_features):

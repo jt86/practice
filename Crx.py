@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 from Imputer import imputer
 from sklearn.feature_extraction import DictVectorizer, FeatureHasher
-
+from Get_Full_Path import get_full_path
 
 alpha_indices = [3,4,5,6,12]
 int_indices = [index for index in range(15) if index not in alpha_indices]
