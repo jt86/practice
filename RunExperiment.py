@@ -42,8 +42,8 @@ if __name__ == '__main__':
                         help='number of folds for cross-validation', default=5)
     # parser.add_argument('--tuple', type=int, required=True,
     #                     help='values of n to consider: min max and increment size', nargs = 3)
-    parser.add_argument('--c-values', type = float, required = True, nargs = '+',
-                    help = 'list of C values to do parameter estimation over')
+    # parser.add_argument('--c-values', type = float, required = True, nargs = '+',
+    #                 help = 'list of C values to do parameter estimation over')
 
     parser.add_argument('--peeking', dest='peeking', action='store_true',
                         help = 'whether or not parameter estimation is performed peeking at the test data each fold')
