@@ -72,7 +72,7 @@ def main_function(features_array, labels_array,output_directory, num_folds,
 
         sorted_features,number_of_features = discard_bottom_n(sorted_features,number_remaining_feats)
         print 'first item after cutting off', sorted_features[0]
-        sys.exit(0)
+
 
 
 
