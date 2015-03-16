@@ -2,6 +2,8 @@ __author__ = 'jt306'
 
 import os, sys
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def get_figures(numbers_of_features_list, results, LUPI_results, baseline_results, num_folds, output_directory, keyword,bottom_n_percent):
