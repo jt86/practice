@@ -2,10 +2,11 @@ __author__ = 'jt306'
 
 import csv
 import numpy as np
+from Get_Full_Path import get_full_path
 
 def get_spambase_data(debug=False):
     print('Reading Spambase data from disk')
-    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/spambase.csv", "rU") as infile:
+    with open(get_full_path("Privileged_Data/new_data/spambase.csv", "rU")) as infile:
         features_array = []
         reader = csv.reader(infile,delimiter = ',')
         features_array +=(row for row in reader)
@@ -25,9 +26,6 @@ def get_spambase_data(debug=False):
 
         features_array = features_array[:,:-1]
 
-        print 'num of labels',labels_array.shape
-        print 'feat array shape',features_array.shape
-        print 'first instance',features_array[0]
     return features_array, labels_array
 
 # get_spambase_data()

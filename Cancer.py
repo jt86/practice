@@ -6,14 +6,14 @@ from Get_Full_Path import get_full_path
 
 def get_cancer_data(debug=False):
     print('Reading Cancer data from disk')
-    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/cancer.csv", "rU") as infile:
+    with open(get_full_path("Desktop/Privileged_Data/new_data/cancer.csv"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile,delimiter = ',')
         features_array +=(row for row in reader)
 
             # print row
         #
-        print len(features_array), len(features_array[0])
+
         features_array = np.array(features_array)
         features_array.shape=(32,57)
 
@@ -27,9 +27,7 @@ def get_cancer_data(debug=False):
 
 
         features_array = features_array[:,1:]
-        # print labels_array
-        # print labels_array.shape
-        # print features_array.shape
+
 
 
 
@@ -38,19 +36,12 @@ def get_cancer_data(debug=False):
         enc.fit(features_array)
         features_array =  enc.transform(features_array).toarray()
 
-
-
-        print "Feats array shape",features_array.shape
-        print "first item in feats array",features_array[0]
-        print "Labels array shape", labels_array.shape
-        print "labels:", labels_array
-
         return features_array, labels_array
 
 def one_v_rest(labels_array, chosen_one):
     for index, item in enumerate(labels_array):
         if item == chosen_one:
-            print 'match!'
+            #print 'match!'
             labels_array[index] = 1
         else:
             labels_array[index]= (-1)

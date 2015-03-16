@@ -1,7 +1,7 @@
 __author__ = 'jt306'
 from scipy import sparse as sp
 import numpy as np
-
+from Get_Full_Path import  get_full_path
 # dok = sp.dok_matrix((800, 139351), dtype=bool)
 
 
@@ -9,7 +9,7 @@ def get_dorothea_data():
     print "Getting DOROTHEA data"
     dok = sp.dok_matrix((800, 100000), dtype=int)
 
-    fh = open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/DOROTHEA/dorothea_train.data","rU")
+    fh = open(get_full_path("Desktop/Privileged_Data/DOROTHEA/dorothea_train.data"),"rU")
 
     line = fh.next().strip()
     for row_num, line in enumerate(fh):
@@ -26,7 +26,7 @@ def get_dorothea_data():
 
 
 
-    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/DOROTHEA/dorothea_train.labels","r+") as file:
+    with open(get_full_path("Desktop/Privileged_Data/DOROTHEA/dorothea_train.labels"),"r+") as file:
         labels_array = np.genfromtxt(file, dtype=None)
         labels_array.shape=(800)
 

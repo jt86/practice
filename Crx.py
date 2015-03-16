@@ -19,7 +19,7 @@ def convert_to_ascii(text):
 
 def get_crx_data(debug=False):
     print('Reading CRX data from disk')
-    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/crx.data", "rU") as infile:
+    with open(get_full_path("Desktop/Privileged_Data/new_data/crx.data"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile,dialect=csv.excel_tab)
         for row in reader:
@@ -62,7 +62,7 @@ def get_crx_data(debug=False):
         # print int_array[0]
         one_hot_array =  enc.transform(int_array).toarray()
 
-        print "int feats shape",int_features.shape,"one hot shape", one_hot_array.shape
+        # print "int feats shape",int_features.shape,"one hot shape", one_hot_array.shape
 
         features_array  = np.array(np.hstack((int_features, one_hot_array)),dtype=float)
         # print "Feats array shape",features_array.shape

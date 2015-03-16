@@ -4,7 +4,7 @@ from Get_Full_Path import get_full_path
 
 def get_heart_data(debug=False):
     print('Reading HEART data from disk')
-    print 'edits made'
+
     with open(get_full_path("Desktop/Privileged_Data/new_data/heart.dat"), "r+") as infile:
         features_array = np.genfromtxt(infile, dtype=None)
         # print features_array.size
