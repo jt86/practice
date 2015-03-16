@@ -65,7 +65,7 @@ def main_function(features_array, labels_array,output_directory, num_folds,
 
 
         if dataset == 'arcene' and sorted_features.shape[1] >9000:
-            sorted_features,number_of_features = cut_off_arcene()
+            sorted_features,number_of_features = cut_off_arcene(sorted_features)
 
 
                                                                             ############ CURRENT NEW BIT ######### - this is for non-r2 - need for r2 too

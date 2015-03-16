@@ -127,7 +127,7 @@ if __name__ == '__main__':
 
     print "tuple",tuple
 
-    keyword = str(args.input)+"_peeking=" +str(args.peeking)+"_"+str(args.num_folds)+"-folds_"+str(args.rank_metric)+"_rejected-"+str(args.bottom_n_percent)+"%-used-gamma_times_"+str(args.gamma_multiplier)
+    keyword = str(args.input)+"_peeking=" +str(args.peeking)+"_"+str(args.num_folds)+"-folds_"+str(args.rank_metric)+"_rejected-"+str(args.bottom_n_percent)+"pc-used-gamma_times_"+str(args.gamma_multiplier)
     print"\n\n"+keyword+"\n\n"
     print keyword
     all_results_directory =  get_full_path('Desktop/Privileged_Data/results/')
