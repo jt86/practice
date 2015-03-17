@@ -6,7 +6,7 @@ from Get_Full_Path import get_full_path
 
 def get_ionosphere_data(debug=False):
     print('Reading IONOSPHERE data from disk')
-    with open(get_full_path("Desktop/Privileged_Data/new_data/ionosphere.csv", "rU")) as infile:
+    with open(get_full_path("Desktop/Privileged_Data/new_data/ionosphere.csv"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile,delimiter = ',')
         features_array +=(row for row in reader)

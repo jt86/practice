@@ -22,6 +22,8 @@ from Ionosphere import get_ionosphere_data
 from HillValley import get_hillvalley_data
 from Wine import get_wine_data
 from ParamEstimation import get_gamma_from_c
+from sklearn import svm, grid_search
+from sklearn.feature_selection import RFECV
 
 print(__doc__)
 
@@ -42,32 +44,40 @@ def recursive_elimination(feats, labels):
     return ranking
 
 def recursive_elimination2(feats,labels,num_feats_to_select):
-    c_values = [0.1, 1., 10.]
-    gamma_values = get_gamma_from_c(c_values,feats)
-    params_dict = {'C':c_values, 'Gamma':gamma_values}
 
-    # print 'shape',feats.shape[1]
     if feats.shape[1]>100:
         step = 0.1
     else:
-        step = 1
-    # print 'num feats eliminated each time', step
-    svc = SVC(kernel="linear", C=1)
+        step = 1.
 
 
+    labels = np.array(labels,dtype=float)
+    feats = np.array(feats,dtype=float)
 
 
-    rfe = RFE(estimator=svc, n_features_to_select=num_feats_to_select, step=step)
-    rfe.fit(feats, labels)
-    ranking = np.subtract(rfe.ranking_.reshape(len(feats[0])),1)
+    #return ranking
+
+    c_values = [.1, 1, 10]
+    gamma_values = get_gamma_from_c(c_values,feats)
+    #params_dict = {'C': c_values, 'gamma': gamma_values}
+    params_grid = [{'C':0.1},{'C':1.},{'C':10.}]
+
+    estimator = svm.SVC(kernel="linear")
+    # selector = RFECV(estimator, step=1, cv=5, n_features_to_select=num_feats_to_select)
+    selector = RFE(estimator, step=1, n_features_to_select=num_feats_to_select)
+    clf = grid_search.GridSearchCV(selector, {'estimator_params': params_grid}, cv=5)
+    clf.fit(feats, labels)
+    # clf.best_estimator_.estimator_
+    # clf.best_estimator_.grid_scores_
+    ranking = clf.best_estimator_.ranking_
+
+    print ranking
+    ranking = np.array(ranking)
+    ranking = np.subtract(ranking,1)
     return ranking
 
-
-
-
-
 # feats, labels = get_heart_data()
-# print recursive_elimination(feats,labels)
+# # print recursive_elimination(feats,labels)
 # print recursive_elimination2(feats,labels,1)
 
 # def recursive_elimination_top_n(feats, labels, num_feats_to_select, proportion):
@@ -129,4 +139,18 @@ def metric_comparison(feats,labels):
 
 
 
-# metric_comparison(feats,labels)
+
+def grid_search_svc(X,Y):
+    svr = svm.SVC()
+    c_values = [.1, 1, 10]
+    gamma_values = get_gamma_from_c(c_values, X)
+    params_dict = {'C': c_values, 'gamma': gamma_values}
+    grid_search_clf = grid_search.GridSearchCV(svr, params_dict, n_jobs=4)
+    grid_search_clf.fit(X, Y)
+
+    # print grid_search_clf.grid_scores_
+    # print grid_search_clf.score(X, Y)
+    print 'best',grid_search_clf.best_params_
+    return grid_search_clf.best_params_
+
+

@@ -4,7 +4,7 @@ from Get_Full_Path import get_full_path
 
 def get_vote_data(debug=False):
     print('Reading VOTE data from disk')
-    with open(get_full_path("Desktop/Privileged_Data/new_data/house-votes-84.data", "r+")) as infile:
+    with open(get_full_path("Desktop/Privileged_Data/new_data/house-votes-84.data"), "r+") as infile:
         features_array = np.genfromtxt(infile, dtype=None)
 
         features_array.shape = (435, 17)

@@ -6,7 +6,33 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+
+
+def get_axis_scales(keyword):
+    if 'arcene' in keyword:
+        return (0,10000,0.70,1.00)
+    if 'heart' in keyword:
+        return (0, 14, 0.80, 0.87)
+    if 'bankruptcy' in keyword:
+        return (0,18,0.970,1.005)
+    if 'cancer' in keyword:
+        return (0,160,0.0,1.0)
+    if 'ionosphere' in keyword:
+        return (0,35,0.86,0.98)
+    if 'vote' in keyword:
+        return (0,16,0.93,0.99)
+    if 'wine' in keyword:
+        return (0,14,0.75,1.0)
+    if 'crx' in keyword:
+        return (0,45,0.65,0.95)
+    if 'musk1' in keyword:
+        return (0,180,0.68,0.84)
+
+
 def get_figures(numbers_of_features_list, results, LUPI_results, baseline_results, num_folds, output_directory, keyword,bottom_n_percent):
+
+
+
     fig = plt.figure()
     ax1 = fig.add_subplot(111, title=" Comparison of SVM+ and basic SVM, for "+keyword)
 
@@ -30,6 +56,12 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
              label='baseline SVM: all features')
 
 
+    xmin, xmax,  ymin, ymax = get_axis_scales(keyword)
+    axes = plt.gca()
+    axes.set_xlim([xmin,xmax])
+    axes.set_ylim([ymin,ymax])
+
+    print xmin, xmax,  ymin, ymax
 
     box = ax1.get_position()
     ax1.set_position([box.x0, box.y0 + box.height * 0.2,

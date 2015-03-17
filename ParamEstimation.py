@@ -3,7 +3,7 @@ import numpy as np
 from SVMplus import svmplusQP, svmplusQP_Predict
 from sklearn.metrics import f1_score, pairwise
 from sklearn import svm
-import re
+from sklearn import grid_search
 
 
 

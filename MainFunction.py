@@ -82,8 +82,19 @@ def main_function(features_array, labels_array,output_directory, num_folds,
     baseline_score = []
 
 
+
+
     full_list_of_values = range(*tuple)+[number_of_features]
+    number_of_values = len (full_list_of_values)
     print 'full list of values',full_list_of_values
+
+    print 'number of values', number_of_values
+
+
+
+    # sys.exit(0)
+
+
     print number_remaining_feats
 
     if number_remaining_feats==number_of_features:
@@ -270,7 +281,7 @@ def main_function(features_array, labels_array,output_directory, num_folds,
 
 
             # ## SVM+ classifier  ###
-            print "ntopfeats",n_top_feats
+            # print "ntopfeats",n_top_feats
             if n_top_feats != total_num_feats:
                 print 'doing SVM plus'
 
@@ -293,12 +304,13 @@ def main_function(features_array, labels_array,output_directory, num_folds,
         numbers_of_features_list.append(n_top_feats)
 
 
+
     # print "baseline_score ", baseline_score
     baseline_results = [baseline_score]* len(numbers_of_features_list)
 
 
-    keyword = str(dataset)+"  (" +str(number_of_items)+ "x" + str(number_of_features) + ");\n peeking =" +str(peeking)\
-              +" ; "+str(num_folds)+" folds; feat ranking by "+str(rank_metric)+"; top 1/"+str(prop_priv)+" unselected used as privileged"
+    keyword = str(dataset)+"  (" +str(total_num_feats)+ "x" + str(number_of_features) + ");\n peeking =" +str(peeking)\
+              +" ; "+str(num_folds)+" folds; feat ranking by "+str(rank_metric)+"; top 1/"+str(bottom_n_percent)+" % rejected"
 
     print 'LUPI LENGTH', len(LUPI_results)
     print 'normal length', len(results)

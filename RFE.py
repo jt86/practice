@@ -33,14 +33,20 @@ X, Y = get_heart_data()
 #
 # print recursive_elimination2(X,Y,1)
 # w
-svr = SVC()
 
-c_values = [.1, 1, 10]
-gamma_values = get_gamma_from_c(c_values, X)
-params_dict = {'C': c_values, 'gamma': gamma_values}
-grid_search_clf = grid_search.GridSearchCV(svr, params_dict, verbose=10, n_jobs=4)
-grid_search_clf.fit(X, Y)
+def grid_search_svc():
+    svr = SVC()
+    c_values = [.1, 1, 10]
+    gamma_values = get_gamma_from_c(c_values, X)
+    params_dict = {'C': c_values, 'gamma': gamma_values}
+    grid_search_clf = grid_search.GridSearchCV(svr, params_dict, n_jobs=4)
+    grid_search_clf.fit(X, Y)
 
-print grid_search_clf.grid_scores_
+    # print grid_search_clf.grid_scores_
+    # print grid_search_clf.score(X, Y)
+    # print grid_search_clf.best_params_
 
-print grid_search_clf.score(X, Y)
+    return grid_search_clf.best_params_
+
+feat_eliminator = RFE()
+grid_search_clf = grid_search.GridSearchCV(svr, params_dict, n_jobs=4)
