@@ -6,11 +6,11 @@ values2 = [item / 10000 for item in values]
 inputs = ['arcene', 'bankruptcy', 'cancer', 'crx','gisette', 'haberman', 'heart', 'hillvalley', 'ionosphere',
           'madelon', 'musk1', 'musk2', 'spambase', 'vote', 'wine']
 
-# metrics = ['f', 'c', 'r', 'r2']
+metrics = ['f', 'c', 'r2']
 
 # inputs = ['heart']
 
-metrics = ['r2']
+
 
 
 bottom_n_values = [0, 25, 50]
