@@ -310,7 +310,7 @@ def main_function(features_array, labels_array,output_directory, num_folds,
 
 
     keyword = str(dataset)+"  (" +str(total_num_feats)+ "x" + str(number_of_features) + ");\n peeking =" +str(peeking)\
-              +" ; "+str(num_folds)+" folds; feat ranking by "+str(rank_metric)+"; top 1/"+str(bottom_n_percent)+" % rejected"
+              +" ; "+str(num_folds)+" folds; rank metric: "+str(rank_metric)+"; bottom feats rejected:"+str(bottom_n_percent)+" %"
 
     print 'LUPI LENGTH', len(LUPI_results)
     print 'normal length', len(results)

@@ -6,7 +6,7 @@ from Get_Full_Path import  get_full_path
 
 def get_musk2_data(debug=False):
     print('Reading Musk2 data from disk')
-    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/musk2.csv", "rU") as infile:
+    with open(get_full_path("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/musk2.csv"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile,delimiter = ',')
         features_array +=(row for row in reader)
