@@ -8,7 +8,7 @@ inputs = ['arcene', 'bankruptcy', 'cancer', 'crx', 'gisette', 'haberman', 'heart
 
 metrics = ['f', 'c', 'r2']
 
-inputs = ['heart']
+# inputs = ['heart']
 
 bottom_n_values = [0, 25, 50]
 peeking_allowed = True
