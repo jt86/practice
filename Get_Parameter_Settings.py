@@ -20,9 +20,4 @@ for input in inputs:
             txt = pattern.format(input, 5, metric, 1, 1, bottom_n)
             if peeking_allowed:
                 txt += ' --peeking'
-            logging.info(txt)
-
-
-
-
-
+            print txt

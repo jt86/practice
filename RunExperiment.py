@@ -31,7 +31,7 @@ if __name__ == '__main__':
                        format="%(asctime)s\t%(module)s.%(funcName)s (line %(lineno)d)\t%(levelname)s : %(message)s")
 
 
-    
+
     logging.info(sys.argv)
 
     parser = argparse.ArgumentParser(description='Process some integers.')
