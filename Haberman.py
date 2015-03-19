@@ -1,9 +1,10 @@
 __author__ = 'jt306'
 import numpy as np
 from Get_Full_Path import  get_full_path
+import logging
 
 def get_haberman_data(debug=False):
-    print('Reading HABERMAN data from disk')
+    logging.info('Reading HABERMAN data from disk')
     with open(get_full_path("Desktop/Privileged_Data/new_data/haberman.data"), "r+") as infile:
         features_array = np.genfromtxt(infile, dtype=None)
 

@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
+import logging
 
 
 def get_axis_scales(keyword):
@@ -39,7 +39,7 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
     ax1.errorbar(numbers_of_features_list, np.mean(results, axis=1),
                  yerr=(np.std(results, axis=1) / np.sqrt(num_folds)),
                  c='b', label='SVM: trained on top features')
-    print "number of feats",len(numbers_of_features_list),"number of results", len(np.mean(LUPI_results, axis=1))
+    logging.info("number of feats %r number of results %r",len(numbers_of_features_list),len(np.mean(LUPI_results, axis=1)))
 
 
     if bottom_n_percent==0:
@@ -61,7 +61,7 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
     axes.set_xlim([xmin,xmax])
     axes.set_ylim([ymin,ymax])
 
-    print xmin, xmax,  ymin, ymax
+    logging.info( xmin, xmax,  ymin, ymax)
 
     box = ax1.get_position()
     ax1.set_position([box.x0, box.y0 + box.height * 0.2,
@@ -102,4 +102,3 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
     plt.ylabel('F-score improvement with SVM+')
 
     plt.savefig(os.path.join(output_directory, 'differences.png'))
-    # print differences_list

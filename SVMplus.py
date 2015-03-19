@@ -12,6 +12,8 @@ from vector import CGaussKernel,CLinearKernel,CRBFKernel
 import numpy as np
 import pdb
 import numpy.random as random
+import logging
+
 def svmplusQP(X,Y,Xstar,C,Cstar,gamma,gammastar):
     n = X.shape[0]
     Y.shape = n,1
@@ -128,7 +130,7 @@ if __name__ == "__main__":
     duals,bias = svmplusQP(X,Y,Xstar,C,Cstar)
     predicted = svmplusQP_Predict(X,Xtest,duals,bias)
 
-    print predicted
+    logging.info(predicted)
 
 #
 #def

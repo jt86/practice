@@ -3,9 +3,10 @@ __author__ = 'jt306'
 import csv
 import numpy as np
 from Get_Full_Path import get_full_path
+import logging
 
 def get_wine_data(debug=False):
-    print('Reading WINE data from disk')
+    logging.info(('Reading WINE data from disk'))
     with open(get_full_path("Desktop/Privileged_Data/new_data/wine.csv"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile,delimiter = ',')

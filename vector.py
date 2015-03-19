@@ -47,7 +47,7 @@ import numpy
 import numpy.random as random
 from generic import CKernel
 from elefant_exceptions import CElefantConstraintException
-
+import logging
 ## Generic kernel class for vectorial data
 #
 # This kernel provide common interface for all kernels operating on
@@ -2005,4 +2005,4 @@ if __name__== '__main__':
     kernel = CJointKernel(y)
     K = kernel.Expand(x, x, alpha)
     t2 = time.clock()
-    print K.shape, t2-t1
+    logging.info( K.shape, t2-t1)

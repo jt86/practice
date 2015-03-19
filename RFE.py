@@ -18,12 +18,12 @@ X, Y = get_heart_data()
 #     gamma_values = get_gamma_from_c(c_values,feats)
 #     params_dict = {'C':c_values}#, 'Gamma':gamma_values}
 #
-#     # print 'shape',feats.shape[1]
+#     # logging.info( 'shape',feats.shape[1])
 #     if feats.shape[1]>100:
 #         step = 0.1
 #     else:
 #         step = 1
-#     # print 'num feats eliminated each time', step
+#     # logging.info( 'num feats eliminated each time', step)
 #     svc = SVC(kernel="linear", C=1)
 #     rfe = RFE(estimator=svc, n_features_to_select=num_feats_to_select, step=step, estimator_params=params_dict)
 #     rfe.fit(feats, labels)
@@ -31,7 +31,7 @@ X, Y = get_heart_data()
 #     grid_search_object = grid_search.GridSearchCV(estimator = rfe)
 #     return ranking
 #
-# print recursive_elimination2(X,Y,1)
+# logging.info( recursive_elimination2(X,Y,1))
 # w
 
 def grid_search_svc():
@@ -42,11 +42,11 @@ def grid_search_svc():
     grid_search_clf = grid_search.GridSearchCV(svr, params_dict, n_jobs=4)
     grid_search_clf.fit(X, Y)
 
-    # print grid_search_clf.grid_scores_
-    # print grid_search_clf.score(X, Y)
-    # print grid_search_clf.best_params_
+    # logging.info( grid_search_clf.grid_scores_)
+    # logging.info( grid_search_clf.score(X, Y))
+    # logging.info( grid_search_clf.best_params_)
 
     return grid_search_clf.best_params_
 
-feat_eliminator = RFE()
-grid_search_clf = grid_search.GridSearchCV(svr, params_dict, n_jobs=4)
+# feat_eliminator = RFE()
+# grid_search_clf = grid_search.GridSearchCV(svr, params_dict, n_jobs=4)

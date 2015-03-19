@@ -10,6 +10,8 @@ from vector import CGaussKernel,CLinearKernel,CRBFKernel
 import numpy as np
 import pdb
 import numpy.random as random
+import logging
+
 def svmplusQP(X,Y,Xstar,C,Cstar):
     n = X.shape[0]
     Y.shape = n,1
@@ -79,23 +81,23 @@ def svmplusQP(X,Y,Xstar,C,Cstar):
 
     if (sel_pos.shape[0] > 0):
         s_pos = np.mean((1 - fi / Cstar - Fi)[ sel_pos ])
-        # print ("fi",fi)
-        # print ("Cstar", Cstar)
-        # print ("Fi", Fi)
-        # print ("sel_pos", sel_pos)
-        # print ("K",K)
-        # print ("Y",Y)
-        # print ("alphas",alphas)
+        # logging.info( ("fi",fi))
+        # logging.info( ("Cstar", Cstar))
+        # logging.info( ("Fi", Fi))
+        # logging.info( ("sel_pos", sel_pos))
+        # logging.info( ("K",K))
+        # logging.info( ("Y",Y))
+        # logging.info( ("alphas",alphas))
 
     else:
         s_pos = 0
 
     if (sel_neg.shape[0] > 0):
         s_neg = np.mean((-1 + fi / Cstar - Fi)[ sel_neg ])
-        # print ("fi",fi)
-        # print ("Cstar", Cstar)
-        # print ("Fi", Fi)
-        # print ("sel_neg", sel_neg)
+        # logging.info( ("fi",fi))
+        # logging.info( ("Cstar", Cstar))
+        # logging.info( ("Fi", Fi))
+        # logging.info( ("sel_neg", sel_neg))
     else:
         s_neg = 0
 
@@ -129,7 +131,7 @@ if __name__ == "__main__":
     duals,bias = svmplusQP(X,Y,Xstar,C,Cstar)
     predicted = svmplusQP_Predict(X,Xtest,duals,bias)
     
-    print predicted
+    logging.info( predicted)
 
 #
 #def 

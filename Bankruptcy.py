@@ -3,20 +3,21 @@ import csv
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 from Get_Full_Path import get_full_path
+import logging
 
 def convert_to_ascii(text):
     return "".join(str(ord(char)) for char in text)
 
 def get_bankruptcy_data(debug=False):
-    print('Reading Bankruptcy data from disk')
+    logging.info(('Reading Bankruptcy data from disk'))
     with open(get_full_path("Desktop/Privileged_Data/new_data/Qualitative_Bankruptcy.data.csv"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile,delimiter = ',')
         features_array +=(row for row in reader)
 
-            # print row
+            # logging.info( row)
 
-        # print len(features_array), len(features_array[0])
+        # logging.info( len(features_array), len(features_array[0]))
         features_array = np.array(features_array)
         features_array.shape=(250,7)
 
@@ -29,7 +30,7 @@ def get_bankruptcy_data(debug=False):
         labels_array[labels_array=='NB']=-1
         labels_array[labels_array=='B']=1
         labels_array = np.array(labels_array, dtype=int)
-        # print labels_array
+        # logging.info( labels_array)
 
 
         features_array = features_array[:,:-1]

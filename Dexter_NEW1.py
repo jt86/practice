@@ -1,9 +1,10 @@
 __author__ = 'jt306'
 import numpy as np
 from scipy import sparse as sp
+import logging
 
 def get_dexter_data():
-    print "Getting DEXTER data"
+    logging.info( "Getting DEXTER data")
     dok = sp.dok_matrix((300, 20000), dtype=int)
 
     fh = open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/DEXTER/dexter_train.data","rU")
@@ -12,7 +13,7 @@ def get_dexter_data():
     for row_num, line in enumerate(fh):
 
         row = line.split('\t')      #make list of numbers for each instance
-        print row
+        logging.info( row)
         indices_of_1s = np.array([int(r)-1 for r in row if r.isdigit()])           #make integers and put in array
 
         dok[row_num,indices_of_1s] = 1

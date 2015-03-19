@@ -12,7 +12,7 @@ Y=np.array(Y)
 X.shape = (11,5)
 Y.shape= (10,1)
 
-# print X
+# logging.info( X)
 
 
 def imputer(X):
@@ -23,4 +23,4 @@ def imputer(X):
     train_imp = imp.transform(X)
     return train_imp
 
-# print imputer(X)
+# logging.info( imputer(X))
