@@ -25,9 +25,12 @@ from Wine import get_wine_data
 import time
 
 if __name__ == '__main__':
+    import sys
+    print 'hi'
     logging.basicConfig(level=logging.INFO,
                        format="%(asctime)s\t%(module)s.%(funcName)s (line %(lineno)d)\t%(levelname)s : %(message)s")
     logging.info("runnning")
+
 
     parser = argparse.ArgumentParser(description='Process some integers.')
 
