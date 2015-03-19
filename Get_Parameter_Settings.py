@@ -1,7 +1,6 @@
 __author__ = 'jt306'
 
-values = [0.01, 0.1, 1., 10., 100.]
-values2 = [item / 10000 for item in values]
+print 'getting parameter settings'
 
 inputs = ['arcene', 'bankruptcy', 'cancer', 'crx','gisette', 'haberman', 'heart', 'hillvalley', 'ionosphere',
           'madelon', 'musk1', 'musk2', 'spambase', 'vote', 'wine']
@@ -9,9 +8,6 @@ inputs = ['arcene', 'bankruptcy', 'cancer', 'crx','gisette', 'haberman', 'heart'
 metrics = ['f', 'c', 'r2']
 
 # inputs = ['heart']
-
-
-
 
 bottom_n_values = [0, 25, 50]
 peeking_allowed = True
