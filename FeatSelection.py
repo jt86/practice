@@ -25,7 +25,6 @@ from ParamEstimation import get_gamma_from_c
 from sklearn import svm, grid_search
 from sklearn.feature_selection import RFECV
 import logging
-logging.info((__doc__))
 
 from sklearn.svm import SVC
 from sklearn.datasets import load_digits
@@ -122,8 +121,8 @@ def metric_comparison(feats, labels):
     logging.info(sorted_scores_r2)
 
     logging.info(('similarity between ANOVA and chi-2 %r', get_mean_ranking_difference(sorted_scores_f, sorted_scores_c)))
-    logging.info(
-        ('similarity between ANOVA and recursive %r', get_mean_ranking_difference(sorted_scores_r, sorted_scores_f)))
+    logging.info(('similarity between ANOVA and recursive %r',
+                  get_mean_ranking_difference(sorted_scores_r, sorted_scores_f)))
     logging.info(
         ('similarity between chi-2 and recursive %r', get_mean_ranking_difference(sorted_scores_r, sorted_scores_c)))
     logging.info(

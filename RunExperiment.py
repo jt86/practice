@@ -1,8 +1,5 @@
 import logging
-
-__author__ = 'jt306'
-
-import os, sys
+import os
 import argparse
 from MainFunction import main_function
 from Arcene import get_arcene_data
@@ -28,9 +25,8 @@ from Wine import get_wine_data
 import time
 
 if __name__ == '__main__':
-    logging.basicConfig(format=('%(asctime)s\t%(module)s.%(funcName)s '
-                                '(line %(lineno)d)\t%(levelname)s : %('
-                                'message)s'), level=logging.INFO)
+    logging.basicConfig(level=logging.INFO,
+                       format="%(asctime)s\t%(module)s.%(funcName)s (line %(lineno)d)\t%(levelname)s : %(message)s")
     logging.info("runnning")
 
     parser = argparse.ArgumentParser(description='Process some integers.')
