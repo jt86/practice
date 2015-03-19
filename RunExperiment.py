@@ -29,8 +29,10 @@ if __name__ == '__main__':
     print 'hi'
     logging.basicConfig(level=logging.INFO,
                        format="%(asctime)s\t%(module)s.%(funcName)s (line %(lineno)d)\t%(levelname)s : %(message)s")
-    logging.info("runnning")
 
+
+    
+    logging.info(sys.argv)
 
     parser = argparse.ArgumentParser(description='Process some integers.')
 
@@ -71,7 +73,7 @@ if __name__ == '__main__':
     print 'input is', args.input
     logging.debug("input is %s", args.input)
 
-    
+
     print args
     logging.debug('Arguments are %s', args)
 
