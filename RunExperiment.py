@@ -40,6 +40,9 @@ if __name__ == '__main__':
                                  'heart2',
                                  'ionosphere', 'hillvalley', 'wine'),
                         help='name of input data')
+
+
+
     parser.add_argument('--debug', action='store_true',
                         help='whether to speed things up and cut corners')
     parser.add_argument('--num-folds', type=int, required=True,
@@ -62,9 +65,14 @@ if __name__ == '__main__':
                         help='the percentage of worst-ranked features to reject')
 
     # parser.set_defaults(feature=True)
-
+    logging.debug("Arguments have been read in by parser")
 
     args = parser.parse_args()
+    print 'input is', args.input
+    logging.debug("input is %s", args.input)
+
+    
+    print args
     logging.debug('Arguments are %s', args)
 
     arcene = False
