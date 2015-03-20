@@ -27,18 +27,18 @@ def main_function(features_array, labels_array, output_directory, num_folds,
                   tuple, c_values, peeking, dataset, rank_metric, prop_priv=1, multiplier=1, bottom_n_percent=0):
     logging.info('main function: dataset = %s, peeking=%s ', dataset, peeking)
 
-    number_of_features = features_array.shape[1]
+    original_number_feats = features_array.shape[1]
 
     results_file = open(os.path.join(output_directory, 'output.csv'), "a")
     param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
     chosen_params_file = open(os.path.join(output_directory, 'chosen_parameters.csv'), "a")
 
-    total_num_feats = number_of_features
-    if dataset == 'arcene':
-        total_num_feats = 9920
 
-    number_remaining_feats = number_of_features - (bottom_n_percent * (features_array.shape[1]) / 100)
-    number_rejected_feats = number_of_features - number_remaining_feats
+    if dataset == 'arcene':
+        original_number_feats = 9920
+
+    number_remaining_feats = original_number_feats - (bottom_n_percent * (features_array.shape[1]) / 100)
+    number_rejected_feats = original_number_feats - number_remaining_feats
     logging.info('rejected %d', number_rejected_feats)
     logging.info('number of remaining features: %d', number_remaining_feats)
     # sys.exit(0)
@@ -55,22 +55,22 @@ def main_function(features_array, labels_array, output_directory, num_folds,
         scaler = preprocessing.StandardScaler().fit(sorted_features)
         sorted_features = scaler.transform(sorted_features, number_of_samples)
         sorted_features = preprocessing.scale(sorted_features, axis=1)
-        number_of_features = sorted_features.shape[1]
+
 
         if dataset == 'arcene' and sorted_features.shape[1] > 9000:
-            sorted_features, number_of_features = cut_off_arcene(sorted_features)
+            sorted_features, original_number_feats = cut_off_arcene(sorted_features)
 
 
             # ########### CURRENT NEW BIT ######### - this is for non-r2 - need for r2 too
 
-        sorted_features, number_of_features = discard_bottom_n(sorted_features, number_remaining_feats)
+        sorted_features = discard_bottom_n(sorted_features, number_remaining_feats)
         logging.debug('first item after cutting off \n %r', sorted_features[0])
 
     numbers_of_features_list = []
     results, LUPI_results, baseline_results = [], [], []
     baseline_score = []
 
-    full_list_of_values = range(*tuple) + [number_of_features]
+    full_list_of_values = range(*tuple) + [original_number_feats]
     number_of_values = len(full_list_of_values)
     logging.info('full list of values %r', full_list_of_values)
 
@@ -81,16 +81,18 @@ def main_function(features_array, labels_array, output_directory, num_folds,
     # sys.exit(0)
 
 
-    logging.info(number_remaining_feats)
+    logging.info("number remaining %d",number_remaining_feats)
 
-    if number_remaining_feats == number_of_features:
+    if number_remaining_feats == original_number_feats:
         list_of_values = full_list_of_values
+        logging.info("not discarding any features")
     else:
-        # list_of_values = full_list_of_values[full_list_of_values<100]
         list_of_values = [i for i in full_list_of_values if i <= number_remaining_feats]
-        logging.info('list of values %r', list_of_values)
-        # sys.exit(0)
+        logging.info ('discarded some features')
 
+
+    logging.info("list of values %r", list_of_values)
+    # sys.exit(0)
     for n_top_feats in list_of_values:
 
         if rank_metric == 'r2':
@@ -108,17 +110,17 @@ def main_function(features_array, labels_array, output_directory, num_folds,
             logging.info(sorted_features.shape)
 
             if dataset == 'arcene' and sorted_features.shape[1] > 9000:
-                sorted_features, number_of_features = cut_off_arcene(sorted_features)
+                sorted_features, original_number_feats = cut_off_arcene(sorted_features)
 
             number_of_samples = sorted_features.shape[0]
             scaler = preprocessing.StandardScaler().fit(sorted_features)
             sorted_features = scaler.transform(sorted_features, number_of_samples)
             sorted_features = preprocessing.scale(sorted_features, axis=1)
 
-            sorted_features, number_of_features = discard_bottom_n(sorted_features, number_remaining_feats)
+            sorted_features = discard_bottom_n(sorted_features, number_remaining_feats)
 
             logging.info(sorted_features[0])
-            logging.info(number_of_features)
+            logging.info(original_number_feats)
 
         logging.info("\n\n ")
 
@@ -126,7 +128,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
 
         normal_indices = np.arange(0, n_top_feats)
         logging.info('\n\n\n NORMAL INDICES \n %r', normal_indices)
-        remaining_indices = [index for index in range(number_of_features) if index not in normal_indices]
+        remaining_indices = [index for index in range(number_remaining_feats) if index not in normal_indices]
         if len(remaining_indices) > 1:
             number_of_indices_to_take = len(remaining_indices) / prop_priv
             logging.info("number_of_indices_to_take: %d of %d", number_of_indices_to_take, len(remaining_indices))
@@ -217,7 +219,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
             # ############ PARAM EST FOR SVM+ ################
 
 
-            if n_top_feats != number_of_features:
+            if n_top_feats != number_remaining_feats:
 
                 param_estimation_file.write("\n\n SVM+ parameter selection for top " + str(
                     n_top_feats) + " features\n" + "C,gamma,C*,gamma*,score")
@@ -269,7 +271,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
 
             # ## SVM+ classifier  ###
             # logging.info( "ntopfeats",n_top_feats)
-            if n_top_feats != total_num_feats:
+            if n_top_feats != number_remaining_feats:
                 logging.info('Doing SVM plus')
 
                 # alphas, bias = svmplusQP(normal_training_data, training_labels.ravel(),
@@ -284,7 +286,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
                 LUPI_score.append(f1_score(testing_labels, LUPI_predictions_for_testing))
 
         results.append(SVM_score)  # put score and feature rank into an array
-        if n_top_feats != total_num_feats:
+        if n_top_feats != number_remaining_feats:
             LUPI_results.append(LUPI_score)
         numbers_of_features_list.append(n_top_feats)
 
@@ -293,7 +295,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
     # logging.info( "baseline_score ", baseline_score)
     baseline_results = [baseline_score] * len(numbers_of_features_list)
 
-    keyword = str(dataset) + "  (" + str(total_num_feats) + "x" + str(number_of_features) + ");\n peeking =" + str(
+    keyword = str(dataset) + "  (" + str(features_array.shape[0]) + "x" + str(original_number_feats) + ");\n peeking =" + str(
         peeking) \
               + " ; " + str(num_folds) + " folds; rank metric: " + str(rank_metric) + "; bottom feats rejected:" + str(
         bottom_n_percent) + " %"
@@ -320,4 +322,4 @@ def discard_bottom_n(sorted_features, number_remaining_feats):
     logging.info("Shape before discard %r", sorted_features.shape)
     sorted_features = sorted_features[:, :number_remaining_feats]
     logging.info("Shape after discard %r", sorted_features.shape)
-    return sorted_features, sorted_features.shape[1]
+    return sorted_features

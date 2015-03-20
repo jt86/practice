@@ -16,6 +16,7 @@ def get_gamma_from_c(c_values, features):
 def param_estimation(param_estimation_file, training_features, training_labels, c_values, rs, privileged,
                      privileged_training_data=None, peeking=False, testing_features=None, testing_labels=None,
                      multiplier=1):
+    training_labels=training_labels.ravel()
     # logging.info( "training_features[0]:")
     # logging.info( training_features[0:5, :6])
     gamma_values = get_gamma_from_c(c_values, training_features)
@@ -94,7 +95,6 @@ def peeking_param_estimation(param_estimation_file, training_features, training_
                              privileged_training_data=None, testing_features=None, testing_labels=None, multiplier=1):
     gamma_values = get_gamma_from_c(c_values, training_features)
     dictionary0 = {}
-
     if privileged == True:
         code_with_score = np.zeros((len(c_values) ** 4))
     else:

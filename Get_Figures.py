@@ -42,14 +42,10 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
     logging.info("number of feats %r number of results %r",len(numbers_of_features_list),len(np.mean(LUPI_results, axis=1)))
 
 
-    if bottom_n_percent==0:
-        ax1.errorbar(numbers_of_features_list[:-1], np.mean(LUPI_results, axis=1),
-                     yerr=(np.std(LUPI_results, axis=1) / np.sqrt(num_folds)),
-                     c='r', label='SVM+: lower features as privileged')
-    else:
-        ax1.errorbar(numbers_of_features_list, np.mean(LUPI_results, axis=1),
-                     yerr=(np.std(LUPI_results, axis=1) / np.sqrt(num_folds)),
-                     c='r', label='SVM+: lower features as privileged')
+
+    ax1.errorbar(numbers_of_features_list[:-1], np.mean(LUPI_results, axis=1),
+                 yerr=(np.std(LUPI_results, axis=1) / np.sqrt(num_folds)),
+                 c='r', label='SVM+: lower features as privileged')
 
 
     ax1.plot(numbers_of_features_list,np.mean(baseline_results, axis=1), linestyle='-', c='black',
@@ -79,20 +75,17 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
     all_but_one_results = np.mean(results,axis=1)[:-1]
     # differences_list = np.subtract(np.mean(LUPI_results, axis=1), np.mean(results, axis=1))
 
-    if bottom_n_percent ==0:
-        differences_list = np.subtract(np.mean(LUPI_results, axis=1), all_but_one_results)
-    else:
-        differences_list = np.subtract(np.mean(LUPI_results, axis=1), np.mean(results,axis=1))
+
+    differences_list = np.subtract(np.mean(LUPI_results, axis=1), all_but_one_results)
+
 
     width = 0.35  # the width of the bars
 
     fig2 = plt.figure()
     ax2 = fig2.add_subplot(211, title="Difference between SVM and SVM+ scores"+str(keyword))
 
-    if bottom_n_percent == 0:
-        ax2.bar(numbers_of_features_list[:-1], differences_list, width)
-    else:
-        ax2.bar(numbers_of_features_list, differences_list, width)
+
+    ax2.bar(numbers_of_features_list[:-1], differences_list, width)
 
 
     ax1.plot(numbers_of_features_list, [0] * len(numbers_of_features_list), linestyle='-', c='black',
