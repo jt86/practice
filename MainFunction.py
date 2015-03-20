@@ -70,7 +70,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
     results, LUPI_results, baseline_results = [], [], []
     baseline_score = []
 
-    full_list_of_values = range(*tuple) + [original_number_feats]
+    full_list_of_values = range(*tuple) + [number_remaining_feats]
     number_of_values = len(full_list_of_values)
     logging.info('full list of values %r', full_list_of_values)
 
