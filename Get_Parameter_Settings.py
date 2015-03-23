@@ -10,7 +10,7 @@ metrics = ['f', 'c', 'r2']
 
 # inputs = ['heart']
 
-bottom_n_values = [0, 25, 50]
+bottom_n_values = [0, 10, 25, 50]
 peeking_allowed = True
 pattern = '--input {} --num-folds {} --rank-metric {} --prop-priv {} --gamma-multiplier {} --bottom-n-percent {}'
 

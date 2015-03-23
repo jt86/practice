@@ -5,7 +5,7 @@ import logging
 
 
 def get_hepatitis_data(ignore_missing=False):
-    with open(get_full_path("Desktop/Privileged_Data/new_data/hepatitis_data.csv", "r+")) as infile:
+    with open(get_full_path("Desktop/Privileged_Data/new_data/hepatitis_data.csv"), "r+") as infile:
         features_array = []
         reader = csv.reader(infile, dialect=csv.excel_tab)
         for row in reader:
@@ -28,4 +28,5 @@ def get_hepatitis_data(ignore_missing=False):
         logging.info(features_array.shape)
         return features_array, labels_array
 
-# get_hepatitis_data(True)
+
+get_hepatitis_data(True)

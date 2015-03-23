@@ -91,10 +91,13 @@ if __name__ == '__main__':
 
     elif args.input == 'gisette':
         features_array, labels_array = get_gisette_data()
+        tuple = [450, 5000, 500]
     elif args.input == 'madelon':
         features_array, labels_array = get_madelon_data()
+        tuple = [45, 500, 50]
     elif args.input == 'dorothea':
         features_array, labels_array = get_dorothea_data()
+        tuple = [9000,100000,10000]
     elif args.input == 'vote':
         features_array, labels_array = get_vote_data()
         tuple = [1, 16, 1]
@@ -103,6 +106,7 @@ if __name__ == '__main__':
         tuple = [1, 13, 1]
     elif args.input == 'haberman':
         features_array, labels_array = get_haberman_data()
+        tuple = [1,4,1]
     elif args.input == 'crx':
         features_array, labels_array = get_crx_data()
         tuple = [1, 42, 5]
@@ -110,6 +114,7 @@ if __name__ == '__main__':
         features_array, labels_array = get_mushroom_data()
     elif args.input == 'hepatitis':
         features_array, labels_array = get_hepatitis_data()
+        tuple = [1,18,2]
     elif args.input == 'cancer':
         features_array, labels_array = get_cancer_data()
         tuple = [15, 153, 15]
@@ -118,8 +123,10 @@ if __name__ == '__main__':
         tuple = [1, 18, 1]
     elif args.input == 'spambase':
         features_array, labels_array = get_spambase_data()
+        tuple = [5, 58, 10]
     elif args.input == 'musk2':
         features_array, labels_array = get_musk2_data()
+        tuple = [16,169, 16]
     elif args.input == 'musk1':
         features_array, labels_array = get_musk1_data()
         tuple = [16, 166, 16]
