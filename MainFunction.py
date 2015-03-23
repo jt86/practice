@@ -28,18 +28,14 @@ def main_function(features_array, labels_array, output_directory, num_folds,
     logging.info('main function: dataset = %s, peeking=%s ', dataset, peeking)
 
     original_number_feats = features_array.shape[1]
+    if dataset == 'arcene':
+        original_number_feats = 9920
 
     results_file = open(os.path.join(output_directory, 'output.csv'), "a")
     param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
     chosen_params_file = open(os.path.join(output_directory, 'chosen_parameters.csv'), "a")
 
-
-    if dataset == 'arcene':
-        original_number_feats = 9920
-
     number_remaining_feats = original_number_feats - (bottom_n_percent * (features_array.shape[1]) / 100)
-    number_rejected_feats = original_number_feats - number_remaining_feats
-    logging.info('rejected %d', number_rejected_feats)
     logging.info('number of remaining features: %d', number_remaining_feats)
     # sys.exit(0)
 
@@ -70,28 +66,15 @@ def main_function(features_array, labels_array, output_directory, num_folds,
     results, LUPI_results, baseline_results = [], [], []
     baseline_score = []
 
-    full_list_of_values = range(*tuple) + [number_remaining_feats]
-    number_of_values = len(full_list_of_values)
-    logging.info('full list of values %r', full_list_of_values)
-
-    logging.info('number of values %d', number_of_values)
 
 
 
-    # sys.exit(0)
-
-
-    logging.info("number remaining %d",number_remaining_feats)
-
-    if number_remaining_feats == original_number_feats:
-        list_of_values = full_list_of_values
-        logging.info("not discarding any features")
-    else:
-        list_of_values = [i for i in full_list_of_values if i <= number_remaining_feats]
-        logging.info ('discarded some features')
-
-
+    logging.info('full list of values %r', range(*tuple))
+    list_of_values = [i for i in range(*tuple) if i < number_remaining_feats]+[number_remaining_feats]
+    logging.info('kept %d of %d values in list', len(list_of_values), len (range(*tuple))+1)
     logging.info("list of values %r", list_of_values)
+
+
     # sys.exit(0)
     for n_top_feats in list_of_values:
 
@@ -119,8 +102,8 @@ def main_function(features_array, labels_array, output_directory, num_folds,
 
             sorted_features = discard_bottom_n(sorted_features, number_remaining_feats)
 
-            logging.info(sorted_features[0])
-            logging.info(original_number_feats)
+            logging.info('first item in r2 sorted feats %r',sorted_features[0])
+
 
         logging.info("\n\n ")
 
@@ -128,16 +111,19 @@ def main_function(features_array, labels_array, output_directory, num_folds,
 
         normal_indices = np.arange(0, n_top_feats)
         logging.info('\n\n\n NORMAL INDICES \n %r', normal_indices)
-        remaining_indices = [index for index in range(number_remaining_feats) if index not in normal_indices]
-        if len(remaining_indices) > 1:
-            number_of_indices_to_take = len(remaining_indices) / prop_priv
-            logging.info("number_of_indices_to_take: %d of %d", number_of_indices_to_take, len(remaining_indices))
-            remaining_indices = remaining_indices[:number_of_indices_to_take]
-        else:
-            logging.info("1 or less indices remaining. Took %d", len(remaining_indices))
+        privileged_indices = [index for index in range(number_remaining_feats) if index not in normal_indices]
+
+        #todo: commented out block deals with prop_priv variable
+
+        # if len(privileged_indices) > 1:
+        #     number_of_indices_to_take = len(privileged_indices) / prop_priv
+        #     logging.info("number_of_indices_to_take: %d of %d", number_of_indices_to_take, len(privileged_indices))
+        #     privileged_indices = privileged_indices[:number_of_indices_to_take]
+        # else:
+        #     logging.info("1 or less indices remaining. Took %d", len(privileged_indices))
 
         normal_features = sorted_features[:, normal_indices]
-        privileged_features = sorted_features[:, remaining_indices]
+        privileged_features = sorted_features[:, privileged_indices]
 
         logging.info('all features first item %r', sorted_features[0])
         logging.info('normal_features first item %r', normal_features[0])
@@ -240,11 +226,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
                         normal_training_data, training_labels, c_values, rs, privileged=True,
                         privileged_training_data=privileged_training_data)
 
-                    # code below is for fixing C* and gamma* as the same as C and gamma (param estimation module also needs to be changed)
 
-                    # best_C_SVM_plus, best_gamma_SVM_plus = param_estimation(param_estimation_file,
-                    # normal_training_data,  training_labels, c_values, rs, privileged=True, privileged_training_data=privileged_training_data)
-                    # best_C_star_SVM_plus, best_gamma_star_SVM_plus = best_C_SVM_plus, best_gamma_SVM_plus
 
             logging.info("best baseline params: %d %d", best_C_baseline, best_gamma_baseline)
             logging.info("best SVM params: %d %d", best_C_SVM, best_gamma_SVM)

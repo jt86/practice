@@ -41,7 +41,7 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
                  c='b', label='SVM: trained on top features')
     logging.info("number of feats %r number of results %r",len(numbers_of_features_list),len(np.mean(LUPI_results, axis=1)))
 
-
+    logging.debug('number of features list %r', numbers_of_features_list)
 
     ax1.errorbar(numbers_of_features_list[:-1], np.mean(LUPI_results, axis=1),
                  yerr=(np.std(LUPI_results, axis=1) / np.sqrt(num_folds)),
