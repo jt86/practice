@@ -9,7 +9,7 @@ def convert_to_ascii(text):
     return "".join(str(ord(char)) for char in text)
 
 def get_bankruptcy_data(debug=False):
-    logging.info(('Reading Bankruptcy data from disk'))
+    print('Reading Bankruptcy data from disk')
     with open(get_full_path("Desktop/Privileged_Data/new_data/Qualitative_Bankruptcy.data.csv"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile,delimiter = ',')

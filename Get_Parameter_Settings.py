@@ -1,10 +1,15 @@
 __author__ = 'jt306'
 import logging
 
-logging.info('getting parameter settings')
+print('getting parameter settings')
 
-inputs = ['arcene', 'bankruptcy', 'cancer', 'crx', 'gisette', 'haberman', 'heart', 'hillvalley', 'ionosphere',
-          'madelon', 'musk1', 'musk2', 'spambase', 'vote', 'wine']
+# inputs = ['arcene', 'bankruptcy', 'cancer', 'crx', 'gisette', 'haberman', 'heart', 'hillvalley', 'ionosphere',
+#           'madelon', 'musk1', 'musk2', 'spambase', 'vote', 'wine']
+
+
+inputs = ['heart','vote', 'wine', 'ionosphere','musk1','hillvalley']
+
+
 
 metrics = ['f', 'c', 'r2']
 

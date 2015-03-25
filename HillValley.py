@@ -6,7 +6,7 @@ from Get_Full_Path import get_full_path
 import logging
 
 def get_hillvalley_data(debug=False):
-    logging.info('Reading HILLVALLEY data from disk')
+    print('Reading HILLVALLEY data from disk')
     #with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/hillvalley.csv", "rU") as infile:
     with open(get_full_path("Desktop/Privileged_Data/new_data/hillvalley.csv"), "rU") as infile:
         features_array = []

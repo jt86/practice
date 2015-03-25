@@ -5,7 +5,7 @@ from Get_Full_Path import  get_full_path
 # dok = sp.dok_matrix((800, 139351), dtype=bool)
 import logging
 def get_dorothea_data():
-    logging.info( "Getting DOROTHEA data")
+    print( "Getting DOROTHEA data")
     dok = sp.dok_matrix((800, 100000), dtype=int)
 
     fh = open(get_full_path("Desktop/Privileged_Data/DOROTHEA/dorothea_train.data"),"rU")

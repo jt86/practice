@@ -27,11 +27,11 @@ for subdir, dirs, files in os.walk(rootdir):
                     elif line[2] == 'SVM':
                         SVM_list += [gamma]
 
-logging.info(SVM_plus_list)
-logging.info(SVM_list)
+print(SVM_plus_list)
+print(SVM_list)
 
-logging.info(len(SVM_plus_list))
-logging.info(len(SVM_list))
+print(SVM_plus_list)
+print(len(SVM_list)
 
 SVM_plus_list = sorted([float(item) for item in SVM_plus_list])[:-20]
 SVM_list = [float(item) for item in SVM_plus_list][:-20]

@@ -130,7 +130,7 @@ if __name__ == "__main__":
     duals,bias = svmplusQP(X,Y,Xstar,C,Cstar)
     predicted = svmplusQP_Predict(X,Xtest,duals,bias)
 
-    logging.info(predicted)
+    print(predicted)
 
 #
 #def

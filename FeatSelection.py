@@ -108,32 +108,32 @@ def get_ranked_indices(feats, labels, metric, num_feats_to_select=None):
     if metric == 'r2':
         return recursive_elimination2(feats, labels, num_feats_to_select)
 
-
-def metric_comparison(feats, labels):
-    sorted_scores_c = univariate_selection(feats, labels, chi2)
-    sorted_scores_f = univariate_selection(feats, labels, f_classif)
-    sorted_scores_r = recursive_elimination(feats, labels)
-    sorted_scores_r2 = recursive_elimination2(feats, labels, 1)
-
-    logging.info(sorted_scores_c)
-    logging.info(sorted_scores_f)
-    logging.info(sorted_scores_r)
-    logging.info(sorted_scores_r2)
-
-    logging.info(('similarity between ANOVA and chi-2 %r', get_mean_ranking_difference(sorted_scores_f, sorted_scores_c)))
-    logging.info(('similarity between ANOVA and recursive %r',
-                  get_mean_ranking_difference(sorted_scores_r, sorted_scores_f)))
-    logging.info(
-        ('similarity between chi-2 and recursive %r', get_mean_ranking_difference(sorted_scores_r, sorted_scores_c)))
-    logging.info(
-        ('similarity between recursive 1 and 2 %r', get_mean_ranking_difference(sorted_scores_r, sorted_scores_r2)))
-
-
-
-    array = np.array(range(13))
-
-    logging.info(feats[0, np.argsort(sorted_scores_r)])
-    logging.info(feats[0, np.argsort(sorted_scores_r2)])
+#
+# def metric_comparison(feats, labels):
+#     sorted_scores_c = univariate_selection(feats, labels, chi2)
+#     sorted_scores_f = univariate_selection(feats, labels, f_classif)
+#     sorted_scores_r = recursive_elimination(feats, labels)
+#     sorted_scores_r2 = recursive_elimination2(feats, labels, 1)
+#
+#     logging.info(sorted_scores_c)
+#     logging.info(sorted_scores_f)
+#     logging.info(sorted_scores_r)
+#     logging.info(sorted_scores_r2)
+#
+#     logging.info(('similarity between ANOVA and chi-2 %r', get_mean_ranking_difference(sorted_scores_f, sorted_scores_c)))
+#     logging.info(('similarity between ANOVA and recursive %r',
+#                   get_mean_ranking_difference(sorted_scores_r, sorted_scores_f)))
+#     logging.info(
+#         ('similarity between chi-2 and recursive %r', get_mean_ranking_difference(sorted_scores_r, sorted_scores_c)))
+#     logging.info(
+#         ('similarity between recursive 1 and 2 %r', get_mean_ranking_difference(sorted_scores_r, sorted_scores_r2)))
+#
+#
+#
+#     array = np.array(range(13))
+#
+#     logging.info(feats[0, np.argsort(sorted_scores_r)])
+#     logging.info(feats[0, np.argsort(sorted_scores_r2)])
 
 
 def grid_search_svc(X, Y):
@@ -146,7 +146,7 @@ def grid_search_svc(X, Y):
 
     # logging.info( grid_search_clf.grid_scores_)
     # logging.info( grid_search_clf.score(X, Y))
-    logging.info('best %r', grid_search_clf.best_params_)
+    print('best %r', grid_search_clf.best_params_)
     return grid_search_clf.best_params_
 
 

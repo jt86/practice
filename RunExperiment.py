@@ -25,14 +25,16 @@ from Wine import get_wine_data
 import time
 
 if __name__ == '__main__':
-    import sys
+
     print 'hi'
-    logging.basicConfig(level=logging.DEBUG,
-                       format="%(asctime)s\t%(module)s.%(funcName)s (line %(lineno)d)\t%(levelname)s : %(message)s")
 
-
-
-    logging.info(sys.argv)
+    logger = logging.getLogger('RunExpt Logger')
+    logger.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s %(module)s %(lineno)d %(levelname)s %(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
 
     parser = argparse.ArgumentParser(description='Process some integers.')
 
@@ -66,25 +68,27 @@ if __name__ == '__main__':
     parser.add_argument('--bottom-n-percent', type=int,
                         help='the percentage of worst-ranked features to reject')
 
+
+    print 'message now'
     # parser.set_defaults(feature=True)
-    logging.debug("Arguments have been read in by parser")
+    logger.debug("Arguments have been read in by parser")
 
     args = parser.parse_args()
     print 'input is', args.input
-    logging.debug("input is %s", args.input)
+    logger.debug("input is %s", args.input)
 
 
     print args
-    logging.debug('Arguments are %s', args)
+    logger.debug('Arguments are %s', args)
 
     arcene = False
     t0 = time.clock()
     if args.input == 'arcene':
         if args.debug == True:
-            logging.info('debug = true')
+            logger.info('debug = true')
             features_array, labels_array = get_arcene_data(debug=True)
         else:
-            logging.info('debug = false')
+            logger.info('debug = false')
             features_array, labels_array = get_arcene_data()
         tuple = (919, 9920, 1000)
 
@@ -142,27 +146,27 @@ if __name__ == '__main__':
     else:
         raise ValueError('WTF is that input')
 
-    logging.info("all args %r", args)
+    logger.warning("all args %r", args)
 
-    logging.info("time taken to load data: %r", time.clock()-t0)
+    logger.info("time taken to load data: %r", time.clock()-t0)
 
-    logging.info("tuple %r", tuple)
+    logger.info("tuple %r", tuple)
 
     keyword = str(args.input) + "_peeking=" + str(args.peeking) + "_" + str(args.num_folds) + "-folds_" + str(
         args.rank_metric) + "_rejected-" + str(args.bottom_n_percent) + "pc-used-gamma_times_" + str(
         args.gamma_multiplier)
-    logging.info("\n\n %r \n\n", keyword)
+    logger.info("\n\n %r \n\n", keyword)
 
-    all_results_directory = get_full_path('Desktop/Privileged_Data/new_results/')
+    all_results_directory = get_full_path('Desktop/Privileged_Data/small-dataset-results/')
     # output_directory = (os.path.join(all_results_directory,args.output_dir))
     output_directory = (os.path.join(all_results_directory, keyword))
 
-    logging.info("output directory %r", output_directory)
+    logger.info("output directory %r", output_directory)
 
     if not os.path.exists(output_directory):
         os.mkdir(output_directory)
 
-    # logging.info( 'peeking=',args.peeking)
+    # logger.info( 'peeking=',args.peeking)
 
     c_values = [0.1, 1., 10.]
 
@@ -170,14 +174,5 @@ if __name__ == '__main__':
 
     main_function(features_array, labels_array, output_directory, args.num_folds, tuple, c_values,
                   peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, prop_priv=args.prop_priv,
-                  multiplier=args.gamma_multiplier, bottom_n_percent=args.bottom_n_percent)
-
-
-    #
-    #     prefix = '/home/j/jt/jt306'
-
-    #     prefix = '/Volumes/LocalDataHD/jt306'
-
-
-
+                  multiplier=args.gamma_multiplier, bottom_n_percent=args.bottom_n_percent, logger=logger)
 

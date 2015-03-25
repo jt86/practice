@@ -6,7 +6,7 @@ from Get_Full_Path import get_full_path
 import logging
 
 def get_spambase_data(debug=False):
-    logging.info('Reading Spambase data from disk')
+    print('Reading Spambase data from disk')
     with open(get_full_path("Privileged_Data/new_data/spambase.csv"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile,delimiter = ',')

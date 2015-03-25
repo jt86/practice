@@ -6,7 +6,7 @@ import logging
 def get_arcene_data(debug=False):
     if debug:
 
-        logging.info('Reading Arcene SMALL data from disk')
+        print('Reading Arcene SMALL data from disk')
         with open(get_full_path("Desktop/Privileged_Data/ARCENE/arcene_train.data-small"), "r+") as infile:
             features_array = np.genfromtxt(infile, dtype=None)
             features_array.shape = (100, 100)
@@ -18,7 +18,7 @@ def get_arcene_data(debug=False):
 
         return features_array, labels_array
 
-    logging.info('Reading Arcene data from disk')
+    print('Reading Arcene data from disk')
     with open(get_full_path("Desktop/Privileged_Data/ARCENE/arcene_train.data"), "r+") as infile:
         features_array = np.genfromtxt(infile, dtype=None)
         features_array.shape = (100, 10000)

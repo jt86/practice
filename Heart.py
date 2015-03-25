@@ -5,7 +5,7 @@ import logging
 
 
 def get_heart_data(debug=False):
-    logging.info('Reading HEART data from disk')
+    print('Reading HEART data from disk')
 
     with open(get_full_path("Desktop/Privileged_Data/new_data/heart.dat"), "r+") as infile:
         features_array = np.genfromtxt(infile, dtype=None)

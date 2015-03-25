@@ -7,7 +7,7 @@ import logging
 
 
 def get_musk1_data(debug=False):
-    logging.info('Reading Musk1 data from disk')
+    print('Reading Musk1 data from disk')
     with open(get_full_path("Desktop/Privileged_Data/new_data/musk1.csv"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile, delimiter=',')

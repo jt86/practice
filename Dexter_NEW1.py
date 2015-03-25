@@ -4,7 +4,7 @@ from scipy import sparse as sp
 import logging
 
 def get_dexter_data():
-    logging.info( "Getting DEXTER data")
+    print( "Getting DEXTER data")
     dok = sp.dok_matrix((300, 20000), dtype=int)
 
     fh = open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/DEXTER/dexter_train.data","rU")

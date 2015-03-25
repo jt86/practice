@@ -6,7 +6,7 @@ from Get_Full_Path import get_full_path
 import logging
 
 def get_cancer_data(debug=False):
-    logging.info('Reading Cancer data from disk')
+    print('Reading Cancer data from disk')
     with open(get_full_path("Desktop/Privileged_Data/new_data/cancer.csv"), "rU") as infile:
         features_array = []
         reader = csv.reader(infile,delimiter = ',')
