@@ -24,10 +24,10 @@ def get_hepatitis_data(ignore_missing=False):
 
         labels_array = np.array(features_array[:, 0], dtype=int)
 
-        print(labels_array.shape)
+        # print(labels_array.shape)
         features_array = np.array(features_array[:, 1:], dtype=float)
-        print (features_array.shape)
+        # print (features_array.shape)
         return features_array, labels_array
 
 
-get_hepatitis_data(True)
+

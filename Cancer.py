@@ -39,3 +39,7 @@ def one_v_rest(labels_array, chosen_one):
             labels_array[index]= (-1)
     return labels_array
 
+
+#
+# feats, labels = get_cancer_data()
+# print feats.shape

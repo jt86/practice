@@ -1,6 +1,5 @@
 __author__ = 'jt306'
 def get_full_path(relative_path):
-    print('getting full path')
     from socket import gethostname
     import os
 

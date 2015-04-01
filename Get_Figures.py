@@ -27,9 +27,10 @@ def get_axis_scales(keyword):
         return (0,45,0.65,0.95)
     if 'musk1' in keyword:
         return (0,180,0.68,0.84)
+    else:
+        return (0,2000,0,1)
 
-
-def get_figures(numbers_of_features_list, results, LUPI_results, baseline_results, num_folds, output_directory, keyword,bottom_n_percent):
+def get_figures(numbers_of_features_list, results, LUPI_results, baseline_results, num_folds, output_directory, keyword, total_num_feats):
 
 
 
@@ -51,13 +52,15 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
     ax1.plot(numbers_of_features_list,np.mean(baseline_results, axis=1), linestyle='-', c='black',
              label='baseline SVM: all features')
 
+    if 'True' in keyword:
+        xmin, xmax,  ymin, ymax = get_axis_scales(keyword)
+        axes = plt.gca()
+        axes.set_xlim([xmin,xmax])
+        axes.set_ylim([ymin,ymax])
+    else:
+        axes = plt.gca()
+        axes.set_ylim([0.5, 1.0])
 
-    xmin, xmax,  ymin, ymax = get_axis_scales(keyword)
-    axes = plt.gca()
-    axes.set_xlim([xmin,xmax])
-    axes.set_ylim([ymin,ymax])
-
-    logging.info( xmin, xmax,  ymin, ymax)
 
     box = ax1.get_position()
     ax1.set_position([box.x0, box.y0 + box.height * 0.2,

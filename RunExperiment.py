@@ -1,5 +1,5 @@
 import logging
-import os
+import os, sys
 import argparse
 from MainFunction import main_function
 from Arcene import get_arcene_data
@@ -67,11 +67,8 @@ if __name__ == '__main__':
                         help='the factor by which to multiply gamma for the SVM+')
     parser.add_argument('--bottom-n-percent', type=int,
                         help='the percentage of worst-ranked features to reject')
-
-
-    print 'message now'
-    # parser.set_defaults(feature=True)
-    logger.debug("Arguments have been read in by parser")
+    parser.add_argument('--cmin', type=int, required = True, help='power of lowest value for c (bottom end of log range)')
+    parser.add_argument('--cmax', type=int, required = True, help='power of highest value for c (top of log range)')
 
     args = parser.parse_args()
     print 'input is', args.input
@@ -151,13 +148,21 @@ if __name__ == '__main__':
     logger.info("time taken to load data: %r", time.clock()-t0)
 
     logger.info("tuple %r", tuple)
+    c_values = [100.,1000.,10000.]
 
-    keyword = str(args.input) + "_peeking=" + str(args.peeking) + "_" + str(args.num_folds) + "-folds_" + str(
-        args.rank_metric) + "_rejected-" + str(args.bottom_n_percent) + "pc-used-gamma_times_" + str(
-        args.gamma_multiplier)
+
+    # keyword = "{}_peeking={}_{}-folds_{}_rejected-{}pc-used-gamma_times_{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.bottom_n_percent, args.gamma_multiplier)
+    keyword = "{}_peeking={}_folds={}_metric={}_cvalues={}to{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.cmin,args.cmax)
+
+    print keyword
+
+
+    # keyword = str(args.input) + "_peeking=" + str(args.peeking) + "_" + str(args.num_folds) + "-folds_" + str(
+    #     args.rank_metric) + "_rejected-" + str(args.bottom_n_percent) + "pc-used-gamma_times_" + str(
+    #     args.gamma_multiplier)
     logger.info("\n\n %r \n\n", keyword)
 
-    all_results_directory = get_full_path('Desktop/Privileged_Data/small-dataset-results/')
+    all_results_directory = get_full_path('Desktop/Privileged_Data/non-peeking-results/')
     # output_directory = (os.path.join(all_results_directory,args.output_dir))
     output_directory = (os.path.join(all_results_directory, keyword))
 
@@ -168,11 +173,10 @@ if __name__ == '__main__':
 
     # logger.info( 'peeking=',args.peeking)
 
-    c_values = [0.1, 1., 10.]
 
     #todo : change c_values in main function back to args.cvalues!!!
 
-    main_function(features_array, labels_array, output_directory, args.num_folds, tuple, c_values,
+    main_function(features_array, labels_array, output_directory, args.num_folds, tuple, args.cmin, args.cmax,
                   peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, prop_priv=args.prop_priv,
                   multiplier=args.gamma_multiplier, bottom_n_percent=args.bottom_n_percent, logger=logger)
 

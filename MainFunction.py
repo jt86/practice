@@ -1,7 +1,7 @@
 __author__ = 'jt306'
 
 import os, sys
-import numpy as np
+import numpy as npw
 from sklearn.cross_validation import StratifiedKFold, ShuffleSplit
 from sklearn.metrics import f1_score, pairwise
 from sklearn import svm, linear_model
@@ -13,7 +13,7 @@ from ParamEstimation import param_estimation
 from FeatSelection import univariate_selection, recursive_elimination
 import time
 from FeatSelection import get_ranked_indices, recursive_elimination2
-import logging
+
 
 
 
@@ -22,12 +22,14 @@ import logging
 
 
 def main_function(features_array, labels_array, output_directory, num_folds,
-                  tuple, c_values, peeking, dataset, rank_metric, prop_priv=1, multiplier=1, bottom_n_percent=0, logger=None):
+                  tuple, cmin, cmax, peeking, dataset, rank_metric, prop_priv=1, multiplier=1, bottom_n_percent=0, logger=None):
     
-
-
+    logger.debug('peeking status: %s', peeking)
 
     logger.info('main function: dataset = %s, peeking=%s ', dataset, peeking)
+
+    c_values = np.logspace(cmin,cmax, num =3)
+    print c_values
 
     original_number_feats = features_array.shape[1]
     if dataset == 'arcene':
@@ -56,7 +58,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
 
 
         if dataset == 'arcene' and sorted_features.shape[1] > 9000:
-            sorted_features, original_number_feats = cut_off_arcene(sorted_features, logger)
+            sorted_features = cut_off_arcene(sorted_features, logger)
 
 
             # ########### CURRENT NEW BIT ######### - this is for non-r2 - need for r2 too
@@ -89,7 +91,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
 
 
             if dataset == 'arcene' and sorted_features.shape[1] > 9000:
-                sorted_features, original_number_feats = cut_off_arcene(sorted_features, logger)
+                sorted_features = cut_off_arcene(sorted_features, logger)
 
             number_of_samples = sorted_features.shape[0]
             scaler = preprocessing.StandardScaler().fit(sorted_features)
@@ -156,16 +158,14 @@ def main_function(features_array, labels_array, output_directory, num_folds,
 
                 logger.info("First iteration, doing param selection for baseline")
 
-                # ############################## PARAM EST FOR BASELINE
+                # ##############################  BASELINE
 
                 param_estimation_file.write("\n\n Baseline parameter selection \n C,gamma,score")
                 best_C_baseline, best_gamma_baseline = param_estimation(param_estimation_file, all_training_data,
                                                                         training_labels, c_values,rs, False, None,
                                                                         peeking=peeking,testing_features=all_testing_data,
-                                                                        testing_labels=testing_labels)
+                                                                        testing_labels=testing_labels, logger=logger)
 
-
-                    # ## Baseline  ###
 
                 clf = svm.SVC(C=best_C_baseline, kernel='rbf', gamma=best_gamma_baseline)
                 clf.fit(all_training_data, training_labels)
@@ -174,9 +174,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
                 baseline_score.append(f1_score(testing_labels, baseline_predictions))
 
 
-
-
-            # ############################## PARAM EST FOR SVM
+            ############################### PARAM EST FOR SVM
 
             param_estimation_file.write(
                 "\n\n SVM parameter selection for top " + str(n_top_feats) + " features\n" + "C,gamma,score")
@@ -186,7 +184,11 @@ def main_function(features_array, labels_array, output_directory, num_folds,
                                                           training_labels, c_values,
                                                           rs, privileged=False, privileged_training_data=None,
                                                           peeking=peeking, testing_features=normal_testing_data,
-                                                          testing_labels=testing_labels)
+                                                          testing_labels=testing_labels, logger=logger)
+
+            clf = svm.SVC(C=best_C_SVM, kernel='rbf', gamma=best_gamma_SVM)  # , gamma=gamma)
+            clf.fit(normal_training_data, training_labels)
+            SVM_score.append(f1_score(testing_labels, clf.predict(normal_testing_data)))
 
 
             # ############ PARAM EST FOR SVM+ ################
@@ -201,37 +203,10 @@ def main_function(features_array, labels_array, output_directory, num_folds,
                     param_estimation_file, normal_training_data, training_labels, c_values, rs, privileged=True,
                     privileged_training_data=privileged_training_data,peeking=peeking,
                     testing_features=normal_testing_data, testing_labels=testing_labels,
-                    multiplier=multiplier)
+                    multiplier=multiplier, logger=logger)
 
 
-
-            logger.info("best baseline params: %d %d", best_C_baseline, best_gamma_baseline)
-            logger.info("best SVM params: %d %d", best_C_SVM, best_gamma_SVM)
-            logger.info("best SVM+ params: %d %d %d %d", best_C_SVM_plus, best_gamma_SVM_plus, best_C_star_SVM_plus,
-                         best_gamma_star_SVM_plus)
-
-            chosen_params_file.write("\n\n" + str(n_top_feats) + " top features,fold " + str(k) + ",baseline," + str(
-                best_C_baseline) + "," + str(best_gamma_baseline))
-            chosen_params_file.write("\n ,,SVM," + str(best_C_SVM) + "," + str(best_gamma_SVM))
-            chosen_params_file.write("\n  ,,SVM+," + str(best_C_SVM_plus) + "," + str(best_gamma_SVM_plus) + "," + str(
-                best_C_star_SVM_plus) + "," + str(best_gamma_star_SVM_plus))
-
-            # ###############
-
-            # ## normal classifier  ###
-
-
-            clf = svm.SVC(C=best_C_SVM, kernel='rbf', gamma=best_gamma_SVM)  # , gamma=gamma)
-            clf.fit(normal_training_data, training_labels)
-            SVM_predictions = clf.predict(normal_testing_data)
-            SVM_score.append(f1_score(testing_labels, SVM_predictions))
-
-
-
-            # ## SVM+ classifier  ###
-            # logger.info( "ntopfeats",n_top_feats)
-            if n_top_feats != number_remaining_feats:
-                logger.info('Doing SVM plus')
+                logger.info('SVM+ feat selection finished. Doing SVM+')
 
                 alphas, bias = svmplusQP(normal_training_data, training_labels.ravel(),
                                          privileged_training_data, best_C_SVM_plus, best_C_star_SVM_plus,
@@ -241,6 +216,26 @@ def main_function(features_array, labels_array, output_directory, num_folds,
                                                                  alphas, bias).ravel()
 
                 LUPI_score.append(f1_score(testing_labels, LUPI_predictions_for_testing))
+            print "\n\n"
+
+            logger.info("best baseline params: {}, {}".format(best_C_baseline, best_gamma_baseline))
+            logger.info("best SVM params: {}, {}".format(best_C_SVM, best_gamma_SVM))
+            logger.info("best SVM+ params: {}, {}, {}, {}".format(best_C_SVM_plus, best_gamma_SVM_plus, best_C_star_SVM_plus,
+                         best_gamma_star_SVM_plus))
+
+            # logger.info("best baseline params: %d %d", best_C_baseline, best_gamma_baseline)
+            # logger.info("best SVM params: %d %d", best_C_SVM, best_gamma_SVM)
+            # logger.info("best SVM+ params: %d %d %d %d", best_C_SVM_plus, best_gamma_SVM_plus, best_C_star_SVM_plus,
+            #              best_gamma_star_SVM_plus)
+
+            chosen_params_file.write("\n\n" + str(n_top_feats) + " top features,fold " + str(k) + ",baseline," + str(
+                best_C_baseline) + "," + str(best_gamma_baseline))
+            chosen_params_file.write("\n ,,SVM," + str(best_C_SVM) + "," + str(best_gamma_SVM))
+            chosen_params_file.write("\n  ,,SVM+," + str(best_C_SVM_plus) + "," + str(best_gamma_SVM_plus) + "," + str(
+                best_C_star_SVM_plus) + "," + str(best_gamma_star_SVM_plus))
+
+
+
 
         results.append(SVM_score)  # put score and feature rank into an array
         if n_top_feats != number_remaining_feats:
@@ -252,16 +247,16 @@ def main_function(features_array, labels_array, output_directory, num_folds,
     # logger.info( "baseline_score ", baseline_score)
     baseline_results = [baseline_score] * len(numbers_of_features_list)
 
-    keyword = str(dataset) + "  (" + str(features_array.shape[0]) + "x" + str(original_number_feats) + ");\n peeking =" + str(
-        peeking) \
-              + " ; " + str(num_folds) + " folds; rank metric: " + str(rank_metric) + "; bottom feats rejected:" + str(
-        bottom_n_percent) + " %"
+
+    keyword = "{} ({}x{}) \n peeking={}; {} folds; rank metric: {}; c values: {}".format(dataset,
+                   features_array.shape[0], original_number_feats, peeking, num_folds, rank_metric, c_values)
+    # bottom {}% rejected, bottom_n_percent
 
     logger.info('LUPI LENGTH %d', len(LUPI_results))
     logger.info('normal length %d', len(results))
     logger.info('num feats list %d', len(numbers_of_features_list))
     get_figures(numbers_of_features_list, results, LUPI_results, baseline_results, num_folds, output_directory, keyword,
-                bottom_n_percent)
+                original_number_feats)
 
     results_file.write(str(np.mean(baseline_results, axis=1)))
     results_file.write(str(np.mean(results, axis=1)))
@@ -271,8 +266,7 @@ def main_function(features_array, labels_array, output_directory, num_folds,
 def cut_off_arcene(sorted_features,logger):
     sorted_features = sorted_features[:, :9920]
     logger.info('Using arcene dataset: discarding bottom 80 features that consist of 0s')
-    number_of_features = 9920
-    return sorted_features, number_of_features
+    return sorted_features
 
 
 def discard_bottom_n(sorted_features, number_remaining_feats, logger):
