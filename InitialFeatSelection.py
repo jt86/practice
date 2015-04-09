@@ -47,7 +47,7 @@ def get_best_feats(data,labels,c_values):
 
     print "Kept {} out of {} features".format((data[:,rfecv.support_]).shape[1], data.shape[1])
     print "support:",rfecv.support_
-    print "time to do initial feature selection: {}",
+    print "time to do initial feature selection:",time.clock()-t0
     return data[:,rfecv.support_]
 
 
