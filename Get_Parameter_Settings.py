@@ -14,8 +14,8 @@ peeking_allowed = False
 pattern = '--input {} --num-folds {} --rank-metric {} --prop-priv {} --gamma-multiplier {} --bottom-n-percent {} --cmin {} --cmax {}'
 
 
-list = [[-3,3],[-2,2],[0,2],[1,3],[0,4]]
-
+# list = [[-3,3],[-2,2],[0,2],[1,3],[0,4]]
+list = [[-1,1],[-3,3]]
 
 for input in inputs:
     for a,b in list:

@@ -148,11 +148,11 @@ if __name__ == '__main__':
     logger.info("time taken to load data: %r", time.clock()-t0)
 
     logger.info("tuple %r", tuple)
-    c_values = [100.,1000.,10000.]
+    c_values = [.1,1.0,100.]
 
 
     # keyword = "{}_peeking={}_{}-folds_{}_rejected-{}pc-used-gamma_times_{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.bottom_n_percent, args.gamma_multiplier)
-    keyword = "{}_peeking={}_folds={}_metric={}_cvalues={}to{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.cmin,args.cmax)
+    keyword = "{}_peeking={}_folds={}_metric={}_cvalues=10^{}-10^{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.cmin,args.cmax)
 
     print keyword
 
@@ -162,7 +162,7 @@ if __name__ == '__main__':
     #     args.gamma_multiplier)
     logger.info("\n\n %r \n\n", keyword)
 
-    all_results_directory = get_full_path('Desktop/Privileged_Data/non-peeking-results/')
+    all_results_directory = get_full_path('Desktop/Privileged_Data/top-k-results/')
     # output_directory = (os.path.join(all_results_directory,args.output_dir))
     output_directory = (os.path.join(all_results_directory, keyword))
 

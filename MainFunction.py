@@ -1,7 +1,7 @@
 __author__ = 'jt306'
 
 import os, sys
-import numpy as npw
+import numpy as np
 from sklearn.cross_validation import StratifiedKFold, ShuffleSplit
 from sklearn.metrics import f1_score, pairwise
 from sklearn import svm, linear_model
@@ -13,12 +13,8 @@ from ParamEstimation import param_estimation
 from FeatSelection import univariate_selection, recursive_elimination
 import time
 from FeatSelection import get_ranked_indices, recursive_elimination2
+from InitialFeatSelection import get_best_feats
 
-
-
-
-#
-# sys.exit(0)
 
 
 def main_function(features_array, labels_array, output_directory, num_folds,
@@ -31,7 +27,12 @@ def main_function(features_array, labels_array, output_directory, num_folds,
     c_values = np.logspace(cmin,cmax, num =3)
     print c_values
 
+    features_array = get_best_feats(features_array,labels_array,c_values)
+
+    print "feat array shape", features_array.shape
     original_number_feats = features_array.shape[1]
+
+    print original_number_feats
     if dataset == 'arcene':
         original_number_feats = 9920
 
@@ -69,8 +70,6 @@ def main_function(features_array, labels_array, output_directory, num_folds,
     numbers_of_features_list = []
     results, LUPI_results, baseline_results = [], [], []
     baseline_score = []
-
-
 
 
     logger.info('full list of values %r', range(*tuple))
@@ -111,14 +110,9 @@ def main_function(features_array, labels_array, output_directory, num_folds,
         logger.info('\n\n\n NORMAL INDICES \n %r', normal_indices)
         privileged_indices = [index for index in range(number_remaining_feats) if index not in normal_indices]
 
-        #todo: commented out block deals with prop_priv variable
+        # commented out block deals with prop_priv variable
+        # privileged_indices = reject_bottom_feats(privileged_indices,prop_priv,logger)
 
-        # if len(privileged_indices) > 1:
-        #     number_of_indices_to_take = len(privileged_indices) / prop_priv
-        #     logger.info("number_of_indices_to_take: %d of %d", number_of_indices_to_take, len(privileged_indices))
-        #     privileged_indices = privileged_indices[:number_of_indices_to_take]
-        # else:
-        #     logger.info("1 or less indices remaining. Took %d", len(privileged_indices))
 
         normal_features = sorted_features[:, normal_indices]
         privileged_features = sorted_features[:, privileged_indices]
@@ -223,16 +217,11 @@ def main_function(features_array, labels_array, output_directory, num_folds,
             logger.info("best SVM+ params: {}, {}, {}, {}".format(best_C_SVM_plus, best_gamma_SVM_plus, best_C_star_SVM_plus,
                          best_gamma_star_SVM_plus))
 
-            # logger.info("best baseline params: %d %d", best_C_baseline, best_gamma_baseline)
-            # logger.info("best SVM params: %d %d", best_C_SVM, best_gamma_SVM)
-            # logger.info("best SVM+ params: %d %d %d %d", best_C_SVM_plus, best_gamma_SVM_plus, best_C_star_SVM_plus,
-            #              best_gamma_star_SVM_plus)
 
-            chosen_params_file.write("\n\n" + str(n_top_feats) + " top features,fold " + str(k) + ",baseline," + str(
-                best_C_baseline) + "," + str(best_gamma_baseline))
-            chosen_params_file.write("\n ,,SVM," + str(best_C_SVM) + "," + str(best_gamma_SVM))
-            chosen_params_file.write("\n  ,,SVM+," + str(best_C_SVM_plus) + "," + str(best_gamma_SVM_plus) + "," + str(
-                best_C_star_SVM_plus) + "," + str(best_gamma_star_SVM_plus))
+
+            chosen_params_file.write("\n\n{} top features,fold {},baseline,{},{}".format(n_top_feats,k,best_C_baseline,best_gamma_baseline))
+            chosen_params_file.write("\n,,SVM,{},{}".format(best_C_SVM,best_gamma_SVM))
+            chosen_params_file.write("\n,,SVM+,{},{},{},{}" .format(best_C_SVM_plus,best_gamma_SVM_plus,best_C_star_SVM_plus,best_gamma_star_SVM_plus))
 
 
 
@@ -248,8 +237,8 @@ def main_function(features_array, labels_array, output_directory, num_folds,
     baseline_results = [baseline_score] * len(numbers_of_features_list)
 
 
-    keyword = "{} ({}x{}) \n peeking={}; {} folds; rank metric: {}; c values: {}".format(dataset,
-                   features_array.shape[0], original_number_feats, peeking, num_folds, rank_metric, c_values)
+    keyword = "{} ({}x{}) \n peeking={}; {} folds; rank metric: {}; c range: 10^{} to 10^{}".format(dataset,
+                   features_array.shape[0], original_number_feats, peeking, num_folds, rank_metric, cmin, cmax)
     # bottom {}% rejected, bottom_n_percent
 
     logger.info('LUPI LENGTH %d', len(LUPI_results))
@@ -274,3 +263,12 @@ def discard_bottom_n(sorted_features, number_remaining_feats, logger):
     sorted_features = sorted_features[:, :number_remaining_feats]
     logger.info("Shape after discard %r", sorted_features.shape)
     return sorted_features
+
+def reject_bottom_feats(privileged_indices,prop_priv,logger):
+    if len(privileged_indices) > 1:
+        number_of_indices_to_take = len(privileged_indices) / prop_priv
+        logger.info("number_of_indices_to_take: %d of %d", number_of_indices_to_take, len(privileged_indices))
+        privileged_indices = privileged_indices[:number_of_indices_to_take]
+    else:
+        logger.info("1 or less indices remaining. Took %d", len(privileged_indices))
+    return privileged_indices
