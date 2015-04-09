@@ -1,5 +1,5 @@
 __author__ = 'jt306'
-import logging
+
 
 print('getting parameter settings')
 
