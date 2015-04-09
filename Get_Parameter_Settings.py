@@ -3,8 +3,8 @@ import logging
 
 print('getting parameter settings')
 
-inputs = ['arcene', 'bankruptcy', 'cancer', 'crx', 'gisette', 'haberman', 'heart', 'hillvalley', 'ionosphere',
-           'madelon', 'musk1', 'musk2', 'spambase', 'vote', 'wine']
+inputs = ['heart', 'vote', 'wine', 'bankruptcy', 'ionosphere', 'crx','hillvalley', 'cancer',  'musk1','arcene', 'gisette', 'haberman',
+           'madelon', 'musk2', 'spambase', ]
 
 # metrics = ['f', 'c', 'r2']
 metrics = ['r2']
