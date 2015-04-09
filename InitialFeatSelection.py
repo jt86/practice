@@ -53,7 +53,6 @@ def get_best_feats(data,labels,c_values):
 
 # X,y = get_heart_data()
 #
-#
 # c_values = [0.1,1.,10.]
 # get_best_feats2(X,y,c_values)
 
