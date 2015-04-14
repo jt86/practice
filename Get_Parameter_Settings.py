@@ -13,7 +13,6 @@ bottom_n_values = [0]
 peeking_allowed = False
 pattern = '--input {} --num-folds {} --rank-metric {} --prop-priv {} --gamma-multiplier {} --bottom-n-percent {} --cmin {} --cmax {}'
 
-
 list = [1,2,3]
 
 for input in inputs:
