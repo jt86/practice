@@ -14,23 +14,27 @@ import pdb
 import numpy.random as random
 import logging
 
-def svmplusQP(X,Y,Xstar,C,Cstar,gamma,gammastar):
+def svmplusQP(X,Y,Xstar,C,Cstar):
     n = X.shape[0]
     Y.shape = n,1
     # Compute kernel matrices
-    dk = CRBFKernel();
-    dkstar = CRBFKernel();
-    dK = dk.Dot(X, X)
-    dKstar = dkstar.Dot(Xstar, Xstar)
+    # dk = CRBFKernel();
+    # dkstar = CRBFKernel();
+    # dK = dk.Dot(X, X)
+    # dKstar = dkstar.Dot(Xstar, Xstar)
 
     # omega_K = 1.0 / np.median(dK.flatten())                   #todo: these two lines modified for param estimation
     # omega_Kstar = 1.0 / np.median(dKstar.flatten())
-    omega_K = gamma
-    omega_Kstar = gammastar
+    # omega_K = gamma
+    # omega_Kstar = gammastar
 
 
-    kernel_K = CGaussKernel(omega_K) #CLinearKernel()
-    kernel_Kstar = CGaussKernel(omega_Kstar) # CLinearKernel()
+    # kernel_K = CGaussKernel(omega_K) #CLinearKernel()
+    # kernel_Kstar = CGaussKernel(omega_Kstar) # CLinearKernel()
+    kernel_K = CLinearKernel()
+    kernel_Kstar = CLinearKernel()
+
+
 
     K = kernel_K.Dot(X,X)
     Kstar = kernel_Kstar.Dot(Xstar,Xstar)
@@ -110,11 +114,12 @@ def svmplusQP(X,Y,Xstar,C,Cstar,gamma,gammastar):
 
 def svmplusQP_Predict(X,Xtest,alphas,bias):
     # Compute kernel matrices
-    dk = CRBFKernel();
-    dK = dk.Dot(X, Xtest)
-    omega_K = 1.0 / np.median(dK.flatten())
-
-    kernel_K = CGaussKernel(omega_K) # CLinearKernel()
+    # dk = CRBFKernel();
+    # dK = dk.Dot(X, Xtest)
+    # omega_K = 1.0 / np.median(dK.flatten())
+    #
+    # kernel_K = CGaussKernel(omega_K) # CLinearKernel()
+    kernel_K =  CLinearKernel()
 
     K = kernel_K.Dot(X,Xtest)
     predicted = np.dot(K.T,alphas)+bias

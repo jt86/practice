@@ -30,7 +30,7 @@ def get_axis_scales(keyword):
     else:
         return (0,2000,0,1)
 
-def get_figures(numbers_of_features_list, results, LUPI_results, baseline_results, num_folds, output_directory, keyword, total_num_feats):
+def get_figures(numbers_of_features_list, results, LUPI_results, baseline_results, baseline_results2, num_folds, output_directory, keyword):
 
 
 
@@ -44,22 +44,25 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
 
     logging.debug('number of features list %r', numbers_of_features_list)
 
-    ax1.errorbar(numbers_of_features_list[:-1], np.mean(LUPI_results, axis=1),
+    ax1.errorbar(numbers_of_features_list[:len(LUPI_results)], np.mean(LUPI_results, axis=1),   #nb number_of features list was indexed [:-1]
                  yerr=(np.std(LUPI_results, axis=1) / np.sqrt(num_folds)),
                  c='r', label='SVM+: lower features as privileged')
 
 
     ax1.plot(numbers_of_features_list,np.mean(baseline_results, axis=1), linestyle='-', c='black',
-             label='baseline SVM: all features')
+             label='baseline SVM: top k features')
+
+    ax1.plot(numbers_of_features_list,np.mean(baseline_results2, axis=1), linestyle='-', c='green',
+         label='baseline SVM: all features')
 
     if 'True' in keyword:
         xmin, xmax,  ymin, ymax = get_axis_scales(keyword)
         axes = plt.gca()
         axes.set_xlim([xmin,xmax])
         axes.set_ylim([ymin,ymax])
-    else:
-        axes = plt.gca()
-        axes.set_ylim([0.5, 1.0])
+    # else:
+    #     axes = plt.gca()
+    #     axes.set_ylim([0.5, 1.0])
 
 
     box = ax1.get_position()
@@ -75,20 +78,18 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
 
     plt.savefig(os.path.join(output_directory, 'plot.png'))
 
-    all_but_one_results = np.mean(results,axis=1)[:-1]
+
     # differences_list = np.subtract(np.mean(LUPI_results, axis=1), np.mean(results, axis=1))
 
 
-    differences_list = np.subtract(np.mean(LUPI_results, axis=1), all_but_one_results)
+    differences_list = np.subtract(np.mean(LUPI_results, axis=1), np.mean(results,axis=1)[:len(LUPI_results)])
 
-
-    width = 0.35  # the width of the bars
 
     fig2 = plt.figure()
     ax2 = fig2.add_subplot(211, title="Difference between SVM and SVM+ scores"+str(keyword))
 
 
-    ax2.bar(numbers_of_features_list[:-1], differences_list, width)
+    ax2.bar(numbers_of_features_list[:len(LUPI_results)], differences_list[:len(LUPI_results)], 0.35)
 
 
     ax1.plot(numbers_of_features_list, [0] * len(numbers_of_features_list), linestyle='-', c='black',

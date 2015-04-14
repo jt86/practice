@@ -37,18 +37,18 @@ class GridSeachWithCoef(GridSearchCV):
 #     return data[:,rfecv.support_]
 
 
-def get_best_feats(data,labels,c_values):
+def get_best_feats(data,labels,c_values,init_step):
     t0 = time.clock()
 
     parameters = {'C':c_values}#, 'gamma':get_gamma_from_c(c_values,data)}
 
-    rfecv = RFECV(GridSeachWithCoef(SVC(kernel='linear'), parameters),step=1, cv=StratifiedKFold(labels, 5))
+    rfecv = RFECV(GridSeachWithCoef(SVC(kernel='linear'), parameters),step=0.1, cv=StratifiedKFold(labels, init_step))
     rfecv.fit(data, labels)
 
     print "Kept {} out of {} features".format((data[:,rfecv.support_]).shape[1], data.shape[1])
     print "support:",rfecv.support_
     print "time to do initial feature selection:",time.clock()-t0
-    return data[:,rfecv.support_]
+    return data[:,rfecv.support_],data[:,rfecv.support_==False]
 
 
 # X,y = get_heart_data()

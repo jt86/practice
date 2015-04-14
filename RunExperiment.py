@@ -70,6 +70,8 @@ if __name__ == '__main__':
     parser.add_argument('--cmin', type=int, required = True, help='power of lowest value for c (bottom end of log range)')
     parser.add_argument('--cmax', type=int, required = True, help='power of highest value for c (top of log range)')
 
+    parser.add_argument('--initfolds', type=int, required=True, help='number of cross-folds for initial RFECV')
+
     args = parser.parse_args()
     print 'input is', args.input
     logger.debug("input is %s", args.input)
@@ -152,7 +154,7 @@ if __name__ == '__main__':
 
 
     # keyword = "{}_peeking={}_{}-folds_{}_rejected-{}pc-used-gamma_times_{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.bottom_n_percent, args.gamma_multiplier)
-    keyword = "{}_peeking={}_folds={}_metric={}_cvalues=10^{}-10^{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.cmin,args.cmax)
+    keyword = "{}_peeking={}_folds={}_metric={}_cvalues=10^{}-10^{}_prop_priv={}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.cmin,args.cmax, args.prop_priv)
 
     print keyword
 
@@ -162,7 +164,7 @@ if __name__ == '__main__':
     #     args.gamma_multiplier)
     logger.info("\n\n %r \n\n", keyword)
 
-    all_results_directory = get_full_path('Desktop/Privileged_Data/top-k-results/')
+    all_results_directory = get_full_path('Desktop/Privileged_Data/top-k-results-4/')
     # output_directory = (os.path.join(all_results_directory,args.output_dir))
     output_directory = (os.path.join(all_results_directory, keyword))
 
@@ -177,6 +179,6 @@ if __name__ == '__main__':
     #todo : change c_values in main function back to args.cvalues!!!
 
     main_function(features_array, labels_array, output_directory, args.num_folds, tuple, args.cmin, args.cmax,
-                  peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, prop_priv=args.prop_priv,
+                  peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, init_folds=args.initfolds, prop_priv=args.prop_priv,
                   multiplier=args.gamma_multiplier, bottom_n_percent=args.bottom_n_percent, logger=logger)
 
