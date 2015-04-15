@@ -110,7 +110,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         privileged_features = top_t_sorted[:, privileged_indices]
         print 'privileged shape', privileged_features.shape
 
-        privileged_features = np.hstack([privileged_features,unselected_features_array])
+        # privileged_features = np.hstack([privileged_features,unselected_features_array])
         print 'privileged shape', privileged_features.shape
 
         SVM_score = []
