@@ -152,7 +152,6 @@ if __name__ == '__main__':
     logger.info("tuple %r", tuple)
     c_values = [.1,1.0,100.]
 
-
     # keyword = "{}_peeking={}_{}-folds_{}_rejected-{}pc-used-gamma_times_{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.bottom_n_percent, args.gamma_multiplier)
     keyword = "{}_peeking={}_folds={}_metric={}_cvalues=10^{}-10^{}_prop_priv={}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.cmin,args.cmax, args.prop_priv)
 
