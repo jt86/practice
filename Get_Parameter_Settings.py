@@ -11,7 +11,7 @@ metrics = ['r2']
 
 bottom_n_values = [0]
 peeking_allowed = False
-pattern = '--input {} --num-folds {} --rank-metric {} --initfolds{} --prop-priv {} --gamma-multiplier {} --bottom-n-percent {} --cmin {} --cmax {}'
+pattern = '--input {} --num-folds {} --rank-metric {} --initfolds {} --prop-priv {} --gamma-multiplier {} --bottom-n-percent {} --cmin {} --cmax {}'
 
 list = [1,2,3]
 
