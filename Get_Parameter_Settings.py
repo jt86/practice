@@ -17,8 +17,8 @@ pattern = '--input {} --num-folds {} --rank-metric {} --prop-priv {} --gamma-mul
 list = [1,2,3]
 
 for input in inputs:
-    for prop_priv in list:
-        txt = pattern.format(input, 5, 'r2', 5, prop_priv, 1, 0,-3,3)
-        if peeking_allowed:
-            txt += ' --peeking'
-        print txt
+    # for prop_priv in list:
+    txt = pattern.format(input, 5, 'r2', 1, 1, 0,-3, 3)
+    if peeking_allowed:
+        txt += ' --peeking'
+    print txt
