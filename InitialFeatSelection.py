@@ -13,7 +13,7 @@ from Get_Full_Path import get_full_path
 # import sys
 # from ParamEstimation import get_gamma_from_c
 import os, sys
-test_folds_file = open(get_full_path('Desktop/Privileged_Data/test_folds_file.csv'),'r+')
+
 
 
 class GridSeachWithCoef(GridSearchCV):
