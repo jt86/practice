@@ -1,7 +1,7 @@
 import logging
 import os, sys
 import argparse
-from MainFunction import main_function
+from MainFunction2 import main_function
 from Arcene import get_arcene_data
 from Gisette import get_gisette_data
 from Get_Full_Path import get_full_path
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     print 'hi'
 
     logger = logging.getLogger('RunExpt Logger')
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.CRITICAL)
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s %(module)s %(lineno)d %(levelname)s %(message)s')
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     parser.add_argument('--cmin', type=int, required = True, help='power of lowest value for c (bottom end of log range)')
     parser.add_argument('--cmax', type=int, required = True, help='power of highest value for c (top of log range)')
 
-    parser.add_argument('--initfolds', type=int, required=True, help='number of cross-folds for initial RFECV')
+    # parser.add_argument('--initfolds', type=int, required=True, help='number of cross-folds for initial RFECV')
 
     args = parser.parse_args()
     print 'input is', args.input
@@ -178,6 +178,6 @@ if __name__ == '__main__':
     #todo : change c_values in main function back to args.cvalues!!!
 
     main_function(features_array, labels_array, output_directory, args.num_folds, tuple, args.cmin, args.cmax,
-                  peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, init_folds=args.initfolds, prop_priv=args.prop_priv,
+                  peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, prop_priv=args.prop_priv,
                   multiplier=args.gamma_multiplier, bottom_n_percent=args.bottom_n_percent, logger=logger)
 

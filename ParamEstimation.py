@@ -35,9 +35,9 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
         dict_of_parameters = {}
 
         if privileged == True:
-            code_with_score = np.zeros((len(c_values) ** 4))
+            code_with_score = np.zeros((len(c_values) ** 2))
         else:
-            code_with_score = np.zeros(len(c_values) ** 2)
+            code_with_score = np.zeros(len(c_values))
 
         nested_fold = 0
         for train_indices, test_indices in rs:

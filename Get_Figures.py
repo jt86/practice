@@ -6,7 +6,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import logging
-
+from Get_Mean import get_mean_from, get_error_from
 
 def get_axis_scales(keyword):
     if 'arcene' in keyword:
@@ -30,36 +30,44 @@ def get_axis_scales(keyword):
     else:
         return (0,2000,0,1)
 
-def get_figures(numbers_of_features_list, results, LUPI_results, baseline_results, baseline_results2, num_folds, output_directory, keyword):
+def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baseline_results, baseline_results2, num_folds, output_directory, keyword):
 
+    results = get_mean_from(all_folds_SVM)
+    errors = get_error_from(all_folds_SVM)
+
+    LUPI_results = get_mean_from(all_folds_LUPI)
+    LUPI_errors = get_error_from(all_folds_LUPI)
 
 
     fig = plt.figure()
-    ax1 = fig.add_subplot(111, title=" Comparison of SVM+ and basic SVM, for "+keyword)
+    ax1 = fig.add_subplot(111, title=" Comparison of SVM+ and SVM, for "+keyword)
 
-    ax1.errorbar(numbers_of_features_list, np.mean(results, axis=1),
-                 yerr=(np.std(results, axis=1) / np.sqrt(num_folds)),
+    print len(numbers_of_features_list)
+    print len(results)
+    print len(errors)
+
+    ax1.errorbar(numbers_of_features_list, results, #np.mean(results, axis=0),#todo changed from axis=1
+                 # yerr=(np.std(results, axis=0) / np.sqrt(num_folds)),           #
+                 yerr = errors,
                  c='b', label='SVM: trained on top features')
-    logging.info("number of feats %r number of results %r",len(numbers_of_features_list),len(np.mean(LUPI_results, axis=1)))
 
-    logging.debug('number of features list %r', numbers_of_features_list)
-
-    ax1.errorbar(numbers_of_features_list[:len(LUPI_results)], np.mean(LUPI_results, axis=1),   #nb number_of features list was indexed [:-1]
-                 yerr=(np.std(LUPI_results, axis=1) / np.sqrt(num_folds)),
+    ax1.errorbar(numbers_of_features_list[:len(LUPI_results)], LUPI_results,   #nb number_of features list was indexed [:-1]
+                 # yerr=(np.std(LUPI_results, axis=0) / np.sqrt(num_folds)),
+                 yerr = LUPI_errors,
                  c='r', label='SVM+: lower features as privileged')
+    #
+    #
+    ax1.plot(numbers_of_features_list,np.mean(baseline_results, axis=1), linestyle=':', c='black',
+             label='baseline SVM: all features')
+    #
+    ax1.plot(numbers_of_features_list,np.mean(baseline_results2, axis=1), linestyle='-.', c='green',
+         label='baseline SVM: top t features only')
 
-
-    ax1.plot(numbers_of_features_list,np.mean(baseline_results, axis=1), linestyle='-', c='black',
-             label='baseline SVM: top k features')
-
-    ax1.plot(numbers_of_features_list,np.mean(baseline_results2, axis=1), linestyle='-', c='green',
-         label='baseline SVM: all features')
-
-    if 'True' in keyword:
-        xmin, xmax,  ymin, ymax = get_axis_scales(keyword)
-        axes = plt.gca()
-        axes.set_xlim([xmin,xmax])
-        axes.set_ylim([ymin,ymax])
+    # if 'True' in keyword:
+    #     xmin, xmax,  ymin, ymax = get_axis_scales(keyword)
+    #     axes = plt.gca()
+    #     axes.set_xlim([xmin,xmax])
+    #     axes.set_ylim([ymin,ymax])
     # else:
     #     axes = plt.gca()
     #     axes.set_ylim([0.5, 1.0])
@@ -79,23 +87,23 @@ def get_figures(numbers_of_features_list, results, LUPI_results, baseline_result
     plt.savefig(os.path.join(output_directory, 'plot.png'))
 
 
-    # differences_list = np.subtract(np.mean(LUPI_results, axis=1), np.mean(results, axis=1))
 
 
-    differences_list = np.subtract(np.mean(LUPI_results, axis=1), np.mean(results,axis=1)[:len(LUPI_results)])
 
-
-    fig2 = plt.figure()
-    ax2 = fig2.add_subplot(211, title="Difference between SVM and SVM+ scores"+str(keyword))
-
-
-    ax2.bar(numbers_of_features_list[:len(LUPI_results)], differences_list[:len(LUPI_results)], 0.35)
-
-
-    ax1.plot(numbers_of_features_list, [0] * len(numbers_of_features_list), linestyle='-', c='black',
-             label='baseline')
-
-    plt.xlabel('Top n features used to train SVM')
-    plt.ylabel('F-score improvement with SVM+')
-
-    plt.savefig(os.path.join(output_directory, 'differences.png'))
+    # differences_list = np.subtract(np.mean(LUPI_results, axis=1), np.mean(results,axis=1)[:len(LUPI_results)])
+    #
+    #
+    # fig2 = plt.figure()
+    # ax2 = fig2.add_subplot(211, title="Difference between SVM and SVM+ scores"+str(keyword))
+    #
+    #
+    # ax2.bar(numbers_of_features_list[:len(LUPI_results)], differences_list[:len(LUPI_results)], 0.35)
+    #
+    #
+    # ax1.plot(numbers_of_features_list, [0] * len(numbers_of_features_list), linestyle='-', c='black',
+    #          label='baseline')
+    #
+    # plt.xlabel('Top n features used to train SVM')
+    # plt.ylabel('F-score improvement with SVM+')
+    #
+    # plt.savefig(os.path.join(output_directory, 'differences.png'))

@@ -2,14 +2,14 @@ __author__ = 'jt306'
 
 import os, sys
 import numpy as np
-from sklearn.cross_validation import StratifiedKFold, ShuffleSplit
+from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit
 from sklearn.metrics import f1_score, pairwise
 from sklearn import svm, linear_model
 from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 from SVMplus import svmplusQP, svmplusQP_Predict
 import sklearn.preprocessing as preprocessing
 from Get_Figures import get_figures
-from ParamEstimation import param_estimation
+from ParamEstimation2 import param_estimation
 from FeatSelection import univariate_selection, recursive_elimination
 import time
 from FeatSelection import get_ranked_indices, recursive_elimination2
@@ -18,15 +18,23 @@ import pdb
 
 
 def main_function(original_features_array, labels_array, output_directory, num_folds,
-                  tuple, cmin, cmax, peeking, dataset, rank_metric,init_folds, prop_priv=1, multiplier=1, bottom_n_percent=0, logger=None, ):
-    
+                  tuple, cmin, cmax, peeking, dataset, rank_metric, prop_priv=1, multiplier=1, bottom_n_percent=0, logger=None):
+
+    #
+    # number_of_items = (original_features_array.shape[0])
+    # number_of_training_instances = int(number_of_items - (number_of_items / num_folds)) - 1
+    # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+
     logger.debug('peeking status: %s', peeking)
     logger.info('main function: dataset = %s, peeking=%s ', dataset, peeking)
 
-    c_values = np.logspace(cmin,cmax, num =7)
+    c_values = np.logspace(cmin,cmax, num =3)
     print c_values
+    total_num_items = original_features_array.shape[0]
+    # cross_validator=StratifiedKFold(labels_array, num_folds)
+    rs = KFold(total_num_items-(total_num_items/num_folds)-2, num_folds, shuffle=False, random_state=0)
 
-    top_t_features_array,unselected_features_array = get_best_feats(original_features_array,labels_array,c_values, init_folds)
+    top_t_features_array,unselected_features_array = get_best_feats(original_features_array,labels_array,c_values, num_folds, rs)
     print top_t_features_array.shape, unselected_features_array.shape
 
     print "top t feat array shape", top_t_features_array.shape
@@ -51,30 +59,6 @@ def main_function(original_features_array, labels_array, output_directory, num_f
     number_remaining_feats = original_number_feats - (bottom_n_percent * (original_number_feats) / 100)
     logger.info('number of remaining features: %d', number_remaining_feats)
 
-
-    # ####################
-    # if rank_metric != 'r2':
-    #
-    #     sorted_features = features_array[:, get_ranked_indices(features_array, labels_array, rank_metric)]
-    #     logger.debug('first item in features array before sorting \n %r', features_array[0])
-    #
-    #     logger.debug('first item in sorted features \n %r', sorted_features[0])
-    #
-    #     number_of_samples = sorted_features.shape[0]
-    #     scaler = preprocessing.StandardScaler().fit(sorted_features)
-    #     sorted_features = scaler.transform(sorted_features, number_of_samples)
-    #     sorted_features = preprocessing.scale(sorted_features, axis=1)
-    #
-    #
-    #     if dataset == 'arcene' and sorted_features.shape[1] > 9000:
-    #         sorted_features = cut_off_arcene(sorted_features, logger)
-
-        #
-        #     # ########### CURRENT NEW BIT ######### - this is for non-r2 - need for r2 too
-        #
-        # sorted_features = discard_bottom_n(sorted_features, number_remaining_feats, logger)
-        # logger.debug('first item after cutting off \n %r', sorted_features[0])
-
     numbers_of_features_list = []
     results, LUPI_results, baseline_results = [], [], []
     baseline_score, baseline_score2 = [], []
@@ -90,7 +74,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
         if rank_metric == 'r2':
             top_t_sorted = get_sorted_features(top_t_features_array, labels_array, rank_metric, n_top_feats, dataset, logger, number_remaining_feats)
-            sorted_original = get_sorted_features(original_features_array, labels_array, rank_metric, n_top_feats,dataset, logger, number_remaining_feats)
+
 
         # ##### THIS BIT TO GET NORMAL AND PRIVILEGED FEATURES ##########
 
@@ -116,11 +100,11 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         SVM_score = []
         LUPI_score = []
 
-        skf = StratifiedKFold(labels_array, num_folds)
+        #skf = StratifiedKFold(labels_array, num_folds)
 
         k = -1
 
-        for train, test in skf:
+        for train, test in StratifiedKFold(labels_array, num_folds, shuffle=False , random_state=1):
             k += 1
             param_estimation_file.write("\n\n\n n=" + str(n_top_feats) + " fold = " + str(k))
 
@@ -128,15 +112,21 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
             normal_training_data, normal_testing_data = normal_features[train], normal_features[test]
             privileged_training_data, privileged_testing_data = privileged_features[train], privileged_features[test]
-            all_training_data, all_testing_data = top_t_sorted[train], top_t_sorted[test]
-
+            top_t_training, top_t_testing = top_t_sorted[train], top_t_sorted[test]
             training_labels, testing_labels = labels_array[train], labels_array[test]
 
-            number_of_items = (top_t_sorted.shape[0])
-            number_of_training_instances = int(number_of_items - (number_of_items / num_folds)) - 1
-            # logger.info( number_of_training_instances)
+            all_feats_training, all_feats_testing = original_features_array[train], original_features_array[test]
 
-            rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+
+            # number_of_items = (top_t_sorted.shape[0])
+            # number_of_training_instances = int(number_of_items - (number_of_items / num_folds)) - 1
+            # # logger.info( number_of_training_instances)
+            #
+            # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+
+            # rs = KFold(total_num_items-(total_num_items/num_folds)-2, num_folds, shuffle=False, random_state=0)
+
+            rs = KFold(total_num_items-(total_num_items/num_folds)-2, num_folds, shuffle=False, random_state=0)
 
             if n_top_feats == list_of_values[0]:
 
@@ -145,36 +135,37 @@ def main_function(original_features_array, labels_array, output_directory, num_f
                 # ##############################  BASELINE
 
                 param_estimation_file.write("\n\n Baseline parameter selection \n C,gamma,score")
-                best_C_baseline = param_estimation(param_estimation_file, all_training_data,
+                best_C_baseline = param_estimation(param_estimation_file, top_t_training,
                                                                         training_labels, c_values,rs, False, None,
-                                                                        peeking=peeking,testing_features=all_testing_data,
+                                                                        peeking,testing_features=top_t_testing,
                                                                         testing_labels=testing_labels, logger=logger)[0]
 
 
                 clf = svm.SVC(C=best_C_baseline, kernel='linear')#, gamma=best_gamma_baseline)
                 # pdb.set_trace()
-                clf.fit(all_training_data, training_labels)
+                clf.fit(top_t_training, training_labels)
 
-                baseline_predictions = clf.predict(all_testing_data)
+                baseline_predictions = clf.predict(top_t_testing)
                 baseline_score.append(f1_score(testing_labels, baseline_predictions))
 
 
                 # ##############################  BASELINE 2 - all features
 
 
-                best_C_baseline2 = param_estimation(param_estimation_file, all_training_data,
+                best_C_baseline2 = param_estimation(param_estimation_file, all_feats_training,
                                                                         training_labels, c_values,rs, False, None,
-                                                                        peeking=peeking,testing_features=all_testing_data,
+                                                                        peeking,testing_features=all_feats_testing,
                                                                         testing_labels=testing_labels, logger=logger)[0]
 
 
                 clf2 = svm.SVC(C=best_C_baseline2, kernel='linear')#, gamma=best_gamma_baseline)
-                clf2.fit(all_training_data, training_labels)
+                clf2.fit(all_feats_training, training_labels)
 
-                baseline_predictions2 = clf.predict(all_testing_data)
+                baseline_predictions2 = clf2.predict(all_feats_testing)
                 baseline_score2.append(f1_score(testing_labels, baseline_predictions2))
 
             ############################### SVM - PARAM ESTIMATION AND RUNNING
+            rs = KFold(total_num_items-(total_num_items/num_folds)-2, num_folds, shuffle=False, random_state=0)
 
             param_estimation_file.write(
                 "\n\n SVM parameter selection for top " + str(n_top_feats) + " features\n" + "C,gamma,score")
@@ -192,7 +183,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
 
             # ############ SVM PLUS - PARAM ESTIMATION AND RUNNING
-
+            rs = KFold(total_num_items-(total_num_items/num_folds)-2, num_folds, shuffle=False, random_state=0)
 
             if n_top_feats != number_remaining_feats:
 
@@ -239,11 +230,11 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
     # logger.info( "baseline_score ", baseline_score)
     baseline_results = [baseline_score] * len(numbers_of_features_list)
-    baseline_results2 = [baseline_score] * len(numbers_of_features_list)
+    baseline_results2 = [baseline_score2] * len(numbers_of_features_list)
 
 
-    keyword = "{} ({}x{}) \n peeking={}; {} folds; rank metric: {}; c range: 10^{} to 10^{}; init folds:{}".format(dataset,
-                   original_features_array.shape[0], original_number_feats, peeking, num_folds, rank_metric, cmin, cmax, init_folds)
+    keyword = "{} ({}x{}) \n peeking={}; {} folds; rank metric: {}; c range: 10^{} to 10^{}".format(dataset,
+                   original_features_array.shape[0], original_number_feats, peeking, num_folds, rank_metric, cmin, cmax)
     # bottom {}% rejected, bottom_n_percent
 
     logger.info('LUPI LENGTH %d', len(LUPI_results))
@@ -288,7 +279,9 @@ def get_sorted_features(features_array, labels_array, rank_metric, n_top_feats,d
     number_of_samples = sorted_features.shape[0]
     # scaler = preprocessing.StandardScaler().fit(sorted_features)
     # sorted_features = scaler.transform(sorted_features, number_of_samples)
-    sorted_features = preprocessing.scale(sorted_features, axis=1)
+    # sorted_features = preprocessing.scale(sorted_features, axis=1)
+    normaliser = preprocessing.Normalizer('l2')
+    normaliser.fit_transform(sorted_features)
     sorted_features = discard_bottom_n(sorted_features, number_remaining_feats, logger)
 
     logger.info('first item in r2 sorted feats %r',sorted_features[0])
