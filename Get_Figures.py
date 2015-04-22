@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import seaborn
 import logging
 from Get_Mean import get_mean_from, get_error_from
 
@@ -55,8 +56,7 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
                  # yerr=(np.std(LUPI_results, axis=0) / np.sqrt(num_folds)),
                  yerr = LUPI_errors,
                  c='r', label='SVM+: lower features as privileged')
-    #
-    #
+
     ax1.plot(numbers_of_features_list,np.mean(baseline_results, axis=1), linestyle=':', c='black',
              label='baseline SVM: all features')
     #
@@ -81,7 +81,7 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
     ax1.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12),
                fancybox=True, shadow=True, ncol=1, prop={'size': 10})
 
-    plt.xlabel('Top n features used to train SVM')
+    plt.xlabel('Top n features used as normal information (remainder used as privileged)')
     plt.ylabel('F-score')
 
     plt.savefig(os.path.join(output_directory, 'plot.png'))

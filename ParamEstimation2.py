@@ -19,7 +19,7 @@ def get_gamma_from_c(c_values, features):
 
 def param_estimation(param_estimation_file, training_features, training_labels, c_values, rs, privileged,
                      privileged_training_data=None, peeking=False, testing_features=None, testing_labels=None,
-                     multiplier=1, logger=None):
+                     multiplier=1, logger=None, cstar_values=None):
     training_labels=training_labels.ravel()
 
     # test_folds_file.write("VALUES FROM PARAM ESTIMATION")
@@ -39,7 +39,7 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
         # logging.info( 'doing param selection by peeking at test data')
 
         get_scores_for_this_fold(privileged, c_values, dict_of_parameters, training_features, training_labels,
-                                 testing_features, testing_labels, privileged_training_data, code_with_score)
+                                 testing_features, testing_labels, privileged_training_data, code_with_score, cstar_values)
 
         output_params_with_scores(dict_of_parameters, code_with_score, param_estimation_file)
         best_parameters = dict_of_parameters[code_with_score.argmax(axis=0)]
@@ -63,7 +63,7 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
                 privileged_train_this_fold = privileged_training_data[train_indices]
             else:
                 privileged_train_this_fold = None
-            get_scores_for_this_fold(privileged, c_values, dict_of_parameters, train_this_fold, train_labels_this_fold, test_this_fold, test_labels_this_fold, privileged_train_this_fold, code_with_score)
+            get_scores_for_this_fold(privileged, c_values, dict_of_parameters, train_this_fold, train_labels_this_fold, test_this_fold, test_labels_this_fold, privileged_train_this_fold, code_with_score, cstar_values)
 
 
 
@@ -83,38 +83,29 @@ def output_params_with_scores(dictionary, code_with_score, param_estimation_file
 
 
 
-def get_scores_for_this_fold(privileged,c_values,dict_of_parameters, train_data, train_labels, test_data, test_labels, priv_train, code_with_score):
+def get_scores_for_this_fold(privileged,c_values,dict_of_parameters, train_data, train_labels, test_data, test_labels, priv_train, code_with_score, cstar_values):
+    print 'cstar values',cstar_values
     j = 0
 
     if privileged == False:
         for c_value in c_values:
-            #for gamma_value in gamma_values:
-            dict_of_parameters[j] = [c_value]#, gamma_value]
-            clf = svm.SVC(C=c_value, kernel='linear')#, gamma=gamma_value)
+            dict_of_parameters[j] = [c_value]
+            clf = svm.SVC(C=c_value, kernel='linear')
             clf.fit(train_data, train_labels)
             new_score = f1_score(test_labels, clf.predict(test_data))
-            # logging.info( "new score:",new_score)
             code_with_score[j] += new_score
             j += 1
 
     if privileged == True:
-        # gamma_values = [value * multiplier for value in gamma_values]
-        # gamma_star_values = [value * multiplier for value in
-        #                      get_gamma_from_c(c_values, privileged_train_this_fold)]
         for c_value in c_values:
-            # for gamma_value in gamma_values:
-            for c_star_value in c_values:
-                    # for gamma_star_value in gamma_star_values:
-                    dict_of_parameters[j] = [c_value, c_star_value]
+            for cstar_value in cstar_values:
+                    dict_of_parameters[j] = [c_value, cstar_value]
                     alphas, bias = svmplusQP(X=train_data, Y=train_labels,
                                              Xstar=priv_train,
-                                             C=c_value, Cstar=c_value) #gamma=gamma_value,
-                                             #gammastar=gamma_value)
+                                             C=c_value, Cstar=cstar_value)
 
                     predictions_this_fold = svmplusQP_Predict(train_data, test_data, alphas, bias)
                     new_score = f1_score(test_labels, predictions_this_fold)
-                    # logging.info( "new score:",new_score)
                     code_with_score[j] += new_score
-
                     j += 1
 

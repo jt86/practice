@@ -69,7 +69,9 @@ if __name__ == '__main__':
                         help='the percentage of worst-ranked features to reject')
     parser.add_argument('--cmin', type=int, required = True, help='power of lowest value for c (bottom end of log range)')
     parser.add_argument('--cmax', type=int, required = True, help='power of highest value for c (top of log range)')
-
+    parser.add_argument('--cstarmin', type=int, help = 'power of lowest value for cstar')
+    parser.add_argument('--cstarmax', type=int, help = 'power of highest value for cstar')
+    parser.add_argument('--numberofcs', type=int, help = 'the number of values to investigate for c and c*')
     # parser.add_argument('--initfolds', type=int, required=True, help='number of cross-folds for initial RFECV')
 
     args = parser.parse_args()
@@ -153,7 +155,7 @@ if __name__ == '__main__':
     c_values = [.1,1.0,100.]
 
     # keyword = "{}_peeking={}_{}-folds_{}_rejected-{}pc-used-gamma_times_{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.bottom_n_percent, args.gamma_multiplier)
-    keyword = "{}_peeking={}_folds={}_metric={}_cvalues=10^{}-10^{}_prop_priv={}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.cmin,args.cmax, args.prop_priv)
+    keyword = "{}_peeking={}_folds={}_metric={}_c=10^{}-10^{}_cstar=10^{}-10^{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.cmin,args.cmax, args.cstarmin, args.cstarmax)
 
     print keyword
 
@@ -178,6 +180,8 @@ if __name__ == '__main__':
     #todo : change c_values in main function back to args.cvalues!!!
 
     main_function(features_array, labels_array, output_directory, args.num_folds, tuple, args.cmin, args.cmax,
+                  args.numberofcs,
                   peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, prop_priv=args.prop_priv,
-                  multiplier=args.gamma_multiplier, bottom_n_percent=args.bottom_n_percent, logger=logger)
+                  multiplier=args.gamma_multiplier, bottom_n_percent=args.bottom_n_percent, logger=logger,
+                    cstarmin=args.cstarmin, cstarmax=args.cstarmax, )
 

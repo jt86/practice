@@ -19,14 +19,23 @@ import pdb
 
 
 def main_function(original_features_array, labels_array, output_directory, num_folds,
-                  tuple, cmin, cmax, peeking, dataset, rank_metric, prop_priv=1, multiplier=1, bottom_n_percent=0, logger=None):
+                  tuple, cmin, cmax,number_of_cs, peeking, dataset, rank_metric, prop_priv=1, multiplier=1, bottom_n_percent=0,
+                logger=None, cstar_values=None,  cstarmin=None, cstarmax=None):
 
     results_file = open(os.path.join(output_directory, 'output.csv'), "a")
     param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
     chosen_params_file = open(os.path.join(output_directory, 'chosen_parameters.csv'), "a")
 
-    c_values = np.logspace(cmin,cmax, num =7)
+    c_values = np.logspace(cmin,cmax,number_of_cs)
+    if cstarmin==None:
+        cstarmin, cstarmax = cmin,cmax
+    cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
+
+
+    print 'c values', c_values, 'cstarvalues', cstar_values
+
     total_num_items = original_features_array.shape[0]
+    original_number_feats = original_features_array.shape[1]
 
     numbers_of_features_list = []
     list_of_t = []
@@ -45,16 +54,10 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         all_training, all_testing = original_features_array[train], original_features_array[test]
         training_labels, testing_labels = labels_array[train], labels_array[test]
 
-        # data[:,rfecv.support_],data[:,rfecv.support_==False]
-        original_number_feats = original_features_array.shape[1]
-
         top_t_indices, remaining_indices = get_best_feats(all_training,training_labels,c_values, num_folds, rs)
-
         top_t_training, unselected_features_training = all_training[:,top_t_indices], all_training[:,remaining_indices]
         top_t_testing, unselected_features_testing = all_testing[:,top_t_indices], all_testing[:,remaining_indices]
-
         print top_t_training.shape, unselected_features_training.shape, top_t_testing.shape, unselected_features_testing.shape
-        # sys.exit(0)
 
         t = top_t_training.shape[1]
         list_of_t.append(t)
@@ -64,16 +67,14 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         # numbers_of_features_list = []
         fold_results_SVM, fold_results_LUPI   =  [], []
 
-
         n = -1
-
 
         if t <= 15:
             tuple = [1,t+1,1]
         else:
             tuple  = [t/10, t+1, t/10]
-        list_of_values = [i for i in range(*tuple)]
 
+        list_of_values = [i for i in range(*tuple)]
         for n_top_feats in list_of_values:
 
             if n_top_feats not in numbers_of_features_list:
@@ -87,20 +88,18 @@ def main_function(original_features_array, labels_array, output_directory, num_f
             top_t_sorted_testing = get_sorted_features(top_t_testing, testing_labels, rank_metric, n_top_feats, dataset, logger, number_remaining_feats)
 
             normal_indices = np.arange(0, n_top_feats)
-            print 'normal indices',normal_indices,'t',t
             privileged_indices = [index for index in range(t) if index not in normal_indices]
 
             normal_features_training = top_t_sorted_training[:,normal_indices]
-
+            normal_features_testing = top_t_sorted_testing[:,normal_indices]
             privileged_features_training = top_t_sorted_training[:, privileged_indices]
             privileged_features_training = np.hstack([privileged_features_training,unselected_features_training])
 
-            normal_features_testing = top_t_sorted_testing[:,normal_indices]
-
             print 'top t sorted shape', top_t_sorted_training.shape
 
-            # ##############################  BASELINE - all features
             number_of_training_instances = int(total_number_of_items - (total_number_of_items / num_folds)) - 1
+            # ##############################  BASELINE - all features
+
 
 
             if n_top_feats == list_of_values[0]:
@@ -141,7 +140,6 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
             ############################### SVM - PARAM ESTIMATION AND RUNNING
             total_number_of_items = len(train)
-            number_of_training_instances = int(total_number_of_items - (total_number_of_items / num_folds)) - 1
             rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
 
             param_estimation_file.write(
@@ -150,7 +148,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
             best_C_SVM  = param_estimation(param_estimation_file, normal_features_training,
                                           training_labels, c_values, rs, privileged=False, privileged_training_data=None,
-                                        peeking=peeking, testing_features=normal_features_testing,                                                          testing_labels=testing_labels, logger=logger)[0]
+                                        peeking=peeking, testing_features=normal_features_testing,testing_labels=testing_labels, logger=logger)[0]
 
             clf = svm.SVC(C=best_C_SVM, kernel='linear')
             clf.fit(normal_features_training, training_labels)
@@ -166,7 +164,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
                 param_estimation_file, normal_features_training, training_labels, c_values, rs, privileged=True,
                 privileged_training_data=privileged_features_training,peeking=peeking,
                 testing_features=normal_features_testing, testing_labels=testing_labels,
-                multiplier=multiplier, logger=logger)
+                multiplier=multiplier, logger=logger, cstar_values=cstar_values)
 
                 alphas, bias = svmplusQP(normal_features_training, training_labels.ravel(), privileged_features_training,
                                          best_C_SVM_plus, best_C_star_SVM_plus)
@@ -192,8 +190,8 @@ def main_function(original_features_array, labels_array, output_directory, num_f
     baseline_results = [baseline_score] * len(numbers_of_features_list)
     baseline_results2 = [baseline_score2] * len(numbers_of_features_list)
 
-    keyword = "{} ({}x{}) t values:{}\n peeking={}; {} folds; rank metric: {}; c range: 10^{} to 10^{}".format(dataset,
-                   original_features_array.shape[0], original_number_feats, list_of_t, peeking, num_folds, rank_metric, cmin, cmax)
+    keyword = "{} ({}x{}) t values:{}\n peeking={}; {} folds; metric: {}; c={{10^{}..10^{}}}; c*={{10^{}..10^{}}} ({} values)".format(dataset,
+                   total_num_items, original_number_feats, list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs)
 
     get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baseline_results, baseline_results2, num_folds, output_directory, keyword)
 
