@@ -8,7 +8,7 @@ import logging
 from Get_Full_Path import get_full_path
 
 
-test_folds_file = open(get_full_path('Desktop/Privileged_Data/test_folds_file2.csv'),'r+')
+# test_folds_file = open(get_full_path('Desktop/Privileged_Data/test_folds_file2.csv'),'r+')
 
 
 def get_gamma_from_c(c_values, features):
@@ -22,7 +22,7 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
                      multiplier=1, logger=None):
     training_labels=training_labels.ravel()
 
-    test_folds_file.write("VALUES FROM PARAM ESTIMATION")
+    # test_folds_file.write("VALUES FROM PARAM ESTIMATION")
 
 
 
@@ -49,12 +49,6 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
 
         nested_fold = 0
         for train_indices, test_indices in rs:
-
-            test_folds_file.write("\n train \n")
-            test_folds_file.write(str(train_indices))
-            test_folds_file.write("\n test \n")
-            test_folds_file.write(str(test_indices))
-
 
             # print 'test indices ',nested_fold
             # print test_indices
