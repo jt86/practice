@@ -3,8 +3,8 @@ __author__ = 'jt306'
 
 print('getting parameter settings')
 
-inputs = ['heart', 'vote', 'wine', 'bankruptcy', 'ionosphere', 'crx','hillvalley', 'cancer',  'musk1','arcene', 'gisette', 'haberman',
-           'madelon']
+inputs = ['heart']#, 'vote', 'wine', 'bankruptcy', 'ionosphere', 'crx','hillvalley', 'cancer',  'musk1','arcene', 'gisette', 'haberman',
+           #'madelon']
 
 # metrics = ['f', 'c', 'r2']
 metrics = ['r2']
