@@ -30,11 +30,14 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
     if peeking == True:
 
         get_scores_for_this_fold(privileged, c_values, dict_of_parameters, training_features, training_labels,
-                                 testing_features, testing_labels, privileged_training_data, code_with_score, cstar_values)
+                                 testing_features, testing_labels, privileged_training_data, code_with_score, cstar_values, scores_array)
 
-        output_params_with_scores(dict_of_parameters, code_with_score, param_estimation_file)
+        # output_params_with_scores(dict_of_parameters, code_with_score, param_estimation_file)
         best_parameters = dict_of_parameters[code_with_score.argmax(axis=0)]
 
+
+        np.set_printoptions(threshold=np.inf, linewidth=np.inf)
+        param_estimation_file.write(np.array2string(scores_array, separator=', ').translate(None, '[]'))
 
         return best_parameters
 
