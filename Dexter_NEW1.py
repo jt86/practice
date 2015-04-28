@@ -18,8 +18,6 @@ def get_dexter_data():
 
         dok[row_num,indices_of_1s] = 1
 
-
-
     features_array = dok.todense()    #csr format
 
 
@@ -30,3 +28,5 @@ def get_dexter_data():
         labels_array.shape=(300)
 
     return features_array, labels_array
+
+print get_dexter_data()[0].shape, get_dexter_data()[1].shape

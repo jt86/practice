@@ -30,3 +30,6 @@ def get_dorothea_data():
         labels_array.shape=(800)
 
     return features_array, labels_array
+
+
+print get_dorothea_data()[0].shape, get_dorothea_data()[1].shape

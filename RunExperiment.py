@@ -144,6 +144,7 @@ if __name__ == '__main__':
     elif args.input == 'wine':
         features_array, labels_array = get_wine_data()
         tuple = [1, 13, 1]
+
     else:
         raise ValueError('WTF is that input')
 

@@ -17,4 +17,3 @@ def get_madelon_data():
     return features_array, labels_array
 
 
-# main_function (features_array, labels_array, number_of_features=500, output_directory=output_directory,  num_folds=5, min=49, max=500, step=50, c_values=[0.01,0.1,1,10,100])
