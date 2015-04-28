@@ -4,7 +4,7 @@ __author__ = 'jt306'
 print('getting parameter settings')
 
 #inputs = ['heart', 'vote', 'wine', 'bankruptcy', 'ionosphere', 'crx','hillvalley', 'cancer',  'musk1','arcene', 'gisette', 'haberman','madelon']
-inputs = ['dorothea', 'dexter']
+inputs = ['dexter']
 
 bottom_n_values = [0]
 peeking_allowed = False

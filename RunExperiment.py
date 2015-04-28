@@ -41,7 +41,7 @@ if __name__ == '__main__':
     parser.add_argument('--input', type=str, required=True,
                         choices=('arcene', 'awa', 'madelon', 'gisette', 'dorothea', 'vote', 'heart', 'haberman', 'crx',
                                  'mushroom', 'hepatitis', 'cancer', 'bankruptcy', 'spambase', 'musk2', 'musk1',
-                                 'heart2',
+                                 'heart2', 'dexter',
                                  'ionosphere', 'hillvalley', 'wine'),
                         help='name of input data')
 
