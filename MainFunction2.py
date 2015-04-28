@@ -2,7 +2,7 @@ __author__ = 'jt306'
 
 import os, sys
 import numpy as np
-from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit
+from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
 from sklearn.metrics import f1_score, pairwise
 from sklearn import svm, linear_model
 from sklearn.feature_selection import SelectPercentile, f_classif, chi2
@@ -37,7 +37,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
     total_num_items = original_features_array.shape[0]
     original_number_feats = original_features_array.shape[1]
 
-    numbers_of_features_list = []
+    # numbers_of_features_list = []
     list_of_t = []
     all_folds_SVM, all_folds_LUPI = [[]]*num_folds,[[]]*num_folds
     baseline_score, baseline_score2 =[], []
@@ -49,14 +49,24 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
         total_number_of_items = (train.shape[0])
         number_of_training_instances = int(total_number_of_items - (total_number_of_items / num_folds)) - 1
-        rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+
 
         all_training, all_testing = original_features_array[train], original_features_array[test]
         training_labels, testing_labels = labels_array[train], labels_array[test]
 
+        rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
+        # rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
+
         top_t_indices, remaining_indices = get_best_feats(all_training,training_labels,c_values, num_folds, rs)
+
         top_t_training, unselected_features_training = all_training[:,top_t_indices], all_training[:,remaining_indices]
         top_t_testing, unselected_features_testing = all_testing[:,top_t_indices], all_testing[:,remaining_indices]
+
+        assert top_t_testing.shape[1]+unselected_features_testing.shape[1]==original_features_array.shape[1],'train and test equal total size'
+        # assert original_features_array.shape[1]/num_folds==top_t_testing.shape[1],'same size'
+
+
+
         print top_t_training.shape, unselected_features_training.shape, top_t_testing.shape, unselected_features_testing.shape
 
         t = top_t_training.shape[1]
@@ -74,14 +84,18 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         else:
             tuple  = [t/10, t+1, t/10]
 
-        list_of_values = [i for i in range(*tuple)]
-        for n_top_feats in list_of_values:
 
-            if n_top_feats not in numbers_of_features_list:
-                numbers_of_features_list.append(n_top_feats)
+        list_of_values = [i for i in range(*tuple)]
+        list_of_values = get_percentage_of_t(t)[0]
+        list_of_percentages = get_percentage_of_t(t)[1]
+
+        for n_top_feats in list_of_values:
+            #
+            # if n_top_feats not in numbers_of_features_list:
+            #     numbers_of_features_list.append(n_top_feats)
 
             n+=1
-
+            param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
              # Get T, Get NORMAL and PRIVILEGED
 
             top_t_sorted_training = get_sorted_features(top_t_training, training_labels, rank_metric, n_top_feats, dataset, logger, number_remaining_feats)
@@ -94,6 +108,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
             normal_features_testing = top_t_sorted_testing[:,normal_indices]
             privileged_features_training = top_t_sorted_training[:, privileged_indices]
             privileged_features_training = np.hstack([privileged_features_training,unselected_features_training])
+            # privileged_features_training = privileged_features_training[:(privileged_features_training.shape[1]/prop_priv)]
 
             print 'top t sorted shape', top_t_sorted_training.shape
 
@@ -104,8 +119,9 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
             if n_top_feats == list_of_values[0]:
 
-                param_estimation_file.write("\n\n Baseline parameter selection \n C,gamma,score")
-                rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+                param_estimation_file.write("\n\n Baseline scores array")
+
+                rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
                 best_C_baseline = param_estimation(param_estimation_file, all_training,
                                                                         training_labels, c_values,rs, False, None,
                                                                         peeking,testing_features=all_testing,
@@ -125,7 +141,8 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
                 # ##############################  BASELINE 2 - top t features only
 
-                rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+                # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+                rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
                 best_C_baseline2 = param_estimation(param_estimation_file, top_t_training,
                                                                         training_labels, c_values,rs, False, None,
                                                                         peeking,testing_features=top_t_testing,
@@ -140,10 +157,11 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
             ############################### SVM - PARAM ESTIMATION AND RUNNING
             total_number_of_items = len(train)
-            rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
-
+            # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+            rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
             param_estimation_file.write(
-                "\n\n SVM parameter selection for top " + str(n_top_feats) + " features\n" + "C,gamma,score")
+                # "\n\n SVM parameter selection for top " + str(n_top_feats) + " features\n" + "C,score")
+                "\n\n SVM scores array for top " + str(n_top_feats) + " features\n")
 
 
             best_C_SVM  = param_estimation(param_estimation_file, normal_features_training,
@@ -158,8 +176,11 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
             ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
             rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+            rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
             if n_top_feats != number_remaining_feats:
-
+                param_estimation_file.write(
+                # "\n\n SVM PLUS parameter selection for top " + str(n_top_feats) + " features\n" + "C,C*,score")
+                "\n\n SVM PLUS scores array for top " + str(n_top_feats) + " features\n")
                 best_C_SVM_plus,  best_C_star_SVM_plus  = param_estimation(
                 param_estimation_file, normal_features_training, training_labels, c_values, rs, privileged=True,
                 privileged_training_data=privileged_features_training,peeking=peeking,
@@ -176,7 +197,9 @@ def main_function(original_features_array, labels_array, output_directory, num_f
                 fold_results_LUPI.append(f1_score(testing_labels, LUPI_predictions_for_testing))
 
 
-
+            chosen_params_file.write("\n\n{} top features,fold {},baseline,{}".format(n_top_feats,k,best_C_baseline))
+            chosen_params_file.write("\n,,SVM,{}".format(best_C_SVM))
+            chosen_params_file.write("\n,,SVM+,{},{}" .format(best_C_SVM_plus,best_C_star_SVM_plus))
 
 
         all_folds_SVM[k] = fold_results_SVM
@@ -187,13 +210,13 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
     print 'all folds SVM length', len(all_folds_SVM)
 
-    baseline_results = [baseline_score] * len(numbers_of_features_list)
-    baseline_results2 = [baseline_score2] * len(numbers_of_features_list)
+    baseline_results = [baseline_score] * len(list_of_values)
+    baseline_results2 = [baseline_score2] * len(list_of_values)
 
     keyword = "{} ({}x{}) t values:{}\n peeking={}; {} folds; metric: {}; c={{10^{}..10^{}}}; c*={{10^{}..10^{}}} ({} values)".format(dataset,
                    total_num_items, original_number_feats, list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs)
 
-    get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baseline_results, baseline_results2, num_folds, output_directory, keyword)
+    get_figures(list_of_percentages, all_folds_SVM, all_folds_LUPI, baseline_results, baseline_results2, num_folds, output_directory, keyword)
 
 
 def cut_off_arcene(sorted_features,logger):
@@ -229,9 +252,18 @@ def get_sorted_features(features_array, labels_array, rank_metric, n_top_feats,d
     # scaler = preprocessing.StandardScaler().fit(sorted_features)
     # sorted_features = scaler.transform(sorted_features, number_of_samples)
     # sorted_features = preprocessing.scale(sorted_features, axis=1)
-    normaliser = preprocessing.Normalizer('l2')
+    normaliser = preprocessing.Normalizer('l1')
     normaliser.fit_transform(sorted_features)
     sorted_features = discard_bottom_n(sorted_features, number_remaining_feats, logger)
 
     logger.info('first item in r2 sorted feats %r',sorted_features[0])
     return sorted_features
+
+
+def get_percentage_of_t(t, tuple=(10,101,15)):
+    list_of_values, list_of_percentages =[],[]
+    for i in range(*tuple):
+        print i
+        list_of_values.append(t*i/100)
+        list_of_percentages.append(i)
+    return list_of_values,list_of_percentages

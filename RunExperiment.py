@@ -165,7 +165,7 @@ if __name__ == '__main__':
     #     args.gamma_multiplier)
     logger.info("\n\n %r \n\n", keyword)
 
-    all_results_directory = get_full_path('Desktop/Privileged_Data/top-k-results-5/')
+    all_results_directory = get_full_path('Desktop/Privileged_Data/top-k-results-6/')
     # output_directory = (os.path.join(all_results_directory,args.output_dir))
     output_directory = (os.path.join(all_results_directory, keyword))
 
