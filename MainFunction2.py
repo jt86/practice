@@ -121,7 +121,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
                 param_estimation_file.write("\n\n Baseline scores array")
 
-                rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
+                rs = StratifiedShuffleSplit(y=training_labels, n_iter=10, test_size=.2, random_state=0)
                 best_C_baseline = param_estimation(param_estimation_file, all_training,
                                                                         training_labels, c_values,rs, False, None,
                                                                         peeking,testing_features=all_testing,
@@ -142,7 +142,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
                 # ##############################  BASELINE 2 - top t features only
 
                 # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
-                rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
+                rs = StratifiedShuffleSplit(y=training_labels, n_iter=10, test_size=.2, random_state=0)
                 best_C_baseline2 = param_estimation(param_estimation_file, top_t_training,
                                                                         training_labels, c_values,rs, False, None,
                                                                         peeking,testing_features=top_t_testing,
@@ -158,7 +158,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
             ############################### SVM - PARAM ESTIMATION AND RUNNING
             total_number_of_items = len(train)
             # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
-            rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
+            rs = StratifiedShuffleSplit(y=training_labels, n_iter=10, test_size=.2, random_state=0)
             param_estimation_file.write(
                 # "\n\n SVM parameter selection for top " + str(n_top_feats) + " features\n" + "C,score")
                 "\n\n SVM scores array for top " + str(n_top_feats) + " features\n")
@@ -175,7 +175,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
 
             ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
-            rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+            rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
             rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
             if n_top_feats != number_remaining_feats:
                 param_estimation_file.write(
