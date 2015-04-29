@@ -1,6 +1,4 @@
 __author__ = 'jt306'
-
-
 print('getting parameter settings')
 
 #inputs = ['heart', 'vote', 'wine', 'bankruptcy', 'ionosphere', 'crx','hillvalley', 'cancer',  'musk1','arcene', 'gisette', 'haberman','madelon']
