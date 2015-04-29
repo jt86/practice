@@ -8,7 +8,7 @@ def get_dexter_data():
     print( "Getting DEXTER data")
     dok = sp.dok_matrix((300, 20000), dtype=int)
 
-    fh = open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.data","rU"))
+    fh = open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.data"),"rU")
 
     line = fh.next().strip()
     for row_num, line in enumerate(fh):
@@ -24,7 +24,7 @@ def get_dexter_data():
 
 
 
-    with open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.labels","r+")) as file:
+    with open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.labels"),"r+") as file:
         labels_array = np.genfromtxt(file, dtype=None)
         labels_array.shape=(300)
 
