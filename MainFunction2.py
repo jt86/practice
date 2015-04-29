@@ -54,6 +54,8 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         all_training, all_testing = original_features_array[train], original_features_array[test]
         training_labels, testing_labels = labels_array[train], labels_array[test]
 
+        assert all_training.shape[0]+all_testing.shape[0] == original_features_array.shape[0], 'training + testing = total'
+
         rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
         # rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
 
@@ -62,7 +64,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         top_t_training, unselected_features_training = all_training[:,top_t_indices], all_training[:,remaining_indices]
         top_t_testing, unselected_features_testing = all_testing[:,top_t_indices], all_testing[:,remaining_indices]
 
-        assert top_t_testing.shape[1]+unselected_features_testing.shape[1]==original_features_array.shape[1],'train and test equal total size'
+        assert top_t_testing.shape[1]+unselected_features_testing.shape[1]==original_features_array.shape[1],'top t + remaining feats = total num of feats'
         # assert original_features_array.shape[1]/num_folds==top_t_testing.shape[1],'same size'
 
 
@@ -78,14 +80,16 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         fold_results_SVM, fold_results_LUPI   =  [], []
 
         n = -1
+        #
+        # if t <= 15:
+        #     tuple = [1,t+1,1]
+        # else:
+        #     tuple  = [t/10, t+1, t/10]
+        #
+        #
+        # list_of_values = [i for i in range(*tuple)]
 
-        if t <= 15:
-            tuple = [1,t+1,1]
-        else:
-            tuple  = [t/10, t+1, t/10]
 
-
-        list_of_values = [i for i in range(*tuple)]
         list_of_values = get_percentage_of_t(t)[0]
         list_of_percentages = get_percentage_of_t(t)[1]
 

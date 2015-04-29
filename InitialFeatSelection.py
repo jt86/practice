@@ -31,7 +31,7 @@ def get_best_feats(data,labels,c_values,num_folds,rs):
         step = 1
     parameters = {'C':c_values}#, 'gamma':get_gamma_from_c(c_values,data)}
     rfecv = RFECV(GridSeachWithCoef(SVC(kernel='linear'), parameters, cv=rs),step=step,
-                  cv=StratifiedKFold(labels, num_folds, shuffle=False , random_state=1),scoring='f1')# cv=StratifiedKFold(labels, init_step))
+                  cv=StratifiedKFold(labels, num_folds, shuffle=False , random_state=1))#,scoring='f1')# cv=StratifiedKFold(labels, init_step))
     print 'data shape',data.shape
     print 'labels shape', labels.shape
 
@@ -40,7 +40,14 @@ def get_best_feats(data,labels,c_values,num_folds,rs):
     print "Kept {} out of {} features".format((data[:,rfecv.support_]).shape[1], data.shape[1])
     print "support:",rfecv.support_
     print "time to do initial feature selection:",time.clock()-t0
+
+    best_feats_doc = open('best_feats.csv','a')
+
+
     return rfecv.support_, rfecv.support_==False
+
+
+
 
 #
 # test_feats = np.array([[1,1,0,0,0,0,0,1,1]*50,[1,0,0,0,0,0,0,1,1]*50,[0,1,0,0,0,0,0,1,1]*50,[0,0,0,0,0,0,0,1,1]*50])
