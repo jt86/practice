@@ -19,7 +19,7 @@ import pdb
 
 
 def main_function(original_features_array, labels_array, output_directory, num_folds,
-                  tuple, cmin, cmax,number_of_cs, peeking, dataset, rank_metric, prop_priv=1, multiplier=1, bottom_n_percent=0,
+                  cmin, cmax,number_of_cs, peeking, dataset, rank_metric, prop_priv=1, multiplier=1, bottom_n_percent=0,
                 logger=None, cstar_values=None,  cstarmin=None, cstarmax=None):
 
     results_file = open(os.path.join(output_directory, 'output.csv'), "a")
@@ -59,7 +59,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
         # rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
 
-        top_t_indices, remaining_indices = get_best_feats(all_training,training_labels,c_values, num_folds, rs)
+        top_t_indices, remaining_indices = get_best_feats(all_training,training_labels,c_values, num_folds, rs, 'heart')
 
         top_t_training, unselected_features_training = all_training[:,top_t_indices], all_training[:,remaining_indices]
         top_t_testing, unselected_features_testing = all_testing[:,top_t_indices], all_testing[:,remaining_indices]
@@ -182,6 +182,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
             rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
             rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
             if n_top_feats != number_remaining_feats:
+                assert n_top_feats < number_remaining_feats
                 param_estimation_file.write(
                 # "\n\n SVM PLUS parameter selection for top " + str(n_top_feats) + " features\n" + "C,C*,score")
                 "\n\n SVM PLUS scores array for top " + str(n_top_feats) + " features\n")

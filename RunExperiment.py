@@ -21,7 +21,7 @@ from Musk1 import get_musk1_data
 from Ionosphere import get_ionosphere_data
 from HillValley import get_hillvalley_data
 from Wine import get_wine_data
-
+from Dexter_NEW1 import get_dexter_data
 import time
 
 if __name__ == '__main__':
@@ -144,6 +144,8 @@ if __name__ == '__main__':
     elif args.input == 'wine':
         features_array, labels_array = get_wine_data()
         tuple = [1, 13, 1]
+    elif args.input == 'dexter':
+        features_array, labels_array = get_dexter_data()
 
     else:
         raise ValueError('WTF is that input')
@@ -152,8 +154,8 @@ if __name__ == '__main__':
 
     logger.info("time taken to load data: %r", time.clock()-t0)
 
-    logger.info("tuple %r", tuple)
-    c_values = [.1,1.0,100.]
+    # logger.info("tuple %r", tuple)
+    # c_values = [.1,1.0,100.]
 
     # keyword = "{}_peeking={}_{}-folds_{}_rejected-{}pc-used-gamma_times_{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.bottom_n_percent, args.gamma_multiplier)
     keyword = "{}_peeking={}_folds={}_metric={}_c=10^{}-10^{}_cstar=10^{}-10^{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.cmin,args.cmax, args.cstarmin, args.cstarmax)
@@ -178,9 +180,7 @@ if __name__ == '__main__':
     # logger.info( 'peeking=',args.peeking)
 
 
-    #todo : change c_values in main function back to args.cvalues!!!
-
-    main_function(features_array, labels_array, output_directory, args.num_folds, tuple, args.cmin, args.cmax,
+    main_function(features_array, labels_array, output_directory, args.num_folds, args.cmin, args.cmax,
                   args.numberofcs,
                   peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, prop_priv=args.prop_priv,
                   multiplier=args.gamma_multiplier, bottom_n_percent=args.bottom_n_percent, logger=logger,

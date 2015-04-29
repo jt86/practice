@@ -29,8 +29,8 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
 
     if peeking == True:
 
-        get_scores_for_this_fold(privileged, c_values, dict_of_parameters, training_features, training_labels,
-                                 testing_features, testing_labels, privileged_training_data, code_with_score, cstar_values, scores_array)
+        get_scores_for_this_fold(privileged, c_values, training_features, training_labels,
+                                 testing_features, testing_labels, privileged_training_data, cstar_values, scores_array)
 
         # output_params_with_scores(dict_of_parameters, code_with_score, param_estimation_file)
         best_parameters = dict_of_parameters[code_with_score.argmax(axis=0)]
@@ -48,13 +48,16 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
         for train_indices, test_indices in rs:
             train_this_fold, test_this_fold = training_features[train_indices], training_features[test_indices]
             train_labels_this_fold, test_labels_this_fold = training_labels[train_indices], training_labels[test_indices]
+            assert train_labels_this_fold.shape[0]+test_labels_this_fold.shape[0]==training_labels.shape[0], 'number of labels total'
 
             if privileged == True:
                 privileged_train_this_fold = privileged_training_data[train_indices]
             else:
                 privileged_train_this_fold = None
 
-            scores_array = get_scores_for_this_fold(privileged, c_values, dict_of_parameters, train_this_fold, train_labels_this_fold, test_this_fold, test_labels_this_fold, privileged_train_this_fold, code_with_score, cstar_values, scores_array)
+            scores_array = get_scores_for_this_fold(privileged, c_values, train_this_fold, train_labels_this_fold,
+                                                    test_this_fold, test_labels_this_fold, privileged_train_this_fold, cstar_values, scores_array)
+
             # output_params_with_scores(dict_of_parameters, code_with_score, param_estimation_file)
 
         best_parameters = dict_of_parameters[code_with_score.argmax(axis=0)]
@@ -102,31 +105,48 @@ def output_params_with_scores(dictionary, code_with_score, param_estimation_file
 
 
 
-def get_scores_for_this_fold(privileged,c_values,dict_of_parameters, train_data, train_labels, test_data, test_labels, priv_train, code_with_score, cstar_values, scores_array):
-
-    j = 0
-
-
+def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_data, test_labels, priv_train, cstar_values, scores_array):
     if privileged == False:
         for c_index, c_value in enumerate(c_values):
-            dict_of_parameters[j] = [c_value]
             clf = svm.SVC(C=c_value, kernel='linear')
             clf.fit(train_data, train_labels)
-            code_with_score[j] += f1_score(test_labels, clf.predict(test_data))
-            j += 1
             scores_array[c_index]+=f1_score(test_labels, clf.predict(test_data))
-
-
     if privileged == True:
         for c_index, c_value in enumerate(c_values):
             for cstar_index, cstar_value in enumerate(cstar_values):
-                    dict_of_parameters[j] = [c_value, cstar_value]
                     alphas, bias = svmplusQP(X=train_data, Y=train_labels,
                                              Xstar=priv_train,
                                              C=c_value, Cstar=cstar_value)
                     predictions_this_fold = svmplusQP_Predict(train_data, test_data, alphas, bias)
-                    code_with_score[j] += f1_score(test_labels, predictions_this_fold)
-                    j += 1
                     scores_array[c_index,cstar_index]+= f1_score(test_labels, predictions_this_fold)
-
     return scores_array
+#
+#
+# def get_scores_for_this_fold(privileged,c_values,dict_of_parameters, train_data, train_labels, test_data, test_labels, priv_train, code_with_score, cstar_values, scores_array):
+#
+#     j = 0
+#
+#
+#     if privileged == False:
+#         for c_index, c_value in enumerate(c_values):
+#             dict_of_parameters[j] = [c_value]
+#             clf = svm.SVC(C=c_value, kernel='linear')
+#             clf.fit(train_data, train_labels)
+#             code_with_score[j] += f1_score(test_labels, clf.predict(test_data))
+#             j += 1
+#             scores_array[c_index]+=f1_score(test_labels, clf.predict(test_data))
+#
+#
+#     if privileged == True:
+#         for c_index, c_value in enumerate(c_values):
+#             for cstar_index, cstar_value in enumerate(cstar_values):
+#                     dict_of_parameters[j] = [c_value, cstar_value]
+#                     alphas, bias = svmplusQP(X=train_data, Y=train_labels,
+#                                              Xstar=priv_train,
+#                                              C=c_value, Cstar=cstar_value)
+#                     predictions_this_fold = svmplusQP_Predict(train_data, test_data, alphas, bias)
+#                     code_with_score[j] += f1_score(test_labels, predictions_this_fold)
+#                     j += 1
+#                     scores_array[c_index,cstar_index]+= f1_score(test_labels, predictions_this_fold)
+#
+#     return scores_array

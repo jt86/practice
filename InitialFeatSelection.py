@@ -16,6 +16,7 @@ import os, sys
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit
 import numpy as np
 from sklearn.metrics import f1_score
+from Get_Full_Path import get_full_path
 
 class GridSeachWithCoef(GridSearchCV):
     @property
@@ -23,7 +24,7 @@ class GridSeachWithCoef(GridSearchCV):
         return self.best_estimator_.coef_
 
 
-def get_best_feats(data,labels,c_values,num_folds,rs):
+def get_best_feats(data,labels,c_values,num_folds,rs,keyword):
     t0 = time.clock()
     if data.shape[1] > 100:
         step = 0.01
@@ -43,6 +44,13 @@ def get_best_feats(data,labels,c_values,num_folds,rs):
 
     best_feats_doc = open('best_feats.csv','a')
 
+
+    directory = get_full_path('Desktop/Privileged_Data/bestfeats')
+    if not os.path.exists(directory):
+        os.mkdir(directory)
+    best_feats_doc = open(os.path.join(directory, keyword),'a')
+    best_feats_doc.write(rfecv.support_)
+    best_feats_doc.write(rfecv.support_==False)
 
     return rfecv.support_, rfecv.support_==False
 

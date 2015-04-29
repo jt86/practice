@@ -29,5 +29,5 @@ gamma, gammastar = 0.1, 0.1
 Xtest = np.array([5,5,3,1,1]*4)
 Xtest.shape = (4,5)
 
-alphas,bias=svmplusQP(X,Y,Xstar,C,Cstar,gamma,gammastar)
+alphas,bias=svmplusQP(X,Y,Xstar,C,Cstar)
 logging.info( (svmplusQP_Predict(X,Xtest,alphas,bias)))

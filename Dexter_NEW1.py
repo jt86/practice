@@ -2,12 +2,13 @@ __author__ = 'jt306'
 import numpy as np
 from scipy import sparse as sp
 import logging
+from Get_Full_Path import get_full_path
 
 def get_dexter_data():
     print( "Getting DEXTER data")
     dok = sp.dok_matrix((300, 20000), dtype=int)
 
-    fh = open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/DEXTER/dexter_train.data","rU")
+    fh = open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.data","rU"))
 
     line = fh.next().strip()
     for row_num, line in enumerate(fh):
@@ -23,10 +24,10 @@ def get_dexter_data():
 
 
 
-    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/DEXTER/dexter_train.labels","r+") as file:
+    with open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.labels","r+")) as file:
         labels_array = np.genfromtxt(file, dtype=None)
         labels_array.shape=(300)
 
     return features_array, labels_array
 
-print get_dexter_data()[0].shape, get_dexter_data()[1].shape
+# print get_dexter_data()[0].shape, get_dexter_data()[1].shape
