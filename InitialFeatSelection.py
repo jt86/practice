@@ -15,6 +15,7 @@ from Get_Full_Path import get_full_path
 import os, sys
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit
 import numpy as np
+from sklearn.metrics import f1_score
 
 class GridSeachWithCoef(GridSearchCV):
     @property
@@ -30,7 +31,7 @@ def get_best_feats(data,labels,c_values,num_folds,rs):
         step = 1
     parameters = {'C':c_values}#, 'gamma':get_gamma_from_c(c_values,data)}
     rfecv = RFECV(GridSeachWithCoef(SVC(kernel='linear'), parameters, cv=rs),step=step,
-                  cv=StratifiedKFold(labels, num_folds, shuffle=False , random_state=1))# cv=StratifiedKFold(labels, init_step))
+                  cv=StratifiedKFold(labels, num_folds, shuffle=False , random_state=1),scoring='f1')# cv=StratifiedKFold(labels, init_step))
     print 'data shape',data.shape
     print 'labels shape', labels.shape
 
