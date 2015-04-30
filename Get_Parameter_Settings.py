@@ -2,8 +2,8 @@ __author__ = 'jt306'
 print('getting parameter settings')
 
 #inputs = ['heart', 'vote', 'wine', 'bankruptcy', 'ionosphere', 'crx','hillvalley', 'cancer',  'musk1','arcene', 'gisette', 'haberman','madelon']
-# inputs = ['arcene', 'gisette', 'dorothea','madelon','dexter']
-inputs = ['madelon','dexter']
+
+inputs = ['madelon','dexter','arcene','gisette','dorothea']
 
 bottom_n_values = [0]
 peeking_allowed = False
