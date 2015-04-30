@@ -6,7 +6,7 @@ from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, Strati
 from sklearn.metrics import f1_score, pairwise
 from sklearn import svm, linear_model
 from sklearn.feature_selection import SelectPercentile, f_classif, chi2
-from SVMplus import svmplusQP, svmplusQP_Predict
+from SVMplus3 import svmplusQP, svmplusQP_Predict
 import sklearn.preprocessing as preprocessing
 from Get_Figures import get_figures
 from ParamEstimation2 import param_estimation
@@ -19,14 +19,16 @@ import pdb
 
 
 def main_function(original_features_array, labels_array, output_directory, num_folds,
-                  cmin, cmax,number_of_cs, peeking, dataset, rank_metric, prop_priv=1, multiplier=1, bottom_n_percent=0,
-                logger=None, cstar_values=None,  cstarmin=None, cstarmax=None):
+                  cmin, cmax,number_of_cs, peeking, dataset, rank_metric, prop_priv=1, bottom_n_percent=0,
+                logger=None, cstar_values=None,  cstarmin=None, cstarmax=None, tuple=None, kernel=None, take_t=False):
 
     results_file = open(os.path.join(output_directory, 'output.csv'), "a")
     param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
     chosen_params_file = open(os.path.join(output_directory, 'chosen_parameters.csv'), "a")
 
     c_values = np.logspace(cmin,cmax,number_of_cs)
+
+
     if cstarmin==None:
         cstarmin, cstarmax = cmin,cmax
     cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
@@ -37,7 +39,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
     total_num_items = original_features_array.shape[0]
     original_number_feats = original_features_array.shape[1]
 
-    # numbers_of_features_list = []
+    numbers_of_features_list = []
     list_of_t = []
     all_folds_SVM, all_folds_LUPI = [[]]*num_folds,[[]]*num_folds
     baseline_score, baseline_score2 =[], []
@@ -54,49 +56,47 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         all_training, all_testing = original_features_array[train], original_features_array[test]
         training_labels, testing_labels = labels_array[train], labels_array[test]
 
-        assert all_training.shape[0]+all_testing.shape[0] == original_features_array.shape[0], 'training + testing = total'
+        ######################
+        if take_t == True:
 
-        rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
-        # rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
-
-        top_t_indices, remaining_indices = get_best_feats(all_training,training_labels,c_values, num_folds, rs, 'heart')
-
-        top_t_training, unselected_features_training = all_training[:,top_t_indices], all_training[:,remaining_indices]
-        top_t_testing, unselected_features_testing = all_testing[:,top_t_indices], all_testing[:,remaining_indices]
-
-        assert top_t_testing.shape[1]+unselected_features_testing.shape[1]==original_features_array.shape[1],'top t + remaining feats = total num of feats'
-        # assert original_features_array.shape[1]/num_folds==top_t_testing.shape[1],'same size'
-
+            assert all_training.shape[0]+all_testing.shape[0] == original_features_array.shape[0], 'training + testing = total'
+            rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
+            top_t_indices, remaining_indices = get_best_feats(all_training,training_labels,c_values, num_folds, rs, 'heart')
+            top_t_training, unselected_features_training = all_training[:,top_t_indices], all_training[:,remaining_indices]
+            top_t_testing, unselected_features_testing = all_testing[:,top_t_indices], all_testing[:,remaining_indices]
+            assert top_t_testing.shape[1]+unselected_features_testing.shape[1]==original_features_array.shape[1],'top t + remaining feats = total num of feats'
+            t = top_t_training.shape[1]
+            list_of_t.append(t)
+            number_remaining_feats = original_number_feats - (bottom_n_percent * (original_number_feats) / 100)
 
 
-        print top_t_training.shape, unselected_features_training.shape, top_t_testing.shape, unselected_features_testing.shape
+        ######################
+        else:
+            top_t_training = all_training
+            top_t_testing = all_testing
+            t = original_number_feats
+            number_remaining_feats = original_number_feats
+            list_of_t.append(t)
 
-        t = top_t_training.shape[1]
-        list_of_t.append(t)
 
-        number_remaining_feats = original_number_feats - (bottom_n_percent * (original_number_feats) / 100)
+        #######################
 
         # numbers_of_features_list = []
         fold_results_SVM, fold_results_LUPI   =  [], []
 
         n = -1
-        #
-        # if t <= 15:
-        #     tuple = [1,t+1,1]
-        # else:
-        #     tuple  = [t/10, t+1, t/10]
-        #
-        #
-        # list_of_values = [i for i in range(*tuple)]
 
 
-        list_of_values = get_percentage_of_t(t)[0]
+
+        # list_of_values = get_percentage_of_t(t)[0]
+        list_of_values = [i for i in range(*tuple)]
+
         list_of_percentages = get_percentage_of_t(t)[1]
 
         for n_top_feats in list_of_values:
             #
-            # if n_top_feats not in numbers_of_features_list:
-            #     numbers_of_features_list.append(n_top_feats)
+            if n_top_feats not in numbers_of_features_list:
+                numbers_of_features_list.append(n_top_feats)
 
             n+=1
             param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
@@ -111,7 +111,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
             normal_features_training = top_t_sorted_training[:,normal_indices]
             normal_features_testing = top_t_sorted_testing[:,normal_indices]
             privileged_features_training = top_t_sorted_training[:, privileged_indices]
-            privileged_features_training = np.hstack([privileged_features_training,unselected_features_training])
+            # privileged_features_training = np.hstack([privileged_features_training,unselected_features_training])                     #todo uncomment this!
             # privileged_features_training = privileged_features_training[:(privileged_features_training.shape[1]/prop_priv)]
 
             print 'top t sorted shape', top_t_sorted_training.shape
@@ -126,14 +126,16 @@ def main_function(original_features_array, labels_array, output_directory, num_f
                 param_estimation_file.write("\n\n Baseline scores array")
 
                 rs = StratifiedShuffleSplit(y=training_labels, n_iter=10, test_size=.2, random_state=0)
-                best_C_baseline = param_estimation(param_estimation_file, all_training,
+                best_C_baseline, best_gamma_baseline = param_estimation(param_estimation_file, all_training,
                                                                         training_labels, c_values,rs, False, None,
                                                                         peeking,testing_features=all_testing,
-                                                                        testing_labels=testing_labels, logger=logger)[0]
+                                                                        testing_labels=testing_labels)
 
 
-                clf = svm.SVC(C=best_C_baseline, kernel='linear')#, gamma=best_gamma_baseline)
+                print 'best c baseline',best_C_baseline, 'best gamma baseline', best_gamma_baseline, 'kernel', kernel
+                clf = svm.SVC(C=best_C_baseline, kernel=kernel, gamma=best_gamma_baseline)
                 # pdb.set_trace()
+                print all_training.shape, training_labels.shape
                 clf.fit(all_training, training_labels)
 
                 baseline_predictions = clf.predict(all_testing)
@@ -147,13 +149,13 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
                 # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
                 rs = StratifiedShuffleSplit(y=training_labels, n_iter=10, test_size=.2, random_state=0)
-                best_C_baseline2 = param_estimation(param_estimation_file, top_t_training,
+                best_C_baseline2, best_gamma_baseline2 = param_estimation(param_estimation_file, top_t_training,
                                                                         training_labels, c_values,rs, False, None,
                                                                         peeking,testing_features=top_t_testing,
-                                                                        testing_labels=testing_labels, logger=logger)[0]
+                                                                        testing_labels=testing_labels)
 
-
-                clf2 = svm.SVC(C=best_C_baseline2, kernel='linear')#, gamma=best_gamma_baseline)
+                print 'best c baseline2',best_C_baseline2, 'best gamma baseline2', best_gamma_baseline2
+                clf2 = svm.SVC(C=best_C_baseline2, kernel=kernel, gamma=best_gamma_baseline2)
                 clf2.fit(top_t_training, training_labels)
 
                 baseline_predictions2 = clf2.predict(top_t_testing)
@@ -168,36 +170,37 @@ def main_function(original_features_array, labels_array, output_directory, num_f
                 "\n\n SVM scores array for top " + str(n_top_feats) + " features\n")
 
 
-            best_C_SVM  = param_estimation(param_estimation_file, normal_features_training,
+            best_C_SVM, best_gamma_SVM  = param_estimation(param_estimation_file, normal_features_training,
                                           training_labels, c_values, rs, privileged=False, privileged_training_data=None,
-                                        peeking=peeking, testing_features=normal_features_testing,testing_labels=testing_labels, logger=logger)[0]
+                                        peeking=peeking, testing_features=normal_features_testing,testing_labels=testing_labels)
 
-            clf = svm.SVC(C=best_C_SVM, kernel='linear')
+            clf = svm.SVC(C=best_C_SVM, kernel=kernel, gamma = best_gamma_SVM)
             clf.fit(normal_features_training, training_labels)
             fold_results_SVM.append(f1_score(testing_labels, clf.predict(normal_features_testing)))
 
 
 
             ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
-            rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
+            # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
             rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
             if n_top_feats != number_remaining_feats:
                 assert n_top_feats < number_remaining_feats
                 param_estimation_file.write(
                 # "\n\n SVM PLUS parameter selection for top " + str(n_top_feats) + " features\n" + "C,C*,score")
                 "\n\n SVM PLUS scores array for top " + str(n_top_feats) + " features\n")
-                best_C_SVM_plus,  best_C_star_SVM_plus  = param_estimation(
-                param_estimation_file, normal_features_training, training_labels, c_values, rs, privileged=True,
-                privileged_training_data=privileged_features_training,peeking=peeking,
-                testing_features=normal_features_testing, testing_labels=testing_labels,
-                multiplier=multiplier, logger=logger, cstar_values=cstar_values)
+
+                best_C_SVM_plus,  best_C_star_SVM_plus, best_gamma_SVM_plus, best_gamma_star_SVM_plus  = param_estimation(
+                    param_estimation_file, normal_features_training, training_labels, c_values, rs, privileged=True,
+                    privileged_training_data=privileged_features_training,peeking=peeking,
+                    testing_features=normal_features_testing, testing_labels=testing_labels,
+                    cstar_values=cstar_values)
 
                 alphas, bias = svmplusQP(normal_features_training, training_labels.ravel(), privileged_features_training,
-                                         best_C_SVM_plus, best_C_star_SVM_plus)
+                                         best_C_SVM_plus, best_C_star_SVM_plus, best_gamma_SVM_plus, best_gamma_star_SVM_plus)
 
 
                 LUPI_predictions_for_testing = svmplusQP_Predict(normal_features_training, normal_features_testing,
-                                                                 alphas, bias).ravel()
+                                                                 alphas, bias, kernel).ravel()
 
                 fold_results_LUPI.append(f1_score(testing_labels, LUPI_predictions_for_testing))
 
@@ -221,8 +224,8 @@ def main_function(original_features_array, labels_array, output_directory, num_f
     keyword = "{} ({}x{}) t values:{}\n peeking={}; {} folds; metric: {}; c={{10^{}..10^{}}}; c*={{10^{}..10^{}}} ({} values)".format(dataset,
                    total_num_items, original_number_feats, list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs)
 
-    get_figures(list_of_percentages, all_folds_SVM, all_folds_LUPI, baseline_results, baseline_results2, num_folds, output_directory, keyword)
-
+    get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baseline_results, baseline_results2, num_folds, output_directory, keyword)
+#todo change list of percentages to number of features list
 
 def cut_off_arcene(sorted_features,logger):
     sorted_features = sorted_features[:, :9920]

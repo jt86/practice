@@ -61,10 +61,10 @@ if __name__ == '__main__':
 
     parser.add_argument('--rank-metric', type=str, required=True,
                         choices=('f', 'c', 'r', 'r2'), help='the method used to rank features')
-    parser.add_argument('--prop-priv', type=int, required=True,
+    parser.add_argument('--prop-priv', type=int, required=False,
                         help='the inverse of the proportion of non-selected features to use as privileged')
-    parser.add_argument('--gamma-multiplier', type=int,
-                        help='the factor by which to multiply gamma for the SVM+')
+    # parser.add_argument('--gamma-multiplier', type=int,
+    #                     help='the factor by which to multiply gamma for the SVM+')
     parser.add_argument('--bottom-n-percent', type=int,
                         help='the percentage of worst-ranked features to reject')
     parser.add_argument('--cmin', type=int, required = True, help='power of lowest value for c (bottom end of log range)')
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     parser.add_argument('--cstarmax', type=int, help = 'power of highest value for cstar')
     parser.add_argument('--numberofcs', type=int, help = 'the number of values to investigate for c and c*')
     # parser.add_argument('--initfolds', type=int, required=True, help='number of cross-folds for initial RFECV')
-
+    parser.add_argument('--kernel', type=str, choices = ('rbf','linear' ))
     args = parser.parse_args()
     print 'input is', args.input
     logger.debug("input is %s", args.input)
@@ -155,7 +155,7 @@ if __name__ == '__main__':
     logger.info("time taken to load data: %r", time.clock()-t0)
 
     # logger.info("tuple %r", tuple)
-    # c_values = [.1,1.0,100.]
+
 
     # keyword = "{}_peeking={}_{}-folds_{}_rejected-{}pc-used-gamma_times_{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.bottom_n_percent, args.gamma_multiplier)
     keyword = "{}_peeking={}_folds={}_metric={}_c=10^{}-10^{}_cstar=10^{}-10^{}".format(args.input, args.peeking, args.num_folds,args.rank_metric, args.cmin,args.cmax, args.cstarmin, args.cstarmax)
@@ -168,7 +168,11 @@ if __name__ == '__main__':
     #     args.gamma_multiplier)
     logger.info("\n\n %r \n\n", keyword)
 
-    all_results_directory = get_full_path('Desktop/Privileged_Data/not-f1rfe')
+    all_results_directory = get_full_path('Desktop/Privileged_Data/ignore_t_rbf')
+    if not os.path.exists(all_results_directory):
+        os.mkdir(all_results_directory)
+
+
     # output_directory = (os.path.join(all_results_directory,args.output_dir))
     output_directory = (os.path.join(all_results_directory, keyword))
 
@@ -183,6 +187,6 @@ if __name__ == '__main__':
     main_function(features_array, labels_array, output_directory, args.num_folds, args.cmin, args.cmax,
                   args.numberofcs,
                   peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, prop_priv=args.prop_priv,
-                  multiplier=args.gamma_multiplier, bottom_n_percent=args.bottom_n_percent, logger=logger,
-                    cstarmin=args.cstarmin, cstarmax=args.cstarmax, )
+                  bottom_n_percent=args.bottom_n_percent, logger=logger,
+                    cstarmin=args.cstarmin, cstarmax=args.cstarmax,tuple = tuple, kernel=args.kernel)
 
