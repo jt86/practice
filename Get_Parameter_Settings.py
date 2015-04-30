@@ -3,8 +3,8 @@ print('getting parameter settings')
 
 #inputs = ['heart', 'vote', 'wine', 'bankruptcy', 'ionosphere', 'crx','hillvalley', 'cancer',  'musk1','arcene', 'gisette', 'haberman','madelon']
 
-inputs = ['madelon','dexter','arcene','gisette','dorothea']
-
+# inputs = ['madelon','dexter','arcene','gisette','dorothea']
+inputs = ['dexter']
 bottom_n_values = [0]
 peeking_allowed = False
 pattern = '--input {} --num-folds 5 --rank-metric r2 --prop-priv 1 --bottom-n-percent 0 --cmin -4 --cmax 1 --cstarmin 0 --cstarmax 5 --numberofcs 6 --kernel rbf {}'

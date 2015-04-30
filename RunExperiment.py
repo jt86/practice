@@ -146,7 +146,7 @@ if __name__ == '__main__':
         tuple = [1, 13, 1]
     elif args.input == 'dexter':
         features_array, labels_array = get_dexter_data()
-
+        tuple = [1950,20000,2000]
     else:
         raise ValueError('WTF is that input')
 
