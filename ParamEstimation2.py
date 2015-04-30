@@ -129,7 +129,7 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
                                                      Xstar=priv_train,
                                                      C=c_value, Cstar=cstar_value, gamma=gamma_value, gammastar = gammastar_value)
                             predictions_this_fold = svmplusQP_Predict(train_data, test_data, alphas, bias, kernel)
-                            print 'c index', c_index, 'cstar index', cstar_index, 'gamma index', gamma_index, 'gammastarindex',gammastar_index
+                            # print 'c index', c_index, 'cstar index', cstar_index, 'gamma index', gamma_index, 'gammastarindex',gammastar_index
                             scores_array[c_index,cstar_index,gamma_index,gammastar_index]+= f1_score(test_labels, predictions_this_fold)
 
     return scores_array

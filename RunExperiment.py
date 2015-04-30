@@ -58,7 +58,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--peeking', dest='peeking', action='store_true',
                         help='whether or not parameter estimation is performed peeking at the test data each fold')
-
+    parser.add_argument('--taket', dest='taket', action='store_true',
+                    help='whether or not an initial RFE is carried out to take just the top t features')
     parser.add_argument('--rank-metric', type=str, required=True,
                         choices=('f', 'c', 'r', 'r2'), help='the method used to rank features')
     parser.add_argument('--prop-priv', type=int, required=False,
@@ -74,6 +75,7 @@ if __name__ == '__main__':
     parser.add_argument('--numberofcs', type=int, help = 'the number of values to investigate for c and c*')
     # parser.add_argument('--initfolds', type=int, required=True, help='number of cross-folds for initial RFECV')
     parser.add_argument('--kernel', type=str, choices = ('rbf','linear' ))
+
     args = parser.parse_args()
     print 'input is', args.input
     logger.debug("input is %s", args.input)
@@ -168,7 +170,7 @@ if __name__ == '__main__':
     #     args.gamma_multiplier)
     logger.info("\n\n %r \n\n", keyword)
 
-    all_results_directory = get_full_path('Desktop/Privileged_Data/ignore_t_rbf')
+    all_results_directory = get_full_path('Desktop/Privileged_Data/top_t_rbf')
     if not os.path.exists(all_results_directory):
         os.mkdir(all_results_directory)
 
@@ -181,12 +183,9 @@ if __name__ == '__main__':
     if not os.path.exists(output_directory):
         os.mkdir(output_directory)
 
-    # logger.info( 'peeking=',args.peeking)
-
-
     main_function(features_array, labels_array, output_directory, args.num_folds, args.cmin, args.cmax,
                   args.numberofcs,
                   peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, prop_priv=args.prop_priv,
                   bottom_n_percent=args.bottom_n_percent, logger=logger,
-                    cstarmin=args.cstarmin, cstarmax=args.cstarmax,tuple = tuple, kernel=args.kernel)
+                    cstarmin=args.cstarmin, cstarmax=args.cstarmax,tuple = tuple, kernel=args.kernel, take_t=args.taket)
 

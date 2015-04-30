@@ -58,6 +58,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
         ######################
         if take_t == True:
+            print 'taking top t only'
 
             assert all_training.shape[0]+all_testing.shape[0] == original_features_array.shape[0], 'training + testing = total'
             rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
@@ -224,7 +225,12 @@ def main_function(original_features_array, labels_array, output_directory, num_f
     keyword = "{} ({}x{}) t values:{}\n peeking={}; {} folds; metric: {}; c={{10^{}..10^{}}}; c*={{10^{}..10^{}}} ({} values)".format(dataset,
                    total_num_items, original_number_feats, list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs)
 
-    get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baseline_results, baseline_results2, num_folds, output_directory, keyword)
+    if take_t == True:
+        x_axis_list = numbers_of_features_list
+    else:
+        x_axis_list = list_of_percentages
+
+    get_figures(x_axis_list, all_folds_SVM, all_folds_LUPI, baseline_results, baseline_results2, num_folds, output_directory, keyword)
 #todo change list of percentages to number of features list
 
 def cut_off_arcene(sorted_features,logger):
