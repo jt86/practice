@@ -1,6 +1,6 @@
 __author__ = 'jt306'
 import numpy as np
-from SVMplus3 import svmplusQP, svmplusQP_Predict
+from SVMplus import svmplusQP, svmplusQP_Predict
 from sklearn.metrics import f1_score, pairwise
 from sklearn import svm
 from sklearn import grid_search
@@ -9,7 +9,7 @@ from Get_Full_Path import get_full_path
 
 
 def get_gamma_from_c(c_values, features):
-    print 'getgamma c_values', c_values
+    # print 'getgamma c_values', c_values
     euclidean_distance = pairwise.euclidean_distances(features)
     median_euclidean_distance = np.median(euclidean_distance ** 2)
     return [value / median_euclidean_distance for value in c_values]
@@ -23,7 +23,7 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
     gamma_values=  get_gamma_from_c(c_values, training_features)
     gammastar_values=None
 
-    kernel = 'rbf'
+    kernel = 'linear'
     if kernel == 'linear':
         if privileged:
             scores_array = np.zeros((len(c_values),len(cstar_values)))

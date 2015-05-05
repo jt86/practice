@@ -40,7 +40,7 @@ def get_mean_from(list_of_lists):
     results = []
     izipped = list(itertools.izip_longest(*list_of_lists, fillvalue=np.nan))
     print 'getting mean'
-    print izipped
+    print 'izipped',izipped
     for int in range(len(izipped)):
         results.append(np.nanmean(izipped[int]))
     return results
@@ -49,7 +49,7 @@ def get_error_from(list_of_lists):
     results = []
     izipped = list(itertools.izip_longest(*list_of_lists, fillvalue=np.nan))
     print 'getting error'
-    print izipped
+    print 'izipped',izipped
     for int in range(len(izipped)):
         results.append(np.nanstd(izipped[int]))
     return results

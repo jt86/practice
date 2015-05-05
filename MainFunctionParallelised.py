@@ -57,29 +57,10 @@ def main_function(original_features_array, labels_array, output_directory, num_f
         training_labels, testing_labels = labels_array[train], labels_array[test]
 
         ######################
-        if take_t == True:
-            print 'taking top t only'
-
-            assert all_training.shape[0]+all_testing.shape[0] == original_features_array.shape[0], 'training + testing = total'
-            rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
-            top_t_indices, remaining_indices = get_best_feats(all_training,training_labels,c_values, num_folds, rs, 'heart')
-            top_t_training, unselected_features_training = all_training[:,top_t_indices], all_training[:,remaining_indices]
-            top_t_testing, unselected_features_testing = all_testing[:,top_t_indices], all_testing[:,remaining_indices]
-            assert top_t_testing.shape[1]+unselected_features_testing.shape[1]==original_features_array.shape[1],'top t + remaining feats = total num of feats'
-            t = top_t_training.shape[1]
-            list_of_t.append(t)
-            number_remaining_feats = original_number_feats - (bottom_n_percent * (original_number_feats) / 100)
-
-
-        ######################
-        else:
-            top_t_training = all_training
-            top_t_testing = all_testing
-            t = original_number_feats
-            number_remaining_feats = original_number_feats
-            list_of_t.append(t)
-
-
+        top_t_training,top_t_testing, unselected_features_training, unselected_features_testing = get_training_testing(take_t,all_training,all_testing,training_labels,c_values, num_folds,number_of_training_instances)
+        t = top_t_training.shape[1]
+        list_of_t.append(t)
+        number_remaining_feats = original_number_feats - (bottom_n_percent * (original_number_feats) / 100)
         #######################
 
         # numbers_of_features_list = []
@@ -295,21 +276,22 @@ def get_percentage_of_t(t, tuple=(10,101,15)):
         list_of_percentages.append(i)
     return list_of_values,list_of_percentages
 
-def get_training_testing(take_t,all_training,all_testing,training_labels,c_values, num_folds):
-    print 'shapes0', all_training.shape, all_testing.shape
+
+def get_training_testing(take_t,all_training,all_testing,training_labels,c_values, num_folds,number_of_training_instances):
     if take_t == True:
         print 'taking top t only'
-        rs = ShuffleSplit((all_training.shape[0] - 1), n_iter=10, test_size=.2, random_state=0)
-        print 'shapes1', all_training.shape, training_labels.shape
+        rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
         top_t_indices, remaining_indices = get_best_feats(all_training,training_labels,c_values, num_folds, rs, 'heart')
         top_t_training, unselected_features_training = all_training[:,top_t_indices], all_training[:,remaining_indices]
         top_t_testing, unselected_features_testing = all_testing[:,top_t_indices], all_testing[:,remaining_indices]
-        t = top_t_training.shape[1]
 
     ######################
     else:
-        top_t_training, top_t_testing = all_training, all_testing
-        t = all_training.shape[1]
-        unselected_features_training, unselected_features_testing = None, None
+        top_t_training = all_training
+        top_t_testing = all_testing
+        unselected_features_training, unselected_features_testing = None,None
 
-    return top_t_training, top_t_testing, unselected_features_training, unselected_features_testing, t
+    return top_t_training,top_t_testing, unselected_features_training, unselected_features_testing
+
+
+

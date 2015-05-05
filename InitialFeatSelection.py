@@ -56,14 +56,3 @@ def get_best_feats(data,labels,c_values,num_folds,rs,keyword):
 
 
 
-
-#
-# test_feats = np.array([[1,1,0,0,0,0,0,1,1]*50,[1,0,0,0,0,0,0,1,1]*50,[0,1,0,0,0,0,0,1,1]*50,[0,0,0,0,0,0,0,1,1]*50])
-# test_feats.shape=(200,9)
-# print test_feats
-# print test_feats.shape
-# test_labels = np.array([1]*150+[-1]*50)
-# test_labels.shape=(200)
-# c_values=[0.1,1.,10.]
-# rs = ShuffleSplit((test_feats.shape[0]- 1), n_iter=5, test_size=.2, random_state=0)
-# print get_best_feats(test_feats,test_labels,c_values,5,rs)

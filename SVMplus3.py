@@ -18,6 +18,7 @@ def svmplusQP(X,Y,Xstar,C,Cstar, gamma=None, gammastar=None):
     n = X.shape[0]
     Y.shape = n,1
 
+    # If gamma is passed, is using rbf so
     if gamma!=None:
     # Compute kernel matrices
         dk = CRBFKernel();

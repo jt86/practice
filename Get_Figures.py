@@ -45,6 +45,9 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
 
     print len(numbers_of_features_list)
     print len(results)
+    print len(LUPI_results)
+    print len(baseline_results)
+    print len(baseline_results2)
     print len(errors)
 
     ax1.errorbar(numbers_of_features_list, results, #np.mean(results, axis=0),#todo changed from axis=1

@@ -1,7 +1,7 @@
 import logging
 import os, sys
 import argparse
-from MainFunction2 import main_function
+from MainFunctionParallelised import main_function
 from Arcene import get_arcene_data
 from Gisette import get_gisette_data
 from Get_Full_Path import get_full_path
@@ -170,7 +170,7 @@ if __name__ == '__main__':
     #     args.gamma_multiplier)
     logger.info("\n\n %r \n\n", keyword)
 
-    all_results_directory = get_full_path('Desktop/Privileged_Data/top_t_rbf')
+    all_results_directory = get_full_path('Desktop/Privileged_Data/RBF-topt')
     if not os.path.exists(all_results_directory):
         os.mkdir(all_results_directory)
 
