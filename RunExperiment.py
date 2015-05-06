@@ -170,7 +170,7 @@ if __name__ == '__main__':
     #     args.gamma_multiplier)
     logger.info("\n\n %r \n\n", keyword)
 
-    all_results_directory = get_full_path('Desktop/Privileged_Data/RBF-topt')
+    all_results_directory = get_full_path('Desktop/Privileged_Data/test-parallel')
     if not os.path.exists(all_results_directory):
         os.mkdir(all_results_directory)
 

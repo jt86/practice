@@ -16,6 +16,7 @@ from FeatSelection import get_ranked_indices, recursive_elimination2
 from InitialFeatSelection import get_best_feats
 from Get_Mean import get_mean_from, get_error_from
 import pdb
+from BringFoldsTogether import bring_folds_together
 
 
 def main_function(original_features_array, labels_array, output_directory, num_folds,
@@ -28,6 +29,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
     c_values = np.logspace(cmin,cmax,number_of_cs)
 
+    inner_folds = num_folds
 
     if cstarmin==None:
         cstarmin, cstarmax = cmin,cmax
@@ -42,33 +44,44 @@ def main_function(original_features_array, labels_array, output_directory, num_f
     numbers_of_features_list = []
     list_of_t = []
     all_folds_SVM, all_folds_LUPI = [[]]*num_folds,[[]]*num_folds
-    baseline_score, baseline_score2 =[], []
+    baseline_score, baseline2_score =[], []
 
-    k = -1
-    for train,test in StratifiedKFold(labels_array, num_folds, shuffle=False , random_state=1):
-        k+=1
+
+
+
+    cross_validation_folder = os.path.join(output_directory,'cross-validation')
+    if not os.path.exists(cross_validation_folder):
+        os.mkdir(cross_validation_folder)
+
+
+
+
+    # for train,test in StratifiedKFold(labels_array, num_folds, shuffle=False , random_state=1):
+    for k in range (num_folds):
+
+
         print'k',k
+        train, test = get_indices_for_fold(labels_array, 5, k)
+        top_t_training,top_t_testing, unselected_features_training, unselected_features_testing = \
+            get_train_test_selected_unselected(k, labels_array, original_features_array, c_values, num_folds, take_t, train, test)
+
 
         total_number_of_items = (train.shape[0])
         number_of_training_instances = int(total_number_of_items - (total_number_of_items / num_folds)) - 1
 
-
         all_training, all_testing = original_features_array[train], original_features_array[test]
         training_labels, testing_labels = labels_array[train], labels_array[test]
 
+
         ######################
-        top_t_training,top_t_testing, unselected_features_training, unselected_features_testing = get_training_testing(take_t,all_training,all_testing,training_labels,c_values, num_folds,number_of_training_instances)
+
         t = top_t_training.shape[1]
         list_of_t.append(t)
         number_remaining_feats = original_number_feats - (bottom_n_percent * (original_number_feats) / 100)
         #######################
 
-        # numbers_of_features_list = []
-        fold_results_SVM, fold_results_LUPI   =  [], []
 
         n = -1
-
-
 
         # list_of_values = get_percentage_of_t(t)[0]
         list_of_values = [i for i in range(*tuple)]
@@ -118,7 +131,7 @@ def main_function(original_features_array, labels_array, output_directory, num_f
 
                 param_estimation_file.write("\n\n Baseline scores array")
 
-                rs = StratifiedShuffleSplit(y=training_labels, n_iter=10, test_size=.2, random_state=0)
+                rs = StratifiedShuffleSplit(y=training_labels, n_iter=inner_folds, test_size=.2, random_state=0)
                 best_C_baseline = param_estimation(param_estimation_file, all_training,
                                                                         training_labels, c_values,rs, False, None,
                                                                         peeking,testing_features=all_testing,
@@ -134,14 +147,18 @@ def main_function(original_features_array, labels_array, output_directory, num_f
                 baseline_predictions = clf.predict(all_testing)
                 baseline_score.append(f1_score(testing_labels, baseline_predictions))
 
-                print 'baseline score length', len(baseline_score)
+                with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as cv_baseline_file:
+                    cv_baseline_file.write(str(f1_score(testing_labels, baseline_predictions))+",")
+
+
                 print '\n\n baseline score', baseline_score
+
 
 
                 # ##############################  BASELINE 2 - top t features only
 
                 # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
-                rs = StratifiedShuffleSplit(y=training_labels, n_iter=10, test_size=.2, random_state=0)
+                rs = StratifiedShuffleSplit(y=training_labels, n_iter=inner_folds, test_size=.2, random_state=0)
                 best_C_baseline2 = param_estimation(param_estimation_file, top_t_training,
                                                                         training_labels, c_values,rs, False, None,
                                                                         peeking,testing_features=top_t_testing,
@@ -152,12 +169,17 @@ def main_function(original_features_array, labels_array, output_directory, num_f
                 clf2.fit(top_t_training, training_labels)
 
                 baseline_predictions2 = clf2.predict(top_t_testing)
-                baseline_score2.append(f1_score(testing_labels, baseline_predictions2))
+                baseline2_score.append(f1_score(testing_labels, baseline_predictions2))
+
+                with open(os.path.join(cross_validation_folder,'baseline2.csv'),'a') as cv_baseline_file2:
+                    cv_baseline_file2.write(str(f1_score(testing_labels, baseline_predictions2))+",")
+
+
 
             ############################### SVM - PARAM ESTIMATION AND RUNNING
             total_number_of_items = len(train)
             # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
-            rs = StratifiedShuffleSplit(y=training_labels, n_iter=10, test_size=.2, random_state=0)
+            rs = StratifiedShuffleSplit(y=training_labels, n_iter=inner_folds, test_size=.2, random_state=0)
             param_estimation_file.write(
                 # "\n\n SVM parameter selection for top " + str(n_top_feats) + " features\n" + "C,score")
                 "\n\n SVM scores array for top " + str(n_top_feats) + " features\n")
@@ -168,16 +190,14 @@ def main_function(original_features_array, labels_array, output_directory, num_f
                                         peeking=peeking, testing_features=normal_features_testing,testing_labels=testing_labels)
 
             clf = svm.SVC(C=best_C_SVM, kernel=kernel)
-            print normal_features_training.shape
-            print training_labels.shape
             clf.fit(normal_features_training, training_labels)
-            fold_results_SVM.append(f1_score(testing_labels, clf.predict(normal_features_testing)))
-
+            with open(os.path.join(cross_validation_folder,'svm-{}.csv'.format(k)),'a') as cv_svm_file:
+                cv_svm_file.write(str(f1_score(testing_labels, clf.predict(normal_features_testing)))+",")
 
 
             ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
             # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
-            rs = StratifiedShuffleSplit(y=training_labels, n_iter=num_folds, test_size=.2, random_state=0)
+            rs = StratifiedShuffleSplit(y=training_labels, n_iter=inner_folds, test_size=.2, random_state=0)
             if n_top_feats != number_remaining_feats:
                 assert n_top_feats < number_remaining_feats
                 param_estimation_file.write(
@@ -197,35 +217,45 @@ def main_function(original_features_array, labels_array, output_directory, num_f
                 LUPI_predictions_for_testing = svmplusQP_Predict(normal_features_training, normal_features_testing,
                                                                  alphas, bias, kernel).ravel()
 
-                fold_results_LUPI.append(f1_score(testing_labels, LUPI_predictions_for_testing))
 
+                with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
+                    cv_lupi_file.write(str(f1_score(testing_labels, LUPI_predictions_for_testing))+",")
 
             chosen_params_file.write("\n\n{} top features,fold {},baseline,{}".format(n_top_feats,k,best_C_baseline))
             chosen_params_file.write("\n,,SVM,{}".format(best_C_SVM))
             chosen_params_file.write("\n,,SVM+,{},{}" .format(best_C_SVM_plus,best_C_star_SVM_plus))
 
-
-        all_folds_SVM[k] = fold_results_SVM
-        all_folds_LUPI[k] = fold_results_LUPI
-
-
         print all_folds_SVM
+
+
 
     print 'all folds SVM length', len(all_folds_SVM)
 
-    baseline_results = [baseline_score] * len(list_of_values)
-    baseline_results2 = [baseline_score2] * len(list_of_values)
 
-    keyword = "{} ({}x{}) t values:{}\n peeking={}; {} folds; metric: {}; c={{10^{}..10^{}}}; c*={{10^{}..10^{}}} ({} values)".format(dataset,
-                   total_num_items, original_number_feats, list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs)
+
 
     if take_t == True:
         x_axis_list = list_of_percentages
     else:
         x_axis_list = numbers_of_features_list
 
-    get_figures(x_axis_list, all_folds_SVM, all_folds_LUPI, baseline_results, baseline_results2, num_folds, output_directory, keyword)
-#todo change list of percentages to number of features list
+
+
+####################
+
+    all_folds_SVM2, all_folds_LUPI2, baseline_score, baseline2_score = bring_folds_together(num_folds,cross_validation_folder)
+
+    baseline_results = [baseline_score] * len(list_of_values)
+    baseline2_results = [baseline2_score] * len(list_of_values)
+
+    keyword2 = "{} ({}x{}) t values:{}\n peeking={}; {} folds; metric: {}; c={{10^{}..10^{}}}; c*={{10^{}..10^{}}} ({} values)".format(dataset,
+                   total_num_items, original_number_feats, list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs)
+
+    output_directory2 = cross_validation_folder
+    get_figures(x_axis_list, all_folds_SVM2, all_folds_LUPI2, baseline_results, baseline2_results, num_folds, output_directory2, keyword2)
+
+############
+
 
 def cut_off_arcene(sorted_features,logger):
     sorted_features = sorted_features[:, :9920]
@@ -295,3 +325,17 @@ def get_training_testing(take_t,all_training,all_testing,training_labels,c_value
 
 
 
+def get_indices_for_fold(labels_array, num_folds, fold_num):
+    for index, (train,test) in enumerate(StratifiedKFold(labels_array, num_folds, shuffle=False , random_state=1)):
+        if index==fold_num:
+            return train,test
+
+
+def get_train_test_selected_unselected(k, labels_array, original_features_array, c_values, num_folds, take_t, train, test):
+
+    number_of_training_instances = int(len(train) - (len(train) / num_folds)) - 1
+    print 'number_of_training_instances', number_of_training_instances
+    print train,test
+    all_training, all_testing = original_features_array[train], original_features_array[test]
+    training_labels, testing_labels = labels_array[train], labels_array[test]
+    return get_training_testing(take_t,all_training,all_testing,training_labels,c_values, num_folds,number_of_training_instances)
