@@ -14,7 +14,6 @@ from SVMplus import svmplusQP, svmplusQP_Predict
 #PATH = '/Volumes/LocalDataHD/jt306/PycharmProjects/FeatureSelectionPython278/FromViktoriia'
 PATH=''
 def main():
-
     k = eval(sys.argv[1])
     class_id = sys.argv[2]		#class_id depending on the dataset AwA:'0','1',...,'9'; arcene:'01'
     N = eval(sys.argv[3])		#N depending on the dataset
