@@ -17,9 +17,6 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
                      privileged_training_data=None, peeking=False, testing_features=None, testing_labels=None,
                      multiplier=1, logger=None):
     training_labels=training_labels.ravel()
-    # logging.info( "training_features[0]:")
-    # logging.info( training_features[0:5, :6])
-    # gamma_values = get_gamma_from_c(c_values, training_features)
 
     logger.info('Selecting hyperparameter C from values: %r', c_values)
     # logger.info('Selecting hyperparameter gamma from values: %r', gamma_values)

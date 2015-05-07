@@ -183,9 +183,14 @@ if __name__ == '__main__':
     if not os.path.exists(output_directory):
         os.mkdir(output_directory)
 
-    main_function(features_array, labels_array, output_directory, args.num_folds, args.cmin, args.cmax,
-                  args.numberofcs,
-                  peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, prop_priv=args.prop_priv,
-                  bottom_n_percent=args.bottom_n_percent, logger=logger,
-                    cstarmin=args.cstarmin, cstarmax=args.cstarmax,tuple = tuple, kernel=args.kernel, take_t=args.taket)
 
+
+    main_function(output_directory, args.num_folds, args.cmin, args.cmax, args.numberofcs,
+                  peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric,
+                  bottom_n_percent=args.bottom_n_percent, logger=logger, cstarmin=args.cstarmin, cstarmax=args.cstarmax,
+                  kernel=args.kernel, take_t=args.taket)
+
+    # main_function(args.input, features_array, labels_array, output_directory, args.num_folds, args.cmin, args.cmax, args.numberofcs,
+    #               peeking=args.peeking, dataset=args.input, rank_metric=args.rank_metric, prop_priv=args.prop_priv,
+    #               bottom_n_percent=args.bottom_n_percent, logger=logger, cstarmin=args.cstarmin, cstarmax=args.cstarmax,
+    #               tuple = tuple, kernel=args.kernel, take_t=args.taket)
