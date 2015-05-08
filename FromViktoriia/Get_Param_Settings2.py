@@ -32,8 +32,8 @@ test_N=20
 method='privfeat_rfe_top'
 dataset='AwA'
 
-for k in range(10):
-    for class_id in range(10):
-        for topK in [0.05, 0.10, 0.25, 0.50, 0.75]:
+for k in range(2):
+    for class_id in range(2):
+        for topK in [0.05]:#, 0.10, 0.25, 0.50, 0.75]:
             txt = "{} {} {} {} {} {} {}".format(k, class_id, N, test_N, method, topK, dataset)
             print txt
