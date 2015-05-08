@@ -10,8 +10,12 @@ from getmethod import do_CV_svm_plus_5x5fold, do_CV_svm_5x5fold
 from getmethod import do_CV_svmrfe_5fold, do_CV_svml1_5fold, do_CV_logreg_5fold
 from SVMplus import svmplusQP, svmplusQP_Predict
 
+from Get_Full_Path import get_full_path
+from Get_Full_Path import get_full_path
+
 #PATH = "/home/n/nq/nq28/PrivFeatures/"
-#PATH = '/Volumes/LocalDataHD/jt306/PycharmProjects/FeatureSelectionPython278/FromViktoriia'
+# PATH = '/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/FromViktoriia'
+
 PATH=''
 def main():
     k = eval(sys.argv[1])
