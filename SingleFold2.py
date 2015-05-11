@@ -19,9 +19,10 @@ from Get_Awa_Data import get_awa_data
 
 
 
-def single_fold(k, num_folds, take_t, bottom_n_percent,
-         rank_metric, dataset, peeking, kernel,
+def single_fold(k, num_folds,dataset, peeking, kernel,
          cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
+
+        rank_metric= 'r2'
 
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
         print c_values
@@ -110,22 +111,22 @@ def single_fold(k, num_folds, take_t, bottom_n_percent,
                 with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as cv_baseline_file:
                     cv_baseline_file.write(str(accuracy_score(testing_labels, baseline_predictions))+",")
 
-
-                # ##############################  BASELINE 2 - top t features only
-
-                best_C_baseline2 = param_estimation(param_estimation_file, all_training,
-                                                                        training_labels, c_values,inner_folds, False, None,
-                                                                        peeking,testing_features=all_testing,
-                                                                        testing_labels=testing_labels)
-
-                print 'best c baseline2',best_C_baseline2
-                clf2 = svm.SVC(C=best_C_baseline2, kernel=kernel)
-                clf2.fit(all_training, training_labels)
-
-                baseline_predictions2 = clf2.predict(all_testing)
-
-                with open(os.path.join(cross_validation_folder,'baseline2.csv'),'a') as cv_baseline_file2:
-                    cv_baseline_file2.write(str(accuracy_score(testing_labels, baseline_predictions2))+",")
+                #
+                # # ##############################  BASELINE 2 - top t features only
+                #
+                # best_C_baseline2 = param_estimation(param_estimation_file, all_training,
+                #                                                         training_labels, c_values,inner_folds, False, None,
+                #                                                         peeking,testing_features=all_testing,
+                #                                                         testing_labels=testing_labels)
+                #
+                # print 'best c baseline2',best_C_baseline2
+                # clf2 = svm.SVC(C=best_C_baseline2, kernel=kernel)
+                # clf2.fit(all_training, training_labels)
+                #
+                # baseline_predictions2 = clf2.predict(all_testing)
+                #
+                # with open(os.path.join(cross_validation_folder,'baseline2.csv'),'a') as cv_baseline_file2:
+                #     cv_baseline_file2.write(str(accuracy_score(testing_labels, baseline_predictions2))+",")
 
 
 

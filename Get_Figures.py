@@ -31,7 +31,7 @@ def get_axis_scales(keyword):
     else:
         return (0,2000,0,1)
 
-def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baseline_results, baseline_results2, num_folds, output_directory, keyword):
+def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baseline_results, num_folds, output_directory, keyword):
 
     results = get_mean_from(all_folds_SVM)
     errors = get_error_from(all_folds_SVM)
@@ -47,8 +47,8 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
     print 'SVM results', len(results)
     print 'LUPI results',len(LUPI_results)
     print 'baseline 1 results',len(baseline_results)
-    print 'baseline 2 results',len(baseline_results2)
-    print 'errors',len(errors)
+    # print 'baseline 2 results',len(baseline_results2)
+    print 'errors',len(errors)w
 
     ax1.errorbar(numbers_of_features_list, results, #np.mean(results, axis=0),#todo changed from axis=1
                  # yerr=(np.std(results, axis=0) / np.sqrt(num_folds)),           #
@@ -62,9 +62,9 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
 
     ax1.plot(numbers_of_features_list,np.mean(baseline_results, axis=1), linestyle=':', c='black',
              label='baseline SVM: all features')
-    #
-    ax1.plot(numbers_of_features_list,np.mean(baseline_results2, axis=1), linestyle='-.', c='green',
-         label='baseline SVM: top t features only')
+    # #
+    # ax1.plot(numbers_of_features_list,np.mean(baseline_results2, axis=1), linestyle='-.', c='green',
+    #      label='baseline SVM: top t features only')
 
     # if 'True' in keyword:
     #     xmin, xmax,  ymin, ymax = get_axis_scales(keyword)
