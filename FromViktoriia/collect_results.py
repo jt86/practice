@@ -13,7 +13,10 @@ def collect_ACC(method, all_classes, all_data, PATH_methods, PATH_output, PATH_o
         for d_ind, data_id in enumerate(all_data):
                 for c_ind,class_id in enumerate(all_classes):
                         method_output = PATH_methods + dataset + "_%s_%sclass_%ddata_ACC.txt"%(method, class_id, data_id)
-                        method_ACC[d_ind,c_ind] = numpy.loadtxt(method_output)
+
+                        # AwA_privfeat_rfe_top_0.50top_3class_3data_ACC.txt
+                        # AwA_svm_                     0class_1data_ACC.txt'
+                        # method_ACC[d_ind,c_ind] = numpy.loadtxt(method_output)
 
         ACC_mean = numpy.mean(method_ACC, axis=0)
         ACC_mean_std = numpy.r_[[numpy.mean(method_ACC, axis=0)], [numpy.std(method_ACC, axis=0)]]

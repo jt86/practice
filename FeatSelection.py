@@ -43,38 +43,49 @@ def recursive_elimination(feats, labels):
     ranking = np.subtract(rfe.ranking_.reshape(len(feats[0])), 1)
     return ranking
 
+#
+# def recursive_elimination2(feats, labels, num_feats_to_select):
+#     if feats.shape[1] > 100:
+#         step = 0.1
+#     else:
+#         step = 1.
+#
+#     labels = np.array(labels, dtype=float)
+#     feats = np.array(feats, dtype=float)
+#
+#
+#     # return ranking
+#
+#     c_values = [.1, 1, 10]
+#     gamma_values = get_gamma_from_c(c_values, feats)
+#     #params_dict = {'C': c_values, 'gamma': gamma_values}
+#     params_grid = [{'C': 0.1}, {'C': 1.}, {'C': 10.}]
+#
+#     estimator = svm.SVC(kernel="linear")
+#     # selector = RFECV(estimator, step=1, cv=5, n_features_to_select=num_feats_to_select)
+#     selector = RFE(estimator, step=1, n_features_to_select=num_feats_to_select)
+#     clf = grid_search.GridSearchCV(selector, {'estimator_params': params_grid}, cv=5)
+#     clf.fit(feats, labels)
+#     # clf.best_estimator_.estimator_
+#     # clf.best_estimator_.grid_scores_
+#     ranking = clf.best_estimator_.ranking_
+#
+#     logging.info(ranking)
+#     ranking = np.array(ranking)
+#     ranking = np.subtract(ranking, 1)
+#     return ranking
 
 def recursive_elimination2(feats, labels, num_feats_to_select):
-    if feats.shape[1] > 100:
-        step = 0.1
-    else:
-        step = 1.
-
-    labels = np.array(labels, dtype=float)
-    feats = np.array(feats, dtype=float)
-
-
-    # return ranking
-
-    c_values = [.1, 1, 10]
-    gamma_values = get_gamma_from_c(c_values, feats)
-    #params_dict = {'C': c_values, 'gamma': gamma_values}
-    params_grid = [{'C': 0.1}, {'C': 1.}, {'C': 10.}]
-
-    estimator = svm.SVC(kernel="linear")
-    # selector = RFECV(estimator, step=1, cv=5, n_features_to_select=num_feats_to_select)
-    selector = RFE(estimator, step=1, n_features_to_select=num_feats_to_select)
-    clf = grid_search.GridSearchCV(selector, {'estimator_params': params_grid}, cv=5)
-    clf.fit(feats, labels)
-    # clf.best_estimator_.estimator_
-    # clf.best_estimator_.grid_scores_
-    ranking = clf.best_estimator_.ranking_
-
-    logging.info(ranking)
-    ranking = np.array(ranking)
-    ranking = np.subtract(ranking, 1)
-    return ranking
-
+    # if feats.shape[1] > 100:
+    #     step = 0.1
+    # else:
+    #     step = 1.
+    step = 1
+    estimator = svm.SVC(kernel="linear", C=10)
+    selector = RFE(estimator, step=step, n_features_to_select=num_feats_to_select)
+    selector = selector.fit(feats, labels)
+    return selector.support_
+    # return selector.ranking_
 
 # feats, labels = get_heart_data()
 # # logging.info( recursive_elimination(feats,labels))

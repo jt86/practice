@@ -6,7 +6,7 @@ from sklearn import svm
 from sklearn import grid_search
 import logging
 from Get_Full_Path import get_full_path
-
+from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
 
 def get_gamma_from_c(c_values, features):
     # print 'getgamma c_values', c_values
@@ -15,7 +15,7 @@ def get_gamma_from_c(c_values, features):
     return [value / median_euclidean_distance for value in c_values]
 
 
-def param_estimation(param_estimation_file, training_features, training_labels, c_values, rs, privileged,
+def param_estimation(param_estimation_file, training_features, training_labels, c_values, inner_folds, privileged,
                      privileged_training_data=None, peeking=False, testing_features=None, testing_labels=None,
                      cstar_values=None):
     training_labels=training_labels.ravel()
@@ -46,7 +46,8 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
 
 
     else:
-
+        # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
+        rs = StratifiedShuffleSplit(y=training_labels, n_iter=inner_folds, test_size=.2, random_state=0)
         print 'scores array \n', scores_array
 
         for train_indices, test_indices in rs:

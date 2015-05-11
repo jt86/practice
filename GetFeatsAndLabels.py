@@ -83,5 +83,6 @@ def get_feats_and_labels(input):
     elif input == 'dexter':
         features_array, labels_array = get_dexter_data()
         tuple = [1950,20000,2000]
-
+    else:
+        features_array, labels_array,tuple = None,None,None
     return features_array, labels_array, tuple

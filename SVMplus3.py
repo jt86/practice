@@ -36,6 +36,7 @@ def svmplusQP(X,Y,Xstar,C,Cstar, gamma=None, gammastar=None):
         kernel_Kstar = CGaussKernel(omega_Kstar) # CLinearKernel()
 
     else:
+        print 'linear kernel for svm plus!'
         kernel_K = CLinearKernel()
         kernel_Kstar = CLinearKernel()
 

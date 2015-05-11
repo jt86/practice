@@ -43,12 +43,12 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
     fig = plt.figure()
     ax1 = fig.add_subplot(111, title=" Comparison of SVM+ and SVM, for "+keyword)
 
-    print len(numbers_of_features_list)
-    print len(results)
-    print len(LUPI_results)
-    print len(baseline_results)
-    print len(baseline_results2)
-    print len(errors)
+    print 'num feats list',len(numbers_of_features_list)
+    print 'SVM results', len(results)
+    print 'LUPI results',len(LUPI_results)
+    print 'baseline 1 results',len(baseline_results)
+    print 'baseline 2 results',len(baseline_results2)
+    print 'errors',len(errors)
 
     ax1.errorbar(numbers_of_features_list, results, #np.mean(results, axis=0),#todo changed from axis=1
                  # yerr=(np.std(results, axis=0) / np.sqrt(num_folds)),           #
@@ -85,7 +85,7 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
                fancybox=True, shadow=True, ncol=1, prop={'size': 10})
 
     plt.xlabel('Top (% of t) features used as normal information (all others used as privileged)')
-    plt.ylabel('F-score')
+    plt.ylabel('Accuracy score')
 
     plt.savefig(os.path.join(output_directory, 'plot.png'))
 

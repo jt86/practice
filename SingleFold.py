@@ -13,27 +13,26 @@ from FeatSelection import get_ranked_indices, recursive_elimination2
 from GetFeatsAndLabels import get_feats_and_labels
 import argparse
 from Get_Full_Path import get_full_path
-
+from Get_Awa_Data import get_awa_data
 
 
 
 
 
 def single_fold(k, num_folds, take_t, bottom_n_percent,
-         rank_metric, dataset, peeking, kernel,directory_name,
+         rank_metric, dataset, peeking, kernel,
          cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 
+        c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
 
-        all_results_directory = get_full_path('Desktop/Privileged_Data/test-parallel')
+        all_results_directory = get_full_path('Desktop/Privileged_Data/FixedCandCStar/{}'.format(dataset))
         if not os.path.exists(all_results_directory):
             os.mkdir(all_results_directory)
-        output_directory = (os.path.join(all_results_directory, directory_name))
+        output_directory = all_results_directory
 
         if not os.path.exists(output_directory):
             os.mkdir(output_directory)
 
-
-        c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
         original_features_array, labels_array, tuple = get_feats_and_labels(dataset)
         param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
         chosen_params_file = open(os.path.join(output_directory, 'chosen_parameters.csv'), "a")
@@ -42,84 +41,113 @@ def single_fold(k, num_folds, take_t, bottom_n_percent,
         if not os.path.exists(cross_validation_folder):
             os.mkdir(cross_validation_folder)
 
-
-
         list_of_t = []
-
-        if k==0:
-            with open(os.path.join(cross_validation_folder,'keyword.txt'),'a') as keyword_file:
-                keyword_file.write("{} ({}x{}) t values:{}\n peeking={}; {} folds; metric: {}; c={{10^{}..10^{}}}; c*={{10^{}..10^{}}} ({} values)".format(dataset,
-                       original_features_array.shape[0], original_features_array.shape[1], list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs))
-
-
-
-        original_number_feats = original_features_array.shape[1]
-        numbers_of_features_list=[]
         inner_folds = num_folds
 
-        print'k',k
-        train, test = get_indices_for_fold(labels_array, 5, k)
-        top_t_training,top_t_testing, unselected_features_training, unselected_features_testing = \
-            get_train_test_selected_unselected(k, labels_array, original_features_array, c_values, num_folds, take_t, train, test)
+
+        if k==0:
+            # with open(os.path.join(cross_validation_folder,'keyword.txt'),'a') as keyword_file:
+            #     keyword_file.write("{} ({}x{}) t values:{}\n peeking={}; {} folds; metric: {}; c={{10^{}..10^{}}}; c*={{10^{}..10^{}}} ({} values)".format(dataset,
+            #            original_features_array.shape[0], original_features_array.shape[1], list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs))
+
+            with open(os.path.join(cross_validation_folder,'keyword.txt'),'a') as keyword_file:
+                keyword_file.write("{} t values:{}\n peeking={}; {} folds; metric: {}; c={{10^{}..10^{}}}; c*={{10^{}..10^{}}} ({} values)".format(dataset,
+                        list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs))
+
+        if 'awa' in dataset:
+            print 'last symbol', dataset[-1]
+            all_training, all_testing, training_labels, testing_labels = get_awa_data("", dataset[-1])
+            original_number_feats = all_training.shape[1]
+            top_t_training =all_training
+            top_t_testing = all_testing
+            total_number_of_items = top_t_training.shape[0]
+
+        else:
+
+            original_number_feats = original_features_array.shape[1]
 
 
-        total_number_of_items = (train.shape[0])
-        number_of_training_instances = int(total_number_of_items - (total_number_of_items / num_folds)) - 1
 
-        all_training, all_testing = original_features_array[train], original_features_array[test]
-        training_labels, testing_labels = labels_array[train], labels_array[test]
+            print'k',k
+            train, test = get_indices_for_fold(labels_array, num_folds, k)
+            top_t_training,top_t_testing, unselected_features_training, unselected_features_testing = \
+                get_train_test_selected_unselected(k, labels_array, original_features_array, c_values, num_folds, take_t, train, test)
 
 
-        ######################
+            total_number_of_items = (train.shape[0])
+            number_of_training_instances = int(total_number_of_items - (total_number_of_items / num_folds)) - 1
+
+            all_training, all_testing = original_features_array[train], original_features_array[test]
+            training_labels, testing_labels = labels_array[train], labels_array[test]
+
+
+            ######################
 
         t = top_t_training.shape[1]
         list_of_t.append(t)
         number_remaining_feats = original_number_feats - (bottom_n_percent * (original_number_feats) / 100)
-        #######################
+            #######################
+
+            # list_of_values = get_percentage_of_t(t)[0]
+
+        numbers_of_features_list=[]
 
         # list_of_values = get_percentage_of_t(t)[0]
+        # if take_t:
+        #     list_of_values = get_percentage_of_t(t)[0]
+        # else:
+        #     list_of_values = [i for i in range(*tuple)]
+        #
+        #
+        # list_of_percentages = get_percentage_of_t(t)[1]
 
-
-        if take_t:
-            list_of_values = get_percentage_of_t(t)[0]
-        else:
-            list_of_values = [i for i in range(*tuple)]
-
-
-        list_of_percentages = get_percentage_of_t(t)[1]
+        list_of_values = []
+        for percentage in [5,10,25,50,75]:
+            list_of_values.append(t*percentage/100)
 
         for n_top_feats in list_of_values:
 
-            if n_top_feats not in numbers_of_features_list:
-                numbers_of_features_list.append(n_top_feats)
+            # if n_top_feats not in numbers_of_features_list:
+            #     numbers_of_features_list.append(n_top_feats)
 
             param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
 
-             # Get T, Get NORMAL and PRIVILEGED
+            # normal_indices = np.arange(0, n_top_feats)
+            # privileged_indices = [index for index in range(t) if index not in normal_indices]
+            #
 
-            top_t_sorted_training = get_sorted_features(top_t_training, training_labels, rank_metric, n_top_feats, dataset,  number_remaining_feats)
-            top_t_sorted_testing = get_sorted_features(top_t_testing, testing_labels, rank_metric, n_top_feats, dataset,  number_remaining_feats)
+            best_n_mask = recursive_elimination2(all_training, training_labels, n_top_feats)
+            normal_features_training = all_training[:,best_n_mask]
+            normal_features_testing = all_testing[:,best_n_mask]
+            privileged_features_training = all_training[:, np.invert(best_n_mask)]
 
-            normal_indices = np.arange(0, n_top_feats)
-            print 'n top feats',n_top_feats
-            privileged_indices = [index for index in range(t) if index not in normal_indices]
-            print 'normal indices', normal_indices
-            if len(normal_indices) == 0:
-                normal_indices = [0]
-            print len(normal_indices)
-            print normal_indices
-
-            normal_features_training = top_t_sorted_training[:,normal_indices]
-            normal_features_testing = top_t_sorted_testing[:,normal_indices]
-            privileged_features_training = top_t_sorted_training[:, privileged_indices]
-
-            if take_t:
-                privileged_features_training = np.hstack([privileged_features_training,unselected_features_training])                     #todo uncomment this!
-            # privileged_features_training = privileged_features_training[:(privileged_features_training.shape[1]/prop_priv)]
-
-
-
-            number_of_training_instances = int(total_number_of_items - (total_number_of_items / num_folds)) - 1
+            #  # Get T, Get NORMAL and PRIVILEGED
+            # print 'top t training', top_t_training.shape
+            # print 'training labels', training_labels.shape
+            #
+            # top_t_sorted_training = get_sorted_features(top_t_training, training_labels, rank_metric, n_top_feats, dataset,  number_remaining_feats)
+            # top_t_sorted_testing = get_sorted_features(top_t_testing, testing_labels, rank_metric, n_top_feats, dataset,  number_remaining_feats)
+            #
+            # normal_indices = np.arange(0, n_top_feats)
+            # print 'n top feats',n_top_feats
+            # privileged_indices = [index for index in range(t) if index not in normal_indices]
+            # print 'normal indices', normal_indices
+            # if len(normal_indices) == 0:
+            #     normal_indices = [0]
+            # print len(normal_indices)
+            # print normal_indices
+            #
+            # normal_features_training = top_t_sorted_training[:,normal_indices]
+            # normal_features_testing = top_t_sorted_testing[:,normal_indices]
+            # privileged_features_training = top_t_sorted_training[:, privileged_indices]
+            #
+            # if take_t:
+            #     privileged_features_training = np.hstack([privileged_features_training,unselected_features_training])                     #todo uncomment this!
+            #     # privileged_features_training = privileged_features_training[:(privileged_features_training.shape[1]/prop_priv)]
+            #
+            #
+            #
+            # number_of_training_instances = int(total_number_of_items - (total_number_of_items / num_folds)) - 1
             # ##############################  BASELINE - all features
 
 
@@ -169,7 +197,7 @@ def single_fold(k, num_folds, take_t, bottom_n_percent,
 
 
             ############################### SVM - PARAM ESTIMATION AND RUNNING
-            total_number_of_items = len(train)
+            total_number_of_items = top_t_training.shape[0]
             # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
             rs = StratifiedShuffleSplit(y=training_labels, n_iter=inner_folds, test_size=.2, random_state=0)
             param_estimation_file.write(
@@ -196,11 +224,12 @@ def single_fold(k, num_folds, take_t, bottom_n_percent,
                 # "\n\n SVM PLUS parameter selection for top " + str(n_top_feats) + " features\n" + "C,C*,score")
                 "\n\n SVM PLUS scores array for top " + str(n_top_feats) + " features\n")
 
-                best_C_SVM_plus,  best_C_star_SVM_plus   = param_estimation(
-                    param_estimation_file, normal_features_training, training_labels, c_values, rs, privileged=True,
-                    privileged_training_data=privileged_features_training,peeking=peeking,
-                    testing_features=normal_features_testing, testing_labels=testing_labels,
-                    cstar_values=cstar_values)
+                # best_C_SVM_plus,  best_C_star_SVM_plus   = param_estimation(
+                #     param_estimation_file, normal_features_training, training_labels, c_values, rs, privileged=True,
+                #     privileged_training_data=privileged_features_training,peeking=peeking,
+                #     testing_features=normal_features_testing, testing_labels=testing_labels,
+                #     cstar_values=cstar_values)
+                best_C_SVM_plus,  best_C_star_SVM_plus = 1, 100
 
                 alphas, bias = svmplusQP(normal_features_training, training_labels.ravel(), privileged_features_training,
                                          best_C_SVM_plus, best_C_star_SVM_plus)
@@ -312,4 +341,7 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 #     single_fold(first_setting)
 #     print first_setting
 
-single_fold(k=3, num_folds=5, take_t=False, bottom_n_percent=0, rank_metric='r2', dataset='wine', peeking=True, kernel='rbf', directory_name='newfindings', cmin=0.1, cmax=10., number_of_cs=1)
+# single_fold(k=3, num_folds=5, take_t=False, bottom_n_percent=0, rank_metric='r2', dataset='wine', peeking=True, kernel='rbf', cmin=0.1, cmax=10., number_of_cs=1)
+
+
+# single_fold(k=4, num_folds=5, take_t=False, bottom_n_percent=0, rank_metric='r2', dataset='awa1', peeking=True, kernel='linear', cmin=0.1, cmax=10., number_of_cs=3)

@@ -51,6 +51,13 @@ def getdata_AwA_one_vs_rest(PATH_data, class_id, N, test_N):	#N,test_N per class
 
     test_X = test_X/numpy.apply_along_axis(lambda row:numpy.linalg.norm(row,ord=1), 1, test_X).reshape(-1,1)
     test_X_star = test_X_star/numpy.apply_along_axis(lambda row:numpy.linalg.norm(row,ord=1), 1, test_X_star).reshape(-1,1)
+    #
+    # print 'X shape',X.shape
+    # print 'X star shape', X_star.shape
+    # print 'test X shape', test_X.shape
+    # print 'test X star shape', test_X_star.shape
+    # sys.exit(0)
+
 
     data=numpy.c_[X, X_star]
     test_data=numpy.c_[test_X, test_X_star]
