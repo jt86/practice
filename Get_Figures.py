@@ -48,7 +48,7 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
     print 'LUPI results',len(LUPI_results)
     print 'baseline 1 results',len(baseline_results)
     # print 'baseline 2 results',len(baseline_results2)
-    print 'errors',len(errors)w
+    print 'errors',len(errors)
 
     ax1.errorbar(numbers_of_features_list, results, #np.mean(results, axis=0),#todo changed from axis=1
                  # yerr=(np.std(results, axis=0) / np.sqrt(num_folds)),           #
