@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--kernel', type=str)#, choices = ('rbf','linear'))
 
-    parser.add_argument('--fold-num', type=int, required = True)
+    parser.add_argument('--k', type=int, required = True)
 
 
     args = parser.parse_args()
@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     # dataset='awa{}'.format(args.dataset_num)
 
-    single_fold(k=args.fold_num, num_folds=args.num_folds, dataset=args.dataset, peeking=args.peeking,
+    single_fold(k=args.k, num_folds=args.num_folds, dataset=args.dataset, peeking=args.peeking,
                 kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs,
                 cstarmin=args.cstarmin, cstarmax=args.cstarmax)
 
