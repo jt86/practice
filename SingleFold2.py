@@ -28,7 +28,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
         print c_values
 
-        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar4/'),dataset)
+        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar5/'),dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 

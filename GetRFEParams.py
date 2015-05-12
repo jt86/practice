@@ -21,7 +21,7 @@ def get_rfe_params(dataset, top_k_percent, k):
 
     reg_array= [1.0, 10., 100., 1000., 10000]
 
-    output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar4/'),dataset)
+    output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar5/'),dataset)
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -45,7 +45,7 @@ def get_rfe_params(dataset, top_k_percent, k):
     cv_scores = cv_scores/5.
     reg_best = reg_array[numpy.argmax(cv_scores)]
 
-    with open (os.path.join(output_directory,str(top_k_percent)+'.txt'),'a') as best_rfe_param_file:
+    with open (os.path.join(output_directory,'{}-{}.txt'.format(k,top_k_percent)),'a') as best_rfe_param_file:
         best_rfe_param_file.write(str(reg_best))
 
 
