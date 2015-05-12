@@ -7,7 +7,7 @@ from SVMplus3 import svmplusQP, svmplusQP_Predict
 from ParamEstimation2 import param_estimation
 # from MainFunctionParallelised import get_indices_for_fold, get_train_test_selected_unselected, get_percentage_of_t, get_sorted_features
 import sklearn.preprocessing
-from InitialFeatSelection import get_best_feats
+# from InitialFeatSelection import get_best_feats
 import sklearn.preprocessing as preprocessing
 from FeatSelection import get_ranked_indices, recursive_elimination2
 from GetFeatsAndLabels import get_feats_and_labels
@@ -22,23 +22,18 @@ from Get_Awa_Data import get_awa_data
 def single_fold(k, num_folds,dataset, peeking, kernel,
          cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 
+        np.random.seed(k)
         rank_metric= 'r2'
 
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
         print c_values
 
-        all_results_directory = get_full_path('Desktop/Privileged_Data/FixedCandCStar4/')
-        if not os.path.exists(all_results_directory):
-            os.mkdir(all_results_directory)
-
-        output_directory = os.path.join(all_results_directory,dataset)
+        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar4/'),dataset)
         if not os.path.exists(output_directory):
-            os.mkdir(output_directory)
+            os.makedirs(output_directory)
 
-        if not os.path.exists(output_directory):
-            os.mkdir(output_directory)
 
-        original_features_array, labels_array, tuple = get_feats_and_labels(dataset)
+        # original_features_array, labels_array, tuple = get_feats_and_labels(dataset)
         param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
         chosen_params_file = open(os.path.join(output_directory, 'chosen_parameters.csv'), "a")
 
@@ -76,10 +71,12 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
         for n_top_feats in list_of_values:
 
-
-
             param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
             best_n_mask = recursive_elimination2(all_training, training_labels, n_top_feats)
+            with open(os.path.join(cross_validation_folder,'best_feats{}.txt'.format(k)),'a') as best_feats_doc:
+                best_feats_doc.write("\n"+str(best_n_mask))
+
+
             normal_features_training = all_training[:,best_n_mask]
             normal_features_testing = all_testing[:,best_n_mask]
             privileged_features_training = all_training[:, np.invert(best_n_mask)]
@@ -220,20 +217,20 @@ def get_percentage_of_t(t, tuple=(10,101,15)):
     return list_of_values,list_of_percentages
 
 
-def get_training_testing(take_t,all_training,all_testing,training_labels,c_values, num_folds,number_of_training_instances):
-    if take_t == True:
-        print 'taking top t only'
-        rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
-        top_t_indices, remaining_indices = get_best_feats(all_training,training_labels,c_values, num_folds, rs, 'heart')
-        top_t_training, unselected_features_training = all_training[:,top_t_indices], all_training[:,remaining_indices]
-        top_t_testing, unselected_features_testing = all_testing[:,top_t_indices], all_testing[:,remaining_indices]
-
-    else:
-        top_t_training = all_training
-        top_t_testing = all_testing
-        unselected_features_training, unselected_features_testing = None,None
-
-    return top_t_training,top_t_testing, unselected_features_training, unselected_features_testing
+# def get_training_testing(take_t,all_training,all_testing,training_labels,c_values, num_folds,number_of_training_instances):
+#     if take_t == True:
+#         print 'taking top t only'
+#         rs = ShuffleSplit((number_of_training_instances - 1), n_iter=10, test_size=.2, random_state=0)
+#         top_t_indices, remaining_indices = get_best_feats(all_training,training_labels,c_values, num_folds, rs, 'heart')
+#         top_t_training, unselected_features_training = all_training[:,top_t_indices], all_training[:,remaining_indices]
+#         top_t_testing, unselected_features_testing = all_testing[:,top_t_indices], all_testing[:,remaining_indices]
+#
+#     else:
+#         top_t_training = all_training
+#         top_t_testing = all_testing
+#         unselected_features_training, unselected_features_testing = None,None
+#
+#     return top_t_training,top_t_testing, unselected_features_training, unselected_features_testing
 
 
 
@@ -242,15 +239,15 @@ def get_indices_for_fold(labels_array, num_folds, fold_num):
         if index==fold_num:
             return train,test
 
-
-def get_train_test_selected_unselected(k, labels_array, original_features_array, c_values, num_folds, take_t, train, test):
-
-    number_of_training_instances = int(len(train) - (len(train) / num_folds)) - 1
-    print 'number_of_training_instances', number_of_training_instances
-    print train,test
-    all_training, all_testing = original_features_array[train], original_features_array[test]
-    training_labels, testing_labels = labels_array[train], labels_array[test]
-    return get_training_testing(take_t,all_training,all_testing,training_labels,c_values, num_folds,number_of_training_instances)
+#
+# def get_train_test_selected_unselected(k, labels_array, original_features_array, c_values, num_folds, take_t, train, test):
+#
+#     number_of_training_instances = int(len(train) - (len(train) / num_folds)) - 1
+#     print 'number_of_training_instances', number_of_training_instances
+#     print train,test
+#     all_training, all_testing = original_features_array[train], original_features_array[test]
+#     training_labels, testing_labels = labels_array[train], labels_array[test]
+#     return get_training_testing(take_t,all_training,all_testing,training_labels,c_values, num_folds,number_of_training_instances)
 
 def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
     c_values = np.logspace(cmin,cmax,number_of_cs)
