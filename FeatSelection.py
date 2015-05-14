@@ -44,24 +44,24 @@ def recursive_elimination(feats, labels):
     return ranking
 
 
-def recursive_elimination2(feats, labels, num_feats_to_select):
-    print 'beginning rfe....'
-    labels = np.array(labels, dtype=float)
-    feats = np.array(feats, dtype=float)
-
-    c_values = [.1, 1, 10]
-    params_grid = [{'C': 0.1}, {'C': 1.}, {'C': 10.}]
-#     gamma_values = get_gamma_from_c(c_values, feats)
-#     params_dict = {'C': c_values, 'gamma': gamma_values}
+# def recursive_elimination2(feats, labels, num_feats_to_select):
+#     print 'beginning rfe....'
+#     labels = np.array(labels, dtype=float)
+#     feats = np.array(feats, dtype=float)
 #
-#
-    estimator = svm.SVC(kernel="linear")
-    selector = RFECV(estimator, step=1, cv=5, n_features_to_select=num_feats_to_select)
-    # selector = RFE(estimator, step=1, n_features_to_select=num_feats_to_select)
-    # clf = grid_search.GridSearchCV(selector, {'estimator_params': params_grid}, cv=5)
-    selector.fit(feats, labels)
-    print '...finishing rfe'
-    return selector.support_
+#     c_values = [.1, 1, 10]
+#     params_grid = [{'C': 0.1}, {'C': 1.}, {'C': 10.}]
+# #     gamma_values = get_gamma_from_c(c_values, feats)
+# #     params_dict = {'C': c_values, 'gamma': gamma_values}
+# #
+# #
+#     estimator = svm.SVC(kernel="linear")
+#     selector = RFECV(estimator, step=1, cv=5, n_features_to_select=num_feats_to_select)
+#     # selector = RFE(estimator, step=1, n_features_to_select=num_feats_to_select)
+#     # clf = grid_search.GridSearchCV(selector, {'estimator_params': params_grid}, cv=5)
+#     selector.fit(feats, labels)
+#     print '...finishing rfe'
+#     return selector.support_
 #     # clf.best_estimator_.estimator_
 #     # clf.best_estimator_.grid_scores_
 #     ranking = clf.best_estimator_.ranking_
@@ -71,10 +71,10 @@ def recursive_elimination2(feats, labels, num_feats_to_select):
 #     ranking = np.subtract(ranking, 1)
 #     return ranking
 
-def recursive_elimination2(feats, labels, num_feats_to_select):
-    step = 1
-    estimator = svm.SVC(kernel="linear", C=10)
-    selector = RFE(estimator, step=step, n_features_to_select=num_feats_to_select)
+def recursive_elimination2(feats, labels, num_feats_to_select, best_rfe_param):
+
+    estimator = svm.SVC(kernel="linear", C=best_rfe_param)
+    selector = RFE(estimator, step=1, n_features_to_select=num_feats_to_select)
     selector = selector.fit(feats, labels)
     return selector.support_
     # return selector.ranking_

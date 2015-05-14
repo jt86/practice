@@ -14,7 +14,7 @@ from GetFeatsAndLabels import get_feats_and_labels
 import argparse
 from Get_Full_Path import get_full_path
 from Get_Awa_Data import get_awa_data
-
+from CollectBestParams import collect_best_rfe_param
 
 
 
@@ -26,7 +26,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         rank_metric= 'r2'
 
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
-        print c_values
+        print 'cvalues',c_values
 
         output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar5/'),dataset)
         if not os.path.exists(output_directory):
@@ -65,14 +65,20 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
                     #######################
 
 
-        list_of_values = []
-        for percentage in [5,10,25,50,75]:
-            list_of_values.append(total_number_of_feats*percentage/100)
+        list_of_percentages = [5,10,25,50,75]
+        for percentage in list_of_percentages:
 
-        for n_top_feats in list_of_values:
+
+            n_top_feats = (total_number_of_feats*percentage/100)
 
             param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
-            best_n_mask = recursive_elimination2(all_training, training_labels, n_top_feats)
+
+            best_rfe_param = collect_best_rfe_param(k, percentage, output_directory)
+            print 'best rfe param', best_rfe_param
+
+            best_n_mask = recursive_elimination2(all_training, training_labels, n_top_feats, best_rfe_param)
+
+
             with open(os.path.join(cross_validation_folder,'best_feats{}.txt'.format(k)),'a') as best_feats_doc:
                 best_feats_doc.write("\n"+str(best_n_mask))
 
@@ -86,7 +92,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
 
 
-            if n_top_feats == list_of_values[0]:
+            if percentage == list_of_percentages[0]:
 
                 param_estimation_file.write("\n\n Baseline scores array")
 
@@ -265,4 +271,6 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 # single_fold(k=3, num_folds=5, take_t=False, bottom_n_percent=0, rank_metric='r2', dataset='wine', peeking=True, kernel='rbf', cmin=0.1, cmax=10., number_of_cs=1)
 
 
-# single_fold(k=4, num_folds=5, take_t=False, bottom_n_percent=0, rank_metric='r2', dataset='awa1', peeking=True, kernel='linear', cmin=0.1, cmax=10., number_of_cs=3)
+single_fold(k=0, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
+
+
