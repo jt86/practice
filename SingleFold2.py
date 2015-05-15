@@ -1,3 +1,4 @@
+from __future__ import division
 import os, sys
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
@@ -28,9 +29,11 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
         print 'cvalues',c_values
 
-        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar7/'),dataset)
+        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar9/'),dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
+
+        outer_directory = get_full_path('Desktop/Privileged_Data/FixedCandCStar9/')
 
         RFE_param_directory = os.path.join(get_full_path('Desktop/Privileged_Data/BestRFEParam/'),dataset)
         # RFE_param_directory = get_full_path('Desktop/Privileged_Data/BestRFEParam')
@@ -77,11 +80,28 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         for percentage in list_of_percentages:
 
 
-            n_top_feats = (total_number_of_feats*percentage/100)
+            n_top_feats = int(total_number_of_feats*percentage/100)
 
             param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
 
-            best_rfe_param = collect_best_rfe_param(k, percentage, RFE_param_directory)
+            #best_rfe_param = collect_best_rfe_param(k, percentage, RFE_param_directory)
+            ############
+
+
+            dataset='awa1'
+            class_id =dataset[-1]
+            method = 'privfeat_rfe_top'
+            PATH_CV_results = os.path.join(outer_directory,'CV/')
+            topK=percentage/100
+
+            print str((PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k))
+            best_rfe_param=np.loadtxt(PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
+            print 'best rfe param',best_rfe_param
+
+            # sys.exit(0)
+
+
+            ###########
             print 'best rfe param', best_rfe_param
 
             best_n_mask = recursive_elimination2(all_training, training_labels, n_top_feats, best_rfe_param)
@@ -102,13 +122,13 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
 
             if percentage == list_of_percentages[0]:
-
+                best_C_baseline=np.loadtxt(PATH_CV_results + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
                 param_estimation_file.write("\n\n Baseline scores array")
 
-                best_C_baseline = param_estimation(param_estimation_file, all_training,
-                                                                        training_labels, c_values,inner_folds, False, None,
-                                                                        peeking,testing_features=all_testing,
-                                                                        testing_labels=testing_labels)
+                # best_C_baseline = param_estimation(param_estimation_file, all_training,
+                #                                                         training_labels, c_values,inner_folds, False, None,
+                #                                                         peeking,testing_features=all_testing,
+                #                                                         testing_labels=testing_labels)
 
 
                 print 'best c baseline',best_C_baseline,  'kernel', kernel
@@ -282,6 +302,6 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 # single_fold(k=3, num_folds=5, take_t=False, bottom_n_percent=0, rank_metric='r2', dataset='wine', peeking=True, kernel='rbf', cmin=0.1, cmax=10., number_of_cs=1)
 
 
-# single_fold(k=0, num_folds=10, dataset='arcene', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
+# single_fold(k=1, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
 
 
