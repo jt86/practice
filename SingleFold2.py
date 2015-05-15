@@ -41,7 +41,8 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
         cross_validation_folder = os.path.join(output_directory,'cross-validation')
         if not os.path.exists(cross_validation_folder):
-            os.mkdir(cross_validation_folder)
+            os.makedirs(cross_validation_folder,exist_ok=True)
+
 
         list_of_t = []
         inner_folds = num_folds
@@ -162,6 +163,8 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
                 # "\n\n SVM PLUS parameter selection for top " + str(n_top_feats) + " features\n" + "C,C*,score")
                 "\n\n SVM PLUS scores array for top " + str(n_top_feats) + " features\n")
 
+
+
                 best_C_SVM_plus,  best_C_star_SVM_plus = 1, 1000
 
                 alphas, bias = svmplusQP(normal_features_training, training_labels.ravel(), privileged_features_training,
@@ -273,6 +276,6 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 # single_fold(k=3, num_folds=5, take_t=False, bottom_n_percent=0, rank_metric='r2', dataset='wine', peeking=True, kernel='rbf', cmin=0.1, cmax=10., number_of_cs=1)
 
 
-single_fold(k=0, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
+# single_fold(k=0, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
 
 
