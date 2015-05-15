@@ -28,7 +28,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
         print 'cvalues',c_values
 
-        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/arcene1/'),dataset)
+        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar7/'),dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
@@ -171,7 +171,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
 
 
-                best_C_SVM_plus,  best_C_star_SVM_plus = 1000, 1
+                best_C_SVM_plus,  best_C_star_SVM_plus = 100, 1
 
                 alphas, bias = svmplusQP(normal_features_training, training_labels.ravel(), privileged_features_training,
                                          best_C_SVM_plus, best_C_star_SVM_plus)
@@ -282,6 +282,6 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 # single_fold(k=3, num_folds=5, take_t=False, bottom_n_percent=0, rank_metric='r2', dataset='wine', peeking=True, kernel='rbf', cmin=0.1, cmax=10., number_of_cs=1)
 
 
-single_fold(k=0, num_folds=10, dataset='arcene', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
+# single_fold(k=0, num_folds=10, dataset='arcene', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
 
 
