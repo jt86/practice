@@ -19,3 +19,4 @@ def get_awa_data(PATH, class_id):
 # print test_data.shape
 # print train_labels.shape
 # print test_Y.shape
+

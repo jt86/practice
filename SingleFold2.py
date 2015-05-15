@@ -16,7 +16,7 @@ from Get_Full_Path import get_full_path
 from Get_Awa_Data import get_awa_data
 from CollectBestParams import collect_best_rfe_param
 
-
+from FromViktoriia import getdata
 
 
 def single_fold(k, num_folds,dataset, peeking, kernel,
@@ -28,7 +28,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
         print 'cvalues',c_values
 
-        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar8/'),dataset)
+        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/arcene1/'),dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
@@ -56,7 +56,12 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         if 'awa' in dataset:
             print 'last symbol', dataset[-1]
             all_training, all_testing, training_labels, testing_labels = get_awa_data("", dataset[-1])
-
+        if 'arcene' in dataset:
+            all_training, all_testing, training_labels, testing_labels = getdata.getdata_arcene("arcene/data_arcene/", '01', 10, 20)
+            print 'got arcene data'
+            print 'all training', all_training.shape
+            print 'all testing', all_testing.shape
+            sys.exit(0)
 
         else:
             print 'not awa'
@@ -89,6 +94,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             normal_features_training = all_training[:,best_n_mask]
             normal_features_testing = all_testing[:,best_n_mask]
             privileged_features_training = all_training[:, np.invert(best_n_mask)]
+
 
 
             # ##############################  BASELINE - all features
@@ -276,6 +282,6 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 # single_fold(k=3, num_folds=5, take_t=False, bottom_n_percent=0, rank_metric='r2', dataset='wine', peeking=True, kernel='rbf', cmin=0.1, cmax=10., number_of_cs=1)
 
 
-# single_fold(k=0, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
+single_fold(k=0, num_folds=10, dataset='arcene', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
 
 
