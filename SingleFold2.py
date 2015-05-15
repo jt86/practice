@@ -28,7 +28,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
         print 'cvalues',c_values
 
-        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar6/'),dataset)
+        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar7/'),dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
@@ -41,7 +41,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
         cross_validation_folder = os.path.join(output_directory,'cross-validation')
         if not os.path.exists(cross_validation_folder):
-            os.makedirs(cross_validation_folder,exist_ok=True)
+            os.makedirs(cross_validation_folder)#,exist_ok=True)
 
 
         list_of_t = []
@@ -165,7 +165,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
 
 
-                best_C_SVM_plus,  best_C_star_SVM_plus = 1, 1000
+                best_C_SVM_plus,  best_C_star_SVM_plus = 100, 1
 
                 alphas, bias = svmplusQP(normal_features_training, training_labels.ravel(), privileged_features_training,
                                          best_C_SVM_plus, best_C_star_SVM_plus)
