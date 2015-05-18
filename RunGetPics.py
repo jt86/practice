@@ -8,5 +8,5 @@ list_of_values = x_axis_list
 
 
 for dataset_num in range(10):
-    cross_validation_folder = '/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/FixedCandCStar5/awa{}/cross-validation'.format(dataset_num)
+    cross_validation_folder = '/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/FixedCandCStar10/awa{}/cross-validation'.format(dataset_num)
     read_from_disk_and_plot(num_folds, cross_validation_folder, list_of_values, x_axis_list)

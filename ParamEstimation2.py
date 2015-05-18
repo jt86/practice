@@ -1,7 +1,7 @@
 __author__ = 'jt306'
 import numpy as np
 from SVMplus import svmplusQP, svmplusQP_Predict
-from sklearn.metrics import f1_score, pairwise
+from sklearn.metrics import accuracy, pairwise
 from sklearn import svm
 from sklearn import grid_search
 import logging
@@ -29,12 +29,12 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
             scores_array = np.zeros((len(c_values),len(cstar_values)))
         else:
             scores_array = np.zeros(len(c_values))
-    if kernel == 'rbf':
-        if privileged:
-            gammastar_values=  get_gamma_from_c(cstar_values, training_features)
-            scores_array = np.zeros((len(c_values),len(cstar_values),len(gamma_values),len(gammastar_values)))
-        else:
-            scores_array = np.zeros((len(c_values),len(gamma_values)))
+    # if kernel == 'rbf':
+    #     if privileged:
+    #         gammastar_values=  get_gamma_from_c(cstar_values, training_features)
+    #         scores_array = np.zeros((len(c_values),len(cstar_values),len(gamma_values),len(gammastar_values)))
+    #     else:
+    #         scores_array = np.zeros((len(c_values),len(gamma_values)))
 
 
     if peeking == True:
@@ -85,15 +85,6 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
 
 
 
-def output_params_with_scores(dictionary, code_with_score, param_estimation_file):
-    for index in range(len(code_with_score)):
-        settings_with_score = str(dictionary[index]).translate(None, '[]')
-
-        param_estimation_file.write("\n" + settings_with_score + ",")
-        param_estimation_file.write(str(code_with_score[index]))
-        #
-        # param_estimation_file.write('\n')
-        # param_estimation_file.write(','.join(map(str,code_with_score)))
 
 
 
@@ -104,7 +95,7 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
             for c_index, c_value in enumerate(c_values):
                 clf = svm.SVC(C=c_value, kernel='linear')
                 clf.fit(train_data, train_labels)
-                scores_array[c_index]+=f1_score(test_labels, clf.predict(test_data))
+                scores_array[c_index]+=accuracy(test_labels, clf.predict(test_data))
         if privileged == True:
             for c_index, c_value in enumerate(c_values):
                 for cstar_index, cstar_value in enumerate(cstar_values):
@@ -112,7 +103,7 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
                                                  Xstar=priv_train,
                                                  C=c_value, Cstar=cstar_value)
                         predictions_this_fold = svmplusQP_Predict(train_data, test_data, alphas, bias)
-                        scores_array[c_index,cstar_index]+= f1_score(test_labels, predictions_this_fold)
+                        scores_array[c_index,cstar_index]+= accuracy(test_labels, predictions_this_fold)
 
     if kernel == 'rbf':
         if privileged == False:
@@ -120,7 +111,7 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
                 for gamma_index, gamma_value in enumerate(gamma_values):
                     clf = svm.SVC(C=c_value, kernel='rbf', gamma=gamma_value)
                     clf.fit(train_data, train_labels)
-                    scores_array[c_index, gamma_index]+=f1_score(test_labels, clf.predict(test_data))
+                    scores_array[c_index, gamma_index]+=accuracy(test_labels, clf.predict(test_data))
         if privileged == True:
             for c_index, c_value in enumerate(c_values):
                 for cstar_index, cstar_value in enumerate(cstar_values):
@@ -131,36 +122,6 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
                                                      C=c_value, Cstar=cstar_value, gamma=gamma_value, gammastar = gammastar_value)
                             predictions_this_fold = svmplusQP_Predict(train_data, test_data, alphas, bias, kernel)
                             # print 'c index', c_index, 'cstar index', cstar_index, 'gamma index', gamma_index, 'gammastarindex',gammastar_index
-                            scores_array[c_index,cstar_index,gamma_index,gammastar_index]+= f1_score(test_labels, predictions_this_fold)
+                            scores_array[c_index,cstar_index,gamma_index,gammastar_index]+= accuracy(test_labels, predictions_this_fold)
 
     return scores_array
-#
-#
-# def get_scores_for_this_fold(privileged,c_values,dict_of_parameters, train_data, train_labels, test_data, test_labels, priv_train, code_with_score, cstar_values, scores_array):
-#
-#     j = 0
-#
-#
-#     if privileged == False:
-#         for c_index, c_value in enumerate(c_values):
-#             dict_of_parameters[j] = [c_value]
-#             clf = svm.SVC(C=c_value, kernel='linear')
-#             clf.fit(train_data, train_labels)
-#             code_with_score[j] += f1_score(test_labels, clf.predict(test_data))
-#             j += 1
-#             scores_array[c_index]+=f1_score(test_labels, clf.predict(test_data))
-#
-#
-#     if privileged == True:
-#         for c_index, c_value in enumerate(c_values):
-#             for cstar_index, cstar_value in enumerate(cstar_values):
-#                     dict_of_parameters[j] = [c_value, cstar_value]
-#                     alphas, bias = svmplusQP(X=train_data, Y=train_labels,
-#                                              Xstar=priv_train,
-#                                              C=c_value, Cstar=cstar_value)
-#                     predictions_this_fold = svmplusQP_Predict(train_data, test_data, alphas, bias)
-#                     code_with_score[j] += f1_score(test_labels, predictions_this_fold)
-#                     j += 1
-#                     scores_array[c_index,cstar_index]+= f1_score(test_labels, predictions_this_fold)
-#
-#     return scores_array
