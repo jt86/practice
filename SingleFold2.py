@@ -29,7 +29,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
         print 'cvalues',c_values
 
-        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar10/'),dataset)
+        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar11/'),dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
@@ -68,12 +68,6 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
         else:
             print 'not awa'
-
-def get_gamma_from_c(c_values, features):
-    euclidean_distance = pairwise.euclidean_distances(features)
-    median_euclidean_distance = np.median(euclidean_distance ** 2)
-    return [value / median_euclidean_distance for value in c_values]
-
 
             ######################
 
@@ -195,6 +189,6 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 
 
 
-# single_fold(k=1, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
+single_fold(k=1, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
 
 
