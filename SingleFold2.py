@@ -57,14 +57,14 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
                         list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs))
 
         if 'awa' in dataset:
-            print 'last symbol', dataset[-1]
-            all_training, all_testing, training_labels, testing_labels = get_awa_data("", dataset[-1])
-        if 'arcene' in dataset:
-            all_training, all_testing, training_labels, testing_labels = getdata.getdata_arcene("arcene/data_arcene/", '01', 10, 20)
-            print 'got arcene data'
-            print 'all training', all_training.shape
-            print 'all testing', all_testing.shape
-            sys.exit(0)
+
+            class_id =dataset[-1]
+            all_training, all_testing, training_labels, testing_labels = get_awa_data("", class_id)
+
+
+
+
+
 
         else:
             print 'not awa'
@@ -88,39 +88,26 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             ############
 
 
-            dataset='awa1'
-            class_id =dataset[-1]
             method = 'privfeat_rfe_top'
             PATH_CV_results = os.path.join(outer_directory,'CV/')
             topK=percentage/100
 
             print str((PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k))
             best_rfe_param=np.loadtxt(PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
-            print 'best rfe param',best_rfe_param
-
-            # sys.exit(0)
-
-
-            ###########
             print 'best rfe param', best_rfe_param
 
+            ###########
+
+
             best_n_mask = recursive_elimination2(all_training, training_labels, n_top_feats, best_rfe_param)
-
-
             with open(os.path.join(cross_validation_folder,'best_feats{}.txt'.format(k)),'a') as best_feats_doc:
                 best_feats_doc.write("\n"+str(best_n_mask))
-
-
             normal_features_training = all_training[:,best_n_mask]
             normal_features_testing = all_testing[:,best_n_mask]
             privileged_features_training = all_training[:, np.invert(best_n_mask)]
 
 
-
             # ##############################  BASELINE - all features
-
-
-
             if percentage == list_of_percentages[0]:
                 best_C_baseline=np.loadtxt(PATH_CV_results + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
                 param_estimation_file.write("\n\n Baseline scores array")
@@ -302,6 +289,6 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 # single_fold(k=3, num_folds=5, take_t=False, bottom_n_percent=0, rank_metric='r2', dataset='wine', peeking=True, kernel='rbf', cmin=0.1, cmax=10., number_of_cs=1)
 
 
-# single_fold(k=1, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
+single_fold(k=1, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
 
 

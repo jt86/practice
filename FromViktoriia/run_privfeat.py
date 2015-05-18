@@ -41,6 +41,19 @@ def main():
         (data, test_data, Y, test_Y) = getdata_arcene(PATH_data, class_id, N, test_N)
         reg_array= [1.0, 10., 100., 1000., 10000., 100000., 1000000., 10000000.]
 
+    print 'data first item',data[0]
+    print 'len of data first item', len(data[0])
+    print 'number of items in data', len(data)
+
+    print 'test first item',test_data[0]
+    print 'len of test first item', len(test_data[0])
+    print 'number of items in test', len(test_data)
+
+    print 'labels',Y
+    print 'number of labels', len(Y)
+    print 'test labels', test_Y
+    print 'num of test labels',len(test_Y)
+
     top=int(topK*data.shape[1])	#top features to select
 
     if (method == 'privfeat_rfe_top'):
@@ -56,6 +69,8 @@ def main():
         ACC = rfe.score(test_data, test_Y)
         selected = rfe.support_
         notselected = numpy.invert(rfe.support_)
+        numpy.set_printoptions(threshold=numpy.nan)
+        print rfe.support_
 
         filename=PATH_results+dataset+"_"+method
         numpy.savetxt(filename + "_SVMRFE_%.2ftop_"%topK+class_id+"class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]),fmt='%f')
