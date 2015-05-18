@@ -1,7 +1,7 @@
 __author__ = 'jt306'
 import numpy as np
 from SVMplus import svmplusQP, svmplusQP_Predict
-from sklearn.metrics import accuracy, pairwise
+from sklearn.metrics import accuracy_score, pairwise
 from sklearn import svm
 from sklearn import grid_search
 import logging
@@ -95,7 +95,7 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
             for c_index, c_value in enumerate(c_values):
                 clf = svm.SVC(C=c_value, kernel='linear')
                 clf.fit(train_data, train_labels)
-                scores_array[c_index]+=accuracy(test_labels, clf.predict(test_data))
+                scores_array[c_index]+=accuracy_score(test_labels, clf.predict(test_data))
         if privileged == True:
             for c_index, c_value in enumerate(c_values):
                 for cstar_index, cstar_value in enumerate(cstar_values):
@@ -103,7 +103,7 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
                                                  Xstar=priv_train,
                                                  C=c_value, Cstar=cstar_value)
                         predictions_this_fold = svmplusQP_Predict(train_data, test_data, alphas, bias)
-                        scores_array[c_index,cstar_index]+= accuracy(test_labels, predictions_this_fold)
+                        scores_array[c_index,cstar_index]+= accuracy_score(test_labels, predictions_this_fold)
 
     if kernel == 'rbf':
         if privileged == False:
@@ -111,7 +111,7 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
                 for gamma_index, gamma_value in enumerate(gamma_values):
                     clf = svm.SVC(C=c_value, kernel='rbf', gamma=gamma_value)
                     clf.fit(train_data, train_labels)
-                    scores_array[c_index, gamma_index]+=accuracy(test_labels, clf.predict(test_data))
+                    scores_array[c_index, gamma_index]+=accuracy_score(test_labels, clf.predict(test_data))
         if privileged == True:
             for c_index, c_value in enumerate(c_values):
                 for cstar_index, cstar_value in enumerate(cstar_values):
@@ -122,6 +122,6 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
                                                      C=c_value, Cstar=cstar_value, gamma=gamma_value, gammastar = gammastar_value)
                             predictions_this_fold = svmplusQP_Predict(train_data, test_data, alphas, bias, kernel)
                             # print 'c index', c_index, 'cstar index', cstar_index, 'gamma index', gamma_index, 'gammastarindex',gammastar_index
-                            scores_array[c_index,cstar_index,gamma_index,gammastar_index]+= accuracy(test_labels, predictions_this_fold)
+                            scores_array[c_index,cstar_index,gamma_index,gammastar_index]+= accuracy_score(test_labels, predictions_this_fold)
 
     return scores_array

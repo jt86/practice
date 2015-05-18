@@ -2,7 +2,7 @@ from __future__ import division
 import os, sys
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
-from sklearn.metrics import f1_score, pairwise, accuracy_score
+from sklearn.metrics import pairwise, accuracy_score
 from sklearn import svm, linear_model
 from SVMplus3 import svmplusQP, svmplusQP_Predict
 from ParamEstimation2 import param_estimation
@@ -33,7 +33,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        outer_directory = get_full_path('Desktop/Privileged_Data/FixedCandCStar9/')
+        outer_directory = get_full_path('Desktop/Privileged_Data/FixedCandCStar11/')
 
         RFE_param_directory = os.path.join(get_full_path('Desktop/Privileged_Data/BestRFEParam/'),dataset)
         # RFE_param_directory = get_full_path('Desktop/Privileged_Data/BestRFEParam')
@@ -68,6 +68,12 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
         else:
             print 'not awa'
+
+def get_gamma_from_c(c_values, features):
+    euclidean_distance = pairwise.euclidean_distances(features)
+    median_euclidean_distance = np.median(euclidean_distance ** 2)
+    return [value / median_euclidean_distance for value in c_values]
+
 
             ######################
 
@@ -189,6 +195,6 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 
 
 
-single_fold(k=1, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
+# single_fold(k=1, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
 
 

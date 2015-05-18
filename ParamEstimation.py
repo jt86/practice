@@ -1,16 +1,10 @@
 __author__ = 'jt306'
 import numpy as np
 from SVMplus import svmplusQP, svmplusQP_Predict
-from sklearn.metrics import f1_score, pairwise
+from sklearn.metrics import accuracy_score, pairwise
 from sklearn import svm
 from sklearn import grid_search
 import logging
-
-
-def get_gamma_from_c(c_values, features):
-    euclidean_distance = pairwise.euclidean_distances(features)
-    median_euclidean_distance = np.median(euclidean_distance ** 2)
-    return [value / median_euclidean_distance for value in c_values]
 
 
 def param_estimation(param_estimation_file, training_features, training_labels, c_values, rs, privileged,
@@ -57,7 +51,7 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
                     dict_of_parameters[j] = [c_value]#, gamma_value]
                     clf = svm.SVC(C=c_value, kernel='linear')#, gamma=gamma_value)
                     clf.fit(train_this_fold, train_labels_this_fold)
-                    new_score = f1_score(test_labels_this_fold, clf.predict(test_this_fold))
+                    new_score = accuracy(test_labels_this_fold, clf.predict(test_this_fold))
                     # logging.info( "new score:",new_score)
                     code_with_score[j] += new_score
                     j += 1
@@ -78,7 +72,7 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
                                                      #gammastar=gamma_value)
 
                             predictions_this_fold = svmplusQP_Predict(train_this_fold, test_this_fold, alphas, bias)
-                            new_score = f1_score(test_labels_this_fold, predictions_this_fold)
+                            new_score = accuracy(test_labels_this_fold, predictions_this_fold)
                             # logging.info( "new score:",new_score)
                             code_with_score[j] += new_score
 
@@ -108,7 +102,7 @@ def peeking_param_estimation(param_estimation_file, training_features, training_
             clf = svm.SVC(C=c_value, kernel='linear')#, gamma=gamma_value)
             clf.fit(training_features, training_labels)
 
-            new_score = f1_score(testing_labels, clf.predict(testing_features))
+            new_score = accuracy(testing_labels, clf.predict(testing_features))
             # logging.info( "new score:",new_score)
             code_with_score[j] += new_score
             j += 1
@@ -129,7 +123,7 @@ def peeking_param_estimation(param_estimation_file, training_features, training_
                     predictions_this_fold = svmplusQP_Predict(training_features, testing_features, alphas, bias)
 
 
-                    new_score = f1_score(testing_labels, predictions_this_fold)
+                    new_score = accuracy(testing_labels, predictions_this_fold)
                     # logging.info( "new score:",new_score)
                     code_with_score[j] += new_score
 

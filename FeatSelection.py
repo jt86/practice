@@ -21,7 +21,7 @@ from Musk1 import get_musk1_data
 from Ionosphere import get_ionosphere_data
 from HillValley import get_hillvalley_data
 from Wine import get_wine_data
-from ParamEstimation import get_gamma_from_c
+from ParamEstimation2 import get_gamma_from_c
 from sklearn import svm, grid_search
 from sklearn.feature_selection import RFECV
 import logging

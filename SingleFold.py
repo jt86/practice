@@ -1,7 +1,7 @@
 import os, sys
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
-from sklearn.metrics import f1_score, pairwise
+from sklearn.metrics import accuracy, pairwise
 from sklearn import svm, linear_model
 from SVMplus3 import svmplusQP, svmplusQP_Predict
 from ParamEstimation2 import param_estimation
@@ -173,7 +173,7 @@ def single_fold(k, num_folds, take_t, bottom_n_percent,
 
 
                 with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as cv_baseline_file:
-                    cv_baseline_file.write(str(f1_score(testing_labels, baseline_predictions))+",")
+                    cv_baseline_file.write(str(accuracy(testing_labels, baseline_predictions))+",")
 
 
                 # ##############################  BASELINE 2 - top t features only
@@ -192,7 +192,7 @@ def single_fold(k, num_folds, take_t, bottom_n_percent,
                 baseline_predictions2 = clf2.predict(top_t_testing)
 
                 with open(os.path.join(cross_validation_folder,'baseline2.csv'),'a') as cv_baseline_file2:
-                    cv_baseline_file2.write(str(f1_score(testing_labels, baseline_predictions2))+",")
+                    cv_baseline_file2.write(str(accuracy(testing_labels, baseline_predictions2))+",")
 
 
 
@@ -212,7 +212,7 @@ def single_fold(k, num_folds, take_t, bottom_n_percent,
             clf = svm.SVC(C=best_C_SVM, kernel=kernel)
             clf.fit(normal_features_training, training_labels)
             with open(os.path.join(cross_validation_folder,'svm-{}.csv'.format(k)),'a') as cv_svm_file:
-                cv_svm_file.write(str(f1_score(testing_labels, clf.predict(normal_features_testing)))+",")
+                cv_svm_file.write(str(accuracy(testing_labels, clf.predict(normal_features_testing)))+",")
 
 
             ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
@@ -240,7 +240,7 @@ def single_fold(k, num_folds, take_t, bottom_n_percent,
 
 
                 with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
-                    cv_lupi_file.write(str(f1_score(testing_labels, LUPI_predictions_for_testing))+",")
+                    cv_lupi_file.write(str(accuracy(testing_labels, LUPI_predictions_for_testing))+",")
 
             chosen_params_file.write("\n\n{} top features,fold {},baseline,{}".format(n_top_feats,k,best_C_baseline))
             chosen_params_file.write("\n,,SVM,{}".format(best_C_SVM))
