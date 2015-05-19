@@ -140,7 +140,8 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
                 clf.fit(all_training, training_labels)
 
                 baseline_predictions = clf.predict(all_testing)
-
+                with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as baseline_file:
+                    baseline_file.write (testing_labels,accuracy_score(baseline_predictions))
 
 
             ############################### SVM - PARAM ESTIMATION AND RUNNING
