@@ -70,8 +70,8 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
                     #######################
 
 
-        # list_of_percentages = [5,10,25,50,75]
-        list_of_percentages = [75]
+        list_of_percentages = [5,10,25,50,75]
+        # list_of_percentages = [75]
         for percentage in list_of_percentages:
             topK = percentage/100
             top=int(topK*total_number_of_feats)
@@ -193,10 +193,10 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
                 ###
 
                 with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
-                    cv_lupi_file.write(str(accuracy_score(testing_labels, LUPI_predictions_for_testing))+",")
-
-                with open(os.path.join(output_directory, 'scores_each_fold_lupi.csv'), "a")as scores_each_fold_lupi:
-                    scores_each_fold_lupi.write('\nfold num {}, {}%, {}'.format(k, percentage, (accuracy_score(testing_labels, LUPI_predictions_for_testing))))
+                    # cv_lupi_file.write(str(accuracy_score(testing_labels, LUPI_predictions_for_testing))+",")
+                    cv_lupi_file.write(LUPI_ACC)
+                # with open(os.path.join(output_directory, 'scores_each_fold_lupi.csv'), "a")as scores_each_fold_lupi:
+                #     scores_each_fold_lupi.write('\nfold num {}, {}%, {}'.format(k, percentage, (accuracy_score(testing_labels, LUPI_predictions_for_testing))))
 
 
             chosen_params_file.write("\n\n{} top features,fold {},baseline,{}".format(n_top_feats,k,best_C_baseline))
@@ -222,5 +222,5 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
 #
 # for k in range (1,6):
 #     single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
-
-
+#
+#

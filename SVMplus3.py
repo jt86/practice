@@ -120,30 +120,30 @@ def svmplusQP(X,Y,Xstar,C,Cstar, gamma=None, gammastar=None):
 
 def svmplusQP_Predict(X,Xtest,alphas,bias, kernel):
 
-    if kernel=='rbf':
-        # Compute kernel matrices
-        dk = CRBFKernel();
-        dK = dk.Dot(X, Xtest)
-        omega_K = 1.0 / np.median(dK.flatten())
-        kernel_K = CGaussKernel(omega_K) # CLinearKernel()
-    else:
-        kernel_K =  CLinearKernel()
+    # if kernel=='rbf':
+    #     # Compute kernel matrices
+    #     dk = CRBFKernel();
+    #     dK = dk.Dot(X, Xtest)
+    #     omega_K = 1.0 / np.median(dK.flatten())
+    #     kernel_K = CGaussKernel(omega_K) # CLinearKernel()
+    # else:
+    kernel_K =  CLinearKernel()
 
     K = kernel_K.Dot(X,Xtest)
     predicted = np.dot(K.T,alphas)+bias
     return np.sign(predicted)
 
-if __name__ == "__main__":
-    X = random.randn(1000,999)
-    Xtest = random.randn(200,999)
-    Xstar = random.randn(1000,90)
-    Y = np.r_[[1]*500, [-1]*500]
-    C = 0.1
-    Cstar = 0.1
-    duals,bias = svmplusQP(X,Y,Xstar,C,Cstar)
-    predicted = svmplusQP_Predict(X,Xtest,duals,bias)
-
-    print(predicted)
+# if __name__ == "__main__":
+#     X = random.randn(1000,999)
+#     Xtest = random.randn(200,999)
+#     Xstar = random.randn(1000,90)
+#     Y = np.r_[[1]*500, [-1]*500]
+#     C = 0.1
+#     Cstar = 0.1
+#     duals,bias = svmplusQP(X,Y,Xstar,C,Cstar)
+#     predicted = svmplusQP_Predict(X,Xtest,duals,bias)
+#
+#     print(predicted)
 
 #
 #def
