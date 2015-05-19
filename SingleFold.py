@@ -141,7 +141,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
                 baseline_predictions = clf.predict(all_testing)
                 with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as baseline_file:
-                    baseline_file.write (testing_labels,accuracy_score(baseline_predictions))
+                    baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
 
 
             ############################### SVM - PARAM ESTIMATION AND RUNNING
@@ -195,7 +195,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
                 with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
                     # cv_lupi_file.write(str(accuracy_score(testing_labels, LUPI_predictions_for_testing))+",")
-                    cv_lupi_file.write(LUPI_ACC)
+                    cv_lupi_file.write(str(LUPI_ACC))
                 # with open(os.path.join(output_directory, 'scores_each_fold_lupi.csv'), "a")as scores_each_fold_lupi:
                 #     scores_each_fold_lupi.write('\nfold num {}, {}%, {}'.format(k, percentage, (accuracy_score(testing_labels, LUPI_predictions_for_testing))))
 
@@ -221,7 +221,7 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
     return c_values, cstar_values
 
 #
-# for k in range (1,6):
-#     single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+for k in range (1,2):
+    single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
 #
 #
