@@ -93,7 +93,7 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
     if kernel == 'linear':
         if privileged == False:
             for c_index, c_value in enumerate(c_values):
-                clf = svm.SVC(C=c_value, kernel='linear')
+                clf = svm.SVC(C=c_value, kernel='linear',random_state=1)
                 clf.fit(train_data, train_labels)
                 scores_array[c_index]+=accuracy_score(test_labels, clf.predict(test_data))
         if privileged == True:
@@ -109,7 +109,7 @@ def get_scores_for_this_fold(privileged,c_values,train_data, train_labels, test_
         if privileged == False:
             for c_index, c_value in enumerate(c_values):
                 for gamma_index, gamma_value in enumerate(gamma_values):
-                    clf = svm.SVC(C=c_value, kernel='rbf', gamma=gamma_value)
+                    clf = svm.SVC(C=c_value, kernel='rbf', gamma=gamma_value,random_state=1)
                     clf.fit(train_data, train_labels)
                     scores_array[c_index, gamma_index]+=accuracy_score(test_labels, clf.predict(test_data))
         if privileged == True:

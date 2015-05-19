@@ -35,13 +35,13 @@ from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 import numpy as np
 
 
-
-def recursive_elimination(feats, labels):
-    svc = SVC(kernel="linear", C=1)
-    rfe = RFE(estimator=svc, n_features_to_select=1, step=1)
-    rfe.fit(feats, labels)
-    ranking = np.subtract(rfe.ranking_.reshape(len(feats[0])), 1)
-    return ranking
+#
+# def recursive_elimination(feats, labels):
+#     svc = SVC(kernel="linear", C=1)
+#     rfe = RFE(estimator=svc, n_features_to_select=1, step=1)
+#     rfe.fit(feats, labels)
+#     ranking = np.subtract(rfe.ranking_.reshape(len(feats[0])), 1)
+#     return ranking
 
 
 # def recursive_elimination2(feats, labels, num_feats_to_select):
@@ -73,7 +73,7 @@ def recursive_elimination(feats, labels):
 
 def recursive_elimination2(feats, labels, num_feats_to_select, best_rfe_param):
 
-    estimator = svm.SVC(kernel="linear", C=best_rfe_param)
+    estimator = svm.SVC(kernel="linear", C=best_rfe_param, random_state=1)
     selector = RFE(estimator, step=1, n_features_to_select=num_feats_to_select)
     selector = selector.fit(feats, labels)
     return selector.support_
@@ -138,18 +138,18 @@ def get_ranked_indices(feats, labels, metric, num_feats_to_select=None):
 #     logging.info(feats[0, np.argsort(sorted_scores_r)])
 #     logging.info(feats[0, np.argsort(sorted_scores_r2)])
 
-
-def grid_search_svc(X, Y):
-    svr = svm.SVC()
-    c_values = [.1, 1, 10]
-    gamma_values = get_gamma_from_c(c_values, X)
-    params_dict = {'C': c_values, 'gamma': gamma_values}
-    grid_search_clf = grid_search.GridSearchCV(svr, params_dict, n_jobs=4)
-    grid_search_clf.fit(X, Y)
-
-    # logging.info( grid_search_clf.grid_scores_)
-    # logging.info( grid_search_clf.score(X, Y))
-    print('best %r', grid_search_clf.best_params_)
-    return grid_search_clf.best_params_
-
-
+#
+# def grid_search_svc(X, Y):
+#     svr = svm.SVC()
+#     c_values = [.1, 1, 10]
+#     gamma_values = get_gamma_from_c(c_values, X)
+#     params_dict = {'C': c_values, 'gamma': gamma_values}
+#     grid_search_clf = grid_search.GridSearchCV(svr, params_dict, n_jobs=4)
+#     grid_search_clf.fit(X, Y)
+#
+#     # logging.info( grid_search_clf.grid_scores_)
+#     # logging.info( grid_search_clf.score(X, Y))
+#     print('best %r', grid_search_clf.best_params_)
+#     return grid_search_clf.best_params_
+#
+#

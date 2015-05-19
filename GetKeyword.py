@@ -12,7 +12,7 @@ cstarmin,cstarmax=None,None
 number_of_cs=5
 
 
-for awanum in range(10):
+for awanum in range(1):
     dataset='awa{}'.format(awanum)
 
     output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/FixedCandCStar11/'),dataset)

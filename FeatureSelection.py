@@ -16,42 +16,42 @@ from sklearn import svm
 import numpy as np
 from sklearn.metrics import f1_score
 from Get_Full_Path import get_full_path
-
-class GridSeachWithCoef(GridSearchCV):
-    @property
-    def coef_(self):
-        return self.best_estimator_.coef_
-
-
-def get_best_feats(data,labels,c_values,num_folds,keyword):
-
-    print 'beginning rfe....'
-    t0 = time.clock
-    parameters = {'C':c_values}#, 'gamma':get_gamma_from_c(c_values,data)}
-
-    rfecv = RFECV(GridSeachWithCoef(SVC(kernel='linear'), parameters, cv=rs, step=0.1),)
-                  # cv=StratifiedKFold(labels, num_folds, shuffle=False , random_state=1))) #,scoring='f1')# cv=StratifiedKFold(labels, init_step))
-
-    print 'data shape',data.shape
-    print 'labels shape', labels.shape
-    rfecv.fit(data, labels)
-    print "... RFE finished. Time to do initial feature selection:",time.clock()-t0
-    print "Kept {} out of {} features".format((data[:,rfecv.support_]).shape[1], data.shape[1])
-    print "support:",rfecv.support_
-
-
-    return rfecv.support_
-
-
-def recursive_elimination2(feats, labels, num_feats_to_select, best_rfe_param):
-    print 'beginning rfe....'
-    # labels = np.array(labels, dtype=float)
-    # feats = np.array(feats, dtype=float)
-    estimator = svm.SVC(kernel="linear", C=best_rfe_param)
-    selector = RFE(estimator, step=1, n_features_to_select=num_feats_to_select)
-    selector.fit(feats, labels)
-    print '...finishing rfe'
-    return selector.support_
+#
+# class GridSeachWithCoef(GridSearchCV):
+#     @property
+#     def coef_(self):
+#         return self.best_estimator_.coef_
+#
+#
+# def get_best_feats(data,labels,c_values,num_folds,keyword):
+#
+#     print 'beginning rfe....'
+#     t0 = time.clock
+#     parameters = {'C':c_values}#, 'gamma':get_gamma_from_c(c_values,data)}
+#
+#     rfecv = RFECV(GridSeachWithCoef(SVC(kernel='linear'), parameters, cv=rs, step=0.1),)
+#                   # cv=StratifiedKFold(labels, num_folds, shuffle=False , random_state=1))) #,scoring='f1')# cv=StratifiedKFold(labels, init_step))
+#
+#     print 'data shape',data.shape
+#     print 'labels shape', labels.shape
+#     rfecv.fit(data, labels)
+#     print "... RFE finished. Time to do initial feature selection:",time.clock()-t0
+#     print "Kept {} out of {} features".format((data[:,rfecv.support_]).shape[1], data.shape[1])
+#     print "support:",rfecv.support_
+#
+#
+#     return rfecv.support_
+#
+#
+# def recursive_elimination2(feats, labels, num_feats_to_select, best_rfe_param):
+#     print 'beginning rfe....'
+#     # labels = np.array(labels, dtype=float)
+#     # feats = np.array(feats, dtype=float)
+#     estimator = svm.SVC(kernel="linear", C=best_rfe_param)
+#     selector = RFE(estimator, step=1, n_features_to_select=num_feats_to_select)
+#     selector.fit(feats, labels)
+#     print '...finishing rfe'
+#     return selector.support_
 
 
 #

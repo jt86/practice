@@ -16,7 +16,7 @@ import argparse
 from Get_Full_Path import get_full_path
 from Get_Awa_Data import get_awa_data
 from CollectBestParams import collect_best_rfe_param
-
+from sklearn.feature_selection import RFE
 from FromViktoriia import getdata
 
 
@@ -98,8 +98,11 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
             ###########
 
+            estimator = svm.SVC(kernel="linear", C=best_rfe_param, random_state=1)
+            selector = RFE(estimator, step=1, n_features_to_select=n_top_feats)
+            selector = selector.fit(all_training, training_labels)
+            best_n_mask = selector.support_
 
-            best_n_mask = recursive_elimination2(all_training, training_labels, n_top_feats, best_rfe_param)
             with open(os.path.join(cross_validation_folder,'best_feats{}.txt'.format(k)),'a') as best_feats_doc:
                 best_feats_doc.write("\n"+str(best_n_mask))
             normal_features_training = all_training[:,best_n_mask]
@@ -119,7 +122,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
 
                 print 'best c baseline',best_C_baseline,  'kernel', kernel
-                clf = svm.SVC(C=best_C_baseline, kernel=kernel)
+                clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
                 # pdb.set_trace()
                 print all_training.shape, training_labels.shape
                 clf.fit(all_training, training_labels)
@@ -141,7 +144,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
                                           training_labels, c_values, inner_folds, privileged=False, privileged_training_data=None,
                                         peeking=peeking, testing_features=normal_features_testing,testing_labels=testing_labels)
 
-            clf = svm.SVC(C=best_C_SVM, kernel=kernel)
+            clf = svm.SVC(C=best_C_SVM, kernel=kernel,random_state=1)
             clf.fit(normal_features_training, training_labels)
             with open(os.path.join(cross_validation_folder,'svm-{}.csv'.format(k)),'a') as cv_svm_file:
                 cv_svm_file.write(str(accuracy_score(testing_labels, clf.predict(normal_features_testing)))+",")
