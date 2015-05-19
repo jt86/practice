@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys
+import os, sys
 import numpy
 import pdb
 from sklearn import cross_validation, linear_model
@@ -40,27 +40,39 @@ def main():
     if (dataset == 'arcene'):
         (data, test_data, Y, test_Y) = getdata_arcene(PATH_data, class_id, N, test_N)
         reg_array= [1.0, 10., 100., 1000., 10000., 100000., 1000000., 10000000.]
-
-    print 'data first item',data[0]
-    print 'len of data first item', len(data[0])
-    print 'number of items in data', len(data)
-
-    print 'test first item',test_data[0]
-    print 'len of test first item', len(test_data[0])
-    print 'number of items in test', len(test_data)
-
-    print 'labels',Y
-    print 'number of labels', len(Y)
-    print 'test labels', test_Y
-    print 'num of test labels',len(test_Y)
+    #
+    # print 'data first item',data[0]
+    # print 'len of data first item', len(data[0])
+    # print 'number of items in data', len(data)
+    #
+    # print 'test first item',test_data[0]
+    # print 'len of test first item', len(test_data[0])
+    # print 'number of items in test', len(test_data)
+    #
+    # print 'labels',Y
+    # print 'number of labels', len(Y)
+    # print 'test labels', test_Y
+    # print 'num of test labels',len(test_Y)
 
     top=int(topK*data.shape[1])	#top features to select
 
     if (method == 'privfeat_rfe_top'):
 
+        outer_directory = get_full_path('Desktop/Privileged_Data/FixedCandCStar12/')
+        output_directory = os.path.join(get_full_path(outer_directory),'awa'+str(class_id))
+        PATH_CV_results = os.path.join(outer_directory,'CV/')
+        print str((PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k))
+
+
+
         #feature selection with RFE with "top" features to select
-        reg_best = 10.#do_CV_svmrfe_5fold(data, Y, reg_array, dataset, PATH_CV_results, method + "_SVMRFE_%.2ftop"%topK, class_id, k,top)
-        #reg_best=numpy.loadtxt(PATH_CV_results + dataset + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
+        # reg_best = 10.#do_CV_svmrfe_5fold(data, Y, reg_array, dataset, PATH_CV_results, method + "_SVMRFE_%.2ftop"%topK, class_id, k,top)
+        # reg_best=numpy.loadtxt(PATH_CV_results + dataset + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
+
+        best_rfe_param=numpy.loadtxt(PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
+        print 'best rfe param', best_rfe_param
+        reg_best=best_rfe_param
+        print str((PATH_CV_results + dataset + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k))
         print "svm+rfe Regularization:", reg_best
 
         svc = SVC(C=reg_best, kernel="linear", random_state=1)
@@ -69,12 +81,17 @@ def main():
         ACC = rfe.score(test_data, test_Y)
         selected = rfe.support_
         notselected = numpy.invert(rfe.support_)
-        numpy.set_printoptions(threshold=numpy.nan)
-        print rfe.support_
+        # numpy.set_printoptions(threshold=numpy.nan)
+        # print rfe.support_
 
         filename=PATH_results+dataset+"_"+method
         numpy.savetxt(filename + "_SVMRFE_%.2ftop_"%topK+class_id+"class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]),fmt='%f')
         print 'Accuracy at selecting: ', ACC
+
+        with open(os.path.join(output_directory, 'scores_each_fold2.csv'), "a")as scores_each_fold:
+            scores_each_fold.write('\nfold num {}, {}%, {}'.format(k, int(topK*100), ACC))
+
+
         #SVM+ part
         X_selected=data[:,selected].copy();
         test_X_selected=test_data[:,selected].copy()
@@ -85,6 +102,9 @@ def main():
         duals,bias = svmplusQP(X_selected,Y.copy(),X_priv,reg_best,reg_best_star)
         testXranked = svmplusQP_Predict(X_selected,test_X_selected,duals,bias).flatten()
         ACC = numpy.sum(test_Y==numpy.sign(testXranked))/(1.*len(test_Y))
+
+        with open(os.path.join(output_directory, 'scores_each_fold_lupi2.csv'), "a")as scores_each_fold_lupi:
+            scores_each_fold_lupi.write('\nfold num {}, {}%, {}'.format(k, int(topK*100), ACC))
 
         numpy.savetxt(filename + "_%.2ftop_"%topK + class_id + "class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]), fmt='%f')
         print 'Privileged selection: ', ACC
@@ -108,6 +128,7 @@ def main():
         numpy.savetxt(PATH_results+dataset+"_"+method+ "_" +class_id + "class_"+ "%ddata_selectedfeatidx.txt"%k, numpy.asarray(idx), fmt='%d')
         print 'Accuracy at selecting: ', ACC
 
+
         #SVM+ part
         X_selected=data[:,selected].copy();
         test_X_selected=test_data[:,selected].copy()
@@ -120,6 +141,7 @@ def main():
 
         numpy.savetxt(PATH_results + dataset + "_" + method +"_" + class_id + "class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]), fmt='%f')
         print 'Privileged selection: ', ACC
+
 
     if (method == 'privfeat_logreg'):
         ##feature selection with L1 regularized logistic regression

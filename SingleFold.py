@@ -5,20 +5,15 @@ from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, Strati
 from sklearn.metrics import pairwise, accuracy_score
 from sklearn import svm, linear_model
 from SVMplus3 import svmplusQP, svmplusQP_Predict
-from ParamEstimation2 import param_estimation
-# from MainFunctionParallelised import get_indices_for_fold, get_train_test_selected_unselected, get_percentage_of_t, get_sorted_features
-import sklearn.preprocessing
-# from InitialFeatSelection import get_best_feats
-import sklearn.preprocessing as preprocessing
-from FeatSelection import get_ranked_indices, recursive_elimination2
-from GetFeatsAndLabels import get_feats_and_labels
-import argparse
+from ParamEstimation import param_estimation, do_CV_svmrfe_5fold
+
 from Get_Full_Path import get_full_path
 from Get_Awa_Data import get_awa_data
 from CollectBestParams import collect_best_rfe_param
 from sklearn.feature_selection import RFE
 from FromViktoriia import getdata
-
+import numpy
+from sklearn.svm import SVC, LinearSVC
 
 def single_fold(k, num_folds,dataset, peeking, kernel,
          cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
@@ -27,21 +22,23 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         rank_metric= 'r2'
 
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
-        print 'cvalues',c_values
+        # print 'cvalues',c_values
 
-        outer_directory = get_full_path('Desktop/Privileged_Data/FixedCandCStar12/')
+        outer_directory = get_full_path('Desktop/Privileged_Data/FixedCandCStar13/')
         output_directory = os.path.join(get_full_path(outer_directory),dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
 
 
-        RFE_param_directory = os.path.join(get_full_path('Desktop/Privileged_Data/BestRFEParam/'),dataset)
         # RFE_param_directory = get_full_path('Desktop/Privileged_Data/BestRFEParam')
 
         # original_features_array, labels_array, tuple = get_feats_and_labels(dataset)
         param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
         chosen_params_file = open(os.path.join(output_directory, 'chosen_parameters.csv'), "a")
+
+
+
 
         cross_validation_folder = os.path.join(output_directory,'cross-validation')
         if not os.path.exists(cross_validation_folder):
@@ -52,10 +49,6 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         inner_folds = num_folds
 
 
-        if k==0:
-            with open(os.path.join(cross_validation_folder,'keyword.txt'),'a') as keyword_file:
-                keyword_file.write("{} t values:{}\n peeking={}; {} folds; metric: {}; c={{10^{}..10^{}}}; c*={{10^{}..10^{}}} ({} values)".format(dataset,
-                        list_of_t, peeking, num_folds, rank_metric, cmin, cmax, cstarmin, cstarmax, number_of_cs))
 
         if 'awa' in dataset:
 
@@ -77,11 +70,13 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
                     #######################
 
 
-        list_of_percentages = [5,10,25,50,75]
+        # list_of_percentages = [5,10,25,50,75]
+        list_of_percentages = [75]
         for percentage in list_of_percentages:
-
-
-            n_top_feats = int(total_number_of_feats*percentage/100)
+            topK = percentage/100
+            top=int(topK*total_number_of_feats)
+            n_top_feats=top
+            # n_top_feats = int(total_number_of_feats*percentage/100)
 
             param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
 
@@ -99,18 +94,34 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
             ###########
 
+
             estimator = svm.SVC(kernel="linear", C=best_rfe_param, random_state=1)
             selector = RFE(estimator, step=1, n_features_to_select=n_top_feats)
             selector = selector.fit(all_training, training_labels)
             best_n_mask = selector.support_
 
+            svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
+            rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=1)
+            rfe.fit(all_training, training_labels)
+            ACC = rfe.score(all_testing, testing_labels)
+            selected = rfe.support_
+            #
+            # with open(os.path.join(output_directory, 'ACC_each_fold.csv'), "a")as scores_each_fold:
+            #     scores_each_fold.write('\nfold num {}, {}%, {}'.format(k, percentage, ACC))
+
+            best_n_mask = selected
+            # numpy.set_printoptions(threshold=numpy.nan)
+            # print 'mask'
+            # print best_n_mask
+            # sys.exit(0)
             with open(os.path.join(cross_validation_folder,'best_feats{}.txt'.format(k)),'a') as best_feats_doc:
                 best_feats_doc.write("\n"+str(best_n_mask))
             normal_features_training = all_training[:,best_n_mask]
             normal_features_testing = all_testing[:,best_n_mask]
             privileged_features_training = all_training[:, np.invert(best_n_mask)]
 
-
+            with open(os.path.join(cross_validation_folder,'svm-{}.csv'.format(k)),'a') as cv_svm_file:
+                cv_svm_file.write(str(ACC)+",")
             # ##############################  BASELINE - all features
             if percentage == list_of_percentages[0]:
                 best_C_baseline=np.loadtxt(PATH_CV_results + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
@@ -129,33 +140,36 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
                 clf.fit(all_training, training_labels)
 
                 baseline_predictions = clf.predict(all_testing)
-                with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as cv_baseline_file:
-                    cv_baseline_file.write(str(accuracy_score(testing_labels, baseline_predictions))+",")
 
 
 
             ############################### SVM - PARAM ESTIMATION AND RUNNING
-
-            param_estimation_file.write(
-                # "\n\n SVM parameter selection for top " + str(n_top_feats) + " features\n" + "C,score")
-                "\n\n SVM scores array for top " + str(n_top_feats) + " features\n")
-
-
-            best_C_SVM  = param_estimation(param_estimation_file, normal_features_training,
-                                          training_labels, c_values, inner_folds, privileged=False, privileged_training_data=None,
-                                        peeking=peeking, testing_features=normal_features_testing,testing_labels=testing_labels)
-
-            clf = svm.SVC(C=best_C_SVM, kernel=kernel,random_state=1)
-            clf.fit(normal_features_training, training_labels)
-            with open(os.path.join(cross_validation_folder,'svm-{}.csv'.format(k)),'a') as cv_svm_file:
-                cv_svm_file.write(str(accuracy_score(testing_labels, clf.predict(normal_features_testing)))+",")
+            #
+            # param_estimation_file.write(
+            #     # "\n\n SVM parameter selection for top " + str(n_top_feats) + " features\n" + "C,score")
+            #     "\n\n SVM scores array for top " + str(n_top_feats) + " features\n")
+            #
+            # # best_C_SVM  = param_estimation(param_estimation_file, normal_features_training, training_labels, c_values, inner_folds)
+            #
+            # # (Xorig,Yorig, reg_array, top):
+            # best_C_SVM = do_CV_svmrfe_5fold(normal_features_training,training_labels,c_values,n_top_feats)
+            #
+            #
+            # # best_C_SVM  = param_estimation(param_estimation_file, normal_features_training,
+            # #                               training_labels, c_values, inner_folds, privileged=False, privileged_training_data=None,
+            # #                             peeking=peeking, testing_features=normal_features_testing,testing_labels=testing_labels)
+            #
+            # clf = svm.SVC(C=best_C_SVM, kernel=kernel,random_state=1)
+            # clf.fit(normal_features_training, training_labels)
+            # with open(os.path.join(cross_validation_folder,'svm-{}.csv'.format(k)),'a') as cv_svm_file:
+            #     cv_svm_file.write(str(accuracy_score(testing_labels, clf.predict(normal_features_testing)))+",")
 
 
             ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
 
 
             if n_top_feats != total_number_of_feats:
-                assert n_top_feats < total_number_of_feats
+
                 param_estimation_file.write(
                 # "\n\n SVM PLUS parameter selection for top " + str(n_top_feats) + " features\n" + "C,C*,score")
                 "\n\n SVM PLUS scores array for top " + str(n_top_feats) + " features\n")
@@ -166,18 +180,32 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
                 alphas, bias = svmplusQP(normal_features_training, training_labels.ravel(), privileged_features_training,
                                          best_C_SVM_plus, best_C_star_SVM_plus)
-
-
                 LUPI_predictions_for_testing = svmplusQP_Predict(normal_features_training, normal_features_testing,
                                                                  alphas, bias, kernel).ravel()
 
+                ####
+                testXranked = svmplusQP_Predict(normal_features_training,normal_features_testing,alphas,bias,kernel).flatten()
+                LUPI_ACC = numpy.sum(testing_labels==numpy.sign(testXranked))/(1.*len(testing_labels))
+
+                with open(os.path.join(output_directory, 'ACC_each_fold_LUPI.csv'), "a")as scores_each_fold:
+                    scores_each_fold.write('\nfold num {}, {}%, {}'.format(k, percentage, LUPI_ACC))
+
+                ###
 
                 with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
                     cv_lupi_file.write(str(accuracy_score(testing_labels, LUPI_predictions_for_testing))+",")
 
+                with open(os.path.join(output_directory, 'scores_each_fold_lupi.csv'), "a")as scores_each_fold_lupi:
+                    scores_each_fold_lupi.write('\nfold num {}, {}%, {}'.format(k, percentage, (accuracy_score(testing_labels, LUPI_predictions_for_testing))))
+
+
             chosen_params_file.write("\n\n{} top features,fold {},baseline,{}".format(n_top_feats,k,best_C_baseline))
-            chosen_params_file.write("\n,,SVM,{}".format(best_C_SVM))
+            # chosen_params_file.write("\n,,SVM,{}".format(best_C_SVM))
             chosen_params_file.write("\n,,SVM+,{},{}" .format(best_C_SVM_plus,best_C_star_SVM_plus))
+
+
+            print 'svm+ accuracy',(accuracy_score(testing_labels, LUPI_predictions_for_testing))
+
 
 
 
@@ -191,8 +219,8 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
     cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
     return c_values, cstar_values
 
-
-
-# single_fold(k=1, num_folds=10, dataset='awa0', peeking=True, kernel='linear', cmin=0, cmax=5, number_of_cs=6)
+#
+# for k in range (1,6):
+#     single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
 
 
