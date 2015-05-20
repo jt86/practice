@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
 from sklearn.metrics import pairwise, accuracy_score
 from sklearn import svm, linear_model
-from SVMplus3 import svmplusQP, svmplusQP_Predict
+from SVMplus4 import svmplusQP, svmplusQP_Predict
 from ParamEstimation import param_estimation, do_CV_svmrfe_5fold
 
 from Get_Full_Path import get_full_path
@@ -167,42 +167,48 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
 
             ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
+                    #SVM+ part
+            X_selected=all_training[:,selected].copy();
+            test_X_selected=all_testing[:,selected].copy()
+            notselected = numpy.invert(rfe.support_)
+            X_priv=all_training[:,notselected].copy()
+            #(reg_best, reg_best_star) = do_CV_svm_plus_5x5fold(X_selected, Y, X_priv, reg_array, reg_array, dataset, PATH_CV_results, method+"_%.2ftop"%topK, class_id, k)
+            reg_best=100.
+            reg_best_star=1.
+            duals,bias = svmplusQP(X_selected,training_labels.copy(),X_priv,reg_best,reg_best_star)
+            testXranked = svmplusQP_Predict(X_selected,test_X_selected,duals,bias).flatten()
+            LUPI_ACC = numpy.sum(testing_labels==numpy.sign(testXranked))/(1.*len(testing_labels))
 
 
-            if n_top_feats != total_number_of_feats:
+            #
+            # if n_top_feats != total_number_of_feats:
+            #
+            #     best_C_SVM_plus,  best_C_star_SVM_plus = 100, 1
+            #
+            #     alphas, bias = svmplusQP(normal_features_training, training_labels.ravel(), privileged_features_training,
+            #                              best_C_SVM_plus, best_C_star_SVM_plus)
+            #     # LUPI_predictions_for_testing = svmplusQP_Predict(normal_features_training, normal_features_testing,
+            #     #                                                  alphas, bias, kernel).ravel()
+            #
+            #     ####
+            #     testXranked = svmplusQP_Predict(normal_features_training,normal_features_testing,alphas,bias,kernel).flatten()
+            #     LUPI_ACC = numpy.sum(testing_labels==numpy.sign(testXranked))/(1.*len(testing_labels))
+            #     #
+            #     # with open(os.path.join(output_directory, 'ACC_each_fold_LUPI.csv'), "a")as scores_each_fold:
+            #     #     scores_each_fold.write('\nfold num {}, {}%, {}'.format(k, percentage, LUPI_ACC))
+            #
+            #     ###
+            #
+            #     with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
+            #         # cv_lupi_file.write(str(accuracy_score(testing_labels, LUPI_predictions_for_testing))+",")
+            #         cv_lupi_file.write(str(LUPI_ACC)+',')
+            #     # with open(os.path.join(output_directory, 'scores_each_fold_lupi.csv'), "a")as scores_each_fold_lupi:
+            #     #     scores_each_fold_lupi.write('\nfold num {}, {}%, {}'.format(k, percentage, (accuracy_score(testing_labels, LUPI_predictions_for_testing))))
 
-                param_estimation_file.write(
-                # "\n\n SVM PLUS parameter selection for top " + str(n_top_feats) + " features\n" + "C,C*,score")
-                "\n\n SVM PLUS scores array for top " + str(n_top_feats) + " features\n")
-
-
-
-                best_C_SVM_plus,  best_C_star_SVM_plus = 100, 1
-
-                alphas, bias = svmplusQP(normal_features_training, training_labels.ravel(), privileged_features_training,
-                                         best_C_SVM_plus, best_C_star_SVM_plus)
-                # LUPI_predictions_for_testing = svmplusQP_Predict(normal_features_training, normal_features_testing,
-                #                                                  alphas, bias, kernel).ravel()
-
-                ####
-                testXranked = svmplusQP_Predict(normal_features_training,normal_features_testing,alphas,bias,kernel).flatten()
-                LUPI_ACC = numpy.sum(testing_labels==numpy.sign(testXranked))/(1.*len(testing_labels))
-                #
-                # with open(os.path.join(output_directory, 'ACC_each_fold_LUPI.csv'), "a")as scores_each_fold:
-                #     scores_each_fold.write('\nfold num {}, {}%, {}'.format(k, percentage, LUPI_ACC))
-
-                ###
-
-                with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
-                    # cv_lupi_file.write(str(accuracy_score(testing_labels, LUPI_predictions_for_testing))+",")
-                    cv_lupi_file.write(str(LUPI_ACC)+',')
-                # with open(os.path.join(output_directory, 'scores_each_fold_lupi.csv'), "a")as scores_each_fold_lupi:
-                #     scores_each_fold_lupi.write('\nfold num {}, {}%, {}'.format(k, percentage, (accuracy_score(testing_labels, LUPI_predictions_for_testing))))
-
-
-            chosen_params_file.write("\n\n{} top features,fold {},baseline,{}".format(n_top_feats,k,best_C_baseline))
-            # chosen_params_file.write("\n,,SVM,{}".format(best_C_SVM))
-            chosen_params_file.write("\n,,SVM+,{},{}" .format(best_C_SVM_plus,best_C_star_SVM_plus))
+            #
+            # chosen_params_file.write("\n\n{} top features,fold {},baseline,{}".format(n_top_feats,k,best_C_baseline))
+            # # chosen_params_file.write("\n,,SVM,{}".format(best_C_SVM))
+            # chosen_params_file.write("\n,,SVM+,{},{}" .format(best_C_SVM_plus,best_C_star_SVM_plus))
 
 
             print 'svm+ accuracy',(LUPI_ACC)
@@ -221,7 +227,7 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
     return c_values, cstar_values
 
 #
-# for k in range (1,2):
-#     single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+for k in range (1,2):
+    single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
 # #
 # #
