@@ -178,7 +178,8 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             duals,bias = svmplusQP(X_selected,training_labels.copy(),X_priv,reg_best,reg_best_star)
             testXranked = svmplusQP_Predict(X_selected,test_X_selected,duals,bias).flatten()
             LUPI_ACC = numpy.sum(testing_labels==numpy.sign(testXranked))/(1.*len(testing_labels))
-
+            with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
+                cv_lupi_file.write(str(LUPI_ACC)+',')
 
             #
             # if n_top_feats != total_number_of_feats:
@@ -199,9 +200,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             #
             #     ###
             #
-            #     with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
-            #         # cv_lupi_file.write(str(accuracy_score(testing_labels, LUPI_predictions_for_testing))+",")
-            #         cv_lupi_file.write(str(LUPI_ACC)+',')
+
             #     # with open(os.path.join(output_directory, 'scores_each_fold_lupi.csv'), "a")as scores_each_fold_lupi:
             #     #     scores_each_fold_lupi.write('\nfold num {}, {}%, {}'.format(k, percentage, (accuracy_score(testing_labels, LUPI_predictions_for_testing))))
 
