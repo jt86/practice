@@ -17,6 +17,28 @@ from SVMplus import svmplusQP, svmplusQP_Predict
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, LinearSVC
 
+def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_values):
+
+    cv = cross_validation.StratifiedKFold(training_labels, 5)
+    cv_scores = np.zeros(len(Cstar_values))	#join cross validation on X, X*
+
+    for i,(train, test) in enumerate(cv):
+        for Cstar_index, Cstar in enumerate(Cstar_values):
+
+            duals,bias = svmplusQP(training_data[train],training_labels[train].copy(),privileged_data[train],C,Cstar)
+            predictions = svmplusQP_Predict(training_data[train],training_data[test],duals,bias).flatten()
+            ACC = np.sum(training_labels[test]==np.sign(predictions))/(1.*len(training_labels[test]))
+            cv_scores[Cstar_index] += ACC
+        print 'fold',i
+        print cv_scores
+
+    cv_scores = cv_scores/5.
+    index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
+    best_Cstar = Cstar_values[index_of_best]
+    return best_Cstar
+
+
+
 def do_CV_svmrfe_5fold(Xorig,Yorig, reg_array, top):
 
 	X = Xorig.copy(); Y = Yorig.copy()
