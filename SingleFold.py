@@ -225,9 +225,9 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
         cstarmin, cstarmax = cmin,cmax
     cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
     return c_values, cstar_values
-
 #
-for k in range (1,2):
-    single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
 # #
-# #
+# for k in range (1,2):
+#     single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+# # #
+# # #
