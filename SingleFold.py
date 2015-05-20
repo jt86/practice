@@ -181,21 +181,21 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
                 alphas, bias = svmplusQP(normal_features_training, training_labels.ravel(), privileged_features_training,
                                          best_C_SVM_plus, best_C_star_SVM_plus)
-                LUPI_predictions_for_testing = svmplusQP_Predict(normal_features_training, normal_features_testing,
-                                                                 alphas, bias, kernel).ravel()
+                # LUPI_predictions_for_testing = svmplusQP_Predict(normal_features_training, normal_features_testing,
+                #                                                  alphas, bias, kernel).ravel()
 
                 ####
                 testXranked = svmplusQP_Predict(normal_features_training,normal_features_testing,alphas,bias,kernel).flatten()
                 LUPI_ACC = numpy.sum(testing_labels==numpy.sign(testXranked))/(1.*len(testing_labels))
-
-                with open(os.path.join(output_directory, 'ACC_each_fold_LUPI.csv'), "a")as scores_each_fold:
-                    scores_each_fold.write('\nfold num {}, {}%, {}'.format(k, percentage, LUPI_ACC))
+                #
+                # with open(os.path.join(output_directory, 'ACC_each_fold_LUPI.csv'), "a")as scores_each_fold:
+                #     scores_each_fold.write('\nfold num {}, {}%, {}'.format(k, percentage, LUPI_ACC))
 
                 ###
 
                 with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
                     # cv_lupi_file.write(str(accuracy_score(testing_labels, LUPI_predictions_for_testing))+",")
-                    cv_lupi_file.write(str(LUPI_ACC))
+                    cv_lupi_file.write(str(LUPI_ACC)+',')
                 # with open(os.path.join(output_directory, 'scores_each_fold_lupi.csv'), "a")as scores_each_fold_lupi:
                 #     scores_each_fold_lupi.write('\nfold num {}, {}%, {}'.format(k, percentage, (accuracy_score(testing_labels, LUPI_predictions_for_testing))))
 
@@ -205,7 +205,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             chosen_params_file.write("\n,,SVM+,{},{}" .format(best_C_SVM_plus,best_C_star_SVM_plus))
 
 
-            print 'svm+ accuracy',(accuracy_score(testing_labels, LUPI_predictions_for_testing))
+            print 'svm+ accuracy',(LUPI_ACC)
 
 
 
