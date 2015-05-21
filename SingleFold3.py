@@ -25,7 +25,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         # print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
-        output_directory = os.path.join(get_full_path(outer_directory),'FixedCSelectedCStar2',dataset)
+        output_directory = os.path.join(get_full_path(outer_directory),'FixedCSelectedCStar3',dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
         print output_directory
@@ -128,9 +128,10 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
 
             c_svm_plus=best_C_baseline
-            c_star_values = [1., 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001]
+            # c_star_values = [1., 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001]
+            c_star_values = [10000., 1000., 100., 10., 1.]
             c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
-
+            print 'c star', c_star_svm_plus, '\n'
             duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
             lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
             accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
@@ -153,6 +154,6 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
     cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
     return c_values, cstar_values
 
-# for k in range (1,2):
-#     single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
-#
+for k in range (1,2):
+    single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+
