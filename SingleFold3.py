@@ -138,7 +138,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
 
             c_svm_plus=best_C_baseline
-            c_star_values = [0.001, 0.01, 0.1, 1, 10., 100., 1000.]
+            c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]
             c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
 
             duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
