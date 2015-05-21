@@ -24,11 +24,11 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
         # print 'cvalues',c_values
 
-        outer_directory = get_full_path('Desktop/Privileged_Data/FixedCSelectedCStar3/')
-        output_directory = os.path.join(get_full_path(outer_directory),dataset)
+        outer_directory = get_full_path('Desktop/Privileged_Data/')
+        output_directory = os.path.join(get_full_path(outer_directory),'FixedCSelectedCStar2',dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
-
+        print output_directory
 
 
         # RFE_param_directory = get_full_path('Desktop/Privileged_Data/BestRFEParam')
@@ -45,21 +45,9 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             os.makedirs(cross_validation_folder)#,exist_ok=True)
 
 
-        list_of_t = []
-        inner_folds = num_folds
-
-
-
         if 'awa' in dataset:
-
             class_id =dataset[-1]
             all_training, all_testing, training_labels, testing_labels = get_awa_data("", class_id)
-
-
-
-
-
-
         else:
             print 'not awa'
 
@@ -86,6 +74,8 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
             method = 'privfeat_rfe_top'
             PATH_CV_results = os.path.join(outer_directory,'CV/')
+            print PATH_CV_results
+
             topK=percentage/100
 
             print str((PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k))
@@ -162,9 +152,7 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
         cstarmin, cstarmax = cmin,cmax
     cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
     return c_values, cstar_values
-#
-# # #
+
 # for k in range (1,2):
 #     single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
-# # #
-# # #
+#
