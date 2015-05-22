@@ -1,7 +1,7 @@
 __author__ = 'jt306'
 import numpy as np
 from Get_Full_Path import get_full_path
-import sys
+
 
 def get_train_and_test_this_fold(dataset):	#N,test_N per class
     
