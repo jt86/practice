@@ -84,9 +84,9 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
             topK=percentage/100
             print 'getting best param for RFE'
-            # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, top)
+            best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, top)
             # best_rfe_param=np.loadtxt(CV_best_param_folder + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
-            best_rfe_param=10.
+            # best_rfe_param=10.
 
             filename='{}_RFE_top{}_fold{}.txt'.format(dataset,percentage,k)
             with open(os.path.join(CV_best_param_folder,filename),'a') as best_param_file:
