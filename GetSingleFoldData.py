@@ -43,6 +43,19 @@ def get_arcene_data(debug=False):
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
 
-
 # train_data, test_data, train_labels, test_labels = get_train_and_test_this_fold('arcene',14,30)
 # print train_data.shape, test_data.shape, train_labels.shape, test_labels.shape
+
+def get_madelon_data():
+    print( 'getting madelon data')
+    with open(get_full_path("Desktop/Privileged_Data/MADELON/madelon_train.data"),"r+") as file:
+        features_array = np.loadtxt(file, dtype=None)
+        features_array.shape=(2000,500)
+
+    with open(get_full_path("Desktop/Privileged_Data/MADELON/madelon_train.labels"),"r+") as file:
+        labels_array = np.loadtxt(file, dtype=None)
+        labels_array.shape=(2000)
+
+    return features_array, labels_array
+
+

@@ -27,7 +27,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
-        output_directory = os.path.join(get_full_path(outer_directory),'ArceneFixed',dataset)
+        output_directory = os.path.join(get_full_path(outer_directory),'ArceneCV',dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
@@ -79,8 +79,10 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
 
             # method = 'privfeat_rfe_top'
-            CV_best_param_folder = os.path.join(outer_directory,'{}CV/'.format(dataset))
-            print CV_best_param_folder
+            CV_best_param_folder = os.path.join(output_directory,'{}CV/'.format(dataset))
+            if not os.path.exists(CV_best_param_folder):
+                os.makedirs(CV_best_param_folder)
+
 
             topK=percentage/100
             print 'getting best param for RFE'
