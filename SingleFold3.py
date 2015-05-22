@@ -145,8 +145,8 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
     cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
     # c_values=np.array(c_values,dtype=int)
     return c_values, cstar_values
-#
+
 # for k in range (1,2):
 #     single_fold(k=k, dataset='madelon', kernel='linear', cmin=-3, cmax=-1, number_of_cs=3)
-#
+
 # single_fold(k=1,dataset='madelon',kernel='linear',cmin=0,cmax=7, number_of_cs= 8)
