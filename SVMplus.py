@@ -61,9 +61,7 @@ def svmplusQP(X,Y,Xstar,C,Cstar):
 
 
     h = np.zeros((2*n,1))  #matrix(0.0, (2*n,1))
-    print h.shape
-    print n
-    h[n:2*n,0] = np.ravel(np.r_[[C]*n])
+    h[n:2*n,0] = np.ravel(np.r_[[C]*n]) #todo this ravel added
 
     sol = qp(matrix(P), matrix(Q), matrix(-1.0*G), matrix(h), matrix(A), matrix(b))['x']
     sol = np.array(sol)

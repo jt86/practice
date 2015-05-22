@@ -30,6 +30,9 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         output_directory = os.path.join(get_full_path(outer_directory),'ArceneFixed',dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
+
+
+
         print output_directory
 
 
@@ -72,20 +75,24 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             # n_top_feats = int(total_number_of_feats*percentage/100)
 
             param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
-
-            #best_rfe_param = collect_best_rfe_param(k, percentage, RFE_param_directory)
             ############
 
 
             # method = 'privfeat_rfe_top'
-            PATH_CV_results = os.path.join(outer_directory,'CV/')
-            print PATH_CV_results
+            CV_best_param_folder = os.path.join(outer_directory,'CV/')
+            print CV_best_param_folder
 
             topK=percentage/100
             print 'getting best param for RFE'
             # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, top)
+            # best_rfe_param=np.loadtxt(CV_best_param_folder + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
             best_rfe_param=10.
-            # best_rfe_param=np.loadtxt(PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
+
+            filename='{}_RFE_top{}_fold{}.txt'.format(dataset,percentage,k)
+            with open(os.path.join(CV_best_param_folder,filename),'a') as best_param_file:
+                best_param_file.write(str(best_rfe_param))
+
+
             print 'best rfe param', best_rfe_param
 
             ###########
@@ -106,15 +113,19 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             # ##############################  BASELINE - all features
             if percentage == list_of_percentages[0]:
 
-                # best_C_baseline=np.loadtxt(PATH_CV_results + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
+                # best_C_baseline=np.loadtxt(CV_best_param_folder + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
                 # best_C_baseline=10.
                 print 'getting best c for baseline'
                 best_C_baseline = get_best_C(all_training, training_labels, c_values)
-                print 'best c baseline',best_C_baseline,  'kernel', kernel
                 clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
                 # pdb.set_trace()
                 print all_training.shape, training_labels.shape
                 clf.fit(all_training, training_labels)
+
+                filename='{}_baseline_fold{}.txt'.format(dataset,k)
+                with open(os.path.join(CV_best_param_folder,filename),'a') as best_param_file:
+                    best_param_file.write(str(best_C_baseline))
+
 
                 baseline_predictions = clf.predict(all_testing)
                 with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as baseline_file:
@@ -159,6 +170,6 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
     # c_values=np.array(c_values,dtype=int)
     return c_values, cstar_values
 
-for k in range (1,2):
-    single_fold(k=k, num_folds=10, dataset='arcene', peeking=False, kernel='linear', cmin=-3, cmax=-1, number_of_cs=3)
-
+# for k in range (1,2):
+#     single_fold(k=k, num_folds=10, dataset='arcene', peeking=False, kernel='linear', cmin=-3, cmax=-1, number_of_cs=3)
+#

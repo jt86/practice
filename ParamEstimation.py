@@ -13,7 +13,7 @@ import numpy
 import pdb
 from sklearn import cross_validation, linear_model
 from scipy.optimize import *
-from SVMplus import svmplusQP, svmplusQP_Predict
+from SVMplus4 import svmplusQP, svmplusQP_Predict
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, LinearSVC
 import time
@@ -56,7 +56,7 @@ def get_best_C(training_data,training_labels, c_values):
 
     cv_scores = cv_scores/5.
     index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
-    best_C = c_values[index_of_best]
+    best_C = c_values[index_of_best][0]
     print 'time to get best c for baseline', time.clock()-t0
     return best_C
 
