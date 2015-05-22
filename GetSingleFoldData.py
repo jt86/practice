@@ -3,14 +3,17 @@ import numpy as np
 from Get_Full_Path import get_full_path
 import sys
 
-def get_train_and_test_this_fold(dataset,N, test_N):	#N,test_N per class
+def get_train_and_test_this_fold(dataset):	#N,test_N per class
     
     if dataset=='arcene':
         class0_data, class1_data = get_arcene_data()
+        N, test_N =14,30
     if dataset=='madelon':
         class0_data, class1_data = get_madelon_data()
+        N, test_N = 100,200
     if dataset=='gisette':
         class0_data, class1_data = get_gisette_data()
+        N, test_N = 100,200
 
     if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
         print "Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0]

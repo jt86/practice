@@ -7,11 +7,11 @@ if __name__ == '__main__':
 
     parser.add_argument('--dataset', type=str, required=True, help='name of input data')
     # parser.add_argument('--datasetnum', type=int, required=True, help='id number for AwA')
-    parser.add_argument('--num-folds', type=int, required=True,
-                        help='number of folds for cross-validation')
+    # parser.add_argument('--num-folds', type=int, required=True,
+    #                     help='number of folds for cross-validation')
 
-    parser.add_argument('--peeking', dest='peeking', action='store_true',
-                        help='whether or not parameter estimation is performed peeking at the test data each fold')
+    # parser.add_argument('--peeking', dest='peeking', action='store_true',
+    #                     help='whether or not parameter estimation is performed peeking at the test data each fold')
 
     parser.add_argument('--cmin', type=int, required = True, help='power of lowest value for c (bottom end of log range)')
     parser.add_argument('--cmax', type=int, required = True, help='power of highest value for c (top of log range)')
