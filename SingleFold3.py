@@ -5,7 +5,7 @@ from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, Strati
 from sklearn.metrics import pairwise, accuracy_score
 from sklearn import svm, linear_model
 from SVMplus4 import svmplusQP, svmplusQP_Predict
-from ParamEstimation import param_estimation, do_CV_svmrfe_5fold,get_best_Cstar
+from ParamEstimation import param_estimation,get_best_Cstar, get_best_C, get_best_RFE_C
 
 from Get_Full_Path import get_full_path
 from Get_Awa_Data import get_awa_data
@@ -14,6 +14,7 @@ from sklearn.feature_selection import RFE
 from FromViktoriia import getdata
 import numpy
 from sklearn.svm import SVC, LinearSVC
+from GetSingleFoldData import get_train_and_test_this_fold
 
 def single_fold(k, num_folds,dataset, peeking, kernel,
          cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
@@ -22,10 +23,11 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         rank_metric= 'r2'
 
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
-        # print 'cvalues',c_values
+
+        print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
-        output_directory = os.path.join(get_full_path(outer_directory),'FixedCSelectedCStar3',dataset)
+        output_directory = os.path.join(get_full_path(outer_directory),'ArceneFixed',dataset)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
         print output_directory
@@ -48,8 +50,11 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         if 'awa' in dataset:
             class_id =dataset[-1]
             all_training, all_testing, training_labels, testing_labels = get_awa_data("", class_id)
+        elif 'arcene' in dataset:
+            all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,14,30)
         else:
-            print 'not awa'
+            print 'unrecognised dataset'
+            sys.exit(0)
 
             ######################
 
@@ -72,14 +77,15 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             ############
 
 
-            method = 'privfeat_rfe_top'
+            # method = 'privfeat_rfe_top'
             PATH_CV_results = os.path.join(outer_directory,'CV/')
             print PATH_CV_results
 
             topK=percentage/100
-
-            print str((PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k))
-            best_rfe_param=np.loadtxt(PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
+            print 'getting best param for RFE'
+            # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, top)
+            best_rfe_param=10.
+            # best_rfe_param=np.loadtxt(PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
             print 'best rfe param', best_rfe_param
 
             ###########
@@ -99,15 +105,11 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
             # ##############################  BASELINE - all features
             if percentage == list_of_percentages[0]:
-                best_C_baseline=np.loadtxt(PATH_CV_results + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
-                param_estimation_file.write("\n\n Baseline scores array")
 
-                # best_C_baseline = param_estimation(param_estimation_file, all_training,
-                #                                                         training_labels, c_values,inner_folds, False, None,
-                #                                                         peeking,testing_features=all_testing,
-                #                                                         testing_labels=testing_labels)
-
-
+                # best_C_baseline=np.loadtxt(PATH_CV_results + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
+                # best_C_baseline=10.
+                print 'getting best c for baseline'
+                best_C_baseline = get_best_C(all_training, training_labels, c_values)
                 print 'best c baseline',best_C_baseline,  'kernel', kernel
                 clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
                 # pdb.set_trace()
@@ -128,8 +130,10 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
 
             c_svm_plus=best_C_baseline
-            # c_star_values = [1., 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001]
-            c_star_values = [10000., 1000., 100., 10., 1.]
+            c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]
+            print 'getting best c star'
+            # c_star_values = [10000., 1000., 100., 10., 1.]
+            print 'normal feats:',normal_features_training.shape,'train labels',training_labels.shape,'priv feat train', privileged_features_training.shape, c_svm_plus,c_star_values
             c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
             print 'c star', c_star_svm_plus, '\n'
             duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
@@ -152,8 +156,9 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
     if cstarmin==None:
         cstarmin, cstarmax = cmin,cmax
     cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
+    # c_values=np.array(c_values,dtype=int)
     return c_values, cstar_values
 
 for k in range (1,2):
-    single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+    single_fold(k=k, num_folds=10, dataset='arcene', peeking=False, kernel='linear', cmin=-3, cmax=-1, number_of_cs=3)
 

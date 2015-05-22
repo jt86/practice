@@ -16,15 +16,16 @@ from scipy.optimize import *
 from SVMplus import svmplusQP, svmplusQP_Predict
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, LinearSVC
+import time
 
 def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_values):
-
+    t0=time.clock()
     cv = cross_validation.StratifiedKFold(training_labels, 5)
     cv_scores = np.zeros(len(Cstar_values))	#join cross validation on X, X*
 
     for i,(train, test) in enumerate(cv):
         for Cstar_index, Cstar in enumerate(Cstar_values):
-
+            print len(train)
             duals,bias = svmplusQP(training_data[train],training_labels[train].copy(),privileged_data[train],C,Cstar)
             predictions = svmplusQP_Predict(training_data[train],training_data[test],duals,bias).flatten()
             ACC = np.sum(training_labels[test]==np.sign(predictions))/(1.*len(training_labels[test]))
@@ -35,27 +36,52 @@ def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_valu
     cv_scores = cv_scores/5.
     index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
     best_Cstar = Cstar_values[index_of_best]
+    print 'time to get best c star', time.clock()-t0
     return best_Cstar
 
+def get_best_C(training_data,training_labels, c_values):
+    t0=time.clock()
+    cv = cross_validation.StratifiedKFold(training_labels, 5)
+    cv_scores = np.zeros(len(c_values))
+
+    for i,(train, test) in enumerate(cv):
+        for C_index, C in enumerate(c_values):
+
+            svc = SVC(C=C, kernel="linear", random_state=1)
+            svc.fit(training_data[train], training_labels[train])
+            cv_scores[C_index] += svc.score(training_data[test], training_labels[test])
+
+        print 'fold',i
+        print cv_scores
+
+    cv_scores = cv_scores/5.
+    index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
+    best_C = c_values[index_of_best]
+    print 'time to get best c for baseline', time.clock()-t0
+    return best_C
 
 
-def do_CV_svmrfe_5fold(Xorig,Yorig, reg_array, top):
 
-	X = Xorig.copy(); Y = Yorig.copy()
-	cv_scores = numpy.zeros(len(reg_array))
-	cv = cross_validation.StratifiedKFold(Y, 5)
+def get_best_RFE_C(training_data,training_labels, c_values, top):
+    t0=time.clock()
+    cv = cross_validation.StratifiedKFold(training_labels, 5)
+    cv_scores = numpy.zeros(len(c_values))
 
-	for i,(train, test) in enumerate(cv):
-		for j, reg_const in enumerate(reg_array):
+    for i,(train, test) in enumerate(cv):
+        for C_index, C in enumerate(c_values):
 
-			svc = SVC(C=reg_const, kernel="linear", random_state=1)
-			rfe = RFE(estimator=svc, n_features_to_select=top, step=1)
-			rfe.fit(X[train], Y[train])
-			cv_scores[j] = cv_scores[j] + rfe.score(X[test], Y[test])
-	cv_scores = cv_scores/5.
-	reg_best = reg_array[numpy.argmax(cv_scores)]
+            svc = SVC(C=C, kernel="linear", random_state=1)
+            rfe = RFE(estimator=svc, n_features_to_select=top, step=1)
+            rfe.fit(training_data[train], training_labels[train])
+            cv_scores[C_index] += rfe.score(training_data[test], training_labels[test])
+        print 'fold',i
+        print cv_scores
 
-	return reg_best
+    cv_scores = cv_scores/5.
+    index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
+    best_C = c_values[index_of_best]
+    print 'time to get best rfe c', time.clock()-t0
+    return best_C
 
 
 def param_estimation(param_estimation_file, training_features, training_labels, c_values, inner_folds):

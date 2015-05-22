@@ -1,8 +1,6 @@
 __author__ = 'jt306'
 
 from FromViktoriia import getdata
-
-
 import numpy as np
 
 def get_awa_data(PATH, class_id):
