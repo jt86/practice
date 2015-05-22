@@ -14,6 +14,12 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
     if dataset=='gisette':
         class0_data, class1_data = get_gisette_data()
         N, test_N = 100,200
+    if dataset=='dexter':
+        class0_data, class1_data = get_dexter_data()
+        N, test_N = 50,100
+    if dataset=='dorothea':
+        class0_data, class1_data = get_dorothea_data()
+        N, test_N = 25,50
 
     if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
         print "Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0]
@@ -82,3 +88,50 @@ def get_gisette_data():
     return positive_instances, negative_instances
 
 
+def get_dexter_data():
+    __author__ = 'jt306'
+import numpy as np
+from scipy import sparse as sp
+import logging
+from Get_Full_Path import get_full_path
+
+def get_dexter_data():
+    print( "Getting DEXTER data")
+    dok = sp.dok_matrix((300, 20000), dtype=int)
+    fh = open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.data"),"rU")
+    line = fh.next().strip()
+    for row_num, line in enumerate(fh):
+        row = line.split('\t')      #make list of numbers for each instance
+        indices_of_1s = np.array([int(r)-1 for r in row if r.isdigit()])           #make integers and put in array
+        dok[row_num,indices_of_1s] = 1
+    features_array = dok.todense()    #csr format
+
+    with open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.labels"),"r+") as file:
+        labels_array = np.genfromtxt(file, dtype=None)
+        labels_array.shape=(300)
+
+    positive_instances = (features_array[labels_array==1])
+    negative_instances = (features_array[labels_array==-1])
+    return positive_instances, negative_instances
+
+def get_dorothea_data():
+    print( "Getting DOROTHEA data")
+    dok = sp.dok_matrix((800, 100000), dtype=int)
+    fh = open(get_full_path("Desktop/Privileged_Data/DOROTHEA/dorothea_train.data"),"rU")
+    line = fh.next().strip()
+    for row_num, line in enumerate(fh):
+        row = line.split('\t')      #make list of numbers for each instance
+        indices_of_1s = np.array([int(r)-1 for r in row if r.isdigit()])           #make integers and put in array
+        dok[row_num,indices_of_1s] = 1
+    features_array = dok.todense()    #csr format
+
+    with open(get_full_path("Desktop/Privileged_Data/DOROTHEA/dorothea_train.labels"),"r+") as file:
+        labels_array = np.genfromtxt(file, dtype=None)
+        labels_array.shape=(800)
+
+    positive_instances = (features_array[labels_array==1])
+    negative_instances = (features_array[labels_array==-1])
+    return positive_instances, negative_instances
+
+positive_instances, negative_instances = get_madelon_data()
+print positive_instances.shape, negative_instances.shape

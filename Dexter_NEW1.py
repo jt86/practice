@@ -30,4 +30,4 @@ def get_dexter_data():
 
     return features_array, labels_array
 
-# print get_dexter_data()[0].shape, get_dexter_data()[1].shape
+print get_dexter_data()[0].shape, get_dexter_data()[1].shape
