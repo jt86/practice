@@ -79,7 +79,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
 
             # method = 'privfeat_rfe_top'
-            CV_best_param_folder = os.path.join(outer_directory,'CV/')
+            CV_best_param_folder = os.path.join(outer_directory,'{}CV/'.format(dataset))
             print CV_best_param_folder
 
             topK=percentage/100
