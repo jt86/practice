@@ -7,6 +7,10 @@ def get_train_and_test_this_fold(dataset,N, test_N):	#N,test_N per class
     
     if dataset=='arcene':
         class0_data, class1_data = get_arcene_data()
+    if dataset=='madelon':
+        class0_data, class1_data = get_madelon_data()
+    if dataset=='gisette':
+        class0_data, class1_data = get_gisette_data()
 
     if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
         print "Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0]
@@ -30,7 +34,6 @@ def get_train_and_test_this_fold(dataset,N, test_N):	#N,test_N per class
 
 
 def get_arcene_data(debug=False):
-
     print('Reading Arcene data from disk')
     with open(get_full_path("Desktop/Privileged_Data/ARCENE/arcene_train.data"), "r+") as infile:
         features_array = np.loadtxt(infile, dtype=float)
@@ -49,13 +52,30 @@ def get_arcene_data(debug=False):
 def get_madelon_data():
     print( 'getting madelon data')
     with open(get_full_path("Desktop/Privileged_Data/MADELON/madelon_train.data"),"r+") as file:
-        features_array = np.loadtxt(file, dtype=None)
+        features_array = np.loadtxt(file, dtype=float)
         features_array.shape=(2000,500)
 
     with open(get_full_path("Desktop/Privileged_Data/MADELON/madelon_train.labels"),"r+") as file:
-        labels_array = np.loadtxt(file, dtype=None)
+        labels_array = np.loadtxt(file, dtype=float)
         labels_array.shape=(2000)
 
-    return features_array, labels_array
+    positive_instances = (features_array[labels_array==1])
+    negative_instances = (features_array[labels_array==-1])
+    return positive_instances, negative_instances
+
+
+def get_gisette_data():
+    print('Reading Gisette data from disk')
+    with open(get_full_path("Desktop/Privileged_Data/GISETTE/gisette_train.data"), "r+") as file:
+        features_array = np.loadtxt(file, dtype=float)
+        features_array.shape = (6000, 5000)
+
+    with open(get_full_path("Desktop/Privileged_Data/GISETTE/gisette_train.labels"), "r+") as file:
+        labels_array = np.loadtxt(file, dtype=float)
+        labels_array.shape = (6000)
+
+    positive_instances = (features_array[labels_array==1])
+    negative_instances = (features_array[labels_array==-1])
+    return positive_instances, negative_instances
 
 

@@ -27,7 +27,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
-        output_directory = os.path.join(get_full_path(outer_directory),'ArceneCV',dataset)
+        output_directory = os.path.join(get_full_path(outer_directory),'{}CV',format(dataset))
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
