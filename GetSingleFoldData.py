@@ -87,13 +87,13 @@ def get_gisette_data():
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
 
-
-def get_dexter_data():
-    __author__ = 'jt306'
-import numpy as np
-from scipy import sparse as sp
-import logging
-from Get_Full_Path import get_full_path
+#
+# def get_dexter_data():
+#     __author__ = 'jt306'
+# import numpy as np
+# from scipy import sparse as sp
+# import logging
+# from Get_Full_Path import get_full_path
 
 def get_dexter_data():
     print( "Getting DEXTER data")
@@ -132,6 +132,6 @@ def get_dorothea_data():
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
-
-positive_instances, negative_instances = get_madelon_data()
-print positive_instances.shape, negative_instances.shape
+#
+# positive_instances, negative_instances = get_madelon_data()
+# print positive_instances.shape, negative_instances.shape
