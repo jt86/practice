@@ -15,8 +15,6 @@ if __name__ == '__main__':
 
     parser.add_argument('--cmin', type=int, required = True, help='power of lowest value for c (bottom end of log range)')
     parser.add_argument('--cmax', type=int, required = True, help='power of highest value for c (top of log range)')
-    parser.add_argument('--cstarmin',  help = 'power of lowest value for cstar')
-    parser.add_argument('--cstarmax',  help = 'power of highest value for cstar')
     parser.add_argument('--numberofcs', type=int, help = 'the number of values to investigate for c and c*')
 
     parser.add_argument('--kernel', type=str)#, choices = ('rbf','linear'))
@@ -31,5 +29,4 @@ if __name__ == '__main__':
     # dataset='awa{}'.format(args.dataset_num)
 
     single_fold(k=args.k, dataset=args.dataset,
-                kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs,
-                cstarmin=args.cstarmin, cstarmax=args.cstarmax)
+                kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
