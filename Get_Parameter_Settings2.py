@@ -12,6 +12,6 @@ for dataset in ['madelon']:
     for fold_num in range(1,11):
         print '--k {}  --dataset {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, dataset, 'linear', 0, 7,8)
 
-for dataset in ['madelon']:
+for dataset in ['gisette']:
     fold_num = 6
     print '--k {}  --dataset {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, dataset, 'linear', 0, 7,8)
