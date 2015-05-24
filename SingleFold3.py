@@ -16,15 +16,15 @@ import numpy
 from sklearn.svm import SVC, LinearSVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
+def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs):
 
         np.random.seed(k)
 
-        c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
+        c_values = np.logspace(cmin,cmax,number_of_cs)
         print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
-        output_directory = os.path.join(get_full_path(outer_directory),'{}CV7'.format(dataset))
+        output_directory = os.path.join(get_full_path(outer_directory),'{}CV8'.format(dataset))
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
@@ -128,7 +128,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs, cstarmin=None, cstar
             # c_star_values = [0.00000001,0.0000001,0.000001,0.00001,0.0001,0.001,0.01,0.1,1.]
             print 'getting best c star'
 
-            c_star_svm_plus = 0.0001
+            c_star_svm_plus = 0.0000001
             # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
             print 'c star', c_star_svm_plus, '\n'
             duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
@@ -140,14 +140,14 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs, cstarmin=None, cstar
 
             print 'svm+ accuracy',(accuracy_lupi)
 
-
-def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
-    c_values = np.logspace(cmin,cmax,number_of_cs)
-    if cstarmin==None:
-        cstarmin, cstarmax = cmin,cmax
-    cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
-    # c_values=np.array(c_values,dtype=int)
-    return c_values, cstar_values
+#
+# def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
+#
+#     if cstarmin==None:
+#         cstarmin, cstarmax = cmin,cmax
+#     cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
+#     # c_values=np.array(c_values,dtype=int)
+#     return c_values, cstar_values
 
 # for k in range (1,2):
 #     single_fold(k=k, dataset='madelon', kernel='linear', cmin=-3, cmax=-1, number_of_cs=3)
