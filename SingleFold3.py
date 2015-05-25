@@ -24,7 +24,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
-        output_directory = os.path.join(get_full_path(outer_directory),'{}CV10'.format(dataset))
+        output_directory = os.path.join(get_full_path(outer_directory),'{}CV11'.format(dataset))
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
