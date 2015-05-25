@@ -6,6 +6,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
 
     parser.add_argument('--dataset', type=str, required=True, help='name of input data')
+
+    parser.add_argument('--percentage', type=int, required=True, help='top % of features selected for use as normal info')
     # parser.add_argument('--datasetnum', type=int, required=True, help='id number for AwA')
     # parser.add_argument('--num-folds', type=int, required=True,
     #                     help='number of folds for cross-validation')
@@ -28,5 +30,5 @@ if __name__ == '__main__':
 
     # dataset='awa{}'.format(args.dataset_num)
 
-    single_fold(k=args.k, dataset=args.dataset,
+    single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,
                 kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
