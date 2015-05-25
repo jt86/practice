@@ -131,8 +131,8 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
 
         # c_star_svm_plus = 10**-12
         c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
-        with open(os.path.join(cross_validation_folder,'best_cstar_fold{}_{}percent.csv'.format(k)),'a') as cv_svm_file:
-            cv_svm_file.write(str(c_star_svm_plus)+",")
+        with open(os.path.join(cross_validation_folder,'best_cstar_fold{}_{}percent.csv'.format(k, percentage)),'a') as cv_svm_file:
+            cv_svm_file.write(str(c_star_svm_plus))
         print 'c star', c_star_svm_plus, '\n'
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
         lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
