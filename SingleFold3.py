@@ -96,12 +96,13 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
             cv_svm_file.write(str(ACC)+",")
 
         # ##############################  BASELINE - all features
+        best_C_baseline = get_best_C(all_training, training_labels, c_values)
         if percentage == list_of_percentages[0]:
 
             # best_C_baseline=np.loadtxt(CV_best_param_folder + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
             # best_C_baseline=10.
             print 'getting best c for baseline'
-            best_C_baseline = get_best_C(all_training, training_labels, c_values)
+
             clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
             clf.fit(all_training, training_labels)
 
