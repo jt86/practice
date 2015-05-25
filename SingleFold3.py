@@ -24,7 +24,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
-        output_directory = os.path.join(get_full_path(outer_directory),'{}CV11'.format(dataset))
+        output_directory = os.path.join(get_full_path(outer_directory),'{}CV10'.format(dataset))
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
@@ -75,9 +75,10 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         # best_rfe_param=10.
 
         best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats)
-        filename='{}_RFE_top{}_fold{}.txt'.format(dataset,percentage,k)
-        with open(os.path.join(CV_best_param_folder,filename),'a') as best_param_file:
-            best_param_file.write(str(best_rfe_param))
+
+
+        with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
+            best_params_doc.write("\n"+str(best_rfe_param))
         print 'best rfe param', best_rfe_param
 
         ###########
@@ -129,10 +130,14 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         # c_star_values = [0.00000001,0.0000001,0.000001,0.00001,0.0001,0.001,0.01,0.1,1.]
         print 'getting best c star'
 
-        c_star_svm_plus = 10**-12
-        # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
-        with open(os.path.join(cross_validation_folder,'best_cstar_fold{}_{}percent.csv'.format(k, percentage)),'a') as cv_svm_file:
-            cv_svm_file.write(str(c_star_svm_plus))
+        # c_star_svm_plus = 10**-12
+
+
+        c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
+
+        with open(os.path.join(cross_validation_folder,'best_Cstar_param{}.txt'.format(k)),'a') as best_params_doc:
+            best_params_doc.write("\n"+str(c_star_svm_plus))
+
         print 'c star', c_star_svm_plus, '\n'
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
         lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
