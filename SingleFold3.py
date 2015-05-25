@@ -24,7 +24,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs):
         print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
-        output_directory = os.path.join(get_full_path(outer_directory),'{}CV8'.format(dataset))
+        output_directory = os.path.join(get_full_path(outer_directory),'{}CV9'.format(dataset))
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
@@ -128,7 +128,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs):
             # c_star_values = [0.00000001,0.0000001,0.000001,0.00001,0.0001,0.001,0.01,0.1,1.]
             print 'getting best c star'
 
-            c_star_svm_plus = 0.0000001
+            c_star_svm_plus = 10**-15
             # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
             print 'c star', c_star_svm_plus, '\n'
             duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
