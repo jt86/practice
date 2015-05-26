@@ -31,7 +31,6 @@ if __name__ == '__main__':
     print ' all args',args
 
     # dataset='awa{}'.format(args.dataset_num)
-    #
     # single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
 
