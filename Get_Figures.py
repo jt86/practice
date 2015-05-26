@@ -9,6 +9,7 @@ import seaborn
 import logging
 from Get_Mean import get_mean_from, get_error_from
 
+
 def get_axis_scales(keyword):
     if 'arcene' in keyword:
         return (0,10000,0.70,1.00)
@@ -51,30 +52,17 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
     print 'errors',len(errors)
 
     ax1.errorbar(numbers_of_features_list, results, #np.mean(results, axis=0),#todo changed from axis=1
-                 # yerr=(np.std(results, axis=0) / np.sqrt(num_folds)),           #
+
                  yerr = errors,
                  c='b', label='SVM: trained on top features')
 
     ax1.errorbar(numbers_of_features_list[:len(LUPI_results)], LUPI_results,   #nb number_of features list was indexed [:-1]
-                 # yerr=(np.std(LUPI_results, axis=0) / np.sqrt(num_folds)),
+
                  yerr = LUPI_errors,
                  c='r', label='SVM+: lower features as privileged')
 
     ax1.plot(numbers_of_features_list,np.mean(baseline_results, axis=1), linestyle=':', c='black',
              label='baseline SVM: all features')
-    # #
-    # ax1.plot(numbers_of_features_list,np.mean(baseline_results2, axis=1), linestyle='-.', c='green',
-    #      label='baseline SVM: top t features only')
-
-    # if 'True' in keyword:
-    #     xmin, xmax,  ymin, ymax = get_axis_scales(keyword)
-    #     axes = plt.gca()
-    #     axes.set_xlim([xmin,xmax])
-    #     axes.set_ylim([ymin,ymax])
-    # else:
-    #     axes = plt.gca()
-    #     axes.set_ylim([0.5, 1.0])
-
 
     box = ax1.get_position()
     ax1.set_position([box.x0, box.y0 + box.height * 0.2,
@@ -93,20 +81,20 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
 
 
 
-    # differences_list = np.subtract(np.mean(LUPI_results, axis=1), np.mean(results,axis=1)[:len(LUPI_results)])
-    #
-    #
-    # fig2 = plt.figure()
-    # ax2 = fig2.add_subplot(211, title="Difference between SVM and SVM+ scores"+str(keyword))
-    #
-    #
-    # ax2.bar(numbers_of_features_list[:len(LUPI_results)], differences_list[:len(LUPI_results)], 0.35)
-    #
-    #
-    # ax1.plot(numbers_of_features_list, [0] * len(numbers_of_features_list), linestyle='-', c='black',
-    #          label='baseline')
-    #
-    # plt.xlabel('Top n features used to train SVM')
-    # plt.ylabel('F-score improvement with SVM+')
-    #
-    # plt.savefig(os.path.join(output_directory, 'differences.png'))
+    differences_list = np.subtract(LUPI_results,results[:len(LUPI_results)])
+
+
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(211, title="Difference between SVM and SVM+ scores"+str(keyword))
+
+
+    ax2.bar(numbers_of_features_list[:len(LUPI_results)], differences_list[:len(LUPI_results)], 0.35)
+
+
+    ax1.plot(numbers_of_features_list, [0] * len(numbers_of_features_list), linestyle='-', c='black',
+             label='baseline')
+
+    plt.xlabel('Top n features used to train SVM')
+    plt.ylabel('Accuracy improvement with SVM+')
+
+    plt.savefig(os.path.join(output_directory, 'differences.png'))

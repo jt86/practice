@@ -72,8 +72,6 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
 
         # topK=percentage/100
         # best_rfe_param=np.loadtxt(CV_best_param_folder + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
-        # best_rfe_param=10.
-
         best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats)
 
 
@@ -93,7 +91,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
             best_feats_doc.write("\n"+str(best_n_mask))
 
 
-        with open(os.path.join(cross_validation_folder,'svm-{}.csv'.format(k)),'a') as cv_svm_file:
+        with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,percentage)),'a') as cv_svm_file:
             cv_svm_file.write(str(ACC)+",")
 
         # ##############################  BASELINE - all features
@@ -101,7 +99,6 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         if percentage == list_of_percentages[0]:
 
             # best_C_baseline=np.loadtxt(CV_best_param_folder + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
-            # best_C_baseline=10.
             print 'getting best c for baseline'
 
             clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
@@ -129,7 +126,6 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         c_star_values = [100., 10., 1., 0.1, 0.01, 0.001, 0.0001]#, 0.00001, 0.000001, 0.0000001, 0.00000001]
         # c_star_values = [0.00000001,0.0000001,0.000001,0.00001,0.0001,0.001,0.01,0.1,1.]
         print 'getting best c star'
-
         # c_star_svm_plus = 10**-12
 
 
@@ -142,7 +138,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
         lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
         accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
-        with open(os.path.join(cross_validation_folder,'lupi-{}.csv'.format(k)),'a') as cv_lupi_file:
+        with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,percentage)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
 
 
@@ -156,9 +152,9 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
 #     cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
 #     # c_values=np.array(c_values,dtype=int)
 #     return c_values, cstar_values
-#
+# #
 # for k in range (1,2):
 #     single_fold(k=k, percentage=5, dataset='madelon', kernel='linear', cmin=-3, cmax=-1, number_of_cs=3)
-
-
-
+#
+#
+#
