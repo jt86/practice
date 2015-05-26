@@ -5,7 +5,7 @@ from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, Strati
 from sklearn.metrics import pairwise, accuracy_score
 from sklearn import svm, linear_model
 from SVMplus4 import svmplusQP, svmplusQP_Predict
-from ParamEstimation import param_estimation, do_CV_svmrfe_5fold
+from ParamEstimation import param_estimation#, do_CV_svmrfe_5fold
 
 from Get_Full_Path import get_full_path
 from Get_Awa_Data import get_awa_data
@@ -210,7 +210,7 @@ def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
     return c_values, cstar_values
 #
 # #
-# for k in range (1,2):
-#     single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
-# # #
+for k in range (1,2):
+    single_fold(k=k, num_folds=10, dataset='awa3', peeking=False, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+# #
 # # #

@@ -15,8 +15,9 @@ from FromViktoriia import getdata
 import numpy
 from sklearn.svm import SVC, LinearSVC
 from GetSingleFoldData import get_train_and_test_this_fold
+from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 
-def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
+def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metric=f_classif):
 
         np.random.seed(k)
 
@@ -24,7 +25,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
-        output_directory = os.path.join(get_full_path(outer_directory),'{}CV11'.format(dataset))
+        output_directory = os.path.join(get_full_path(outer_directory),'{}-fclassif'.format(dataset))
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
@@ -47,6 +48,11 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
             all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset)
 
 
+        ordered_feats=univariate_selection(all_training,training_labels,rank_metric)
+        sorted_training = all_training[:, ordered_feats]
+        sorted_testing = all_testing[:, ordered_feats]
+
+
 
         total_number_of_feats = all_training.shape[1]
         list_of_percentages = [5,10,25,50,75]
@@ -55,7 +61,10 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         topK = percentage/100
         n_top_feats=int(topK*total_number_of_feats)
 
-        # n_top_feats = int(total_number_of_feats*percentage/100)
+        normal_features_training = sorted_training[:,:n_top_feats]
+        normal_features_testing = sorted_testing[:,:n_top_feats]
+        privileged_features_training=sorted_training[:,:n_top_feats]
+
 
         param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
         ############
@@ -67,32 +76,15 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
             os.makedirs(CV_best_param_folder)
 
 
-
-        print 'getting best param for RFE'
-
-        # topK=percentage/100
-        # best_rfe_param=np.loadtxt(CV_best_param_folder + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
-        best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats)
-
-
-        with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
-            best_params_doc.write("\n"+str(best_rfe_param))
-        print 'best rfe param', best_rfe_param
-
-        ###########
-
-        svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
-        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=1)
-        rfe.fit(all_training, training_labels)
-        ACC = rfe.score(all_testing, testing_labels)
-        best_n_mask = rfe.support_
-
-        with open(os.path.join(cross_validation_folder,'best_feats{}.txt'.format(k)),'a') as best_feats_doc:
-            best_feats_doc.write("\n"+str(best_n_mask))
-
-
+        best_C_SVM = get_best_C(normal_features_training,training_labels,c_values)
+        with open(os.path.join(cross_validation_folder,'best_svm_param{}.txt'.format(k)),'a') as best_params_doc:
+            best_params_doc.write("\n"+str(best_C_SVM))
+        print 'best rfe param', best_C_SVM
+        clf = svm.SVC(C=best_C_SVM, kernel=kernel,random_state=1)
+        clf.fit(normal_features_training, training_labels)
+        svm_predictions = clf.predict(normal_features_testing)
         with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,percentage)),'a') as cv_svm_file:
-            cv_svm_file.write(str(ACC)+",")
+            cv_svm_file.write(str(accuracy_score(testing_labels,svm_predictions))+',')
 
         # ##############################  BASELINE - all features
         best_C_baseline = get_best_C(all_training, training_labels, c_values)
@@ -118,12 +110,10 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
 
-        normal_features_training = all_training[:,best_n_mask].copy()
-        normal_features_testing = all_testing[:,best_n_mask].copy()
-        privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
+
 
         c_svm_plus=best_C_baseline
-        c_star_values = [100., 10., 1., 0.1, 0.01, 0.001, 0.0001]#, 0.00001, 0.000001, 0.0000001, 0.00000001]
+        c_star_values = [1., 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001]#, 0.00000001]
         # c_star_values = [0.00000001,0.0000001,0.000001,0.00001,0.0001,0.001,0.01,0.1,1.]
         print 'getting best c star'
         # c_star_svm_plus = 10**-12
@@ -144,17 +134,12 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
 
         print 'svm+ accuracy',(accuracy_lupi)
 
+
+def univariate_selection(feats, labels, metric):
+    selector = SelectPercentile(metric, percentile=100)
+    selector.fit(feats, labels)
+    scores = selector.pvalues_
+    return np.array(np.argsort(scores))
 #
-# def get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin=None, cstarmax=None):
-#
-#     if cstarmin==None:
-#         cstarmin, cstarmax = cmin,cmax
-#     cstar_values=np.logspace(cstarmin,cstarmax,number_of_cs)
-#     # c_values=np.array(c_values,dtype=int)
-#     return c_values, cstar_values
-# #
-# for k in range (1,2):
-#     single_fold(k=k, percentage=5, dataset='madelon', kernel='linear', cmin=-3, cmax=-1, number_of_cs=3)
-#
-#
-#
+# for percentage in [25,50,75,90]:
+#     single_fold(k=1, percentage=percentage, dataset='madelon', kernel='linear', cmin=-3, cmax=-1, number_of_cs=3,rank_metric=chi2)

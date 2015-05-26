@@ -1,5 +1,6 @@
 import argparse
-from SingleFold3 import single_fold
+# from SingleFold3 import single_fold
+from SingleFoldUnivariate import single_fold
 
 if __name__ == '__main__':
 
@@ -24,11 +25,16 @@ if __name__ == '__main__':
     parser.add_argument('--k', type=int, required = True)
 
 
+
     args = parser.parse_args()
     print 'input is', args.dataset
     print ' all args',args
 
     # dataset='awa{}'.format(args.dataset_num)
+    #
+    # single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,
+    #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
+
 
     single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,
                 kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
