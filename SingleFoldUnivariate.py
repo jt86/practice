@@ -17,7 +17,7 @@ from sklearn.svm import SVC, LinearSVC
 from GetSingleFoldData import get_train_and_test_this_fold
 from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 
-def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metric=f_classif):
+def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metric=chi2):
 
         np.random.seed(k)
 
@@ -25,7 +25,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metr
         print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
-        output_directory = os.path.join(get_full_path(outer_directory),'{}-fclassif'.format(dataset))
+        output_directory = os.path.join(get_full_path(outer_directory),'{}-chi2'.format(dataset))
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
