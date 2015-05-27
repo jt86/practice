@@ -26,8 +26,11 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metr
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
         output_directory = os.path.join(get_full_path(outer_directory),'{}-chi2'.format(dataset))
-        if not os.path.exists(output_directory):
+        try:
             os.makedirs(output_directory)
+        except OSError:
+            if not os.path.isdir(output_directory):
+                raise
 
         # original_features_array, labels_array, tuple = get_feats_and_labels(dataset)
         param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
@@ -37,8 +40,11 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metr
 
 
         cross_validation_folder = os.path.join(output_directory,'cross-validation')
-        if not os.path.exists(cross_validation_folder):
-            os.makedirs(cross_validation_folder)#,exist_ok=True)
+        try:
+            os.makedirs(cross_validation_folder)
+        except OSError:
+            if not os.path.isdir(cross_validation_folder):
+                raise
 
 
         if 'awa' in dataset:
@@ -72,8 +78,13 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metr
 
         # method = 'privfeat_rfe_top'
         CV_best_param_folder = os.path.join(output_directory,'{}CV/'.format(dataset))
-        if not os.path.exists(CV_best_param_folder):
+        cross_validation_folder = os.path.join(output_directory,'cross-validation')
+        try:
             os.makedirs(CV_best_param_folder)
+        except OSError:
+            if not os.path.isdir(CV_best_param_folder):
+                raise
+
 
 
         best_C_SVM = get_best_C(normal_features_training,training_labels,c_values)
