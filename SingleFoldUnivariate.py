@@ -140,6 +140,6 @@ def univariate_selection(feats, labels, metric):
     selector.fit(feats, labels)
     scores = selector.pvalues_
     return np.array(np.argsort(scores))
-#
-# for percentage in [25,50,75,90]:
-#     single_fold(k=1, percentage=percentage, dataset='madelon', kernel='linear', cmin=-3, cmax=-1, number_of_cs=3,rank_metric=chi2)
+# #
+# for percentage in [5,10,25,50,75]:
+#     single_fold(k=3, percentage=percentage, dataset='awa1', kernel='linear', cmin=0, cmax=7, number_of_cs=8,rank_metric=chi2)
