@@ -43,6 +43,8 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         if 'awa' in dataset:
             class_id =dataset[-1]
             all_training, all_testing, training_labels, testing_labels = get_awa_data("", class_id)
+
+
         else:
             all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset)
 
@@ -154,7 +156,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
 #     return c_values, cstar_values
 # # #
 # --k 1 --percentage 5 --dataset mushroom --kernel linear --cmin 0 --cmax 4 --numberofcs 1
-# single_fold(k=1, percentage=5, dataset='madelon', kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+single_fold(k=1, percentage=5, dataset='prove1', kernel='linear', cmin=0, cmax=4, number_of_cs=5)
 #
 #
 #

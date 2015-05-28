@@ -26,7 +26,11 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
     if dataset=='sick':
         class0_data, class1_data = get_sick_data()
         N, test_N = 77,154
-
+    if 'prove' in dataset:
+        id = dataset[-1]
+        print 'id is ',id
+        class0_data,class1_data=get_prove_data(id)
+        N, test_N = 79, 150
     # print class0_data.shape, class1_data.shape
 
     if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
@@ -228,3 +232,25 @@ def get_sick_data():
     return positive_instances, negative_instances
 #
 # get_sick_data()
+
+def get_prove_data(label_number):
+    print('Reading Prove data from disk')
+    with open(get_full_path("Desktop/Privileged_Data/ml-prove/train.csv"), "r+") as infile:
+        features_array = np.loadtxt(infile,delimiter=',', dtype=float)
+    print len(features_array[0])
+    print len(features_array)
+
+
+    all_labels = features_array[:,-6:]
+    features_array=features_array[:,:-6]
+    print features_array.shape
+
+    labels_array = all_labels[:,label_number]
+    print labels_array
+
+    positive_instances = (features_array[labels_array==1])
+    negative_instances = (features_array[labels_array==-1])
+    return positive_instances, negative_instances
+#
+# positive_instances, negative_instances = get_prove_data(1)
+# print positive_instances.shape, negative_instances.shape
