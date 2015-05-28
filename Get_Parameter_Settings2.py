@@ -13,6 +13,6 @@ num_folds=10
 for dataset in ('mushroom'):
     for fold_num in range(1,11):
         for top_k_percent in [5,10,25,50,75]:
-            dataset='awa{}'.format(awa_num)
+            # dataset='awa{}'.format(awa_num)
             print '--k {} --percentage {} --dataset {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k_percent, dataset, 'linear', 0, 7,8)
 
