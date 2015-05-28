@@ -155,4 +155,4 @@ def univariate_selection(feats, labels, metric):
 # for percentage in [5,10,25,50,75]:
 #     single_fold(k=3, percentage=percentage, dataset='awa1', kernel='linear', cmin=0, cmax=7, number_of_cs=8,rank_metric=chi2)
 
-single_fold(k=1, percentage=5, dataset='mushroom', kernel='linear', cmin=0, cmax=7, number_of_cs=8,rank_metric=chi2)
+# single_fold(k=1, percentage=5, dataset='mushroom', kernel='linear', cmin=0, cmax=7, number_of_cs=8,rank_metric=chi2)
