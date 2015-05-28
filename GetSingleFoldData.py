@@ -25,7 +25,7 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
         N, test_N = 500,1000
     if dataset=='sick':
         class0_data, class1_data = get_sick_data()
-        N, test_N = 75,150
+        N, test_N = 77,154
 
     # print class0_data.shape, class1_data.shape
 
@@ -208,8 +208,6 @@ def get_sick_data():
 
     with open(get_full_path("Desktop/Privileged_Data/Sick/sick2.txt"), "r+") as infile:
         features_array = np.genfromtxt(infile, dtype=float,delimiter="\t", filling_values=np.NaN)
-        print features_array.shape
-        print features_array[0]
         features_array.shape = (3772, 29)
 
     final_feat=features_array[:,-1]
@@ -220,13 +218,13 @@ def get_sick_data():
     for index,feature in enumerate(final_feat):
         one_hot_array[index,int(feature)-1]=1
 
-    imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
-    imp.fit_transform(features_array)
+    imp = Imputer(missing_values=np.NaN, strategy='mean', axis=0)
+    features_array=imp.fit_transform(features_array)
 
     features_array=np.hstack((features_array,one_hot_array))
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
-
+    print positive_instances.shape, negative_instances.shape
     return positive_instances, negative_instances
-
+#
 # get_sick_data()
