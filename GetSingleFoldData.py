@@ -1,8 +1,8 @@
 __author__ = 'jt306'
 import numpy as np
 from Get_Full_Path import get_full_path
-
-
+import csv
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, Imputer
 def get_train_and_test_this_fold(dataset):	#N,test_N per class
     
     if dataset=='arcene':
@@ -20,6 +20,14 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
     if dataset=='dorothea':
         class0_data, class1_data = get_dorothea_data()
         N, test_N = 25,50
+    if dataset=='mushroom':
+        class0_data, class1_data = get_mushroom_data()
+        N, test_N = 500,1000
+    if dataset=='sick':
+        class0_data, class1_data = get_sick_data()
+        N, test_N = 75,150
+
+    print class0_data.shape, class1_data.shape
 
     if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
         print "Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0]
@@ -29,6 +37,9 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
     train1, test1 = idx1[:N], idx1[N:N+test_N]
     idx2 = np.random.permutation(class1_data.shape[0])
     train2, test2 = idx2[:N], idx2[N:N+test_N]
+
+    print 'class0',class0_data[train1].shape
+    print 'class1',class1_data[train2].shape
 
     train_data = np.r_[class0_data[train1], class1_data[train2]]
     test_data = np.r_[class0_data[test1], class1_data[test2]]
@@ -132,6 +143,90 @@ def get_dorothea_data():
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
+
+def get_mushroom_data():
+
+    numerical_value_dict = {'a':1, 'b':2, 'c':3, 'd':4, 'e':5, 'f':6, 'g':7, 'h':8, 'i':9, 'j':10, 'k':11, 'l':12, 'm':13, 'n':14, 'o':15,
+        'p':16, 'q':17, 'r':18, 's':19, 't':20, 'u':21, 'v':22, 'w':23, 'x':24, 'y':25, 'z':26 ,'?':27}
+
+
+    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/mushroom.data.csv", "r+") as infile:
+        features_array = []
+        reader = csv.reader(infile, dialect=csv.excel_tab)
+        for row in reader:
+            features_array.append(str(row).translate(None, "[]'").split(","))
+
+    features_array = np.array(features_array)
+    labels_array = np.array(features_array[:, 0], dtype=int)
+    features_array=np.array(features_array[:,1:])
+    labels_array = np.reshape(labels_array, 8124)
+
+    labels_array[labels_array=='e']=1
+    labels_array[labels_array=='p']=-1
+
+
+    for item in numerical_value_dict:
+        features_array[features_array==item]=numerical_value_dict[item]
+        # print item
+
+    print features_array[0]
+    # dummies = get_dummies(features_array)
+
+    print features_array.shape, labels_array.shape
+    print labels_array
+
+    enc = OneHotEncoder(n_values='auto', categorical_features ='all')
+    features_array = enc.fit_transform(features_array)
+    # print features_array[0]
+    print 'feats array shape',features_array.shape
+
+    positive_instances = (features_array[labels_array==1]).todense()
+    negative_instances = (features_array[labels_array==-1]).todense()
+
+    print positive_instances.shape, negative_instances.shape
+    return positive_instances, negative_instances
 #
-# positive_instances, negative_instances = get_madelon_data()
-# print positive_instances.shape, negative_instances.shape
+
+
+positive_instances, negative_instances = get_mushroom_data()
+
+print type(positive_instances),type(negative_instances)
+get_mushroom_data()
+
+
+def get_sick_data():
+    print('Reading Sick data from disk')
+    with open(get_full_path("Desktop/Privileged_Data/Sick/sick.data.txt"), "r+") as infile:
+        features_array = np.loadtxt(infile, dtype=str)
+        features_array.shape = (3772, 30)
+    labels_array=np.zeros(3772)
+    for index,item in enumerate(features_array[:,-1]):
+        if 'sick' in item:
+            labels_array[index]=1
+        else:
+            labels_array[index]=-1
+
+    with open(get_full_path("Desktop/Privileged_Data/Sick/sick2.txt"), "r+") as infile:
+        features_array = np.genfromtxt(infile, dtype=float,delimiter="\t", filling_values=np.NaN)
+        print features_array.shape
+        print features_array[0]
+        features_array.shape = (3772, 29)
+
+    final_feat=features_array[:,-1]
+    final_feat.shape=(3772,1)
+    features_array = features_array[:,:-1]
+
+    one_hot_array = np.zeros((3772,5))
+    for index,feature in enumerate(final_feat):
+        one_hot_array[index,int(feature)-1]=1
+
+    imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
+    imp.fit_transform(features_array)
+
+    features_array=np.hstack((features_array,one_hot_array))
+    positive_instances = (features_array[labels_array==1])
+    negative_instances = (features_array[labels_array==-1])
+
+    return positive_instances, negative_instances
+
+# get_sick_data()

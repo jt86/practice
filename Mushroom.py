@@ -29,6 +29,13 @@ dict[20] = ['a', 'c', 'n', 's', 'v', 'y']
 dict[21] = ['g', 'l', 'm', 'p', 'u', 'w', 'd']
 
 
+
+numerical_value_dict = {'a':1, 'b':2, 'c':3, 'd':4, 'e':5, 'f':6, 'g':7, 'h':8, 'i':9, 'j':10, 'k':11, 'l':12, 'm':13, 'n':14, 'o':15,
+        'p':16, 'q':17, 'r':18, 's':19, 't':20, 'u':21, 'v':22, 'w':23, 'x':24, 'y':25, 'z':26}
+
+
+
+
 def get_mushroom_data():
     with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/mushroom.data.csv", "r+") as infile:
         features_array = []
@@ -48,19 +55,22 @@ def get_mushroom_data():
     # labels_array[labels_array=='e']=1
     # labels_array[labels_array=='p']=-1
 
+    print features_array.shape, labels_array.shape
+
     logging.info(labels_array)
 
     features_array = features_array[:, 1:]
 
     new_features_array = []
-    for instance in features_array:
-        new_features_array.append(convert_instance(instance))
+    # for instance in features_array:
+    #     new_features_array.append(convert_instance(instance))
 
     features_array = np.array(new_features_array)
     logging.info(features_array.shape)
     # logging.info( 'labels', labels_array)
     return (features_array, labels_array)
 
+get_mushroom_data()
 
 def convert_to_binary(instance, feature_number, list):
     binary = np.zeros(len(list))
