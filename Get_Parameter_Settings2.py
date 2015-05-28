@@ -10,7 +10,7 @@ num_folds=10
 # for dataset in ['gisette','madelon','arcene','dorothea','dexter']:
 
 # for awa_num in range(10):
-dataset='sick'
+dataset='mushroom'
 for fold_num in range(1,11):
     for top_k_percent in [5,10,25,50,75]:
         # dataset='awa{}'.format(awa_num)
