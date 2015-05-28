@@ -150,7 +150,7 @@ def get_mushroom_data():
         'p':16, 'q':17, 'r':18, 's':19, 't':20, 'u':21, 'v':22, 'w':23, 'x':24, 'y':25, 'z':26 ,'?':27}
 
 
-    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/mushroom.data.csv", "r+") as infile:
+    with open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/Mushroom/mushroom.data.csv", "r+") as infile:
         features_array = []
         reader = csv.reader(infile, dialect=csv.excel_tab)
         for row in reader:
