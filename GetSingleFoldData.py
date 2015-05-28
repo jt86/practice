@@ -27,7 +27,7 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
         class0_data, class1_data = get_sick_data()
         N, test_N = 75,150
 
-    print class0_data.shape, class1_data.shape
+    # print class0_data.shape, class1_data.shape
 
     if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
         print "Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0]
@@ -188,10 +188,10 @@ def get_mushroom_data():
 #
 
 
-positive_instances, negative_instances = get_mushroom_data()
-
-print type(positive_instances),type(negative_instances)
-get_mushroom_data()
+# positive_instances, negative_instances = get_mushroom_data()
+#
+# print type(positive_instances),type(negative_instances)
+# get_mushroom_data()
 
 
 def get_sick_data():
