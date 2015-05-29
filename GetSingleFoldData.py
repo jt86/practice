@@ -34,6 +34,9 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
         print 'id is ',id
         class0_data,class1_data=get_prove_data(id)
         N, test_N = 79, 150
+    if dataset=='heart':
+        class0_data,class1_data=get_heart_data()
+        N, test_N = 40,80
     # print class0_data.shape, class1_data.shape
 
     if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
@@ -261,3 +264,21 @@ def get_prove_data(label_number):
 #
 # positive_instances, negative_instances = get_prove_data(1)
 # print positive_instances.shape, negative_instances.shape
+
+def get_heart_data(debug=False):
+    print('Reading HEART data from disk')
+
+    with open(get_full_path("Desktop/Privileged_Data/new_data/heart.dat"), "r+") as infile:
+        features_array = np.genfromtxt(infile, dtype=None)
+        features_array = np.array(str(features_array).translate(None, '()').split(","), dtype=float)
+        features_array.shape = (270, 14)
+        labels_array = np.array(features_array[:, 13])
+        features_array = np.array(features_array[:, :13])
+        labels_array[labels_array == 2] = -1
+
+
+    positive_instances = (features_array[labels_array==1])
+    negative_instances = (features_array[labels_array==-1])
+    return positive_instances, negative_instances
+
+print get_heart_data()[0].shape, get_heart_data()[1].shape
