@@ -24,7 +24,15 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         print 'cvalues',c_values
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
+
+
         output_directory = os.path.join(get_full_path(outer_directory),'{}-RFE-smallrange-baseline'.format(dataset))
+        try:
+            os.makedirs(output_directory)
+        except OSError:
+            if not os.path.isdir(output_directory):
+                raise
+
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
@@ -36,8 +44,12 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
 
 
         cross_validation_folder = os.path.join(output_directory,'cross-validation')
-        if not os.path.exists(cross_validation_folder):
-            os.makedirs(cross_validation_folder)#,exist_ok=True)
+        try:
+            os.makedirs(cross_validation_folder)
+        except OSError:
+            if not os.path.isdir(cross_validation_folder):
+                raise
+
 
 
         if 'awa' in dataset:
@@ -65,8 +77,12 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
 
         # method = 'privfeat_rfe_top'
         CV_best_param_folder = os.path.join(output_directory,'{}CV/'.format(dataset))
-        if not os.path.exists(CV_best_param_folder):
+        try:
             os.makedirs(CV_best_param_folder)
+        except OSError:
+            if not os.path.isdir(CV_best_param_folder):
+                raise
+
 
 
 
