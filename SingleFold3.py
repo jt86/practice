@@ -84,7 +84,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         ###########
 
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
-        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=10)
+        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=1)
         rfe.fit(all_training, training_labels)
         ACC = rfe.score(all_testing, testing_labels)
         best_n_mask = rfe.support_
