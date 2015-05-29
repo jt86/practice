@@ -11,10 +11,8 @@ num_folds=10
 
 # for awa_num in range(10):
 
-# for dataset in ['madelon','arcene','gisette']:
-for prove_num in range(6):
+for dataset in ['dexter','dorothea']:
     for fold_num in range(1,11):
         for top_k_percent in [5,10,25,50,75]:
-            dataset='prove{}'.format(prove_num)
             print '--k {} --percentage {} --dataset {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k_percent, dataset, 'linear', 0, 4,5)
 

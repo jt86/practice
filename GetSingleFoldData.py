@@ -2,7 +2,10 @@ __author__ = 'jt306'
 import numpy as np
 from Get_Full_Path import get_full_path
 import csv
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder, Imputer
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, Imputer, Normalizer
+from scipy import sparse as sp
+
+
 def get_train_and_test_this_fold(dataset):	#N,test_N per class
     
     if dataset=='arcene':
@@ -19,7 +22,7 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
         N, test_N = 50,100
     if dataset=='dorothea':
         class0_data, class1_data = get_dorothea_data()
-        N, test_N = 25,50
+        N, test_N = 26,52
     if dataset=='mushroom':
         class0_data, class1_data = get_mushroom_data()
         N, test_N = 500,1000
@@ -51,10 +54,16 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
     test_labels = np.ravel(np.r_[[1]*test_N, [-1]*test_N])
 
     #L1 normalization ============================
-    train_data = train_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, train_data).reshape(-1,1)
-    test_data = test_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, test_data).reshape(-1,1)
+    normaliser = Normalizer(norm='l1')
+    np.set_printoptions(threshold=np.nan)
+    print train_data[0]
+    train_data=normaliser.fit_transform(train_data)
+    print train_data[0]
+    # train_data = train_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, train_data).reshape(-1,1)
+    # test_data = test_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, test_data).reshape(-1,1)
 
     return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)
+
 
 
 def get_arcene_data(debug=False):
@@ -112,38 +121,36 @@ def get_gisette_data():
 
 def get_dexter_data():
     print( "Getting DEXTER data")
-    dok = sp.dok_matrix((300, 20000), dtype=int)
+    features_array = np.zeros((300,20000))
     fh = open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.data"),"rU")
-    line = fh.next().strip()
     for row_num, line in enumerate(fh):
-        row = line.split('\t')      #make list of numbers for each instance
-        indices_of_1s = np.array([int(r)-1 for r in row if r.isdigit()])           #make integers and put in array
-        dok[row_num,indices_of_1s] = 1
-    features_array = dok.todense()    #csr format
-
+        row = line.split(' ')      #make list of numbers for each instance
+        for item in row:
+            if len(item)>1:
+                index, value = item.split(':')[0],item.split(':')[1]
+                features_array[row_num,index]=value
     with open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.labels"),"r+") as file:
         labels_array = np.genfromtxt(file, dtype=None)
         labels_array.shape=(300)
-
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
+
+
+
 
 def get_dorothea_data():
     print( "Getting DOROTHEA data")
     dok = sp.dok_matrix((800, 100000), dtype=int)
     fh = open(get_full_path("Desktop/Privileged_Data/DOROTHEA/dorothea_train.data"),"rU")
-    line = fh.next().strip()
     for row_num, line in enumerate(fh):
         row = line.split('\t')      #make list of numbers for each instance
-        indices_of_1s = np.array([int(r)-1 for r in row if r.isdigit()])           #make integers and put in array
+        indices_of_1s = np.array([int(r)-1 for r in row if r.isdigit()])           #make list of indices, as an array of integers]
         dok[row_num,indices_of_1s] = 1
     features_array = dok.todense()    #csr format
-
     with open(get_full_path("Desktop/Privileged_Data/DOROTHEA/dorothea_train.labels"),"r+") as file:
         labels_array = np.genfromtxt(file, dtype=None)
         labels_array.shape=(800)
-
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
