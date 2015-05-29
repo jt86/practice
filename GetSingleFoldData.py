@@ -37,6 +37,9 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
     if dataset=='heart':
         class0_data,class1_data=get_heart_data()
         N, test_N = 40,80
+    if dataset=='vote':
+        class0_data,class1_data=get_vote_data()
+        N, test_N = 112,56
     # print class0_data.shape, class1_data.shape
 
     if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
@@ -281,4 +284,26 @@ def get_heart_data(debug=False):
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
 
-print get_heart_data()[0].shape, get_heart_data()[1].shape
+# print get_heart_data()[0].shape, get_heart_data()[1].shape
+
+def get_vote_data():
+    print('Reading VOTE data from disk')
+    with open(get_full_path("Desktop/Privileged_Data/new_data/house-votes-84.data"), "r+") as infile:
+        features_array = np.genfromtxt(infile, dtype=None)
+
+        features_array.shape = (435, 17)
+
+        d = {'republican':1.,'democrat':-1., 'y':1., 'n':0., '?':0.5}
+        new_array = np.copy(features_array)
+        for k, v in d.iteritems():
+            new_array[features_array==k] = v
+
+
+    labels_array = np.array(new_array[:,0], dtype=float)
+    features_array = np.array(new_array[:,1:], dtype=float)
+    positive_instances = (features_array[labels_array==1])
+    negative_instances = (features_array[labels_array==-1])
+    return positive_instances, negative_instances
+
+# positive_instances, negative_instances = get_vote_data()
+# print positive_instances.shape, negative_instances.shape
