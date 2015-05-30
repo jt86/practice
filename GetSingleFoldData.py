@@ -51,8 +51,6 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
     idx2 = np.random.permutation(class1_data.shape[0])
     train2, test2 = idx2[:N], idx2[N:N+test_N]
 
-    print 'class0',class0_data[train1].shape
-    print 'class1',class1_data[train2].shape
 
     train_data = np.r_[class0_data[train1], class1_data[train2]]
     test_data = np.r_[class0_data[test1], class1_data[test2]]
@@ -62,9 +60,9 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
     #L1 normalization ============================
     normaliser = Normalizer(norm='l1')
     np.set_printoptions(threshold=np.nan)
-    print train_data[0]
+
     train_data=normaliser.fit_transform(train_data)
-    print train_data[0]
+
     # train_data = train_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, train_data).reshape(-1,1)
     # test_data = test_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, test_data).reshape(-1,1)
 

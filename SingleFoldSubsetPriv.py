@@ -118,7 +118,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,subset_of_priv):
 
 
         normal_features_testing = all_testing[:,best_n_mask].copy()
-        print all_training[0]
+        # print all_training[0]
         sorted_features = all_training[:,np.argsort(all_features_ranking)]
         normal_features_training=sorted_features[:,:n_top_feats]
         privileged_features_training=sorted_features[:,n_top_feats:]
@@ -130,7 +130,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,subset_of_priv):
         print 'priv \n', privileged_features_training[0]
 
         c_svm_plus=best_C_baseline
-        c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]
+        c_star_values = [1., 0.1]#, 0.01, 0.001, 0.0001]
 
 
         privileged_features_training=sorted_features[:,n_top_feats:]
@@ -138,7 +138,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,subset_of_priv):
         privileged_features_training = privileged_features_training[:,:number_of_priv_to_take]
         c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
 
-        with open(os.path.join(cross_validation_folder,'best_Cstar_param{}-subset{}.txt'.format(k),subset_of_priv,),'a') as best_params_doc:
+        with open(os.path.join(cross_validation_folder,'best_Cstar_param{}-subset{}.txt'.format(k,subset_of_priv)),'a') as best_params_doc:
             best_params_doc.write("\n"+str(c_star_svm_plus))
         print 'c star', c_star_svm_plus, '\n'
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
@@ -150,4 +150,3 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,subset_of_priv):
 
         print 'svm+ accuracy',(accuracy_lupi)
 
-# single_fold(1, 'gisette', 'linear', 0,2,2)
