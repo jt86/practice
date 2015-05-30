@@ -11,6 +11,7 @@ num_folds=10
 
 # for awa_num in range(10):
 
+for subset_of_priv in [10,20,30,40,50,60,70,80,90,100]:
 for dataset in ['dexter','dorothea']:
     for fold_num in range(1,11):
         for top_k_percent in [5,10,25,50,75]:
