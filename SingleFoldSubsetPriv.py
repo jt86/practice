@@ -79,7 +79,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,subset_of_priv):
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
         rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=step)
         rfe.fit(all_training, training_labels)
-        ACC = rfe.score(all_testing, testing_labels)
+
         best_n_mask = rfe.support_
 
         all_features_ranking=rfe.ranking_
@@ -90,23 +90,25 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,subset_of_priv):
         with open(os.path.join(cross_validation_folder,'best_feats{}.txt'.format(k)),'a') as best_feats_doc:
             best_feats_doc.write("\n"+str(best_n_mask))
 
-
-        with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,percentage)),'a') as cv_svm_file:
-            cv_svm_file.write(str(ACC)+",")
+        if subset_of_priv==5:
+            ACC = rfe.score(all_testing, testing_labels)
+            with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,percentage)),'a') as cv_svm_file:
+                cv_svm_file.write(str(ACC)+",")
 
         # ##############################  BASELINE - all features
         best_C_baseline = get_best_C(all_training, training_labels, c_values)
         print 'getting best c for baseline'
 
-        clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
-        clf.fit(all_training, training_labels)
-        filename='{}_baseline_fold{}.txt'.format(dataset,k)
-        with open(os.path.join(CV_best_param_folder,filename),'a') as best_param_file:
-            best_param_file.write(str(best_C_baseline))
+        if subset_of_priv==5:
+            clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
+            clf.fit(all_training, training_labels)
+            filename='{}_baseline_fold{}.txt'.format(dataset,k)
+            with open(os.path.join(CV_best_param_folder,filename),'a') as best_param_file:
+                best_param_file.write(str(best_C_baseline))
 
-        baseline_predictions = clf.predict(all_testing)
-        with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as baseline_file:
-            baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
+            baseline_predictions = clf.predict(all_testing)
+            with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as baseline_file:
+                baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
 
 
 
