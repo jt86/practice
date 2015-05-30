@@ -17,7 +17,7 @@ from sklearn.svm import SVC, LinearSVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
 def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
-
+        step=100
         np.random.seed(k)
 
         c_values = np.logspace(cmin,cmax,number_of_cs)
@@ -26,7 +26,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         outer_directory = get_full_path('Desktop/Privileged_Data/')
 
 
-        output_directory = os.path.join(get_full_path(outer_directory),'{}-RFE-smallrange-baseline'.format(dataset))
+        output_directory = os.path.join(get_full_path(outer_directory),'{}-RFE-smallrange-baseline-step{}'.format(dataset,step))
         try:
             os.makedirs(output_directory)
         except OSError:
@@ -100,7 +100,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
         ###########
 
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
-        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=1)
+        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=step)
         rfe.fit(all_training, training_labels)
         ACC = rfe.score(all_testing, testing_labels)
         best_n_mask = rfe.support_
