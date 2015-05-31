@@ -38,4 +38,4 @@ if __name__ == '__main__':
 
 
     single_fold(k=args.k, dataset=args.dataset, #percentage=args.percentage,
-                kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, subset_of_priv=args.subsetofpriv)
+                kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, amount_of_priv=args.subsetofpriv)

@@ -48,7 +48,7 @@ def param_estimation(param_estimation_file, training_features, training_labels, 
     else:
         # rs = ShuffleSplit((number_of_training_instances - 1), n_iter=num_folds, test_size=.2, random_state=0)
         rs = StratifiedShuffleSplit(y=training_labels, n_iter=inner_folds, test_size=.2, random_state=0)
-        print 'scores array \n', scores_array
+        # print 'scores array \n', scores_array
 
         for train_indices, test_indices in rs:
             train_this_fold, test_this_fold = training_features[train_indices], training_features[test_indices]

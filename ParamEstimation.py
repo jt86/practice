@@ -29,13 +29,13 @@ def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_valu
             predictions = svmplusQP_Predict(training_data[train],training_data[test],duals,bias).flatten()
             ACC = np.sum(training_labels[test]==np.sign(predictions))/(1.*len(training_labels[test]))
             cv_scores[Cstar_index] += ACC
-        print 'fold',i, cv_scores
+        # print 'fold',i, cv_scores
 
 
     cv_scores = cv_scores/5.
     index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
     best_Cstar = Cstar_values[index_of_best]
-    print 'time to get best c star', time.clock()-t0
+    # print 'time to get best c star', time.clock()-t0
     return best_Cstar
 
 def get_best_C(training_data,training_labels, c_values):
@@ -50,13 +50,13 @@ def get_best_C(training_data,training_labels, c_values):
             svc.fit(training_data[train], training_labels[train])
             cv_scores[C_index] += svc.score(training_data[test], training_labels[test])
 
-        print 'fold',i, cv_scores
+        # print 'fold',i, cv_scores
 
 
     cv_scores = cv_scores/5.
     index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
     best_C = c_values[index_of_best][0]
-    print 'time to get best c for baseline', time.clock()-t0
+    # print 'time to get best c for baseline', time.clock()-t0
     return best_C
 
 
@@ -73,12 +73,12 @@ def get_best_RFE_C(training_data,training_labels, c_values, top):
             rfe = RFE(estimator=svc, n_features_to_select=top, step=1)
             rfe.fit(training_data[train], training_labels[train])
             cv_scores[C_index] += rfe.score(training_data[test], training_labels[test])
-        print 'fold',i,cv_scores
+        # print 'fold',i,cv_scores
 
     cv_scores = cv_scores/5.
     index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
     best_C = c_values[index_of_best]
-    print 'time to get best rfe c', time.clock()-t0
+    # print 'time to get best rfe c', time.clock()-t0
     return best_C
 
 
