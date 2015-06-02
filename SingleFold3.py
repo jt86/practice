@@ -173,6 +173,3 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs):
 # # #
 # --k 1 --percentage 5 --dataset mushroom --kernel linear --cmin 0 --cmax 4 --numberofcs 1
 #single_fold(k=1, percentage=5, dataset='heart', kernel='linear', cmin=0, cmax=4, number_of_cs=5)
-#
-#
-#
