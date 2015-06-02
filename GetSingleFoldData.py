@@ -202,9 +202,9 @@ def get_mushroom_data():
     return positive_instances, negative_instances
 #
 
-
-# positive_instances, negative_instances = get_mushroom_data()
 #
+# positive_instances, negative_instances = get_mushroom_data()
+
 # print type(positive_instances),type(negative_instances)
 # get_mushroom_data()
 

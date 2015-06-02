@@ -32,7 +32,7 @@ def get_axis_scales(keyword):
     else:
         return (0,2000,0,1)
 
-def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baseline_results, num_folds, output_directory, keyword):
+def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baseline_results, num_folds, output_directory, keyword, dataset):
 
     results = get_mean_from(all_folds_SVM)
     errors = get_error_from(all_folds_SVM)
@@ -40,10 +40,14 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
     LUPI_results = get_mean_from(all_folds_LUPI)
     LUPI_errors = get_error_from(all_folds_LUPI)
 
+    title_font = {'fontname':'Arial', 'size':'16', 'color':'black', 'weight':'normal',
+              'verticalalignment':'bottom'}
+
 
     fig = plt.figure()
-    ax1 = fig.add_subplot(111, title=" Comparison of SVM+ and SVM, for "+keyword)
-
+    # ax1 = fig.add_subplot(111, title=" Comparison of SVM+ and SVM, for "+keyword)
+    ax1 = fig.add_subplot(111)
+    fig.suptitle(dataset.title(), fontsize=20)
     print 'num feats list',len(numbers_of_features_list)
     print 'SVM results', len(results)
     print 'LUPI results',len(LUPI_results)
@@ -63,17 +67,18 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
 
     ax1.plot(numbers_of_features_list,np.mean(baseline_results, axis=1), linestyle=':', c='black',
              label='baseline SVM: all features')
-
-    box = ax1.get_position()
-    ax1.set_position([box.x0, box.y0 + box.height * 0.2,
-                      box.width, box.height * 0.8])
+    #
+    # box = ax1.get_position()
+    # ax1.set_position([box.x0, box.y0 + box.height * 0.2,
+    #                   box.width, box.height * 0.8])
 
     # Put a legend below current axis
     ax1.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12),
                fancybox=True, shadow=True, ncol=1, prop={'size': 10})
 
-    plt.xlabel('Top (% of t) features used as normal information (all others used as privileged)')
-    plt.ylabel('Accuracy score')
+    plt.xlabel('Top % of features used as normal information',fontsize=16)
+    # plt.xlabel('Top (% of t) features used as normal information (all others used as privileged)')
+    plt.ylabel('Accuracy score',fontsize=16)
 
     plt.savefig(os.path.join(output_directory, 'plot.png'))
 
