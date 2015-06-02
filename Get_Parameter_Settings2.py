@@ -15,4 +15,3 @@ for fold_num in range(7,11):
 #     for fold_num in range(1,11):
 #         for top_k_percent in [5,10,25,50,75]:
 #             print '--k {} --percentage {} --dataset {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k_percent, dataset, 'linear', 0, 4,5)
-#
