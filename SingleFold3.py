@@ -86,8 +86,8 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
         ########## RFE CROSS VALIDATION
 
         print('getting best param for RFE')
-        # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats)
-        best_rfe_param=1
+        best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats)
+        # best_rfe_param=1
 
         # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
         #     best_params_doc.write("\n"+str(best_rfe_param))
@@ -106,14 +106,14 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
         #     best_feats_doc.write("\n"+str(best_n_mask))
         #
         #
-        # with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,percentage)),'a') as cv_svm_file:
-        #     cv_svm_file.write(str(ACC)+",")
+        with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,percentage)),'a') as cv_svm_file:
+            cv_svm_file.write(str(ACC)+",")
 
         # ##############################  BASELINE - all features
         best_C_baseline = get_best_C(all_training, training_labels, c_values)
-        list_of_percentages = [5,10,25,50,75]
-        # if percentage == list_of_percentages[0]:
-        if 1<2:
+        list_of_percentages =[5, 10, 25, 50, 75]
+        if percentage == list_of_percentages[0]:
+        # if 1<2:
 
             # best_C_baseline=np.loadtxt(CV_best_param_folder + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
             print('getting best c for baseline')
@@ -128,8 +128,8 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
             # with open(os.path.join(CV_best_param_folder,filename),'a') as best_param_file:
             #     best_param_file.write(str(best_C_baseline))
             #
-            # with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as baseline_file:
-            #     baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
+            with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as baseline_file:
+                baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
 
 
 
@@ -143,8 +143,8 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
         c_svm_plus=best_C_baseline
         c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]#, 0.00001, 0.000001, 0.0000001, 0.00000001]
         print('getting best c star')
-        # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
-        c_star_svm_plus=0.1
+        c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
+        # c_star_svm_plus=0.1
         with open(os.path.join(cross_validation_folder,'best_Cstar_param{}.txt'.format(k)),'a') as best_params_doc:
             best_params_doc.write("\n"+str(c_star_svm_plus))
 
@@ -159,9 +159,9 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
         print('svm+ accuracy',(accuracy_lupi))
 
 
-list_of_values = [5, 10, 25, 50, 75]
-
-percentage = 75
-for i in range(1,11):
-    print ('\n\n NEW FOLD NUM {}'.format(i))
-    single_fold(k=i, percentage=percentage, dataset='tech', datasetnum=1, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+# list_of_values = [5, 10, 25, 50, 75]
+#
+# percentage = 50
+# for i in range(1,11):
+#     print ('\n\n NEW FOLD NUM {}'.format(i))
+#     single_fold(k=i, percentage=percentage, dataset='tech', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
