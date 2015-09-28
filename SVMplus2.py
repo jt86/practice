@@ -2,7 +2,7 @@
 # based on Fast Optimization Algorithms for Solving SVM+ (D. Pechyony and V. Vapnik)
 # 22 July 2014
 # Questions regarding this code are directed to: N.Quadrianto@sussex.ac.uk
-from __future__ import division
+
 from cvxopt import matrix
 from cvxopt.blas import dot
 from cvxopt.solvers import qp
@@ -75,7 +75,7 @@ def svmplusQP(X,Y,Xstar,C,Cstar,gamma,gammastar):
     Fi = np.dot(K,Y*alphas)
     fi = np.dot(Kstar,betahats)
 
-    rangeobs = range(n)
+    rangeobs = list(range(n))
 
 
     sel_pos = ((alphas.flatten() > 0) & (Y.flatten()==1))
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     duals,bias = svmplusQP(X,Y,Xstar,C,Cstar)
     predicted = svmplusQP_Predict(X,Xtest,duals,bias)
 
-    print predicted
+    print(predicted)
 
 #
 #def

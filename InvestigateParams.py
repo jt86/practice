@@ -15,7 +15,7 @@ for subdir, dirs, files in os.walk(rootdir):
     for file in files:
         path = os.path.join(subdir, file)
         if 'chosen' in path:
-            print '\n',path
+            print('\n',path)
             # SVM_list, SVM_plus_list, baseline_list = [], [], []
             for line in open(path, 'r'):
                 line = line.split(',')
@@ -25,13 +25,13 @@ for subdir, dirs, files in os.walk(rootdir):
                         baseline_list += [gamma]
                     if line[2] == 'SVM+':
                         SVM_plus_list += [gamma]
-                        print SVM_plus_list
+                        print(SVM_plus_list)
                     elif line[2] == 'SVM':
                         SVM_list += [gamma]
-                        print SVM_list
+                        print(SVM_list)
 
-print('svm plus',SVM_plus_list)
-print('svm',SVM_list)
+print(('svm plus',SVM_plus_list))
+print(('svm',SVM_list))
 
 logging.info(len(SVM_plus_list))
 logging.info(len(SVM_list))

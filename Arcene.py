@@ -20,5 +20,5 @@ def get_arcene_data(debug=False):
 
 
 positive, negative = get_arcene_data()
-print positive.shape
-print negative.shape
+print(positive.shape)
+print(negative.shape)

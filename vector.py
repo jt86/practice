@@ -90,8 +90,7 @@ class CVectorKernel(CKernel):
     # @param x2 [read] The second data point.
     #
     def K(self, x1, x2):
-        raise NotImplementedError, \
-              'CVectorKernel.K in abstract class is not implemented'
+        raise NotImplementedError('CVectorKernel.K in abstract class is not implemented')
 
     ## Compute the kernel between the data points in x1 and those in x2.
     # It returns a matrix with entry $(ij)$ equal to $K(x1_i, x1_j)$.
@@ -107,8 +106,7 @@ class CVectorKernel(CKernel):
     # @param output [write] The buffer where the output matrix is written into.
     #
     def Dot(self, x1, x2, index1=None, index2=None, output=None):
-        raise NotImplementedError, \
-              'CVectorKernel.Dot in abstract class is not implemented'
+        raise NotImplementedError('CVectorKernel.Dot in abstract class is not implemented')
 
     ## Compute the kernel between the data points in x1 and those in x2,
     # then multiply the resulting kernel matrix by alpha2.
@@ -123,8 +121,7 @@ class CVectorKernel(CKernel):
     # @param output [write] The buffer where the output matrix is written into.
     #
     def Expand(self, x1, x2, alpha2, index1=None, index2=None):
-        raise NotImplementedError, \
-              'CVectorKernel.Expand in abstract class is not implemented'
+        raise NotImplementedError('CVectorKernel.Expand in abstract class is not implemented')
 
     ## Compute the kernel between the data points in x1 and those in x2,
     # then multiply the resulting kernel matrix elementwiesely by the
@@ -140,8 +137,7 @@ class CVectorKernel(CKernel):
     # @param output [write] The buffer where the output matrix is written into.
     #
     def Tensor(self, x1, y1, x2, y2, index1=None, index2=None):
-        raise NotImplementedError, \
-              'CVectorKernel.Tensor in abstract class is not implemented'
+        raise NotImplementedError('CVectorKernel.Tensor in abstract class is not implemented')
 
     ## Compute the kernel between the data points in x1 and those in x2,
     # then multiply the resulting kernel matrix elementwiesely by the
@@ -159,8 +155,7 @@ class CVectorKernel(CKernel):
     #
     def TensorExpand(self, x1, y1, x2, y2, alpha2, index1=None, index2=None, \
                      output=None):
-        raise NotImplementedError, \
-              'CVectorKernel.K in abstract class is not implemented'
+        raise NotImplementedError('CVectorKernel.K in abstract class is not implemented')
 
     ## Remember x by computing the inner product of the data points contained
     # in x, storing them in the cache and indexing them by the id of
@@ -183,7 +178,7 @@ class CVectorKernel(CKernel):
         # default behavior
         if x is not None:
             assert len(x.shape) == 2, 'Argument 1 is has wrong shape'
-            if self._cacheData.has_key(id(x)) is False:
+            if (id(x) in self._cacheData) is False:
                 return False
             else:
                 del self._cacheData[id(x)]
@@ -230,7 +225,7 @@ class CVectorKernel(CKernel):
         # default behavior
         if x is not None:
             assert len(x.shape) == 2, "Argument 1 has wrong shape"
-            if self._cacheKernel.has_key(id(x)) is False:
+            if (id(x) in self._cacheKernel) is False:
                 return False
             else:
                 del self._cacheKernel[id(x)]
@@ -247,8 +242,7 @@ class CVectorKernel(CKernel):
     # @param x [read] The data whose base part is to be cached.
     #
     def CreateCacheKernel(self, x):
-        raise NotImplementedError, \
-              'CVectorKernel.K in abstract class is not implemented'
+        raise NotImplementedError('CVectorKernel.K in abstract class is not implemented')
 
     ## Dot product of x with itself with the cached base part of the kernel.
     # Overload this method to use the base part differently for different
@@ -260,8 +254,7 @@ class CVectorKernel(CKernel):
     # @param output The output buffer.
     #
     def DotCacheKernel(self, x, param=None, output=None):
-        raise NotImplementedError, \
-              'CVectorKernel.K in abstract class is not implemented'
+        raise NotImplementedError('CVectorKernel.K in abstract class is not implemented')
 
     ## Decrement the base part of the kernel for x1 stored in the cache
     # by x2. Overload this method to define the decrement of the base
@@ -271,8 +264,7 @@ class CVectorKernel(CKernel):
     # @param x2 The data set who is to be decremented from x1.
     #
     def DecCacheKernel(self, x1, x2):
-        raise NotImplementedError, \
-              'CVectorKernel.K in abstract class is not implemented'
+        raise NotImplementedError('CVectorKernel.K in abstract class is not implemented')
 
     ## Decrement the base part of the kernel for x1 stored in the cache
     # by x2, and return the resulting kernel matrix. If param is given,
@@ -285,8 +277,7 @@ class CVectorKernel(CKernel):
     # @param param The new parameters.
     #
     def DecDotCacheKernel(self, x1, x2, param=None, output=None):
-        raise NotImplementedError, \
-              'CVectorKernel.K in abstract class is not implemented'
+        raise NotImplementedError('CVectorKernel.K in abstract class is not implemented')
 
     ## Gradient of the kernel matrix with respect to the kernel parameter.
     # If param is given, the kernel matrix is computed using the given
@@ -298,7 +289,7 @@ class CVectorKernel(CKernel):
     def GradDotCacheKernel(self, x, param=None, output=None):
         # default behavior
         assert len(x.shape)==2, "Argument 1 has wrong shape"
-        assert self._cacheKernel.has_key(id(x)) == True, \
+        assert (id(x) in self._cacheKernel) == True, \
                "Argument 1 has not been cached"
 
         if param is not None:
@@ -359,7 +350,7 @@ class CLinearKernel(CVectorKernel):
         # number of data points in x2.
         n2 = x2.shape[0]
         # number of blocks.
-        nb = n1 / self._blocksize
+        nb = n1 // self._blocksize                  #changed for Python 3
 
         if output is None:
             output = numpy.zeros((n1,n2), numpy.float64)
@@ -560,7 +551,7 @@ class CLinearKernel(CVectorKernel):
         nb = n / self._blocksize
 
         # create the cache space
-        if self._cacheKernel.has_key(id(x)):
+        if id(x) in self._cacheKernel:
             self.ClearCacheKernel(x)
         tmpCacheKernel = numpy.zeros((n,n), numpy.float64)
         self._cacheKernel[id(x)] = tmpCacheKernel
@@ -587,7 +578,7 @@ class CLinearKernel(CVectorKernel):
     #
     def DotCacheKernel(self, x, param=None, output=None):
         assert len(x.shape)==2, 'Argument 1 has wrong shape'
-        assert self._cacheKernel.has_key(id(x)) == True, \
+        assert (id(x) in self._cacheKernel) == True, \
                'Argument 1 has not been cached'
 
         n = x.shape[0]
@@ -623,7 +614,7 @@ class CLinearKernel(CVectorKernel):
         assert len(x2.shape) == 2, 'Argument 2 has wrong shape'
         assert x1.shape[0] == x2.shape[0], \
                'Argument 1 and 2 have different number of data points'
-        assert self._cacheKernel.has_key(id(x1)) == True, \
+        assert (id(x1) in self._cacheKernel) == True, \
                'Argument 1 has not been cached'
 
         n = x1.shape[0]
@@ -658,7 +649,7 @@ class CLinearKernel(CVectorKernel):
         assert len(x2.shape) == 2, 'Argument 2 has wrong shape'
         assert x1.shape[0] == x2.shape[0], \
                'Argument 1 and 2 have different number of data points'
-        assert self._cacheKernel.has_key(id(x1)) == True, \
+        assert (id(x1) in self._cacheKernel) == True, \
                'Argument 1 has not been cached'
 
         n = x1.shape[0]
@@ -943,7 +934,7 @@ class CDotProductKernel(CVectorKernel):
         nb = n / self._blocksize
 
         # create the cache space
-        if self._cacheKernel.has_key(id(x)):
+        if id(x) in self._cacheKernel:
             self.ClearCacheKernel(x)
         tmpCacheKernel = numpy.zeros((n,n), numpy.float64)
         self._cacheKernel[id(x)] = tmpCacheKernel
@@ -970,7 +961,7 @@ class CDotProductKernel(CVectorKernel):
     #
     def DotCacheKernel(self, x, param=None, output=None):
         assert len(x.shape)==2, 'Argument 1 has wrong shape'
-        assert self._cacheKernel.has_key(id(x)) == True, \
+        assert (id(x) in self._cacheKernel) == True, \
                'Argument 1 has not been cached'
 
         n = x.shape[0]
@@ -1006,7 +997,7 @@ class CDotProductKernel(CVectorKernel):
         assert len(x2.shape) == 2, 'Argument 2 has wrong shape'
         assert x1.shape[0] == x2.shape[0], \
                'Argument 1 and 2 have different number of data points'
-        assert self._cacheKernel.has_key(id(x1)) == True, \
+        assert (id(x1) in self._cacheKernel) == True, \
                'Argument 1 has not been cached'
 
         n = x1.shape[0]
@@ -1041,7 +1032,7 @@ class CDotProductKernel(CVectorKernel):
         assert len(x2.shape) == 2, 'Argument 2 has wrong shape'
         assert x1.shape[0] == x2.shape[0], \
                'Argument 1 and 2 have different number of data points'
-        assert self._cacheKernel.has_key(id(x1)) == True, \
+        assert (id(x1) in self._cacheKernel) == True, \
                'Argument 1 has not been cached'
 
         n = x1.shape[0]
@@ -1080,7 +1071,7 @@ class CDotProductKernel(CVectorKernel):
     #
     def GradDotCacheKernel(self, x, param=None, output=None):
         assert len(x.shape) == 2, "Argument 1 has wrong shape"
-        assert self._cacheKernel.has_key(id(x)) == True, \
+        assert (id(x) in self._cacheKernel) == True, \
                "Argument 1 has not been cached"
 
         n = x.shape[0]
@@ -1230,11 +1221,11 @@ class CRBFKernel(CVectorKernel):
 
         # retrieve remembered data from the cache.
         flg1 = False
-        if self._cacheData.has_key(id(x1)):
+        if id(x1) in self._cacheData:
             dot_x1 = self._cacheData[id(x1)]
             flg1 = True
         flg2 = False
-        if self._cacheData.has_key(id(x2)):
+        if id(x2) in self._cacheData:
             dot_x2 = self._cacheData[id(x2)]
             flg2 = True
 
@@ -1312,11 +1303,11 @@ class CRBFKernel(CVectorKernel):
 
         # retrieve remembered data from cache.
         flg1 = False
-        if self._cacheData.has_key(id(x1)):
+        if id(x1) in self._cacheData:
             dot_x1 = self._cacheData[id(x1)]
             flg1 = True
         flg2 = False
-        if self._cacheData.has_key(id(x2)):
+        if id(x2) in self._cacheData:
             dot_x2 = self._cacheData[id(x2)]
             flg2 = True
 
@@ -1396,11 +1387,11 @@ class CRBFKernel(CVectorKernel):
 
         # retrieve remembered data from the cache
         flg1 = False
-        if self._cacheData.has_key(id(x1)):
+        if id(x1) in self._cacheData:
             dot_x1 = self._cacheData[id(x1)]
             flg1 = True
         flg2 = False
-        if self._cacheData.has_key(id(x2)):
+        if id(x2) in self._cacheData:
             dot_x2 = self._cacheData[id(x2)]
             flg2 = True
 
@@ -1485,11 +1476,11 @@ class CRBFKernel(CVectorKernel):
 
         # retrieve remembered data from the cache
         flg1 = False
-        if self._cacheData.has_key(id(x1)):
+        if id(x1) in self._cacheData:
             dot_x1 = self._cacheData[id(x1)]
             flg1 = True
         flg2 = False
-        if self._cacheData.has_key(id(x2)):
+        if id(x2) in self._cacheData:
             dot_x2 = self._cacheData[id(x2)]
             flg2 = True
 
@@ -1558,12 +1549,12 @@ class CRBFKernel(CVectorKernel):
         nb = n / self._blocksize
 
         # create the cache space
-        if self._cacheKernel.has_key(id(x)):
+        if id(x) in self._cacheKernel:
             self.ClearCacheKernel(x)
         tmpCacheKernel = numpy.zeros((n,n), numpy.float64)
         self._cacheKernel[id(x)] = tmpCacheKernel
 
-        if self._cacheData.has_key(id(x)):
+        if id(x) in self._cacheData:
             dot_x = self._cacheData[id(x)]
         else:
             dot_x = numpy.sum(x**2,1)
@@ -1594,7 +1585,7 @@ class CRBFKernel(CVectorKernel):
     #
     def DotCacheKernel(self, x, param=None, output=None):
         assert len(x.shape)==2, 'Argument 1 has wrong shape'
-        assert self._cacheKernel.has_key(id(x)) == True, \
+        assert (id(x) in self._cacheKernel) == True, \
                'Argument 1 has not been cached'
 
         n = x.shape[0]
@@ -1630,14 +1621,14 @@ class CRBFKernel(CVectorKernel):
         assert len(x2.shape) == 2, 'Argument 2 has wrong shape'
         assert x1.shape[0] == x2.shape[0], \
                'Argument 1 and 2 have different number of data points'
-        assert self._cacheKernel.has_key(id(x1)) == True, \
+        assert (id(x1) in self._cacheKernel) == True, \
                'Argument 1 has not been cached'
 
         n = x1.shape[0]
         nb = n / self._blocksize
         tmpCacheKernel = self._cacheKernel[id(x1)]
 
-        if self._cacheData.has_key(id(x2)):
+        if id(x2) in self._cacheData:
             dot_x2 = self._cacheData[id(x2)]
         else:
             dot_x2 = numpy.sum(x2**2,1)
@@ -1674,7 +1665,7 @@ class CRBFKernel(CVectorKernel):
         assert len(x2.shape) == 2, 'Argument 2 has wrong shape'
         assert x1.shape[0] == x2.shape[0], \
                'Argument 1 and 2 have different number of data points'
-        assert self._cacheKernel.has_key(id(x1)) == True, \
+        assert (id(x1) in self._cacheKernel) == True, \
                'Argument 1 has not been cached'
 
         n = x1.shape[0]
@@ -1688,7 +1679,7 @@ class CRBFKernel(CVectorKernel):
         if output is None:
             output = numpy.zeros((n,n), numpy.float64)
 
-        if self._cacheData.has_key(id(x2)):
+        if id(x2) in self._cacheData:
             dot_x2 = self._cacheData[id(x2)]
         else:
             dot_x2 = numpy.sum(x2*x2,1)
@@ -1720,7 +1711,7 @@ class CRBFKernel(CVectorKernel):
     #
     def GradDotCacheKernel(self, x, param=None, output=None):
         assert len(x.shape) == 2, "Argument 1 has wrong shape"
-        assert self._cacheKernel.has_key(id(x)) == True, \
+        assert (id(x) in self._cacheKernel) == True, \
                "Argument 1 has not been cached"
 
         n = x.shape[0]

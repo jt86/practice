@@ -18,7 +18,7 @@ def get_heart_data(debug=False):
         return features_array, labels_array
 
 features_array,labels_array=get_heart_data()
-print features_array.shape, labels_array.shape
+print(features_array.shape, labels_array.shape)
 #
 # data = open("/Volumes/LocalDataHD/jt306/Desktop/Privileged_Data/new_data/house-votes-84.data", "r+")
 # data_array = np.loadtxt(data,delimiter=",")

@@ -14,4 +14,4 @@ import numpy as np
 
 c_star_svm_plus = 10**-15
 
-print c_star_svm_plus
+print(c_star_svm_plus)

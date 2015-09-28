@@ -48,12 +48,12 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
     # ax1 = fig.add_subplot(111, title=" Comparison of SVM+ and SVM, for "+keyword)
     ax1 = fig.add_subplot(111)
     fig.suptitle(dataset.title(), fontsize=20)
-    print 'num feats list',len(numbers_of_features_list)
-    print 'SVM results', len(results)
-    print 'LUPI results',len(LUPI_results)
-    print 'baseline 1 results',len(baseline_results)
+    print('num feats list',len(numbers_of_features_list))
+    print('SVM results', len(results))
+    print('LUPI results',len(LUPI_results))
+    print('baseline 1 results',len(baseline_results))
     # print 'baseline 2 results',len(baseline_results2)
-    print 'errors',len(errors)
+    print('errors',len(errors))
 
     ax1.errorbar(numbers_of_features_list, results, #np.mean(results, axis=0),#todo changed from axis=1
 

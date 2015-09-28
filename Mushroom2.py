@@ -28,22 +28,22 @@ def get_mushroom_data():
 
     for item in numerical_value_dict:
         features_array[features_array==item]=numerical_value_dict[item]
-        print item
+        print(item)
 
-    print features_array[0]
+    print(features_array[0])
     # dummies = get_dummies(features_array)
 
-    print features_array.shape, labels_array.shape
-    print labels_array
+    print(features_array.shape, labels_array.shape)
+    print(labels_array)
 
     enc = OneHotEncoder(n_values='auto', categorical_features ='all')
     features_array = enc.fit_transform(features_array)
-    print features_array[0]
-    print 'feats array shape',features_array.shape
+    print(features_array[0])
+    print('feats array shape',features_array.shape)
 
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
-    print positive_instances.shape, negative_instances.shape
+    print(positive_instances.shape, negative_instances.shape)
     return positive_instances, negative_instances
 
 get_mushroom_data()

@@ -4,9 +4,9 @@ from Get_Full_Path import get_full_path
 import csv
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, Imputer, Normalizer
 from scipy import sparse as sp
+import sys
 
-
-def get_train_and_test_this_fold(dataset):	#N,test_N per class
+def get_train_and_test_this_fold(dataset,datasetnum):	#N,test_N per class
     
     if dataset=='arcene':
         class0_data, class1_data = get_arcene_data()
@@ -31,7 +31,7 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
         N, test_N = 77,154
     if 'prove' in dataset:
         id = dataset[-1]
-        print 'id is ',id
+        print('id is ',id)
         class0_data,class1_data=get_prove_data(id)
         N, test_N = 79, 150
     if dataset=='heart':
@@ -42,15 +42,18 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
         N, test_N = 112,56
     # print class0_data.shape, class1_data.shape
 
+    if dataset=='tech':
+        class0_data,class1_data=get_techtc_data(datasetnum)
+        N, test_N =80, 50
+
     if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
-        print "Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0]
+        print("Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0])
         N=44; test_N = 44
 
     idx1 = np.random.permutation(class0_data.shape[0])
     train1, test1 = idx1[:N], idx1[N:N+test_N]
     idx2 = np.random.permutation(class1_data.shape[0])
     train2, test2 = idx2[:N], idx2[N:N+test_N]
-
 
     train_data = np.r_[class0_data[train1], class1_data[train2]]
     test_data = np.r_[class0_data[test1], class1_data[test2]]
@@ -65,7 +68,7 @@ def get_train_and_test_this_fold(dataset):	#N,test_N per class
 
     # train_data = train_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, train_data).reshape(-1,1)
     # test_data = test_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, test_data).reshape(-1,1)
-
+    print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
     return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)
 
 
@@ -184,21 +187,21 @@ def get_mushroom_data():
         features_array[features_array==item]=numerical_value_dict[item]
         # print item
 
-    print features_array[0]
+    print(features_array[0])
     # dummies = get_dummies(features_array)
 
-    print features_array.shape, labels_array.shape
-    print labels_array
+    print(features_array.shape, labels_array.shape)
+    print(labels_array)
 
     enc = OneHotEncoder(n_values='auto', categorical_features ='all')
     features_array = enc.fit_transform(features_array)
     # print features_array[0]
-    print 'feats array shape',features_array.shape
+    print('feats array shape',features_array.shape)
 
     positive_instances = (features_array[labels_array==1]).todense()
     negative_instances = (features_array[labels_array==-1]).todense()
 
-    print positive_instances.shape, negative_instances.shape
+    print(positive_instances.shape, negative_instances.shape)
     return positive_instances, negative_instances
 #
 
@@ -239,7 +242,7 @@ def get_sick_data():
     features_array=np.hstack((features_array,one_hot_array))
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
-    print positive_instances.shape, negative_instances.shape
+    print(positive_instances.shape, negative_instances.shape)
     return positive_instances, negative_instances
 #
 # get_sick_data()
@@ -248,16 +251,16 @@ def get_prove_data(label_number):
     print('Reading Prove data from disk')
     with open(get_full_path("Desktop/Privileged_Data/ml-prove/train.csv"), "r+") as infile:
         features_array = np.loadtxt(infile,delimiter=',', dtype=float)
-    print len(features_array[0])
-    print len(features_array)
+    print(len(features_array[0]))
+    print(len(features_array))
 
 
     all_labels = features_array[:,-6:]
     features_array=features_array[:,:-6]
-    print features_array.shape
+    print(features_array.shape)
 
     labels_array = all_labels[:,label_number]
-    print labels_array
+    print(labels_array)
 
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
@@ -270,7 +273,7 @@ def get_heart_data(debug=False):
     print('Reading HEART data from disk')
 
     with open(get_full_path("Desktop/Privileged_Data/new_data/heart.dat"), "r+") as infile:
-        features_array = np.genfromtxt(infile, dtype=None)
+        features_array = np.genfromtxt(infile, dtype=str)
         features_array = np.array(str(features_array).translate(None, '()').split(","), dtype=float)
         features_array.shape = (270, 14)
         labels_array = np.array(features_array[:, 13])
@@ -293,7 +296,7 @@ def get_vote_data():
 
         d = {'republican':1.,'democrat':-1., 'y':1., 'n':0., '?':0.5}
         new_array = np.copy(features_array)
-        for k, v in d.iteritems():
+        for k, v in d.items():
             new_array[features_array==k] = v
 
 
@@ -305,3 +308,56 @@ def get_vote_data():
 
 # positive_instances, negative_instances = get_vote_data()
 # print positive_instances.shape, negative_instances.shape
+
+
+
+def get_techtc_data(line_num):
+    max_num_of_feats,instances_count =0,0
+    labels_list,all_instances = [],[]
+    with open(get_tech_address(line_num), "r")as infile:
+    # with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/Exp_1092_1110/vectors.dat"), "r") as infile:
+        for row_num, line in enumerate(infile):
+            if row_num%2==1 and 1<row_num:
+                row = line.split()
+                label = row.pop(0)
+                labels_list.append(int(label))
+
+
+                array_of_tuples = list([item.split(':') for item in row])
+                if row_num<4:
+                    print (array_of_tuples)
+
+
+                indices = list([int(pair[0]) for pair in array_of_tuples])
+                max_num_of_feats=max(max(indices),max_num_of_feats)
+                instances_count+=1
+                all_instances.append(array_of_tuples)
+        # print ('max num feats', max_num_of_feats)
+        dok = sp.dok_matrix((instances_count, max_num_of_feats), dtype=int)
+
+        for count, instance in enumerate(all_instances):
+            for index, value in instance:
+                dok[count,int(index)-1] = int(value)
+        # print ('dok0',dok[0])
+
+
+
+    labels_list=np.array(labels_list)
+    positive_indices = (labels_list==1).nonzero()
+    negative_indices = (labels_list==-1).nonzero()
+
+
+    dok=np.array(dok.todense(), dtype=float)
+    positive_instances = dok[positive_indices]
+    negative_instances = dok[negative_indices]
+    print (positive_instances.shape, negative_instances.shape)
+
+    return(positive_instances,negative_instances)
+
+
+
+def get_tech_address(line_num):
+    with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_49.txt"), "r") as infile:
+        line = infile.readlines()[line_num]
+        return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/vectors.dat".format(line[:-1])))
+

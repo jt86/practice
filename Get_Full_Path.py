@@ -6,7 +6,7 @@ def get_full_path(relative_path):
     h = gethostname()
     if 'apollo' in h or 'node' in h:
         print('apollo in hostname')
-        prefix = '/mnt/lustre/scratch/inf/jt306'
+        prefix = '/lustre/scratch/inf/jt306'
     else:
         prefix = '/Volumes/LocalDataHD/jt306'
     return os.path.join(prefix, relative_path)

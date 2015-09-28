@@ -1,4 +1,4 @@
-from __future__ import division
+
 import os, sys
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
@@ -27,7 +27,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
         rank_metric= 'r2'
 
         c_values, cstar_values = get_c_and_cstar(cmin,cmax,number_of_cs, cstarmin, cstarmax)
-        print 'cvalues',c_values
+        print('cvalues',c_values)
 
         outer_directory = get_full_path('Desktop/Privileged_Data/FixedCandCStar12/')
         output_directory = os.path.join(get_full_path(outer_directory),dataset)
@@ -68,7 +68,7 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
 
 
         else:
-            print 'not awa'
+            print('not awa')
 
             ######################
 
@@ -93,9 +93,9 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
             PATH_CV_results = os.path.join(outer_directory,'CV/')
             topK=percentage/100
 
-            print str((PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k))
+            print(str((PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)))
             best_rfe_param=np.loadtxt(PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
-            print 'best rfe param', best_rfe_param
+            print('best rfe param', best_rfe_param)
 
             ###########
 
@@ -122,10 +122,10 @@ def single_fold(k, num_folds,dataset, peeking, kernel,
                 #                                                         testing_labels=testing_labels)
 
 
-                print 'best c baseline',best_C_baseline,  'kernel', kernel
+                print('best c baseline',best_C_baseline,  'kernel', kernel)
                 clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
                 # pdb.set_trace()
-                print all_training.shape, training_labels.shape
+                print(all_training.shape, training_labels.shape)
                 clf.fit(all_training, training_labels)
 
                 baseline_predictions = clf.predict(all_testing)

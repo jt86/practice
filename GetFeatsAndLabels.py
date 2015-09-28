@@ -26,7 +26,7 @@ from Dexter_NEW1 import get_dexter_data
 import time
 
 def get_feats_and_labels(input):
-    print 'input', input
+    print('input', input)
     if input == 'arcene':
         features_array, labels_array = get_arcene_data()
         tuple = (919, 9920, 1000)

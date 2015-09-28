@@ -16,4 +16,3 @@ def get_madelon_data():
 
     return features_array, labels_array
 
-

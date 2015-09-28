@@ -5,7 +5,7 @@ for fold_num in range(num_folds):
     for dataset_num in range(10):
         for top_k in top_k_list:
             dataset='awa{}'.format(dataset_num)
-            print '--k {}  --dataset {} --top-k-percent {}'.format(fold_num, dataset, top_k)
+            print('--k {}  --dataset {} --top-k-percent {}'.format(fold_num, dataset, top_k))
 
 
 

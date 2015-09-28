@@ -1,4 +1,4 @@
-from __future__ import division
+
 import os, sys
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
@@ -22,7 +22,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metr
         np.random.seed(k)
 
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        print 'cvalues',c_values
+        print('cvalues',c_values)
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
         output_directory = os.path.join(get_full_path(outer_directory),'{}-chi2'.format(dataset))
@@ -90,7 +90,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metr
         best_C_SVM = get_best_C(normal_features_training,training_labels,c_values)
         with open(os.path.join(cross_validation_folder,'best_svm_param{}.txt'.format(k)),'a') as best_params_doc:
             best_params_doc.write("\n"+str(best_C_SVM))
-        print 'best rfe param', best_C_SVM
+        print('best rfe param', best_C_SVM)
         clf = svm.SVC(C=best_C_SVM, kernel=kernel,random_state=1)
         clf.fit(normal_features_training, training_labels)
         svm_predictions = clf.predict(normal_features_testing)
@@ -102,7 +102,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metr
         if percentage == list_of_percentages[0]:
 
             # best_C_baseline=np.loadtxt(CV_best_param_folder + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
-            print 'getting best c for baseline'
+            print('getting best c for baseline')
 
             clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
             clf.fit(all_training, training_labels)
@@ -126,7 +126,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metr
         c_svm_plus=best_C_baseline
         c_star_values = [1., 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001]#, 0.00000001]
         # c_star_values = [0.00000001,0.0000001,0.000001,0.00001,0.0001,0.001,0.01,0.1,1.]
-        print 'getting best c star'
+        print('getting best c star')
         # c_star_svm_plus = 10**-12
 
 
@@ -135,7 +135,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metr
         with open(os.path.join(cross_validation_folder,'best_Cstar_param{}.txt'.format(k)),'a') as best_params_doc:
             best_params_doc.write("\n"+str(c_star_svm_plus))
 
-        print 'c star', c_star_svm_plus, '\n'
+        print('c star', c_star_svm_plus, '\n')
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
         lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
         accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
@@ -143,7 +143,7 @@ def single_fold(k, percentage, dataset, kernel, cmin,cmax,number_of_cs,rank_metr
             cv_lupi_file.write(str(accuracy_lupi)+',')
 
 
-        print 'svm+ accuracy',(accuracy_lupi)
+        print('svm+ accuracy',(accuracy_lupi))
 
 
 def univariate_selection(feats, labels, metric):

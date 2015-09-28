@@ -20,8 +20,8 @@ def get_sick_data():
 
     with open(get_full_path("Desktop/Privileged_Data/Sick/sick2.txt"), "r+") as infile:
         features_array = np.genfromtxt(infile, dtype=float,delimiter="\t", filling_values=np.NaN)
-        print features_array.shape
-        print features_array[0]
+        print(features_array.shape)
+        print(features_array[0])
         features_array.shape = (3772, 29)
 
     final_feat=features_array[:,-1]
@@ -39,4 +39,4 @@ def get_sick_data():
 
     return positive_instances, negative_instances
 
-print get_sick_data()[0].shape, get_sick_data()[1].shape
+print(get_sick_data()[0].shape, get_sick_data()[1].shape)

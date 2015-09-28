@@ -14,4 +14,4 @@ pattern = '--input {} --num-folds 5 --rank-metric r2 --prop-priv 1 --bottom-n-pe
 for input in inputs:
     for peeking in ['--peeking','']:
         txt = pattern.format(input, peeking)
-        print txt
+        print(txt)

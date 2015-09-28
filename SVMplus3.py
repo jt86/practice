@@ -2,7 +2,7 @@
 # based on Fast Optimization Algorithms for Solving SVM+ (D. Pechyony and V. Vapnik)
 # 22 July 2014
 # Questions regarding this code are directed to: N.Quadrianto@sussex.ac.uk
-from __future__ import division
+
 from cvxopt import matrix
 from cvxopt.blas import dot
 from cvxopt.solvers import qp
@@ -36,7 +36,7 @@ def svmplusQP(X,Y,Xstar,C,Cstar, gamma=None, gammastar=None):
         kernel_Kstar = CGaussKernel(omega_Kstar) # CLinearKernel()
 
     else:
-        print 'linear kernel for svm plus!'
+        print('linear kernel for svm plus!')
         kernel_K = CLinearKernel()
         kernel_Kstar = CLinearKernel()
 
@@ -87,7 +87,7 @@ def svmplusQP(X,Y,Xstar,C,Cstar, gamma=None, gammastar=None):
     Fi = np.dot(K,Y*alphas)
     fi = np.dot(Kstar,betahats)
 
-    rangeobs = range(n)
+    rangeobs = list(range(n))
 
 
     sel_pos = ((alphas.flatten() > 0) & (Y.flatten()==1))

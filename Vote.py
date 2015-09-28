@@ -12,7 +12,7 @@ def get_vote_data(debug=False):
 
         d = {'republican':1.,'democrat':-1., 'y':1., 'n':0., '?':0.5}
         new_array = np.copy(features_array)
-        for k, v in d.iteritems():
+        for k, v in d.items():
             new_array[features_array==k] = v
 
 

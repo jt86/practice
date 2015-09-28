@@ -64,7 +64,7 @@ def svmplusQP(X,Y,Xstar,C,Cstar):
     Fi = np.dot(K,Y*alphas)
     fi = np.dot(Kstar,betahats)
 
-    rangeobs = range(n)
+    rangeobs = list(range(n))
     sel_pos = ((alphas.flatten() > 0) & (Y.flatten()==1))
     sel_neg = ((alphas.flatten() > 0) & (Y.flatten()==-1))
 

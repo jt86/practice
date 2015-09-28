@@ -1,4 +1,4 @@
-from __future__ import division
+
 import os, sys
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
@@ -20,7 +20,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,amount_of_priv):
         step=1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        print 'cvalues',c_values
+        print('cvalues',c_values)
 
         outer_directory = get_full_path('Desktop/Privileged_Data/')
 
@@ -64,7 +64,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,amount_of_priv):
             if not os.path.isdir(CV_best_param_folder):
                 raise
 
-        print 'getting best param for RFE'
+        print('getting best param for RFE')
         best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats)
         with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
             best_params_doc.write("\n"+str(best_rfe_param))
@@ -86,9 +86,9 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,amount_of_priv):
                 cv_svm_file.write(str(ACC)+",")
 
         # ##############################  BASELINE - all features
-        print 'getting best c for baseline'
+        print('getting best c for baseline')
         best_C_baseline = get_best_C(all_training, training_labels, c_values)
-        print 'got best C baseline',best_C_baseline
+        print('got best C baseline',best_C_baseline)
 
 
         if amount_of_priv==10:
@@ -113,27 +113,27 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,amount_of_priv):
         normal_features_training = all_training[:,best_n_mask].copy()
         privileged_features_training = all_training[:,np.invert(best_n_mask)].copy()
 
-        print amount_of_priv,'%'
+        print(amount_of_priv,'%')
         c_svm_plus=best_C_baseline
         c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]
 
-        print 'number of total priv feats',privileged_features_training.shape[1]
+        print('number of total priv feats',privileged_features_training.shape[1])
         number_of_priv_to_take= int(amount_of_priv*privileged_features_training.shape[1]/100)
-        print 'number to take', number_of_priv_to_take
+        print('number to take', number_of_priv_to_take)
 
 
         all_features_ranking = all_features_ranking[np.invert(best_n_mask)]
         privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
 
         privileged_features_training = privileged_features_training[:,:number_of_priv_to_take]
-        print 'privileged',privileged_features_training.shape
-        print 'sorted priv feature training', privileged_features_training.shape
+        print('privileged',privileged_features_training.shape)
+        print('sorted priv feature training', privileged_features_training.shape)
         # print 'sorted priv feature training', privileged_features_training[0]
 
         c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
         with open(os.path.join(cross_validation_folder,'best_Cstar_param{}-subset{}.txt'.format(k,amount_of_priv)),'a') as best_params_doc:
             best_params_doc.write("\n"+str(c_star_svm_plus))
-        print 'c star', c_star_svm_plus
+        print('c star', c_star_svm_plus)
 
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
 
@@ -143,7 +143,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,amount_of_priv):
             cv_lupi_file.write(str(accuracy_lupi)+',')
 
 
-        print 'svm+ accuracy',(accuracy_lupi),'\n'
+        print('svm+ accuracy',(accuracy_lupi),'\n')
 #
 # subset_of_priv=40
 # single_fold(7, 'mushroom', 'linear', 0,2,1,  subset_of_priv)

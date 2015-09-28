@@ -55,7 +55,7 @@ def get_mushroom_data():
     # labels_array[labels_array=='e']=1
     # labels_array[labels_array=='p']=-1
 
-    print features_array.shape, labels_array.shape
+    print(features_array.shape, labels_array.shape)
 
     logging.info(labels_array)
 

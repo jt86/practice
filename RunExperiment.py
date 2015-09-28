@@ -1,6 +1,6 @@
 import argparse
 from SingleFold3 import single_fold
-# from SingleFoldUnivariate import single_fold
+
 
 if __name__ == '__main__':
 
@@ -27,8 +27,8 @@ if __name__ == '__main__':
 
 
     args = parser.parse_args()
-    print 'input is', args.dataset
-    print ' all args',args
+    print('input is', args.dataset)
+    print(' all args',args)
 
     # dataset='awa{}'.format(args.dataset_num)
     # single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,
