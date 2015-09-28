@@ -23,7 +23,7 @@ if __name__ == '__main__':
     parser.add_argument('--kernel', type=str)#, choices = ('rbf','linear'))
 
     parser.add_argument('--k', type=int, required = True)
-
+    parser.add_argument('--datasetnum', type=int, required = True)
 
 
     args = parser.parse_args()
@@ -35,5 +35,5 @@ if __name__ == '__main__':
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
 
 
-    single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,
+    single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,datasetnum =args.datasetnum,
                 kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
