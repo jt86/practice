@@ -361,3 +361,4 @@ def get_tech_address(line_num):
         line = infile.readlines()[line_num]
         return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/vectors.dat".format(line[:-1])))
 
+print (get_tech_address(0))
