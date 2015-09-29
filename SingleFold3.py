@@ -26,7 +26,7 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
         outer_directory = get_full_path('Desktop/Privileged_Data/')
 
         # Check if output directory exists and make it if necessary
-        output_directory = os.path.join(get_full_path(outer_directory),'{}-{}-RFE-baseline'.format(dataset,datasetnum))
+        output_directory = os.path.join(get_full_path(outer_directory),'{}-{}-RFE-baseline-step=1000'.format(dataset,datasetnum))
         try:
             os.makedirs(output_directory)
         except OSError:
@@ -86,7 +86,8 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
         ########## RFE CROSS VALIDATION
 
         print('getting best param for RFE')
-        best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats)
+        stepsize=1000
+        best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
         # best_rfe_param=1
 
         # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
@@ -96,7 +97,7 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
         ###########  RFE CARRIED OUT; GET ACCURACY
         # print ('test labels',testing_labels)
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
-        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=100)
+        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
         print ('rfe step size',rfe.step)
         rfe.fit(all_training, training_labels)
         ACC = rfe.score(all_testing, testing_labels)
@@ -160,8 +161,8 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
 
 
 # list_of_values = [5, 10, 25, 50, 75]
-#
-# percentage = 50
-# for i in range(1,11):
-#     print ('\n\n NEW FOLD NUM {}'.format(i))
-#     single_fold(k=i, percentage=percentage, dataset='tech', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+
+percentage = 50
+for i in range(1):#,11):
+    print ('\n\n NEW FOLD NUM {}'.format(i))
+    single_fold(k=i, percentage=percentage, dataset='tech', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5)

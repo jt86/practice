@@ -61,16 +61,16 @@ def get_best_C(training_data,training_labels, c_values):
 
 
 
-def get_best_RFE_C(training_data,training_labels, c_values, top):
-    t0=time.clock()
+def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize):
     cv = cross_validation.StratifiedKFold(training_labels, 5)
     cv_scores = numpy.zeros(len(c_values))
 
     for i,(train, test) in enumerate(cv):
+        print('iter',i)
         for C_index, C in enumerate(c_values):
-
+            print('c index',C_index)
             svc = SVC(C=C, kernel="linear", random_state=1)
-            rfe = RFE(estimator=svc, n_features_to_select=top, step=1)
+            rfe = RFE(estimator=svc, n_features_to_select=top, step=stepsize)
             rfe.fit(training_data[train], training_labels[train])
             cv_scores[C_index] += rfe.score(training_data[test], training_labels[test])
         # print 'fold',i,cv_scores
