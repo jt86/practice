@@ -17,9 +17,7 @@ from sklearn.svm import SVC, LinearSVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
 def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
-
         np.random.seed(k)
-
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
 
