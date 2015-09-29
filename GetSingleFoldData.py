@@ -359,6 +359,6 @@ def get_techtc_data(line_num):
 def get_tech_address(line_num):
     with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_49.txt"), "r") as infile:
         line = infile.readlines()[line_num]
-        return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/vectors.dat".format(line[:-1])))
+        return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/vectors.dat".format(line.strip('\r'))))
 
 print (get_tech_address(0))
