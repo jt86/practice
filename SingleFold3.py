@@ -128,7 +128,7 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
             # filename='{}_baseline_fold{}.txt'.format(dataset,k)
             # with open(os.path.join(CV_best_param_folder,filename),'a') as best_param_file:
             #     best_param_file.write(str(best_C_baseline))
-            #
+            #q
             with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as baseline_file:
                 baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
 
