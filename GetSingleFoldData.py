@@ -44,11 +44,16 @@ def get_train_and_test_this_fold(dataset,datasetnum):	#N,test_N per class
 
     if dataset=='tech':
         class0_data,class1_data=get_techtc_data(datasetnum)
-        N, test_N =80, 50
+        # N, test_N =80, 50
+        test_N = min(class0_data.shape[0],class1_data.shape[0])//3
+        N = test_N*2
+        print (N, test_N)
 
-    if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
-        print("Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0])
-        N=44; test_N = 44
+    #
+    #
+    # if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
+    #     print("Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0])
+    #     N=44; test_N = 44
 
     idx1 = np.random.permutation(class0_data.shape[0])
     train1, test1 = idx1[:N], idx1[N:N+test_N]
@@ -361,4 +366,4 @@ def get_tech_address(line_num):
         line = infile.readlines()[line_num]
         return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/vectors.dat".format(line.strip('\r\n'))))
 
-print (get_tech_address(0))
+# print (get_tech_address(0))

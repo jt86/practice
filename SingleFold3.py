@@ -98,6 +98,7 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
         rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
         print ('rfe step size',rfe.step)
         rfe.fit(all_training, training_labels)
+        print (all_testing.shape,testing_labels.shape)
         ACC = rfe.score(all_testing, testing_labels)
         best_n_mask = rfe.support_
         print ('rfe accuracy',ACC)
@@ -159,8 +160,8 @@ def single_fold(k, percentage, dataset,datasetnum, kernel, cmin,cmax,number_of_c
 
 
 # list_of_values = [5, 10, 25, 50, 75]
-#
-# percentage = 50
-# for i in range(1):#,11):
-#     print ('\n\n NEW FOLD NUM {}'.format(i))
-#     single_fold(k=i, percentage=percentage, dataset='tech', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+# for percentage in list_of_values:
+# #
+#     for i in range(1):#,11):
+#         print ('\n\n NEW FOLD NUM {}'.format(i))
+#         single_fold(k=i, percentage=percentage, dataset='tech', datasetnum=30, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
