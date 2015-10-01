@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--dataset', type=str, required=True, help='name of input data')
 
-    parser.add_argument('--percentage', type=int, required=True, help='top % of features selected for use as normal info')
+    parser.add_argument('--topk', type=int, required=True, help='num of top features selected for use as normal info')
     # parser.add_argument('--datasetnum', type=int, required=True, help='id number for AwA')
     # parser.add_argument('--num-folds', type=int, required=True,
     #                     help='number of folds for cross-validation')
@@ -35,5 +35,5 @@ if __name__ == '__main__':
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
 
 
-    single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,datasetnum =args.datasetnum,
+    single_fold(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
                 kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
