@@ -16,7 +16,7 @@ import numpy
 from sklearn.svm import SVC, LinearSVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, top_k, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         outer_directory = get_full_path('Desktop/Privileged_Data/')
@@ -46,7 +46,7 @@ def single_fold(k, top_k, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum)
         total_number_of_feats = all_training.shape[1]
         # n_top_feats = int(total_number_of_feats*(percentage/100))
-        n_top_feats= top_k
+        n_top_feats= topk
         param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
         ############
 
@@ -87,13 +87,13 @@ def single_fold(k, top_k, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         #     best_feats_doc.write("\n"+str(best_n_mask))
         #
         #
-        with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,top_k)),'a') as cv_svm_file:
+        with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
             cv_svm_file.write(str(ACC)+",")
 
         # ##############################  BASELINE - all features
         best_C_baseline = get_best_C(all_training, training_labels, c_values)
 
-        if top_k == 300:
+        if topk == 300:
         # if 1<2:
 
             # best_C_baseline=np.loadtxt(CV_best_param_folder + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
@@ -137,7 +137,7 @@ def single_fold(k, top_k, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         # print ('lupi predictions',lupi_predictions)
         print ('\n lupi count',sum(x > 0 for x in lupi_predictions),'of',len(all_testing))
         accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
-        with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,top_k)),'a') as cv_lupi_file:
+        with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
 
 
@@ -150,4 +150,4 @@ def single_fold(k, top_k, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
 # #
 #     for i in range(1):#,11):
 #         print ('\n\n NEW FOLD NUM {}'.format(i))
-#         single_fold(k=i, top_k=top_k, dataset='tech', datasetnum=30, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+#         single_fold(k=i, topk=top_k, dataset='tech', datasetnum=30, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
