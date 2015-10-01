@@ -39,7 +39,6 @@ def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_valu
     return best_Cstar
 
 def get_best_C(training_data,training_labels, c_values):
-    t0=time.clock()
     cv = cross_validation.StratifiedKFold(training_labels, 5)
     cv_scores = np.zeros(len(c_values))
 
@@ -49,7 +48,7 @@ def get_best_C(training_data,training_labels, c_values):
             svc = SVC(C=C, kernel="linear", random_state=1)
             svc.fit(training_data[train], training_labels[train])
             cv_scores[C_index] += svc.score(training_data[test], training_labels[test])
-
+            print ('c=',C,'score=',svc.score(training_data[test], training_labels[test]))
         # print 'fold',i, cv_scores
 
 
@@ -66,9 +65,9 @@ def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize):
     cv_scores = numpy.zeros(len(c_values))
 
     for i,(train, test) in enumerate(cv):
-        print('iter',i)
+        # print('iter',i)
         for C_index, C in enumerate(c_values):
-            print('c index',C_index)
+            # print('c index',C_index)
             svc = SVC(C=C, kernel="linear", random_state=1)
             rfe = RFE(estimator=svc, n_features_to_select=top, step=stepsize)
             rfe.fit(training_data[train], training_labels[train])

@@ -45,8 +45,8 @@ def get_train_and_test_this_fold(dataset,datasetnum):	#N,test_N per class
     if dataset=='tech':
         class0_data,class1_data=get_techtc_data(datasetnum)
         # N, test_N =80, 50
-        test_N = min(class0_data.shape[0],class1_data.shape[0])//3
-        N = test_N*2
+        N = min(class0_data.shape[0],class1_data.shape[0])//3
+        test_N = N*2
         print (N, test_N)
 
     #
@@ -123,13 +123,7 @@ def get_gisette_data():
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
 
-#
-# def get_dexter_data():
-#     __author__ = 'jt306'
-# import numpy as np
-# from scipy import sparse as sp
-# import logging
-# from Get_Full_Path import get_full_path
+
 
 def get_dexter_data():
     print( "Getting DEXTER data")
@@ -326,13 +320,7 @@ def get_techtc_data(line_num):
                 row = line.split()
                 label = row.pop(0)
                 labels_list.append(int(label))
-
-
                 array_of_tuples = list([item.split(':') for item in row])
-                if row_num<4:
-                    print (array_of_tuples)
-
-
                 indices = list([int(pair[0]) for pair in array_of_tuples])
                 max_num_of_feats=max(max(indices),max_num_of_feats)
                 instances_count+=1

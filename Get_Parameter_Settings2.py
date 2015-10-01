@@ -3,8 +3,8 @@ dataset='tech'
 
 for datasetnum in range (49):
     for fold_num in range(1,11):
-        for percentage in [5,10,25,50,75]:
-            print('--k {} --percentage {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, percentage, dataset, datasetnum, 'linear', 0, 4,5))
+        for top_k in [100,200,300,400,500,600,700,800,900,1000]:
+            print('--k {} --percentage {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', 0, 4,5))
 
 # for dataset in ['gisette','madelon','arcene','dorothea','dexter']:
 
