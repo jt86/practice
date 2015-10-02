@@ -48,7 +48,7 @@ def get_best_C(training_data,training_labels, c_values):
             svc = SVC(C=C, kernel="linear", random_state=1)
             svc.fit(training_data[train], training_labels[train])
             cv_scores[C_index] += svc.score(training_data[test], training_labels[test])
-            print ('c=',C,'score=',svc.score(training_data[test], training_labels[test]))
+            # print ('c=',C,'score=',svc.score(training_data[test], training_labels[test]))
         # print 'fold',i, cv_scores
 
 

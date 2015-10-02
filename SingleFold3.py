@@ -21,7 +21,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         c_values = np.logspace(cmin,cmax,number_of_cs)
         outer_directory = get_full_path('Desktop/Privileged_Data/')
         # Check if output directory exists and make it if necessary
-        output_directory = os.path.join(get_full_path(outer_directory),'{}-{}-RFE-baseline-step=1000'.format(dataset,datasetnum))
+        output_directory = os.path.join(get_full_path(outer_directory),'fixedC=1-{}-{}-RFE-baseline-step=1000'.format(dataset,datasetnum))
         try:
             os.makedirs(output_directory)
         except OSError:
@@ -61,8 +61,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
 
         print('getting best param for RFE')
         stepsize=1000
-        best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
-        # best_rfe_param=.01
+        # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
+        best_rfe_param=1
 
         # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
         #     best_params_doc.write("\n"+str(best_rfe_param))
@@ -93,11 +93,6 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         best_C_baseline = get_best_C(all_training, training_labels, c_values)
 
         if topk == 300:
-        # if 1<2:
-
-            # best_C_baseline=np.loadtxt(CV_best_param_folder + 'AwA' + "_svm_" + class_id + "class_"+ "%ddata_best.txt"%k)
-            # print('getting best c for baseline')
-
             clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
             clf.fit(all_training, training_labels)
             baseline_predictions = clf.predict(all_testing)
@@ -123,10 +118,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
 
         c_svm_plus=best_C_baseline
         c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]#, 0.00001, 0.000001, 0.0000001, 0.00000001]
-        #c_star_values = [1., 10., 100., 1000.,10000]
-        # print('getting best c star')
         c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
-        # c_star_svm_plus=0.1
         with open(os.path.join(cross_validation_folder,'best_Cstar_param{}.txt'.format(k)),'a') as best_params_doc:
             best_params_doc.write("\n"+str(c_star_svm_plus))
 
