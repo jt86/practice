@@ -1,19 +1,12 @@
-
-import os, sys
+import os
 import numpy as np
-from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
-from sklearn.metrics import pairwise, accuracy_score
-from sklearn import svm, linear_model
+from sklearn.metrics import accuracy_score
 from SVMplus4 import svmplusQP, svmplusQP_Predict
-from ParamEstimation import param_estimation,get_best_Cstar, get_best_C, get_best_RFE_C
-from sklearn import svm, cross_validation
+from ParamEstimation import get_best_Cstar, get_best_C, get_best_RFE_C
+from sklearn import svm
 from Get_Full_Path import get_full_path
-from Get_Awa_Data import get_awa_data
-from CollectBestParams import collect_best_rfe_param
 from sklearn.feature_selection import RFE
-from FromViktoriia import getdata
-import numpy
-from sklearn.svm import SVC, LinearSVC
+from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
@@ -21,7 +14,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         c_values = np.logspace(cmin,cmax,number_of_cs)
         outer_directory = get_full_path('Desktop/Privileged_Data/')
         # Check if output directory exists and make it if necessary
-        output_directory = os.path.join(get_full_path(outer_directory),'fixedC=1-{}-{}-RFE-baseline-step=1000'.format(dataset,datasetnum))
+        output_directory = os.path.join(get_full_path(outer_directory),'not-fixedC-{}-{}-RFE-baseline-step=1000'.format(dataset,datasetnum))
         try:
             os.makedirs(output_directory)
         except OSError:
@@ -30,10 +23,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        # original_features_array, labels_array, tuple = get_feats_and_labels(dataset)
-        param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
-        # chosen_params_file = open(os.path.join(output_directory, 'chosen_parameters.csv'), "a")
 
+        param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
 
         cross_validation_folder = os.path.join(output_directory,'cross-validation')
         try:
@@ -57,18 +48,18 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
                 raise
 
 
-        ########## RFE CROSS VALIDATION
+        ########## GET BEST C FOR RFE
 
         print('getting best param for RFE')
         stepsize=1000
-        # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
-        best_rfe_param=1
+        best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
+        # best_rfe_param=1
 
         # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
         #     best_params_doc.write("\n"+str(best_rfe_param))
         print('best rfe param', best_rfe_param)
 
-        ###########  RFE CARRIED OUT; GET ACCURACY
+        ###########  CARRY OUT RFE, GET ACCURACY
         # print ('test labels',testing_labels)
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
         rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)

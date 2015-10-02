@@ -198,13 +198,6 @@ def get_mushroom_data():
 
     print(positive_instances.shape, negative_instances.shape)
     return positive_instances, negative_instances
-#
-
-#
-# positive_instances, negative_instances = get_mushroom_data()
-
-# print type(positive_instances),type(negative_instances)
-# get_mushroom_data()
 
 
 def get_sick_data():
