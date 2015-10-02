@@ -44,8 +44,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
 
 
         all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum)
-        total_number_of_feats = all_training.shape[1]
-        # n_top_feats = int(total_number_of_feats*(percentage/100))
+
         n_top_feats= topk
         param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
         ############
