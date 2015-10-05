@@ -132,7 +132,16 @@ def get_dexter_data():
                 index, value = item.split(':')[0],item.split(':')[1]
                 features_array[row_num,index]=value
     with open(get_full_path("Desktop/Privileged_Data/DEXTER/dexter_train.labels"),"r+") as file:
-        labels_array = np.genfromtxt(file, dtype=None)
+        labels_array=np.empty(shape=[300,1])
+        print (labels_array.shape)
+        print (labels_array)
+        for row_num, line in enumerate(file):
+            print (row_num,line)
+            labels_array[row_num] = line
+
+        print (labels_array)
+        print (labels_array.shape)
+
         labels_array.shape=(300)
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
