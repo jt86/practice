@@ -152,19 +152,31 @@ def get_dexter_data():
 
 def get_dorothea_data():
     print( "Getting DOROTHEA data")
-    dok = sp.dok_matrix((800, 100000), dtype=int)
+
     fh = open(get_full_path("Desktop/Privileged_Data/DOROTHEA/dorothea_train.data"),"rU")
+    features_array = np.zeros([800, 100000])
     for row_num, line in enumerate(fh):
-        row = line.split('\t')      #make list of numbers for each instance
-        indices_of_1s = np.array([int(r)-1 for r in row if r.isdigit()])           #make list of indices, as an array of integers]
-        dok[row_num,indices_of_1s] = 1
-    features_array = dok.todense()    #csr format
+        row = line.split(' ')      #make list of numbers for each instance
+        for item in row:
+            if len(item)>1:
+                index, value = item.split(':')[0],item.split(':')[1]
+                features_array[row_num,index]=value
+
     with open(get_full_path("Desktop/Privileged_Data/DOROTHEA/dorothea_train.labels"),"r+") as file:
-        labels_array = np.genfromtxt(file, dtype=None)
-        labels_array.shape=(800)
+        labels_array=np.empty(shape=[800,1])
+        print (labels_array.shape)
+        print (labels_array)
+        for row_num, line in enumerate(file):
+            print (row_num,line)
+            labels_array[row_num] = line
+
+        print (labels_array)
+        print (labels_array.shape)
+
+    labels_array.shape=(800)
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
-    return positive_instances, negative_instances
+    return (positive_instances, negative_instances)
 
 def get_mushroom_data():
 
