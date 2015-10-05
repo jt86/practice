@@ -44,8 +44,8 @@ def get_train_and_test_this_fold(dataset,datasetnum):	#N,test_N per class
 
     if dataset=='tech':
         class0_data,class1_data=get_techtc_data(datasetnum)
-        test_N = min(class0_data.shape[0],class1_data.shape[0])//3
-        N = test_N*2
+        test_N = min(class0_data.shape[0],class1_data.shape[0])//4
+        N = test_N*3
         print (N, test_N)
     # if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
     #     print("Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0])
