@@ -10,11 +10,12 @@ from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
+        stepsize=1000
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         outer_directory = get_full_path('Desktop/Privileged_Data/')
         # Check if output directory exists and make it if necessary
-        output_directory = os.path.join(get_full_path(outer_directory),'{}-{}-RFE-baseline-step=1000'.format(dataset,datasetnum))
+        output_directory = os.path.join(get_full_path(outer_directory),'{}-{}-RFE-baseline-step={}'.format(dataset,datasetnum,stepsize))
         try:
             os.makedirs(output_directory)
         except OSError:
@@ -50,7 +51,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         ########## GET BEST C FOR RFE
 
         print('getting best param for RFE')
-        stepsize=1000
+
         best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
         # best_rfe_param=1
 
@@ -125,9 +126,9 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         print('svm+ accuracy',(accuracy_lupi))
 
 #
-# list_of_values = [5, 10, 25, 50, 75]
-# # list_of_values = [300]#,400,500,600,700,800,900,1000]
-# for top_k in list_of_values:
-#     for i in range(1):#,11):
-#         print ('\n\n NEW FOLD NUM {}'.format(i))
-#         single_fold(k=i, topk=top_k, dataset='dexter', datasetnum=30, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+list_of_values = [5, 10, 25, 50, 75]
+# list_of_values = [300]#,400,500,600,700,800,900,1000]
+for top_k in list_of_values:
+    for i in range(1):#,11):
+        print ('\n\n NEW FOLD NUM {}'.format(i))
+        single_fold(k=i, topk=top_k, dataset='dexter', datasetnum=30, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
