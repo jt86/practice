@@ -16,7 +16,7 @@ def get_train_and_test_this_fold(dataset,datasetnum):	#N,test_N per class
         # N, test_N = 250,250
     if dataset=='gisette':
         class0_data, class1_data = get_gisette_data()
-        N, test_N = 100,200
+        # N, test_N = 100,200
     if dataset=='dexter':
         class0_data, class1_data = get_dexter_data()
         # N, test_N = 50,100
