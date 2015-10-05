@@ -132,4 +132,4 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
 # for top_k in list_of_values:
 #     for i in range(1,11):
 #         print ('\n\n NEW FOLD NUM {}'.format(i))
-#         single_fold(k=i, topk=top_k, dataset='madelon', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+#         single_fold(k=i, topk=top_k, dataset='arcene', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5)

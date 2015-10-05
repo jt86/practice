@@ -10,19 +10,19 @@ def get_train_and_test_this_fold(dataset,datasetnum):	#N,test_N per class
     
     if dataset=='arcene':
         class0_data, class1_data = get_arcene_data()
-        N, test_N =14,30
+        # N, test_N =14,30
     if dataset=='madelon':
         class0_data, class1_data = get_madelon_data()
-        N, test_N = 250,250
+        # N, test_N = 250,250
     if dataset=='gisette':
         class0_data, class1_data = get_gisette_data()
         N, test_N = 100,200
     if dataset=='dexter':
         class0_data, class1_data = get_dexter_data()
-        N, test_N = 50,100
+        # N, test_N = 50,100
     if dataset=='dorothea':
         class0_data, class1_data = get_dorothea_data()
-        N, test_N = 26,52
+        # N, test_N = 26,52
     if dataset=='mushroom':
         class0_data, class1_data = get_mushroom_data()
         N, test_N = 500,1000
@@ -44,9 +44,9 @@ def get_train_and_test_this_fold(dataset,datasetnum):	#N,test_N per class
 
     if dataset=='tech':
         class0_data,class1_data=get_techtc_data(datasetnum)
-        test_N = min(class0_data.shape[0],class1_data.shape[0])//4
-        N = test_N*3
-        print (N, test_N)
+    test_N = min(class0_data.shape[0],class1_data.shape[0])//4
+    N = test_N*3
+    print (N, test_N)
     # if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
     #     print("Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0])
     #     N=44; test_N = 44
