@@ -9,7 +9,7 @@ from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, privileged_subsection):
         stepsize=1000
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
@@ -57,8 +57,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
 
         print('getting best param for RFE')
 
-        best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
-        # best_rfe_param=1
+        # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
+        best_rfe_param=1
 
         # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
         #     best_params_doc.write("\n"+str(best_rfe_param))
@@ -86,9 +86,11 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
             cv_svm_file.write(str(ACC)+",")
 
         # ##############################  BASELINE - all features
-        best_C_baseline = get_best_C(all_training, training_labels, c_values)
+        # best_C_baseline = get_best_C(all_training, training_labels, c_values)
+        best_C_baseline=1
 
-        if topk == 100:
+
+        if topk == 100 or topk == 5:
             clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
             clf.fit(all_training, training_labels)
             baseline_predictions = clf.predict(all_testing)
@@ -106,10 +108,11 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
 
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
-
+        print('doing svm+')
         normal_features_training = all_training[:,best_n_mask].copy()
         normal_features_testing = all_testing[:,best_n_mask].copy()
         privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
+        print('privileged',privileged_features_training.shape)
 
 
         c_svm_plus=best_C_baseline
@@ -129,11 +132,11 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
 
 
         print('svm+ accuracy',(accuracy_lupi))
-
-
-# list_of_values = [5]#, 10, 25, 50, 75]
+#
+#
+# list_of_values = [500]#, 10, 25, 50, 75]
 # # # list_of_values = [300]#,400,500,600,700,800,900,1000]
 # for top_k in list_of_values:
 #     for i in range(1,11):
 #         print ('\n\n NEW FOLD NUM {}'.format(i))
-#         single_fold(k=i, topk=top_k, dataset='tech', datasetnum=48, kernel='linear', cmin=0, cmax=4, number_of_cs=5)
+#         single_fold(k=i, topk=top_k, dataset='tech', datasetnum=48, kernel='linear', cmin=0, cmax=4, number_of_cs=5, privileged_subsection=50)

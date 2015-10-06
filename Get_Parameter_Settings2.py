@@ -1,16 +1,16 @@
 #
-# dataset='tech'
-# for datasetnum in range (49):
-#     for fold_num in range(1,11):
-#         for top_k in [100,200,300,400,500,600,700,800,900,1000]:
-#             print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', 0, 4,5))
+dataset='tech'
+for datasetnum in range (49):
+    for fold_num in range(1,11):
+        for top_k in [100,200,300,400,500,600,700,800,900,1000]:
+            print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', 0, 4,5))
 
 #
-for dataset in ['gisette','madelon','arcene','dorothea','dexter']:
-    for fold_num in range(1,11):
-        for top_k_percent in [5,10,25,50,75]:
-            print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k_percent, dataset, 0, 'linear', 0, 4,5))
-
+# for dataset in ['gisette','madelon','arcene','dorothea','dexter']:
+#     for fold_num in range(1,11):
+#         for top_k_percent in [5,10,25,50,75]:
+#             print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k_percent, dataset, 0, 'linear', 0, 4,5))
+#
 
 #
 #
