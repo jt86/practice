@@ -139,8 +139,8 @@ def get_dexter_data():
             print (row_num,line)
             labels_array[row_num] = line
 
-        print (labels_array)
-        print (labels_array.shape)
+        # print (labels_array)
+        # print (labels_array.shape)
 
         labels_array.shape=(300)
     positive_instances = (features_array[labels_array==1])
