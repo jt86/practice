@@ -10,7 +10,7 @@ from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv=50):
-        stepsize=100
+        stepsize=1000
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         outer_directory = get_full_path('Desktop/Privileged_Data/NIPS')
