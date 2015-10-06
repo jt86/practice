@@ -86,8 +86,9 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
             cv_svm_file.write(str(ACC)+",")
 
         # ##############################  BASELINE - all features
-        # best_C_baseline = get_best_C(all_training, training_labels, c_values)
-        best_C_baseline=1
+
+        best_C_baseline = get_best_C(all_training, training_labels, c_values)
+        # best_C_baseline=1
 
 
         if topk == 100 or topk == 5:
