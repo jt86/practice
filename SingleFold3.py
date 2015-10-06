@@ -9,7 +9,7 @@ from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv=100):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv):
         stepsize=100
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
@@ -80,9 +80,9 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
         print ('rfe accuracy',ACC)
 
         with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
-        #     cv_svm_file.write(str(ACC)+",")
+            cv_svm_file.write(str(ACC)+",")
 
-        # ##############################  BASELINE - all features
+        ##############################  BASELINE - all features
 
         # best_C_baseline = get_best_C(all_training, training_labels, c_values)
         best_C_baseline=1
