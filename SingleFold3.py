@@ -57,8 +57,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
 
         print('getting best param for RFE')
 
-        # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
-        best_rfe_param=1
+        best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
+        # best_rfe_param=1
 
         # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
         #     best_params_doc.write("\n"+str(best_rfe_param))
@@ -84,8 +84,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
 
         ##############################  BASELINE - all features
 
-        # best_C_baseline = get_best_C(all_training, training_labels, c_values)
-        best_C_baseline=1
+        best_C_baseline = get_best_C(all_training, training_labels, c_values)
+        # best_C_baseline=1
 
 
         if topk == 100 or topk == 5:
