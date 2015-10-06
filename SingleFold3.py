@@ -34,7 +34,6 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
             if not os.path.isdir(cross_validation_folder):
                 raise
 
-
         all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum)
 
         if 'tech' in dataset:
