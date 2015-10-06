@@ -27,7 +27,7 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, baselin
     plt.xlabel('Number of top-rated features used as normal information',fontsize=16)
     plt.ylabel('Accuracy score',fontsize=16)
 
-    plt.savefig(os.path.join(graph_directory, 'plot{}.png'.format(datasetnum)))
+    plt.savefig(os.path.join(graph_directory, '{}plot{}.png'.format(dataset,datasetnum)))
 
 
 def get_mean_and_error(list_of_lists):

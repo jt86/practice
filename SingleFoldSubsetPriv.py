@@ -74,7 +74,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,amount_of_priv):
         rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=step)
         rfe.fit(all_training, training_labels)
         best_n_mask = rfe.support_
-        all_features_ranking=rfe.ranking_
+
 
 
         with open(os.path.join(cross_validation_folder,'best_feats{}.txt'.format(k)),'a') as best_feats_doc:
@@ -121,7 +121,7 @@ def single_fold(k, dataset, kernel, cmin,cmax,number_of_cs,amount_of_priv):
         number_of_priv_to_take= int(amount_of_priv*privileged_features_training.shape[1]/100)
         print('number to take', number_of_priv_to_take)
 
-
+        all_features_ranking=rfe.ranking_
         all_features_ranking = all_features_ranking[np.invert(best_n_mask)]
         privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
 

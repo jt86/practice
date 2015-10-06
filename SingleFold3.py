@@ -9,11 +9,11 @@ from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
-        stepsize=1000
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv=100):
+        stepsize=100
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        outer_directory = get_full_path('Desktop/Privileged_Data/')
+        outer_directory = get_full_path('Desktop/Privileged_Data/NIPS')
         # Check if output directory exists and make it if necessary
         output_directory = os.path.join(get_full_path(outer_directory),'not-fixedC-25-75-{}-{}-RFE-baseline-step={}'.format(dataset,datasetnum,stepsize))
         print (output_directory)
@@ -57,8 +57,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
 
         print('getting best param for RFE')
 
-        best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
-        #best_rfe_param=1
+        # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
+        best_rfe_param=1
 
         # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
         #     best_params_doc.write("\n"+str(best_rfe_param))
@@ -75,20 +75,17 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
 
         ACC = rfe.score(all_testing, testing_labels)
         best_n_mask = rfe.support_
-        # print ('rfe predictions',rfe.predict(all_testing))
+
         print ('\nrfe predictions',sum(x > 0 for x in rfe.predict(all_testing)),'of',len(all_testing))
         print ('rfe accuracy',ACC)
-        # with open(os.path.join(cross_validation_folder,'best_feats{}.txt'.format(k)),'a') as best_feats_doc:
-        #     best_feats_doc.write("\n"+str(best_n_mask))
-        #
-        #
+
         with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
-            cv_svm_file.write(str(ACC)+",")
+        #     cv_svm_file.write(str(ACC)+",")
 
         # ##############################  BASELINE - all features
 
-        best_C_baseline = get_best_C(all_training, training_labels, c_values)
-        # best_C_baseline=1
+        # best_C_baseline = get_best_C(all_training, training_labels, c_values)
+        best_C_baseline=1
 
 
         if topk == 100 or topk == 5:
@@ -116,6 +113,19 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         print('privileged',privileged_features_training.shape)
 
 
+        all_features_ranking=rfe.ranking_
+        print (all_features_ranking.shape)
+        all_features_ranking = all_features_ranking[np.invert(best_n_mask)]
+        print('\n\n\n\n all features ranking')
+        print (all_features_ranking.shape)
+        privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
+
+        num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
+        print('number to take', num_of_priv_feats)
+
+        privileged_features_training = privileged_features_training[:,:num_of_priv_feats]
+        print (privileged_features_training.shape)
+
         c_svm_plus=best_C_baseline
         c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]#, 0.00001, 0.000001, 0.0000001, 0.00000001]
         c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
@@ -135,9 +145,12 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs):
         print('svm+ accuracy',(accuracy_lupi))
 #
 #
-# list_of_values = [500]#, 10, 25, 50, 75]
-# # # list_of_values = [300]#,400,500,600,700,800,900,1000]
-# for top_k in list_of_values:
-#     for i in range(1,11):
-#         print ('\n\n NEW FOLD NUM {}'.format(i))
-#         single_fold(k=i, topk=top_k, dataset='tech', datasetnum=48, kernel='linear', cmin=0, cmax=4, number_of_cs=5, privileged_subsection=50)
+# list_of_values = [5]#, 10, 25, 50, 75]
+# # # # list_of_values = [300]#,400,500,600,700,800,900,1000]
+# for dataset in ['arcene','madelon','dexter','dorothea']:
+#     for top_k in list_of_values:
+#         for i in range(10):#,11):
+#             print ('\n\n NEW FOLD NUM {}'.format(i))
+#             single_fold(k=i, topk=top_k, dataset=dataset, datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100)
+
+
