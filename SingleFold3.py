@@ -9,11 +9,11 @@ from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv=100):
-        stepsize=100
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv=50):
+        stepsize=1000
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        outer_directory = get_full_path('Desktop/Privileged_Data/NIPS')
+        outer_directory = get_full_path('Desktop/Privileged_Data/OCTOBER7/TOP50')
         # Check if output directory exists and make it if necessary
         output_directory = os.path.join(get_full_path(outer_directory),'not-fixedC-25-75-{}-{}-RFE-baseline-step={}-percent_of_priv={}all'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
