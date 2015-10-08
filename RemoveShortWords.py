@@ -12,9 +12,11 @@ def get_words_indices(line_num):
         print (infile)
         for row_num, line in enumerate(infile):
             if row_num>8:
-                row = line.split()
-                index = row.pop(0)
-                print ('row',row,'index',index)
-                words_indices_dict[index]=row
+                index,word = line.split()[0],line.split()[1]
+                # print ('word',word,'index',index)
+                if len(word)<5:
+                    print ('short word',word)
+                words_indices_dict[index]=word
+    print (len(words_indices_dict))
 
 get_words_indices(10)

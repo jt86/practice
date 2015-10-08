@@ -13,7 +13,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
         stepsize=1000
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        outer_directory = get_full_path('Desktop/Privileged_Data/OCTOBER7/66-33/BOTTOM50')
+        outer_directory = get_full_path('Desktop/Privileged_Data/OCTOBER7/66-33/TOP50')
         # Check if output directory exists and make it if necessary
         output_directory = os.path.join(get_full_path(outer_directory),'not-fixedC-33-66-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
@@ -146,16 +146,16 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
 #
 # list_of_values = [5, 10, 25, 50, 75]
 # # # list_of_values = [300]#,400,500,600,700,800,900,1000]
-list_of_values=[300,500]
+# list_of_values=[300,500]
 
-
-# for dataset in ['arcene','madelon','dexter','dorothea']:
-dataset = 'tech'
-datasetnum = 10
-
-for top_k in list_of_values:
-    for i in range(10):#,11):
-        print ('\n\n NEW FOLD NUM {}'.format(i))
-        single_fold(k=i, topk=top_k, dataset=dataset, datasetnum=10, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100)
-
-
+#
+# # for dataset in ['arcene','madelon','dexter','dorothea']:
+# dataset = 'tech'
+# datasetnum = 10
+#
+# for top_k in list_of_values:
+#     for i in range(10):#,11):
+#         print ('\n\n NEW FOLD NUM {}'.format(i))
+#         single_fold(k=i, topk=top_k, dataset=dataset, datasetnum=10, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100)
+#
+#
