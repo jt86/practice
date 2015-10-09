@@ -16,7 +16,8 @@ def get_words_indices(line_num):
                 # print ('word',word,'index',index)
                 if len(word)<5:
                     print ('short word',word)
-                words_indices_dict[index]=word
+                    words_indices_dict[index]=word
     print (len(words_indices_dict))
+    return words_indices_dict
 
 get_words_indices(10)
