@@ -13,7 +13,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        outer_directory = get_full_path('Desktop/Privileged_Data/STEP10percent66-33-LONGWORDS/ALL')
+        outer_directory = get_full_path('Desktop/Privileged_Data/STEP10percent66-33-LONGWORDS-FIXEDC/ALL')
         # Check if output directory exists and make it if necessary
         output_directory = os.path.join(get_full_path(outer_directory),'not-fixedC-33-66-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
@@ -52,42 +52,42 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
                 raise
 
 
-        # ########## GET BEST C FOR RFE
-        #
-        # print('getting best param for RFE')
-        #
+        ########## GET BEST C FOR RFE
+
+        print('getting best param for RFE')
+
         # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
-        # # best_rfe_param=1
-        #
-        # # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
-        # #     best_params_doc.write("\n"+str(best_rfe_param))
-        # print('best rfe param', best_rfe_param)
-        #
-        # ###########  CARRY OUT RFE, GET ACCURACY
-        # # print ('test labels',testing_labels)
-        # svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
-        # rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
-        # print ('rfe step size',rfe.step)
-        # rfe.fit(all_training, training_labels)
-        # print (all_testing.shape,testing_labels.shape)
-        # print ('num of chosen feats',sum(x == 1 for x in rfe.support_))
-        #
-        # ACC = rfe.score(all_testing, testing_labels)
-        # best_n_mask = rfe.support_
-        #
-        # print ('\nrfe predictions',sum(x > 0 for x in rfe.predict(all_testing)),'of',len(all_testing))
-        # print ('rfe accuracy',ACC)
-        #
-        # with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
-        #     cv_svm_file.write(str(ACC)+",")
+        best_rfe_param=1
+
+        # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
+        #     best_params_doc.write("\n"+str(best_rfe_param))
+        print('best rfe param', best_rfe_param)
+
+        ###########  CARRY OUT RFE, GET ACCURACY
+        # print ('test labels',testing_labels)
+        svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
+        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
+        print ('rfe step size',rfe.step)
+        rfe.fit(all_training, training_labels)
+        print (all_testing.shape,testing_labels.shape)
+        print ('num of chosen feats',sum(x == 1 for x in rfe.support_))
+
+        ACC = rfe.score(all_testing, testing_labels)
+        best_n_mask = rfe.support_
+
+        print ('\nrfe predictions',sum(x > 0 for x in rfe.predict(all_testing)),'of',len(all_testing))
+        print ('rfe accuracy',ACC)
+
+        with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
+            cv_svm_file.write(str(ACC)+",")
 
         ##############################  BASELINE - all features
 
-        best_C_baseline = get_best_C(all_training, training_labels, c_values)
-        # best_C_baseline=1
+        # best_C_baseline = get_best_C(all_training, training_labels, c_values)
+        best_C_baseline=1
 
 
-        if topk == 100 or topk == 5:
+        if topk == 300 or topk == 5:
             clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
             clf.fit(all_training, training_labels)
             baseline_predictions = clf.predict(all_testing)
@@ -103,45 +103,45 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
                 baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
 
 
-        #
-        # ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
-        # print('doing svm+')
-        # normal_features_training = all_training[:,best_n_mask].copy()
-        # normal_features_testing = all_testing[:,best_n_mask].copy()
-        # privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
-        # print('privileged',privileged_features_training.shape)
-        #
-        #
-        # all_features_ranking=rfe.ranking_
-        # print (all_features_ranking.shape)
-        # all_features_ranking = all_features_ranking[np.invert(best_n_mask)]
-        # print('\n\n\n\n all features ranking')
-        # print (all_features_ranking.shape)
-        # privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
-        #
-        # num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
-        # print('number to take', num_of_priv_feats)
-        #
-        # # privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
-        # print (privileged_features_training.shape)
-        #
-        # c_svm_plus=best_C_baseline
-        # c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]#, 0.00001, 0.000001, 0.0000001, 0.00000001]
-        # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
-        # with open(os.path.join(cross_validation_folder,'best_Cstar_param{}.txt'.format(k)),'a') as best_params_doc:
-        #     best_params_doc.write("\n"+str(c_star_svm_plus))
-        #
-        # print('c star', c_star_svm_plus)
-        # duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
-        # lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
-        # # print ('lupi predictions',lupi_predictions)
-        # print ('\n lupi count',sum(x > 0 for x in lupi_predictions),'of',len(all_testing))
-        # accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
-        # with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
-        #     cv_lupi_file.write(str(accuracy_lupi)+',')
-        #
-        #
-        # print('svm+ accuracy',(accuracy_lupi))
+
+        ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
+        print('doing svm+')
+        normal_features_training = all_training[:,best_n_mask].copy()
+        normal_features_testing = all_testing[:,best_n_mask].copy()
+        privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
+        print('privileged',privileged_features_training.shape)
+
+
+        all_features_ranking=rfe.ranking_
+        print (all_features_ranking.shape)
+        all_features_ranking = all_features_ranking[np.invert(best_n_mask)]
+        print('\n\n\n\n all features ranking')
+        print (all_features_ranking.shape)
+        privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
+
+        num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
+        print('number to take', num_of_priv_feats)
+
+        # privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
+        print (privileged_features_training.shape)
+
+        c_svm_plus=best_C_baseline
+        c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]#, 0.00001, 0.000001, 0.0000001, 0.00000001]
+        c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
+        with open(os.path.join(cross_validation_folder,'best_Cstar_param{}.txt'.format(k)),'a') as best_params_doc:
+            best_params_doc.write("\n"+str(c_star_svm_plus))
+
+        print('c star', c_star_svm_plus)
+        duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
+        lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
+        # print ('lupi predictions',lupi_predictions)
+        print ('\n lupi count',sum(x > 0 for x in lupi_predictions),'of',len(all_testing))
+        accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
+        with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
+            cv_lupi_file.write(str(accuracy_lupi)+',')
+
+
+        print('svm+ accuracy',(accuracy_lupi))
 #
 #
 # list_of_values = [5, 10, 25, 50, 75]
