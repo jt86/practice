@@ -12,11 +12,11 @@ for datasetnum in range (49):
 #             print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k_percent, dataset, 0, 'linear', 0, 4,5))
 #
 
-#
-#
+
+
 # for dataset in ['gisette','madelon','arcene','dorothea','dexter']:
 
 # for awa_num in range(10):
-#
+
 # for subset_of_priv in [10,20,30,40,50,60,70,80,90,100]:
 # for dataset in ['dexter','dorothea']:
