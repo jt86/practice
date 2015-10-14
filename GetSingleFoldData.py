@@ -248,8 +248,6 @@ def get_sick_data():
     negative_instances = (features_array[labels_array==-1])
     print(positive_instances.shape, negative_instances.shape)
     return positive_instances, negative_instances
-#
-# get_sick_data()
 
 def get_prove_data(label_number):
     print('Reading Prove data from disk')
@@ -269,9 +267,6 @@ def get_prove_data(label_number):
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
-#
-# positive_instances, negative_instances = get_prove_data(1)
-# print positive_instances.shape, negative_instances.shape
 
 def get_heart_data(debug=False):
     print('Reading HEART data from disk')
@@ -288,8 +283,6 @@ def get_heart_data(debug=False):
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
-
-# print get_heart_data()[0].shape, get_heart_data()[1].shape
 
 def get_vote_data():
     print('Reading VOTE data from disk')
@@ -310,33 +303,44 @@ def get_vote_data():
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
 
-# positive_instances, negative_instances = get_vote_data()
-# print positive_instances.shape, negative_instances.shape
 
 
 
-def get_techtc_data(line_num):
+def get_techtc_data(dataset_index):
     max_num_of_feats,instances_count =0,0
     labels_list,all_instances = [],[]
-    with open(get_tech_address(line_num), "r")as infile:
-    # with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/Exp_1092_1110/vectors.dat"), "r") as infile:
+    # short_words = get_shortword_indices(dataset_index)
+    # print ('number of short words to remove =',len(short_words))
+    # print (type(short_words.pop()))
+    long_words_dict = get_longword_indices(dataset_index)
+    # print ('max',max(long_words_dict.iteritems()))
+    max_num_of_feats= (len(long_words_dict))
+
+    with open(get_tech_address(dataset_index), "r")as infile:
         for row_num, line in enumerate(infile):
             if row_num%2==1 and 1<row_num:
                 row = line.split()
                 label = row.pop(0)
                 labels_list.append(int(label))
                 array_of_tuples = list([item.split(':') for item in row])
-                indices = list([int(pair[0]) for pair in array_of_tuples])
-                max_num_of_feats=max(max(indices),max_num_of_feats)
-                instances_count+=1
-                all_instances.append(array_of_tuples)
+
+                new_feats=[]
+                for pair in array_of_tuples:                    #for each feature in a line
+                    if int(pair[0]) in long_words_dict:         #if the feature isn't too short
+                        # print ('index from pair',pair[0])
+                        new_tuple = [long_words_dict[int(pair[0])],pair[1]]      #make a new tuple of the index and the value
+                        # print ('new tuple', new_tuple)
+                        new_feats.append(new_tuple)             #add this to the new features
+                        # print('new feats',new_feats)
+                        # print (len(new_feats))
+                instances_count+=1                              #add one for each training data point
+                all_instances.append(new_feats)                 #add all the new features
         print ('max num feats', max_num_of_feats)
         dok = sp.dok_matrix((instances_count, max_num_of_feats), dtype=int)
 
         for count, instance in enumerate(all_instances):
             for index, value in instance:
                 dok[count,int(index)-1] = int(value)
-        # print ('dok0',dok[0])
 
 
 
@@ -354,27 +358,39 @@ def get_techtc_data(line_num):
 
 
 
-def get_tech_address(line_num):
+def get_tech_address(dataset_index):
     with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_49.txt"), "r") as infile:
-        line = infile.readlines()[line_num]
+        line = infile.readlines()[dataset_index]
         return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/vectors.dat".format(line.strip('\r\n'))))
 
 
-def get_words(line_num):
+def get_words(dataset_index):
     with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_49.txt"), "r") as infile:
-        line = infile.readlines()[line_num]
+        line = infile.readlines()[dataset_index]
         return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/features.idx".format(line.strip('\r\n'))))
 
-def get_words_indices(line_num):
-    words_indices_dict={}
-    with open(get_words(line_num), "r")as infile:
-        print (infile)
+def get_shortword_indices(dataset_index):
+    short_words=set()
+    with open(get_words(dataset_index), "r")as infile:
         for row_num, line in enumerate(infile):
             if row_num>8:
                 index,word = line.split()[0],line.split()[1]
-                # print ('word',word,'index',index)
                 if len(word)<5:
-                    print ('short word',word)
-                    words_indices_dict[index]=word
-    print (len(words_indices_dict))
-    return words_indices_dict
+                    short_words.add(int(index))
+    return short_words
+
+#puts the original index of long words into a dict with its new index
+def get_longword_indices(dataset_index):
+    long_words = {}
+    long_words_count = 0
+    with open(get_words(dataset_index), "r")as infile:
+        for line_index, line in enumerate(infile):
+            if line_index>8:
+                index,word = line.split()[0],line.split()[1]
+                if len(word)>4:
+                    long_words[int(line_index)]=long_words_count
+                    long_words_count+=1
+    print (len(long_words))
+    return long_words
+
+# positive_instances,negative_instances = get_techtc_data(10)

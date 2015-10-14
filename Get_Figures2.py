@@ -10,12 +10,12 @@ import logging
 from itertools import zip_longest
 from scipy import stats
 
-def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, all_folds_LUPI_top,# all_folds_LUPI_bottom,
+def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI,#, all_folds_LUPI_top,# all_folds_LUPI_bottom,
                 baseline_results, dataset, graph_directory, datasetnum):
 
     results, errors = get_mean_and_error(all_folds_SVM)
     LUPI_results, LUPI_errors = get_mean_and_error(all_folds_LUPI)
-    top_results, top_errors = get_mean_and_error(all_folds_LUPI_top)
+    # top_results, top_errors = get_mean_and_error(all_folds_LUPI_top)
     # bottom_results, bottom_errors = get_mean_and_error(all_folds_LUPI_bottom)
 
     fig = plt.figure()
@@ -25,7 +25,7 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI, all_fol
     ax1.errorbar(numbers_of_features_list, results, yerr = errors, c='b', label='SVM: trained on top features')
     ax1.errorbar(numbers_of_features_list[:len(LUPI_results)], LUPI_results, yerr = LUPI_errors, c='r', label='SVM+: lower features as privileged')
 
-    ax1.errorbar(numbers_of_features_list[:len(LUPI_results)], top_results, yerr = top_errors, c='g', label='SVM+: top 50% unselected features')
+    # ax1.errorbar(numbers_of_features_list[:len(LUPI_results)], top_results, yerr = top_errors, c='g', label='SVM+: top 50% unselected features')
     # ax1.errorbar(numbers_of_features_list[:len(LUPI_results)], bottom_results, yerr = bottom_errors, c='y', label='SVM+: bottom 50% unselected features')
 
     ax1.plot(numbers_of_features_list,np.mean(baseline_results, axis=1), linestyle=':', c='black',label='baseline SVM: all features')
