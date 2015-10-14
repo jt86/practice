@@ -5,8 +5,9 @@ import csv
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, Imputer, Normalizer
 from scipy import sparse as sp
 import sys
+from sklearn.cross_validation import StratifiedKFold
 
-def get_train_and_test_this_fold(dataset,datasetnum):	#N,test_N per class
+def get_train_and_test_this_fold(dataset,datasetnum,k):	#N,test_N per class
     
     if dataset=='arcene':
         class0_data, class1_data = get_arcene_data()
@@ -60,6 +61,24 @@ def get_train_and_test_this_fold(dataset,datasetnum):	#N,test_N per class
     test_data = np.r_[class0_data[test1], class1_data[test2]]
     train_labels = np.ravel(np.r_[[1]*N, [-1]*N])
     test_labels = np.ravel(np.r_[[1]*test_N, [-1]*test_N])
+    #
+    # print('train', train_labels.shape, train_labels)
+    # print('test', test_labels.shape, test_labels)
+    all_labels = np.concatenate((train_labels,test_labels))
+    # print ('all', all_labels.shape, all_labels)
+
+
+    skf = StratifiedKFold(all_labels, n_folds=10)
+    # for fold_num, (train_index, test_index) in enumerate(skf):
+    #     if fold_num==k:
+    #         print ('\n\n',fold_num, train_index, test_index
+    #             train_data, test_data =  np.r_[class0_data[train_index], class1_data[train_index]]
+    #             y_train, y_test = y[train_index], y[test_index]
+    #
+
+
+
+
 
     #L1 normalization ============================
     normaliser = Normalizer(norm='l1')
@@ -393,4 +412,4 @@ def get_longword_indices(dataset_index):
     print (len(long_words))
     return long_words
 
-# positive_instances,negative_instances = get_techtc_data(10)
+get_train_and_test_this_fold('tech',0,1)
