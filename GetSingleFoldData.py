@@ -416,4 +416,4 @@ def get_longword_indices(dataset_index):
     print (len(long_words))
     return long_words
 
-get_train_and_test_this_fold('synthetic',0,1)
+# get_train_and_test_this_fold('synthetic',0,1)
