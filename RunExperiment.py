@@ -1,5 +1,5 @@
 import argparse
-from SingleFold3 import single_fold
+from SingleFold import single_fold
 
 
 if __name__ == '__main__':

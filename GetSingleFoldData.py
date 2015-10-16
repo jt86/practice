@@ -8,7 +8,9 @@ import sys
 from sklearn.cross_validation import StratifiedKFold
 
 def get_train_and_test_this_fold(dataset,datasetnum,k):	#N,test_N per class
-    
+    if dataset == 'synthetic':
+        class0_data, class1_data = np.loadtxt(get_full_path('Desktop/Privileged_Data/syn_positive.txt')), np.loadtxt(get_full_path('Desktop/Privileged_Data/syn_negative.txt'))
+
     if dataset=='arcene':
         class0_data, class1_data = get_arcene_data()
         # N, test_N =14,30
@@ -41,40 +43,47 @@ def get_train_and_test_this_fold(dataset,datasetnum,k):	#N,test_N per class
     if dataset=='vote':
         class0_data,class1_data=get_vote_data()
         N, test_N = 112,56
-    # print class0_data.shape, class1_data.shape
+    # print class0_data.shapef, class1_data.shape
 
     if dataset=='tech':
         class0_data,class1_data=get_techtc_data(datasetnum)
-    test_N = min(class0_data.shape[0],class1_data.shape[0])//3
-    N = test_N*2
-    print (N, test_N)
-    # if (N+test_N > class0_data.shape[0]) or (N+test_N > class1_data.shape[0]):
-    #     print("Warning: total number of samples is less than required ", class0_data.shape[0], class1_data.shape[0])
-    #     N=44; test_N = 44
+    class0_labels = [-1]*class0_data.shape[0]
+    class1_labels = [1]* class1_data.shape[0]
+    all_labels = np.r_[class0_labels, class1_labels]
+    print (all_labels.shape)
 
-    idx1 = np.random.permutation(class0_data.shape[0])
-    train1, test1 = idx1[:N], idx1[N:N+test_N]
-    idx2 = np.random.permutation(class1_data.shape[0])
-    train2, test2 = idx2[:N], idx2[N:N+test_N]
 
-    train_data = np.r_[class0_data[train1], class1_data[train2]]
-    test_data = np.r_[class0_data[test1], class1_data[test2]]
-    train_labels = np.ravel(np.r_[[1]*N, [-1]*N])
-    test_labels = np.ravel(np.r_[[1]*test_N, [-1]*test_N])
+    all_data = np.vstack([class0_data,class1_data])
+    print(all_data.shape)
+    # sys.exit()
+
+    # test_N = min(class0_data.shape[0],class1_data.shape[0])//3
+    # N = test_N*2
+    # print (N, test_N)
+
+
+    # idx1 = np.random.permutation(class0_data.shape[0])
+    # train1, test1 = idx1[:N], idx1[N:N+test_N]
+    # idx2 = np.random.permutation(class1_data.shape[0])
+    # train2, test2 = idx2[:N], idx2[N:N+test_N]
+   #
+    # train_data = np.r_[class0_data[train1], class1_data[train2]]
+    # test_data = np.r_[class0_data[test1], class1_data[test2]]
+    # train_labels = np.ravel(np.r_[[1]*N, [-1]*N])
+    # test_labels = np.ravel(np.r_[[1]*test_N, [-1]*test_N])
     #
     # print('train', train_labels.shape, train_labels)
     # print('test', test_labels.shape, test_labels)
-    all_labels = np.concatenate((train_labels,test_labels))
     # print ('all', all_labels.shape, all_labels)
 
 
     skf = StratifiedKFold(all_labels, n_folds=10)
-    # for fold_num, (train_index, test_index) in enumerate(skf):
-    #     if fold_num==k:
-    #         print ('\n\n',fold_num, train_index, test_index
-    #             train_data, test_data =  np.r_[class0_data[train_index], class1_data[train_index]]
-    #             y_train, y_test = y[train_index], y[test_index]
-    #
+    for fold_num, (train_index, test_index) in enumerate(skf):
+        if fold_num==k:
+            print ('\n\n',fold_num, train_index, test_index)
+            train_data, test_data = all_data[train_index],all_data[test_index]
+            train_labels, test_labels = all_labels[train_index], all_labels[test_index]
+
 
 
 
@@ -342,16 +351,11 @@ def get_techtc_data(dataset_index):
                 label = row.pop(0)
                 labels_list.append(int(label))
                 array_of_tuples = list([item.split(':') for item in row])
-
                 new_feats=[]
                 for pair in array_of_tuples:                    #for each feature in a line
                     if int(pair[0]) in long_words_dict:         #if the feature isn't too short
-                        # print ('index from pair',pair[0])
                         new_tuple = [long_words_dict[int(pair[0])],pair[1]]      #make a new tuple of the index and the value
-                        # print ('new tuple', new_tuple)
                         new_feats.append(new_tuple)             #add this to the new features
-                        # print('new feats',new_feats)
-                        # print (len(new_feats))
                 instances_count+=1                              #add one for each training data point
                 all_instances.append(new_feats)                 #add all the new features
         print ('max num feats', max_num_of_feats)
@@ -412,4 +416,4 @@ def get_longword_indices(dataset_index):
     print (len(long_words))
     return long_words
 
-get_train_and_test_this_fold('tech',0,1)
+get_train_and_test_this_fold('synthetic',0,1)

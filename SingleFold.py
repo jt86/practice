@@ -11,12 +11,11 @@ from GetSingleFoldData import get_train_and_test_this_fold
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv=100):
 
-        stepsize=1
+        stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        outer_directory = get_full_path('Desktop/Privileged_Data/SYNTHETIC')
-        # Check if output directory exists and make it if necessary
-        output_directory = os.path.join(get_full_path(outer_directory),'not-fixedC-33-66-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
+        outer_directory = get_full_path('Desktop/Privileged_Data/10fold/ALL')
+        output_directory = os.path.join(get_full_path(outer_directory),'fixedC-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
             os.makedirs(output_directory)
@@ -66,7 +65,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
         print('best rfe param', best_rfe_param)
 
         ###########  CARRY OUT RFE, GET ACCURACY
-        # print ('test labels',testing_labels)
+
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
         rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
         print ('rfe step size',rfe.step)
@@ -79,10 +78,11 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
 
         print ('\nrfe predictions',sum(x > 0 for x in rfe.predict(all_testing)),'of',len(all_testing))
         print ('rfe accuracy',ACC)
+        print (os.path.join(cross_validation_folder,('svm-{}-{}.csv'.format(k,topk))))
+
 
         with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
             cv_svm_file.write(str(ACC)+",")
-
         ##############################  BASELINE - all features
 
         # best_C_baseline = get_best_C(all_training, training_labels, c_values)
@@ -93,18 +93,10 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
             clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
             clf.fit(all_training, training_labels)
             baseline_predictions = clf.predict(all_testing)
-            print ('\nbaseline predictions',sum(x > 0 for x in baseline_predictions),'of',len(all_testing))
-            # print ('baseline predictions',baseline_predictions)
             print ('baseline',accuracy_score(testing_labels,baseline_predictions))
 
-            # filename='{}_baseline_fold{}.txt'.format(dataset,k)
-            # with open(os.path.join(CV_best_param_folder,filename),'a') as best_param_file:
-            #     best_param_file.write(str(best_C_baseline))
-            #q
             with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as baseline_file:
                 baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
-
-
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
         print('doing svm+')
@@ -128,7 +120,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
         print (privileged_features_training.shape)
 
         c_svm_plus=best_C_baseline
-        c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]#, 0.00001, 0.000001, 0.0000001, 0.00000001]
+        c_star_values = [1., 0.1, 0.01, 0.001, 0.0001]
         c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training, c_svm_plus, c_star_values)
         with open(os.path.join(cross_validation_folder,'best_Cstar_param{}.txt'.format(k)),'a') as best_params_doc:
             best_params_doc.write("\n"+str(c_star_svm_plus))
@@ -139,20 +131,21 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
         # print ('lupi predictions',lupi_predictions)
         print ('\n lupi count',sum(x > 0 for x in lupi_predictions),'of',len(all_testing))
         accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
+
+        print('svm+ accuracy',(accuracy_lupi))
         with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
 
-
-        print('svm+ accuracy',(accuracy_lupi))
+        return (ACC)
 #
 #
 # list_of_values = [5, 10, 25, 50, 75]
-list_of_values = [300]#,400,500,600,700,800,900,1000]
+# list_of_values = [300]#,400,500,600,700,800,900,1000]
 # list_of_values=[300,500]
 
 #
 # # for dataset in ['arcene','madelon','dexter','dorothea']:
-dataset = 'tech'
+# dataset = 'tech'
 
 #
 # for top_k in list_of_values:
@@ -162,5 +155,10 @@ dataset = 'tech'
 #
 #
 
-for i in range(15):
-    single_fold(1, i, dataset='synthetic', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100)
+# list_folds = []
+# for foldnum in range(10):
+#     score = single_fold(foldnum, 10, dataset='synthetic', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100)
+#     list_folds.append(score)
+#
+# print (list_folds)
+# print(np.mean(list_folds))
