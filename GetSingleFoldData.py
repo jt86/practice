@@ -85,10 +85,6 @@ def get_train_and_test_this_fold(dataset,datasetnum,k):	#N,test_N per class
             train_labels, test_labels = all_labels[train_index], all_labels[test_index]
 
 
-
-
-
-
     #L1 normalization ============================
     normaliser = Normalizer(norm='l1')
     np.set_printoptions(threshold=np.nan)
@@ -337,23 +333,21 @@ def get_vote_data():
 def get_techtc_data(dataset_index):
     max_num_of_feats,instances_count =0,0
     labels_list,all_instances = [],[]
-    # short_words = get_shortword_indices(dataset_index)
-    # print ('number of short words to remove =',len(short_words))
-    # print (type(short_words.pop()))
     long_words_dict = get_longword_indices(dataset_index)
-    # print ('max',max(long_words_dict.iteritems()))
     max_num_of_feats= (len(long_words_dict))
 
     with open(get_tech_address(dataset_index), "r")as infile:
         for row_num, line in enumerate(infile):
-            if row_num%2==1 and 1<row_num:
+            if row_num%2==1 and 1<row_num<5:
                 row = line.split()
                 label = row.pop(0)
                 labels_list.append(int(label))
                 array_of_tuples = list([item.split(':') for item in row])
                 new_feats=[]
                 for pair in array_of_tuples:                    #for each feature in a line
+                    print (pair)
                     if int(pair[0]) in long_words_dict:         #if the feature isn't too short
+                        print ('this is a long word')
                         new_tuple = [long_words_dict[int(pair[0])],pair[1]]      #make a new tuple of the index and the value
                         new_feats.append(new_tuple)             #add this to the new features
                 instances_count+=1                              #add one for each training data point
@@ -392,28 +386,22 @@ def get_words(dataset_index):
         line = infile.readlines()[dataset_index]
         return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/features.idx".format(line.strip('\r\n'))))
 
-def get_shortword_indices(dataset_index):
-    short_words=set()
-    with open(get_words(dataset_index), "r")as infile:
-        for row_num, line in enumerate(infile):
-            if row_num>8:
-                index,word = line.split()[0],line.split()[1]
-                if len(word)<5:
-                    short_words.add(int(index))
-    return short_words
 
-#puts the original index of long words into a dict with its new index
+#Iterates over list of words with indices; puts the original index of long words into a dict with its new index
 def get_longword_indices(dataset_index):
     long_words = {}
     long_words_count = 0
+    short_words = []
     with open(get_words(dataset_index), "r")as infile:
         for line_index, line in enumerate(infile):
             if line_index>8:
                 index,word = line.split()[0],line.split()[1]
                 if len(word)>4:
-                    long_words[int(line_index)]=long_words_count
+                    long_words[int(line_index-8)]=long_words_count
                     long_words_count+=1
-    print (len(long_words))
+                    print (int(line_index-8),long_words[int(line_index-8)])
+                else:
+                    short_words.append(word)
     return long_words
 
-# get_train_and_test_this_fold('synthetic',0,1)
+# get_train_and_test_this_fold('tech',0,1)
