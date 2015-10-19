@@ -80,7 +80,6 @@ def get_train_and_test_this_fold(dataset,datasetnum,k):	#N,test_N per class
     skf = StratifiedKFold(all_labels, n_folds=10)
     for fold_num, (train_index, test_index) in enumerate(skf):
         if fold_num==k:
-            print ('\n\n',fold_num, train_index, test_index)
             train_data, test_data = all_data[train_index],all_data[test_index]
             train_labels, test_labels = all_labels[train_index], all_labels[test_index]
 
@@ -396,7 +395,6 @@ def get_longword_indices(dataset_index):
                 if len(word)>4:
                     long_words[int(line_index-8)]=long_words_count
                     long_words_count+=1
-                    print (int(line_index-8),long_words[int(line_index-8)])
                 else:
                     short_words.append(word)
     return long_words
