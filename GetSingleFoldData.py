@@ -338,21 +338,18 @@ def get_techtc_data(dataset_index):
 
     with open(get_tech_address(dataset_index), "r")as infile:
         for row_num, line in enumerate(infile):
-            if row_num%2==1 and 1<row_num<5:
+            if row_num%2==1 and 1<row_num:
                 row = line.split()
                 label = row.pop(0)
                 labels_list.append(int(label))
                 array_of_tuples = list([item.split(':') for item in row])
                 new_feats=[]
                 for pair in array_of_tuples:                    #for each feature in a line
-                    print (pair)
                     if int(pair[0]) in long_words_dict:         #if the feature isn't too short
-                        print ('this is a long word')
                         new_tuple = [long_words_dict[int(pair[0])],pair[1]]      #make a new tuple of the index and the value
                         new_feats.append(new_tuple)             #add this to the new features
                 instances_count+=1                              #add one for each training data point
                 all_instances.append(new_feats)                 #add all the new features
-        print ('max num feats', max_num_of_feats)
         dok = sp.dok_matrix((instances_count, max_num_of_feats), dtype=int)
 
         for count, instance in enumerate(all_instances):
