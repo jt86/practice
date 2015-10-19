@@ -137,13 +137,10 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
             cv_lupi_file.write(str(accuracy_lupi)+',')
 
         return (ACC)
-#
-#
+
 # list_of_values = [5, 10, 25, 50, 75]
 # list_of_values = [300]#,400,500,600,700,800,900,1000]
-# list_of_values=[300,500]
 
-#
 # # for dataset in ['arcene','madelon','dexter','dorothea']:
 # dataset = 'tech'
 
