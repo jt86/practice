@@ -1,7 +1,7 @@
 
 dataset='tech'
 
-for top_k in [300,500,]:#100,200,400,600,700,800,900,1000]:
+for top_k in [300,500]:#100,200,400,600,700,800,900,1000]:
     for datasetnum in range (49):
         for fold_num in range(10):
             print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', 0, 4,5))
