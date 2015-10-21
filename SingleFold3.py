@@ -9,7 +9,7 @@ from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, libsvm
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skf_seed, percent_of_priv=100):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skfseed, percent_of_priv=100):
 
         stepsize=0.1
         np.random.seed(k)
@@ -28,14 +28,14 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skf_
 
         param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
 
-        cross_validation_folder = os.path.join(output_directory,('cross-validation-{}').format(skf_seed))
+        cross_validation_folder = os.path.join(output_directory,('cross-validation-{}').format(skfseed))
         try:
             os.makedirs(cross_validation_folder)
         except OSError:
             if not os.path.isdir(cross_validation_folder):
                 raise
 
-        all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum,k,skf_seed)
+        all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum,k,skfseed)
 
         n_top_feats = topk
         # if 'tech' in dataset:
@@ -67,7 +67,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skf_
 
         ###########  CARRY OUT RFE, GET ACCURACY
         # print ('test labels',testing_labels)
-        svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
+        svc = SVC(C=best_rfe_param, kernel=kernel, random_state=1)
         rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
         print ('rfe step size',rfe.step)
         rfe.fit(all_training, training_labels)
@@ -90,7 +90,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skf_
 
 
         if topk == 300 or topk == 5 or topk==10:
-            clf = svm.SVC(C=best_C_baseline, kernel='linear',random_state=1)
+            clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
             clf.fit(all_training, training_labels)
             baseline_predictions = clf.predict(all_testing)
             print ('\nbaseline predictions',sum(x > 0 for x in baseline_predictions),'of',len(all_testing))
