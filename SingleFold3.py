@@ -28,7 +28,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skf_
 
         param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
 
-        cross_validation_folder = os.path.join(output_directory,'cross-validation')
+        cross_validation_folder = os.path.join(output_directory,('cross-validation-{}').format(skf_seed))
         try:
             os.makedirs(cross_validation_folder)
         except OSError:
@@ -68,8 +68,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skf_
         ###########  CARRY OUT RFE, GET ACCURACY
         # print ('test labels',testing_labels)
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
-        libsvm_estimator = libsvm.fit(C=best_rfe_param, kernel="linear", random_state=1)
-        rfe = RFE(estimator=libsvm_estimator, n_features_to_select=n_top_feats, step=stepsize)
+        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
         print ('rfe step size',rfe.step)
         rfe.fit(all_training, training_labels)
         print (all_testing.shape,testing_labels.shape)
@@ -91,7 +90,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skf_
 
 
         if topk == 300 or topk == 5 or topk==10:
-            clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
+            clf = svm.SVC(C=best_C_baseline, kernel='linear',random_state=1)
             clf.fit(all_training, training_labels)
             baseline_predictions = clf.predict(all_testing)
             print ('\nbaseline predictions',sum(x > 0 for x in baseline_predictions),'of',len(all_testing))
@@ -101,8 +100,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skf_
             # filename='{}_baseline_fold{}.txt'.format(dataset,k)
             # with open(os.path.join(CV_best_param_folder,filename),'a') as best_param_file:
             #     best_param_file.write(str(best_C_baseline))
-            #q
-            with open(os.path.join(cross_validation_folder,'baseline.csv'),'a') as baseline_file:
+            #
+            with open(os.path.join(cross_validation_folder,('baseline.csv')),'a') as baseline_file:
                 baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
 
 
@@ -163,5 +162,5 @@ dataset = 'tech'
 #
 #
 
-for i in range(1):
-    single_fold(1, i, dataset='synthetic', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100)
+# for i in [10]:
+#     single_fold(1, i, dataset='synthetic', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100,skf_seed=1)
