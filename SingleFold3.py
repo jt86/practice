@@ -9,12 +9,12 @@ from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, libsvm
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv=100,skf_seed):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skf_seed, percent_of_priv=100):
 
         stepsize=1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        outer_directory = get_full_path('Desktop/Privileged_Data/SYNTHETIC')
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x10foldTech')
         # Check if output directory exists and make it if necessary
         output_directory = os.path.join(get_full_path(outer_directory),'not-fixedC-33-66-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
