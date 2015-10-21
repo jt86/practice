@@ -11,7 +11,7 @@ from GetSingleFoldData import get_train_and_test_this_fold
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs,skf_seed, percent_of_priv=100):
 
-        stepsize=1
+        stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         outer_directory = get_full_path('Desktop/Privileged_Data/10x10foldTech')
