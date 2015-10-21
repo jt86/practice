@@ -9,12 +9,12 @@ from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv=100):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=100):
 
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10fold/ALL')
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x10tech/ALL')
         output_directory = os.path.join(get_full_path(outer_directory),'fixedC-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -27,14 +27,14 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
 
         param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
 
-        cross_validation_folder = os.path.join(output_directory,'cross-validation')
+        cross_validation_folder = os.path.join(output_directory,'cross-validation{}'.format(skfseed))
         try:
             os.makedirs(cross_validation_folder)
         except OSError:
             if not os.path.isdir(cross_validation_folder):
                 raise
 
-        all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum,k)
+        all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum,k,skfseed)
 
         n_top_feats = topk
         # if 'tech' in dataset:
@@ -138,6 +138,11 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
 
         return (ACC)
 
+
+
+#
+# for i in [10]:
+#     single_fold(1, i, dataset='synthetic', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100,skfseed=1)
 # list_of_values = [5, 10, 25, 50, 75]
 # list_of_values = [300]#,400,500,600,700,800,900,1000]
 
