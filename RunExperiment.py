@@ -25,7 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('--k', type=int, required = True)
     parser.add_argument('--datasetnum', type=int, required = True)
 
-    parser.add_argument(--'skf_seed', type=int, required=True, help='seed for random division of SKF - to allow 10x10fold')
+    parser.add_argument(--'skfseed', type=int, required=True, help='seed for random division of SKF - to allow 10x10fold')
 
     args = parser.parse_args()
     print('input is', args.dataset)
