@@ -7,7 +7,7 @@ from scipy import sparse as sp
 import sys
 from sklearn.cross_validation import StratifiedKFold
 
-def get_train_and_test_this_fold(dataset,datasetnum,k):	#N,test_N per class
+def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per class
     if dataset == 'synthetic':
         class0_data, class1_data = np.loadtxt(get_full_path('Desktop/Privileged_Data/syn_positive.txt')), np.loadtxt(get_full_path('Desktop/Privileged_Data/syn_negative.txt'))
 
@@ -77,7 +77,7 @@ def get_train_and_test_this_fold(dataset,datasetnum,k):	#N,test_N per class
     # print ('all', all_labels.shape, all_labels)
 
 
-    skf = StratifiedKFold(all_labels, n_folds=10)
+    skf = StratifiedKFold(all_labels, n_folds=10, random_state=skf_seed)
     for fold_num, (train_index, test_index) in enumerate(skf):
         if fold_num==k:
             train_data, test_data = all_data[train_index],all_data[test_index]

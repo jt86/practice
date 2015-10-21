@@ -6,10 +6,10 @@ from ParamEstimation import get_best_Cstar, get_best_C, get_best_RFE_C
 from sklearn import svm
 from Get_Full_Path import get_full_path
 from sklearn.feature_selection import RFE
-from sklearn.svm import SVC
+from sklearn.svm import SVC, libsvm
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv=100):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, percent_of_priv=100,skf_seed):
 
         stepsize=1
         np.random.seed(k)
@@ -35,7 +35,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
             if not os.path.isdir(cross_validation_folder):
                 raise
 
-        all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum,k)
+        all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum,k,skf_seed)
 
         n_top_feats = topk
         # if 'tech' in dataset:
@@ -68,7 +68,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, per
         ###########  CARRY OUT RFE, GET ACCURACY
         # print ('test labels',testing_labels)
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
-        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
+        libsvm_estimator = libsvm.fit(C=best_rfe_param, kernel="linear", random_state=1)
+        rfe = RFE(estimator=libsvm_estimator, n_features_to_select=n_top_feats, step=stepsize)
         print ('rfe step size',rfe.step)
         rfe.fit(all_training, training_labels)
         print (all_testing.shape,testing_labels.shape)
@@ -162,5 +163,5 @@ dataset = 'tech'
 #
 #
 
-for i in range(15):
+for i in range(1):
     single_fold(1, i, dataset='synthetic', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100)

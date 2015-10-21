@@ -13,6 +13,7 @@ from scipy import stats
 def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI,#, all_folds_LUPI_top,# all_folds_LUPI_bottom,
                 baseline_results, dataset, graph_directory, datasetnum):
 
+
     results, errors = get_mean_and_error(all_folds_SVM)
     LUPI_results, LUPI_errors = get_mean_and_error(all_folds_LUPI)
     # top_results, top_errors = get_mean_and_error(all_folds_LUPI_top)
