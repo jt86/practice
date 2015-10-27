@@ -15,7 +15,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         outer_directory = get_full_path('Desktop/Privileged_Data/TechSlice/')
-        output_directory = os.path.join(get_full_path(outer_directory),'fixedC-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
+        output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
             os.makedirs(output_directory)
@@ -120,10 +120,10 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         c_svm_plus=best_C_baseline
         c_star_values = [1000.,100.,10.,1., 0.1, 0.01, 0.001, 0.0001]
-        c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
-                                       c_svm_plus, c_star_values,cross_validation_folder,datasetnum)
+        # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
+        #                                c_svm_plus, c_star_values,cross_validation_folder,datasetnum)
 
-
+        c_star_svm_plus =1
         print('c star', c_star_svm_plus)
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
         lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
