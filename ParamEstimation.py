@@ -4,21 +4,18 @@ import numpy
 from SVMplus import svmplusQP, svmplusQP_Predict
 from sklearn.metrics import accuracy_score, pairwise
 from sklearn import svm
-from sklearn import grid_search
-import logging
-from Get_Full_Path import get_full_path
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
 import numpy as np
 import numpy
-import pdb
+
 from sklearn import cross_validation, linear_model
 from scipy.optimize import *
 from SVMplus4 import svmplusQP, svmplusQP_Predict
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, LinearSVC
-import time
+import os
 
-def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_values):
+def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_values,cross_validation_folder):
     cv = cross_validation.StratifiedKFold(training_labels, 5)
     cv_scores = np.zeros(len(Cstar_values))	#join cross validation on X, X*
 
@@ -30,10 +27,15 @@ def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_valu
             cv_scores[Cstar_index] += ACC
         # print 'fold',i, cv_scores
 
-
     cv_scores = cv_scores/5.
+
     index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
     best_Cstar = Cstar_values[index_of_best]
+    print (np.where(cv_scores == cv_scores.max()))
+    print ('index of best',index_of_best)
+    with open(os.path.join(cross_validation_folder,'Cstar-crossvalid.txt'),'a') as cross_validation_doc:
+        cross_validation_doc.write("\n{} {}".format(cv_scores,best_Cstar))
+
     # print 'time to get best c star', time.clock()-t0
     return best_Cstar
 

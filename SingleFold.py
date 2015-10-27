@@ -88,7 +88,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # best_C_baseline = get_best_C(all_training, training_labels, c_values)
         best_C_baseline=1
 
-
+        print ('all training shape',all_training.shape)
         if topk == 300 or topk == 5 or topk==10:
             clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
             clf.fit(all_training, training_labels)
@@ -141,8 +141,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 #
-# for i in [10]:
-#     single_fold(1, i, dataset='synthetic', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100,skfseed=1)
+for i in [10]:
+    single_fold(1, i, dataset='synthetic', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5, percent_of_priv=100,skfseed=1)
 # list_of_values = [5, 10, 25, 50, 75]
 # list_of_values = [300]#,400,500,600,700,800,900,1000]
 
