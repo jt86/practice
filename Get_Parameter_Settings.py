@@ -1,17 +1,24 @@
-__author__ = 'jt306'
-print('getting parameter settings')
+#hello hello
+dataset='tech'
 
-#inputs = ['heart', 'vote', 'wine', 'bankruptcy', 'ionosphere', 'crx','hillvalley', 'cancer',  'musk1','arcene', 'gisette', 'haberman','madelon']
+for seed in range (10):
+    for top_k in [300,500]:#100,200,400,600,700,800,900,1000]:
+        for datasetnum in range (49):
+            for fold_num in range(10):
+                print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', 0, 4,5, seed))
 
-inputs = ['madelon','dexter','arcene','gisette','dorothea']
-# inputs = ['dexter']
-bottom_n_values = [0]
-peeking_allowed = False
-pattern = '--input {} --num-folds 5 --rank-metric r2 --prop-priv 1 --bottom-n-percent 0 --cmin -4 --cmax 1 --cstarmin 0 --cstarmax 5 --numberofcs 6 --kernel rbf --taket {}'
 
-#--input wine --num-folds 3 --cmin -3 --cmax 3 --numberofcs 2 --rank-metric r2 --prop-priv 1 --gamma-multiplier 1 --bottom-n-percent 0 --peeking
+#
+# for dataset in ['madelon','arcene','dorothea','dexter','gisette']:
+#     for fold_num in range(1,11):
+#         for top_k_percent in [5,10,25,50,75]:
+#             print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, top_k_percent, dataset, 0, 'linear', 0, 4,5))
+#
 
-for input in inputs:
-    for peeking in ['--peeking','']:
-        txt = pattern.format(input, peeking)
-        print(txt)
+
+
+
+# for awa_num in range(10):
+
+# for subset_of_priv in [10,20,30,40,50,60,70,80,90,100]:
+# for dataset in ['dexter','dorothea']:

@@ -6,22 +6,22 @@ from scipy import sparse as sp
 
 
 
-
+#Takes a TechTC dataset index (0-48) and returns the full path of the data file
 def get_tech_address(dataset_index):
     with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_49.txt"), "r") as infile:
         line = infile.readlines()[dataset_index]
         return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/vectors.dat".format(line.strip('\r\n'))))
 
+#Takes a TechTC dataset index (0-48) and returns the path of file listing words with their feature index number
 def get_words(dataset_index):
     with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_49.txt"), "r") as infile:
         line = infile.readlines()[dataset_index]
         return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/features.idx".format(line.strip('\r\n'))))
 
-#Iterates over list of words with indices; puts the original index of long words into a dict with its new index
+#Iterate over the list of words with feature indices; if a word's length>4: put the original index into a dict with its new index
 def get_longword_indices(dataset_index):
     long_words = {}
     long_words_count = 0
-    short_words = []
     with open(get_words(dataset_index), "r")as infile:
         for line_index, line in enumerate(infile):
             if line_index>8:
@@ -29,12 +29,11 @@ def get_longword_indices(dataset_index):
                 if len(word)>4:
                     long_words[int(line_index-8)]=long_words_count
                     long_words_count+=1
-                else:
-                    short_words.append(word)
     return long_words
 
+#Take the techtc-300 dataset index (0-48) and return two arrays: features and corresponding labels
 def get_techtc_data(dataset_index):
-    max_num_of_feats,instances_count =0,0
+    instances_count =0
     labels_list,all_instances = [],[]
     long_words_dict = get_longword_indices(dataset_index)
     max_num_of_feats= (len(long_words_dict))
@@ -64,7 +63,7 @@ def get_techtc_data(dataset_index):
     return(features_array,labels_array)
 
 
-
+#Takes all the data
 def get_tech_train_and_test_this_fold(all_data, all_labels ,k, skf_seed):	#N,test_N per class
 
     skf = StratifiedKFold(all_labels, n_folds=10, random_state=skf_seed)
@@ -80,7 +79,6 @@ def get_tech_train_and_test_this_fold(all_data, all_labels ,k, skf_seed):	#N,tes
     print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
     return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)
 
-features_array,labels_array = get_techtc_data(0)
-print (features_array.shape, labels_array.shape)
 
+features_array,labels_array = get_techtc_data(0)
 get_tech_train_and_test_this_fold(features_array,labels_array,0,1)

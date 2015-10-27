@@ -21,7 +21,7 @@ for dataset_num in range(49):
     all_folds_baseline=[]
     all_folds_SVM,all_folds_LUPI = [],[]
     for outer_fold in range (10):
-        output_directory = (get_full_path('Desktop/Privileged_Data/TechSlice/fixedC-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(dataset_num,outer_fold)))
+        output_directory = (get_full_path('Desktop/Privileged_Data/TechSlice/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(dataset_num,outer_fold)))
 
         with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
             baseline_i_list = baseline_file.readline().split(',')[:-1]
@@ -89,34 +89,34 @@ fig.savefig('newplot')
 plt.show()
 
 
-# lupi_improvements =0
-# lupi_worse = 0
-# for rfe_error, lupi_error in zip(list_of_rfe_errors,list_of_lupi_errors):
-#     if rfe_error>lupi_error:
-#         lupi_improvements+=1
-#     else:
-#         lupi_worse+=1
-# print('lupi helped in',lupi_improvements,'cases vs rfe')
-# print('lupi worsened in',lupi_worse,'cases vs rfe')
-#
-# lupi_improvements =0
-# lupi_worse = 0
-# for baseline_error, lupi_error in zip(list_of_baseline_errors,list_of_lupi_errors):
-#     if baseline_error>lupi_error:
-#         lupi_improvements+=1
-#     else:
-#         lupi_worse+=1
-# print('lupi helped in',lupi_improvements,'cases vs baseline')
-# print('lupi worsened in',lupi_worse,'cases vs baseline')
-#
-#
-# rfe_improvements =0
-# rfe_worse = 0
-# for baseline_error, rfe_error in zip(list_of_baseline_errors,list_of_rfe_errors):
-#     if baseline_error>rfe_error:
-#         rfe_improvements+=1
-#     else:
-#         rfe_worse+=1
-# print('rfe helped in',rfe_improvements,'cases vs baseline')
-# print('rfe worsened in',rfe_worse,'cases vs baseline')
-#
+lupi_improvements =0
+lupi_worse = 0
+for rfe_error, lupi_error in zip(list_of_rfe_errors,list_of_lupi_errors):
+    if rfe_error>lupi_error:
+        lupi_improvements+=1
+    else:
+        lupi_worse+=1
+print('lupi helped in',lupi_improvements,'cases vs rfe')
+print('lupi worsened in',lupi_worse,'cases vs rfe')
+
+lupi_improvements =0
+lupi_worse = 0
+for baseline_error, lupi_error in zip(list_of_baseline_errors,list_of_lupi_errors):
+    if baseline_error>lupi_error:
+        lupi_improvements+=1
+    else:
+        lupi_worse+=1
+print('lupi helped in',lupi_improvements,'cases vs baseline')
+print('lupi worsened in',lupi_worse,'cases vs baseline')
+
+
+rfe_improvements =0
+rfe_worse = 0
+for baseline_error, rfe_error in zip(list_of_baseline_errors,list_of_rfe_errors):
+    if baseline_error>rfe_error:
+        rfe_improvements+=1
+    else:
+        rfe_worse+=1
+print('rfe helped in',rfe_improvements,'cases vs baseline')
+print('rfe worsened in',rfe_worse,'cases vs baseline')
+
