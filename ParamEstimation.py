@@ -15,7 +15,7 @@ from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, LinearSVC
 import os
 
-def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_values,cross_validation_folder):
+def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_values,cross_validation_folder,datasetnum):
     cv = cross_validation.StratifiedKFold(training_labels, 5)
     cv_scores = np.zeros(len(Cstar_values))	#join cross validation on X, X*
 
@@ -33,7 +33,7 @@ def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_valu
     best_Cstar = Cstar_values[index_of_best]
     print (np.where(cv_scores == cv_scores.max()))
     print ('index of best',index_of_best)
-    with open(os.path.join(cross_validation_folder,'Cstar-crossvalid.txt'),'a') as cross_validation_doc:
+    with open(os.path.join(cross_validation_folder,'Cstar-crossvalid-{}.txt'.format(datasetnum)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_Cstar))
 
     # print 'time to get best c star', time.clock()-t0

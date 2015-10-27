@@ -121,7 +121,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         c_svm_plus=best_C_baseline
         c_star_values = [1000.,100.,10.,1., 0.1, 0.01, 0.001, 0.0001]
         c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
-                                       c_svm_plus, c_star_values,cross_validation_folder)
+                                       c_svm_plus, c_star_values,cross_validation_folder,datasetnum)
 
 
         print('c star', c_star_svm_plus)
