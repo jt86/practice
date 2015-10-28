@@ -141,7 +141,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 
-
+# single_fold(k=1, topk=300, dataset='tech', datasetnum=10, kernel='linear', cmin=0, cmax=4, number_of_cs=5,skfseed=0, percent_of_priv=100)
 
 # list_of_values = [300]#,400,500,600,700,800,900,1000]
 # for top_k in list_of_values:
