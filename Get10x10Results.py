@@ -21,7 +21,7 @@ for dataset_num in range(49):
     all_folds_baseline=[]
     all_folds_SVM,all_folds_LUPI = [],[]
     for outer_fold in range (10):
-        output_directory = (get_full_path('Desktop/Privileged_Data/TechSlice/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(dataset_num,outer_fold)))
+        output_directory = (get_full_path('Desktop/Privileged_Data/TechSlice-finegrained/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(dataset_num,outer_fold)))
 
         with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
             baseline_i_list = baseline_file.readline().split(',')[:-1]
