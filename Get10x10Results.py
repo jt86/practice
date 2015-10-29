@@ -21,7 +21,7 @@ for dataset_num in range(49):
     all_folds_baseline=[]
     all_folds_SVM,all_folds_LUPI = [],[]
     for outer_fold in range (10):
-        output_directory = (get_full_path('Desktop/Privileged_Data/TechSlice-finegrained/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(dataset_num,outer_fold)))
+        output_directory = (get_full_path('Desktop/Privileged_Data/TechSlice_10x10/fixedC-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(dataset_num,outer_fold)))
 
         with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
             baseline_i_list = baseline_file.readline().split(',')[:-1]
@@ -84,31 +84,33 @@ plt.errorbar(list(range(49)), list_of_lupi_errors, yerr = lupi_error_bars, c='r'
 
 
 fig.suptitle('TechTC-300 - Error rates', fontsize=20)
-plt.legend()#([line1,line2],['All features',['RFE - top 300 features']])
-fig.savefig('newplot')
+plt.legend(bbox_to_anchor=(0.6, 1))#([line1,line2],['All features',['RFE - top 300 features']])
+fig.savefig('newplot-10x10')
 plt.show()
 
 
 lupi_improvements =0
 lupi_worse = 0
+total_improvement_over_rfe, total_improvement_over_baseline = 0,0
 for rfe_error, lupi_error in zip(list_of_rfe_errors,list_of_lupi_errors):
+    total_improvement_over_rfe+=(lupi_error-rfe_error)
     if rfe_error>lupi_error:
         lupi_improvements+=1
     else:
         lupi_worse+=1
 print('lupi helped in',lupi_improvements,'cases vs rfe')
-print('lupi worsened in',lupi_worse,'cases vs rfe')
+print('mean improvement', total_improvement_over_rfe/len(list_of_rfe_errors))
 
 lupi_improvements =0
 lupi_worse = 0
 for baseline_error, lupi_error in zip(list_of_baseline_errors,list_of_lupi_errors):
+    total_improvement_over_baseline+=(lupi_error-baseline_error)
     if baseline_error>lupi_error:
         lupi_improvements+=1
     else:
         lupi_worse+=1
 print('lupi helped in',lupi_improvements,'cases vs baseline')
-print('lupi worsened in',lupi_worse,'cases vs baseline')
-
+print('mean improvement', total_improvement_over_baseline/len(list_of_rfe_errors))
 
 rfe_improvements =0
 rfe_worse = 0
