@@ -15,7 +15,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x10_All_Params_CV/')
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x4_finegrained_normscorrected/')
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -125,10 +125,10 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         c_svm_plus=best_C_baseline
         # c_svm_plus=10
-        # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
+        c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
 
         # c_star_values=[1000,100,10,1,0.1,0.01,0.001,0.0001]
-        c_star_values=[0.0001,0.001,0.01,0.1,1.,10.,100.,1000]
+        # c_star_values=[0.0001,0.001,0.01,0.1,1.,10.,100.,1000]
         c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
                                        c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
         # c_star_svm_plus=1
@@ -149,7 +149,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 
-# single_fold(k=0, topk=300, dataset='tech', datasetnum=27, kernel='linear', cmin=0, cmax=4, number_of_cs=5,skfseed=0, percent_of_priv=100)
+single_fold(k=0, topk=300, dataset='tech', datasetnum=27, kernel='linear', cmin=0, cmax=0, number_of_cs=5,skfseed=0, percent_of_priv=100)
 
 # list_of_values = [300]#,400,500,600,700,800,900,1000]
 # for top_k in list_of_values:

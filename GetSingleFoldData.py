@@ -77,7 +77,7 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     # print ('all', all_labels.shape, all_labels)
 
 
-    skf = StratifiedKFold(all_labels, n_folds=10, random_state=skf_seed)
+    skf = StratifiedKFold(all_labels, n_folds=4, random_state=skf_seed)
     for fold_num, (train_index, test_index) in enumerate(skf):
         if fold_num==k:
             train_data, test_data = all_data[train_index],all_data[test_index]
@@ -87,9 +87,10 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     #L1 normalization ============================
     normaliser = Normalizer(norm='l1')
     np.set_printoptions(threshold=np.nan)
-
     train_data=normaliser.fit_transform(train_data)
 
+    normaliser = Normalizer(norm='l1')
+    test_data=normaliser.fit_transform(test_data)
     # train_data = train_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, train_data).reshape(-1,1)
     # test_data = test_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, test_data).reshape(-1,1)
     print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
