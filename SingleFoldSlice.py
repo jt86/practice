@@ -15,7 +15,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x4_finegrained_normscorrected/')
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x4_finegrained_nonorms/')
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -148,7 +148,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 
-
+# single_fold(0, 300,"tech",5,"linear",0,4,5,4)
 # single_fold(k=0, topk=300, dataset='tech', datasetnum=27, kernel='linear', cmin=0, cmax=0, number_of_cs=5,skfseed=0, percent_of_priv=100)
 
 # list_of_values = [300]#,400,500,600,700,800,900,1000]
