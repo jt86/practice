@@ -77,7 +77,7 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     # print ('all', all_labels.shape, all_labels)
 
 
-    skf = StratifiedKFold(all_labels, n_folds=4, random_state=skf_seed)
+    skf = StratifiedKFold(all_labels, n_folds=10, random_state=skf_seed)
     for fold_num, (train_index, test_index) in enumerate(skf):
         if fold_num==k:
             train_data, test_data = all_data[train_index],all_data[test_index]
