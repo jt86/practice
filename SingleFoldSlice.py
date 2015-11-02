@@ -9,12 +9,13 @@ from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=50):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=100):
+
 
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        outer_directory = get_full_path('Desktop/Privileged_Data/TechSlice-10x10-top50/')
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x10_All_Params_CV/')
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -36,6 +37,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum,k,skfseed)
 
+
+
         n_top_feats = topk
         # if 'tech' in dataset:
         #     n_top_feats= topk
@@ -55,8 +58,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ########## GET BEST C FOR RFE
 
-        # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize=stepsize)
-        best_rfe_param=1
+        best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize,cross_validation_folder,datasetnum,topk)
+        # best_rfe_param=1
 
         # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
         #     best_params_doc.write("\n"+str(best_rfe_param))
@@ -76,7 +79,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         best_n_mask = rfe.support_
         normal_features_training = all_training[:,best_n_mask].copy()
         normal_features_testing = all_testing[:,best_n_mask].copy()
-        privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
+        # privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
+        privileged_features_training = normal_features_training                     ######CHANGE THIS
 
         ACC = rfe.score(all_testing, testing_labels)
         print ('rfe accuracy (old version):',ACC)
@@ -91,8 +95,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
             cv_svm_file.write(str(ACC2)+",")
         ##############################  BASELINE - all features
 
-        # best_C_baseline = get_best_C(all_training, training_labels, c_values)
-        best_C_baseline=1
+        best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
+        # best_C_baseline=best_rfe_param
 
         print ('all training shape',all_training.shape)
         if topk == 300 or topk == 5 or topk==10:
@@ -106,25 +110,28 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
 
-        print('privileged',privileged_features_training.shape)
-        all_features_ranking=rfe.ranking_
-        print (all_features_ranking.shape)
-        all_features_ranking = all_features_ranking[np.invert(best_n_mask)]
-        print('\n\n\n\n all features ranking',all_features_ranking.shape)
-        privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
+        # print('privileged',privileged_features_training.shape)
+        # all_features_ranking=rfe.ranking_
+        # print (all_features_ranking.shape)
+        # all_features_ranking = all_features_ranking[np.invert(best_n_mask)]
+        # print('\n\n\n\n all features ranking',all_features_ranking.shape)
+        # privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
 
         num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
         print('number to take', num_of_priv_feats)
 
-        privileged_features_training = privileged_features_training[:,:num_of_priv_feats]
+        # privileged_features_training = privileged_features_training[:,:num_of_priv_feats]
         print ('privileged data shape',privileged_features_training.shape)
 
         c_svm_plus=best_C_baseline
+        # c_svm_plus=10
         # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
-        c_star_values=[1000,100,10,1,0.1,0.01,0.001,0.0001]
-        c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
-                                       c_svm_plus, c_star_values,cross_validation_folder,datasetnum)
 
+        # c_star_values=[1000,100,10,1,0.1,0.01,0.001,0.0001]
+        c_star_values=[0.0001,0.001,0.01,0.1,1.,10.,100.,1000]
+        c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
+                                       c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
+        # c_star_svm_plus=1
 
         print('c star', c_star_svm_plus)
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
@@ -142,7 +149,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 
-# single_fold(k=1, topk=300, dataset='tech', datasetnum=10, kernel='linear', cmin=0, cmax=4, number_of_cs=5,skfseed=0, percent_of_priv=100)
+# single_fold(k=0, topk=300, dataset='tech', datasetnum=27, kernel='linear', cmin=0, cmax=4, number_of_cs=5,skfseed=0, percent_of_priv=100)
 
 # list_of_values = [300]#,400,500,600,700,800,900,1000]
 # for top_k in list_of_values:
