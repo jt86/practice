@@ -16,12 +16,12 @@ list_of_baselines=[]
 list_of_300_rfe=[]
 list_of_300_lupi=[]
 
-for dataset_num in range(49):
+for dataset_num in range(6,49):
     print ('doing dataset',dataset_num)
     all_folds_baseline=[]
     all_folds_SVM,all_folds_LUPI = [],[]
     for outer_fold in range (10):
-        output_directory = (get_full_path('Desktop/Privileged_Data/TechSlice-10x10-top50/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=50/cross-validation{}'.format(dataset_num,outer_fold)))
+        output_directory = (get_full_path('Desktop/Privileged_Data/10x4_finegrained_normscorrected/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(dataset_num,outer_fold)))
 
         with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
             baseline_i_list = baseline_file.readline().split(',')[:-1]
@@ -31,7 +31,7 @@ for dataset_num in range(49):
             # print (len(list_of_baselines))
 
 
-        for inner_fold in range(10):
+        for inner_fold in range(4):
             with open(os.path.join(output_directory,'svm-{}-{}.csv').format(inner_fold,300),'r') as cv_svm_file:
                 svm_score = float(cv_svm_file.readline().split(',')[0])
                 all_folds_SVM+=[svm_score]
@@ -85,7 +85,7 @@ plt.errorbar(list(range(49)), list_of_lupi_errors, yerr = lupi_error_bars, c='r'
 
 fig.suptitle('TechTC-300 - Error rates', fontsize=20)
 plt.legend(bbox_to_anchor=(0.6, 1))#([line1,line2],['All features',['RFE - top 300 features']])
-fig.savefig('newplot-10x10')
+fig.savefig('10x4_norms')
 plt.show()
 
 

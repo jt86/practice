@@ -6,6 +6,8 @@ from sklearn.preprocessing import OneHotEncoder, LabelEncoder, Imputer, Normaliz
 from scipy import sparse as sp
 import sys
 from sklearn.cross_validation import StratifiedKFold
+# import numpy.linalg.norm
+
 
 def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per class
     if dataset == 'synthetic':
