@@ -28,13 +28,13 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
 
 
     #L1 normalization ============================
-    normaliser = Normalizer(norm='l1')
-    train_data=normaliser.fit_transform(train_data)
-    # np.set_printoptions(threshold=np.nan)
-
+    # normaliser = Normalizer(norm='l1')
+    # train_data=normaliser.fit_transform(train_data)
+    # # np.set_printoptions(threshold=np.nan)
     #
-    normaliser = Normalizer(norm='l1')
-    test_data=normaliser.fit_transform(test_data)
+    # #
+    # normaliser = Normalizer(norm='l1')
+    # test_data=normaliser.fit_transform(test_data)
     # train_data = train_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, train_data).reshape(-1,1)
     # test_data = test_data/np.apply_along_axis(lambda row:np.linalg.norm(row,ord=1), 1, test_data).reshape(-1,1)
     print ('train data shape', train_data.shape, 'test data shape', test_data.shape)

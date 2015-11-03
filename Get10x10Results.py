@@ -21,7 +21,7 @@ for dataset_num in range(49):
     print ('doing dataset',dataset_num)
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
     for outer_fold in range (10):
-        output_directory = (get_full_path('Desktop/Privileged_Data/10x4_finegrained_oldstylenorms/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(dataset_num,outer_fold)))
+        output_directory = (get_full_path('Desktop/Privileged_Data/10x4_finegrained_newstylenorms/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(dataset_num,outer_fold)))
         # with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
         #     baseline_i_list = baseline_file.readline().split(',')[:-1]
         #     print('datasetnum',dataset_num,'outer fold',outer_fold,'baseline i list',baseline_i_list)
@@ -48,13 +48,17 @@ for dataset_num in range(49):
 
 print ((list_of_baselines))
 
-for number, list in enumerate(list_of_baselines):
-    print (number,list[0], len(list))
 
 
-list_of_baseline_errors =([1-mean for mean in np.mean(list_of_baselines,axis=1)])
+list_of_baseline_errors =np.array([1-mean for mean in np.mean(list_of_baselines,axis=1)])
 list_of_rfe_errors = np.array([1-mean for mean in np.mean(list_of_300_rfe,axis=1)])
 list_of_lupi_errors = np.array([1-mean for mean in np.mean(list_of_300_lupi,axis=1)])
+
+print(len(list_of_baseline_errors))
+print(list_of_rfe_errors.shape)
+print(list_of_lupi_errors.shape)
+
+
 
 print ('baseline sorted',np.argsort(list_of_baseline_errors))
 list_of_rfe_errors = list_of_rfe_errors[np.argsort(list_of_baseline_errors)]
