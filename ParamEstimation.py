@@ -19,7 +19,6 @@ import os
 def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_values,cross_validation_folder,datasetnum,topk):
     n_folds=5
     cv = cross_validation.StratifiedKFold(training_labels, n_folds)
-    print('shape',training_data.shape[0])
     cv_scores = np.zeros(len(Cstar_values))	#join cross validation on X, X*
     for i,(train, test) in enumerate(cv):
         for Cstar_index, Cstar in enumerate(Cstar_values):
@@ -33,7 +32,7 @@ def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_valu
     best_Cstar = Cstar_values[index_of_best]
     with open(os.path.join(cross_validation_folder,'Cstar-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_Cstar))
-    print('cross valid scores:',cv_scores,best_Cstar)
+    print('cross valid scores:',cv_scores,'=> best C*=',best_Cstar)
     return best_Cstar
 
 def get_best_C(training_data,training_labels, c_values, cross_validation_folder,datasetnum,topk):
