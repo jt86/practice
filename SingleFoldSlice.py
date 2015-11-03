@@ -16,7 +16,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x4_finegrained_oldstylenorms/')
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x4_finegrained_newstylenorms/')
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -83,8 +83,11 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
         # privileged_features_training = normal_features_training                                    ######CHANGE THIS
 
-        ACC = rfe.score(all_testing, testing_labels)
-        print ('rfe accuracy (old version):',ACC)
+        print('all testing', all_testing.shape)
+        print('testing labels', testing_labels.shape)
+
+        # ACC = rfe.score(all_testing, testing_labels)
+        # print ('rfe accuracy (old version):',ACC)
 
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
         svc.fit(normal_features_training,training_labels)
@@ -146,12 +149,17 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
 
-        return (ACC)
+        return (ACC2)
 
+#
+# for seed in range (10):  #4
+#     for top_k in [300]:#,500]:#100,200,400,600,700,800,900,1000]:
+#         for datasetnum in[26]:
+#             for fold_num in range(4): #0
+#                 single_fold(fold_num, top_k, 'tech', datasetnum, 'linear', 0, 4,5, seed)
+#
 
-
-
-# single_fold(k=0, topk=300, dataset='tech', datasetnum=15, kernel='linear', cmin=0, cmax=4, number_of_cs=5,skfseed=5, percent_of_priv=100)
+# single_fold(k=0, topk=300, dataset='tech', datasetnum=26, kernel='linear', cmin=0, cmax=4, number_of_cs=5,skfseed=5, percent_of_priv=100)
 
 # list_of_values = [300]#,400,500,600,700,800,900,1000]
 # for top_k in list_of_values:
