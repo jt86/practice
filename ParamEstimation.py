@@ -1,16 +1,12 @@
 __author__ = 'jt306'
-import numpy as np
-import numpy
-from SVMplus import svmplusQP, svmplusQP_Predict
+
 from sklearn.metrics import accuracy_score, pairwise
 from sklearn import svm
 from sklearn.cross_validation import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
 import numpy as np
 import numpy
 import pdb
-
 from sklearn import cross_validation, linear_model
-from scipy.optimize import *
 from SVMplus4 import svmplusQP, svmplusQP_Predict
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, LinearSVC

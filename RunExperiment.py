@@ -27,6 +27,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--skfseed', type=int, required=True, help='seed for random division of SKF - to allow 10x10fold')
 
+    parser.add_argument('--percentofpriv', type=int, required=True, help='percentage of priv info to take')
     args = parser.parse_args()
     print('input is', args.dataset)
     print(' all args',args)
@@ -37,4 +38,5 @@ if __name__ == '__main__':
 
 
     single_fold(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
-                kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, skfseed=args.skfseed)
+                kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, skfseed=args.skfseed,
+                percent_of_priv = args.percentofpriv)
