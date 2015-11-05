@@ -16,7 +16,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x4-top10/')
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x4-top{}/'.format(percent_of_priv))
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
