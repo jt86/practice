@@ -11,7 +11,7 @@ from scipy import stats
 
 x = list(range(49))
 y = list(range(49))
-experiment_name = '10x4-c1000cstarfinegrain-notnormalised'
+experiment_name = '10x4-cCVcstarfinegrain-notnormalised'
 
 list_of_baselines=[]
 list_of_300_rfe=[]

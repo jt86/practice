@@ -2,7 +2,7 @@
 dataset='tech'
 
 for seed in range (10):  #4
-    for top_k in [300]:#,500]:#100,200,400,600,700,800,900,1000]:
+    for top_k in [500]:#,500]:#100,200,400,600,700,800,900,1000]:
         for datasetnum in range (49): #5
             for fold_num in range(4): #0
                 print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', 0, 4,5, seed, 100))
