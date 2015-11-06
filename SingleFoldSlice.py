@@ -16,7 +16,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x4-cCVcstarfinegrain-notnormalised/'.format(percent_of_priv))
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x4-cCVcstarCV-notnormalised/'.format(percent_of_priv))
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -125,8 +125,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         c_svm_plus=best_C_baseline
         # c_svm_plus=10
-        c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
-        # c_star_values=[1000,100,10,1,0.1,0.01,0.001,0.0001]
+        # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
+        c_star_values=[1000,100,10,1,0.1,0.01,0.001,0.0001]
         # c_star_values = np.logspace(-4,4,9)
         print('c star values',c_star_values)
         c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,

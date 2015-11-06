@@ -11,7 +11,7 @@ from scipy import stats
 
 x = list(range(49))
 y = list(range(49))
-
+experiment_name = '10x4-c1000cstarfinegrain-notnormalised'
 
 list_of_baselines=[]
 list_of_300_rfe=[]
@@ -21,7 +21,7 @@ for dataset_num in range(49):
     print ('doing dataset',dataset_num)
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
     for outer_fold in range (10):
-        output_directory = (get_full_path('Desktop/Privileged_Data/10x4-c1000cstarfinegrain-notnormalised/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(dataset_num,outer_fold)))
+        output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(experiment_name,dataset_num,outer_fold)))
         for inner_fold in range(4):
             with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
                 baseline_score = float(baseline_file.readline().split(',')[0])
@@ -109,8 +109,8 @@ lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 
 fig = plt.figure()
 
-plt.errorbar(list(range(49)), list_of_baseline_errors, yerr = baseline_error_bars, c='g', label='All features (corrected)')
-plt.errorbar(list(range(49)), list_of_rfe_errors, yerr = rfe_error_bars, c='b', label='RFE - top 300 features (corrected)')
+plt.errorbar(list(range(49)), list_of_baseline_errors, yerr = baseline_error_bars, c='green', label='All features (corrected)')
+plt.errorbar(list(range(49)), list_of_rfe_errors, yerr = rfe_error_bars, c='blue', label='RFE - top 300 features (corrected)')
 plt.errorbar(list(range(49)), list_of_lupi_errors, yerr = lupi_error_bars, c='r', label='LUPI - top 300, rest privileged (corrected)')
 
 #
@@ -121,7 +121,7 @@ plt.errorbar(list(range(49)), list_of_lupi_errors, yerr = lupi_error_bars, c='r'
 
 fig.suptitle('TechTC-300 - Error rates', fontsize=20)
 plt.legend(loc='best')#bbox_to_anchor=(0.6, 1))#([line1,line2],['All features',['RFE - top 300 features']])
-fig.savefig('10x4-notnormalised-fine-grained')
+fig.savefig(experiment_name)
 plt.show()
 
 
