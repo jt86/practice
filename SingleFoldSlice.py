@@ -11,12 +11,12 @@ from GetSingleFoldData import get_train_and_test_this_fold
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=100):
 
-
+        c_star_svm_plus=1
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x4-cCVcstarCV1000-l2normalised/'.format(percent_of_priv))
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x4-cCVcstarc_star_svm_plus{}notnormalised/'.format(c_star_svm_plus))
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -129,8 +129,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         c_star_values=[1000,100,10,1,0.1,0.01,0.001,0.0001]
         # c_star_values = np.logspace(-4,4,9)
         print('c star values',c_star_values)
-        c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
-                                       c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
+        # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
+        #                                c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
 
 
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
