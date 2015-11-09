@@ -11,7 +11,7 @@ from scipy import stats
 
 x = list(range(49))
 y = list(range(49))
-experiment_name = '10x4-cCVcstarCV1000-l2normalised'
+experiment_name = '10x4-cCVcstar10notnormalised'
 
 list_of_baselines=[]
 list_of_300_rfe=[]
@@ -53,7 +53,10 @@ print(list_of_lupi_errors.shape)
 
 
 
-print ('baseline sorted',np.argsort(list_of_baseline_errors))
+print ('all features errors',[item*100 for item in list_of_baseline_errors])
+print ('rfe errors',[item*100 for item in list_of_rfe_errors])
+
+
 list_of_rfe_errors = list_of_rfe_errors[np.argsort(list_of_baseline_errors)]
 list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_baseline_errors)]
 list_of_baseline_errors = list_of_baseline_errors[np.argsort(list_of_baseline_errors)]
