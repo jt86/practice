@@ -11,7 +11,7 @@ from scipy import stats
 
 x = list(range(49))
 y = list(range(49))
-experiment_name = '10x4-cCVcstarfinegrain-notnormalised'
+experiment_name = '10x4-top500-cCVcstarCV1000-notnormalised'
 
 list_of_baselines=[]
 list_of_300_rfe=[]
@@ -26,10 +26,10 @@ for dataset_num in range(49):
             with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
                 baseline_score = float(baseline_file.readline().split(',')[0])
                 all_folds_baseline+=[baseline_score]
-            with open(os.path.join(output_directory,'svm-{}-{}.csv').format(inner_fold,300),'r') as cv_svm_file:
+            with open(os.path.join(output_directory,'svm-{}-{}.csv').format(inner_fold,500),'r') as cv_svm_file:
                 svm_score = float(cv_svm_file.readline().split(',')[0])
                 all_folds_SVM+=[svm_score]
-            with open(os.path.join(output_directory,'lupi-{}-{}.csv').format(inner_fold,300),'r') as cv_lupi_file:
+            with open(os.path.join(output_directory,'lupi-{}-{}.csv').format(inner_fold,500),'r') as cv_lupi_file:
                 lupi_score = float(cv_lupi_file.readline().split(',')[0])
                 # print (outer_fold,inner_fold,svm_score)
                 all_folds_LUPI+=[lupi_score]
