@@ -44,6 +44,7 @@ def get_best_C(training_data,training_labels, c_values, cross_validation_folder,
     best_C = c_values[index_of_best][0]
     with open(os.path.join(cross_validation_folder,'C_fullset-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_C))
+    print('cross valid scores (all featurers):',cv_scores,'=> best C=',best_C)
     return best_C
 
 
@@ -67,6 +68,7 @@ def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,cross_
     best_C = c_values[index_of_best]
     with open(os.path.join(cross_validation_folder,'C_fullset-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_C))
+    print('cross valid scores (rfe):',cv_scores,'=> best C=',best_C)
     return best_C
 
 

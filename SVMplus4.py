@@ -10,7 +10,7 @@ import numpy as np
 import pdb
 import numpy.random as random
 from cvxopt.solvers import options
-options['show_progress'] = False
+options['show_progress'] = True
 
 def svmplusQP(X,Y,Xstar,C,Cstar):
     n = X.shape[0]

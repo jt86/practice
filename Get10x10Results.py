@@ -8,11 +8,11 @@ import sys
 list_of_values = [300,500]
 from scipy import stats
 
-num_datasets=1
+num_datasets=49
 
 x = list(range(num_datasets))
 y = list(range(num_datasets))
-experiment_name = '10x10-29onlyhalformalised'
+experiment_name = '10x4-cCVcstarCV1000-notnormalised'
 
 list_of_baselines=[]
 list_of_300_rfe=[]
