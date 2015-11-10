@@ -127,7 +127,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         c_svm_plus=best_C_baseline
         # c_svm_plus=10
         # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
-        c_star_values=[0.1,0.01,0.001,0.0001]
+        c_star_values=[0.0001, 0.001, 0.01, 0.1]
         # c_star_values = np.logspace(-4,4,9)
         # print('c star values',c_star_values)
         c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
