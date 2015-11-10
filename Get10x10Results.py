@@ -12,7 +12,7 @@ num_datasets=49
 
 x = list(range(num_datasets))
 y = list(range(num_datasets))
-experiment_name = '10x4-cCVcstarCV1000-notnormalised'
+experiment_name = '10x10-CsCV-Cplus0-01-Cstarfinegrain'
 
 list_of_baselines=[]
 list_of_300_rfe=[]
@@ -63,9 +63,9 @@ print ('lupi errors',[item*100 for item in list_of_lupi_errors])
 
 print(np.argsort(list_of_baseline_errors))
 #
-# list_of_rfe_errors = list_of_rfe_errors[np.argsort(list_of_baseline_errors)]
-# list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_baseline_errors)]
-# list_of_baseline_errors = list_of_baseline_errors[np.argsort(list_of_baseline_errors)]
+list_of_rfe_errors = list_of_rfe_errors[np.argsort(list_of_baseline_errors)]
+list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_baseline_errors)]
+list_of_baseline_errors = list_of_baseline_errors[np.argsort(list_of_baseline_errors)]
 
 baseline_error_bars=list(stats.sem(list_of_baselines,axis=1))
 rfe_error_bars = list(stats.sem(list_of_300_rfe,axis=1))
@@ -118,9 +118,9 @@ lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 
 fig = plt.figure()
 
-plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, c='green', label='All features (corrected)')
-plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, c='blue', label='RFE - top 300 features (corrected)')
-plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, c='r', label='LUPI - top 300, rest privileged (corrected)')
+plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, c='green', label='All features (non-normalised)')
+plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, c='blue', label='RFE - top 300 features (non-normalised)')
+plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, c='r', label='LUPI - top 300, rest privileged (non-normalised)')
 
 #
 # plt.errorbar(list(range(num_datasets)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
@@ -133,37 +133,38 @@ plt.legend(loc='best')#bbox_to_anchor=(0.6, 1))#([line1,line2],['All features',[
 fig.savefig(experiment_name)
 plt.show()
 
-#
-# lupi_improvements =0
-# lupi_worse = 0
-# total_improvement_over_rfe, total_improvement_over_baseline = 0,0
-# for rfe_error, lupi_error in zip(list_of_rfe_errors,list_of_lupi_errors):
-#     total_improvement_over_rfe+=(lupi_error-rfe_error)
-#     if rfe_error>lupi_error:
-#         lupi_improvements+=1
-#     else:
-#         lupi_worse+=1
-# print('lupi helped in',lupi_improvements,'cases vs rfe')
-# print('mean improvement', total_improvement_over_rfe/len(list_of_rfe_errors))
-#
-# lupi_improvements =0
-# lupi_worse = 0
-# for baseline_error, lupi_error in zip(list_of_baseline_errors,list_of_lupi_errors):
-#     total_improvement_over_baseline+=(lupi_error-baseline_error)
-#     if baseline_error>lupi_error:
-#         lupi_improvements+=1
-#     else:
-#         lupi_worse+=1
-# print('lupi helped in',lupi_improvements,'cases vs baseline')
-# print('mean improvement', total_improvement_over_baseline/len(list_of_rfe_errors))
-#
-# rfe_improvements =0
-# rfe_worse = 0
-# for baseline_error, rfe_error in zip(list_of_baseline_errors,list_of_rfe_errors):
-#     if baseline_error>rfe_error:
-#         rfe_improvements+=1
-#     else:
-#         rfe_worse+=1
-# print('rfe helped in',rfe_improvements,'cases vs baseline')
-# print('rfe worsened in',rfe_worse,'cases vs baseline')
-#
+
+lupi_improvements =0
+lupi_worse = 0
+total_improvement_over_rfe, total_improvement_over_baseline, total_improvement_over_baseline2 = 0,0,0
+for rfe_error, lupi_error in zip(list_of_rfe_errors,list_of_lupi_errors):
+    total_improvement_over_rfe+=(rfe_error-lupi_error)
+    if rfe_error>lupi_error:
+        lupi_improvements+=1
+    else:
+        lupi_worse+=1
+print('lupi helped in',lupi_improvements,'cases vs rfe')
+print('mean improvement', total_improvement_over_rfe/len(list_of_rfe_errors))
+
+lupi_improvements =0
+lupi_worse = 0
+for baseline_error, lupi_error in zip(list_of_baseline_errors,list_of_lupi_errors):
+    total_improvement_over_baseline+=(baseline_error-lupi_error)
+    if baseline_error>lupi_error:
+        lupi_improvements+=1
+    else:
+        lupi_worse+=1
+print('lupi helped in',lupi_improvements,'cases vs baseline')
+print('mean improvement', total_improvement_over_baseline/len(list_of_rfe_errors))
+
+rfe_improvements =0
+rfe_worse = 0
+for baseline_error, rfe_error in zip(list_of_baseline_errors,list_of_rfe_errors):
+    total_improvement_over_baseline2+=(baseline_error-rfe_error)
+    if baseline_error>rfe_error:
+        rfe_improvements+=1
+    else:
+        rfe_worse+=1
+print('rfe helped in',rfe_improvements,'cases vs baseline')
+print('mean improvement', total_improvement_over_baseline2/len(list_of_rfe_errors))
+

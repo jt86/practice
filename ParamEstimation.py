@@ -10,7 +10,33 @@ from sklearn import cross_validation, linear_model
 from SVMplus4 import svmplusQP, svmplusQP_Predict
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, LinearSVC
-import os
+import os,sys
+
+
+def get_best_CandCstar(training_data,training_labels, privileged_data, c_values, Cstar_values,cross_validation_folder,datasetnum,topk):
+    n_folds=5
+    cv = cross_validation.StratifiedKFold(training_labels, n_folds)
+    cv_scores = np.zeros((len(Cstar_values),len(c_values)))	#join cross validation on X, X*
+    print ('cv scores shape',cv_scores.shape)
+
+    for i,(train, test) in enumerate(cv):
+        for Cstar_index, Cstar in enumerate(Cstar_values):
+            for C_index, C in enumerate(c_values):
+                duals,bias = svmplusQP(training_data[train],training_labels[train].copy(),privileged_data[train],C,Cstar)
+                predictions = svmplusQP_Predict(training_data[train],training_data[test],duals,bias).flatten()
+                ACC = np.sum(training_labels[test]==np.sign(predictions))/(1.*len(training_labels[test]))
+                cv_scores[Cstar_index,C_index] += ACC
+                # print (cv_scores)
+    cv_scores = cv_scores/n_folds
+    index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
+    print(np.argwhere(cv_scores.max() == cv_scores))
+    print(index_of_best)
+    best_Cstar, best_C = Cstar_values[index_of_best[0]],c_values[index_of_best[1]]
+    with open(os.path.join(cross_validation_folder,'Cstar-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
+        cross_validation_doc.write("\n{} {}".format(cv_scores,best_Cstar))
+    print('cross valid scores:',cv_scores,'=> best C*=',best_Cstar, 'bestC=',best_C)
+    return best_Cstar,best_C
+
 
 def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_values,cross_validation_folder,datasetnum,topk):
     n_folds=5
@@ -20,7 +46,6 @@ def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_valu
         for Cstar_index, Cstar in enumerate(Cstar_values):
             duals,bias = svmplusQP(training_data[train],training_labels[train].copy(),privileged_data[train],C,Cstar)
             predictions = svmplusQP_Predict(training_data[train],training_data[test],duals,bias).flatten()
-            # pdb.set_trace()
             ACC = np.sum(training_labels[test]==np.sign(predictions))/(1.*len(training_labels[test]))
             cv_scores[Cstar_index] += ACC
     cv_scores = cv_scores/n_folds

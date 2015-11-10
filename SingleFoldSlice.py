@@ -2,7 +2,7 @@ import os
 import numpy as np
 from sklearn.metrics import accuracy_score
 from SVMplus4 import svmplusQP, svmplusQP_Predict
-from ParamEstimation import get_best_Cstar, get_best_C, get_best_RFE_C
+from ParamEstimation import get_best_Cstar, get_best_C, get_best_RFE_C, get_best_CandCstar
 from sklearn import svm
 from Get_Full_Path import get_full_path
 from sklearn.feature_selection import RFE
@@ -17,7 +17,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-CsCV-Cplus0.01-Cstarfinegrain/')#.format(c_star_svm_plus))
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-CsCV-Cplus0.01-Cstarfinegrain-ALLCV/')#.format(c_star_svm_plus))
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -83,6 +83,11 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         normal_features_testing = all_testing[:,best_n_mask].copy()
         privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
 
+        np.save('normal_features_training',normal_features_training)
+        np.save('privileged_features_training',privileged_features_training)
+        np.save('normal_features_testing',normal_features_testing)
+        np.save('training_labels',training_labels)
+        np.save('testing_labels',testing_labels)
 
         # print('all testing', all_testing.shape)
         print('testing labels', testing_labels.shape)
@@ -125,16 +130,21 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         print ('privileged data shape',privileged_features_training.shape)
 
-        c_svm_plus=0.01
+        # c_svm_plus=0.01
         # c_svm_plus=10
         c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
         # c_star_values=[0.0001, 0.001, 0.01, 0.1]
         # c_star_values = np.logspace(-4,4,9)
         # print('c star values',c_star_values)
         # c_star_values=c_values
-        c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
-                                        c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
+        # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
+        #                                 c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
         #c_star_svm_plus=1.
+
+
+        c_svm_plus, c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
+                                         c_values, c_star_values,cross_validation_folder,datasetnum, topk)
+
 
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
         lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
