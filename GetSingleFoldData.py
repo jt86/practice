@@ -28,8 +28,8 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
 
 
     #L1 normalization ============================
-    normaliser = Normalizer(norm='l2')
-    train_data=normaliser.fit_transform(train_data)
+    # normaliser = Normalizer(norm='l2')
+    # train_data=normaliser.fit_transform(train_data)
     # normaliser = Normalizer(norm='l2')
     # test_data=normaliser.fit_transform(test_data)
 

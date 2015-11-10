@@ -8,27 +8,28 @@ import sys
 list_of_values = [300,500]
 from scipy import stats
 
+num_datasets=1
 
-x = list(range(49))
-y = list(range(49))
-experiment_name = 'TechSlice-10x4-finegrained'
+x = list(range(num_datasets))
+y = list(range(num_datasets))
+experiment_name = '10x10-29onlyhalformalised'
 
 list_of_baselines=[]
 list_of_300_rfe=[]
 list_of_300_lupi=[]
 
-for dataset_num in range(49):
+for dataset_num in range(num_datasets):
     print ('doing dataset',dataset_num)
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
     for outer_fold in range (10):
         output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(experiment_name,dataset_num,outer_fold)))
         for inner_fold in range(4):
-            with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
-                baseline_score = np.array([item for item in baseline_file.readline().split(',')[:-1]]).astype(np.float)
-                all_folds_baseline+=[item for item in baseline_score]
-            # with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
-                # baseline_score = float(baseline_file.readline().split(',')[0])
-                # all_folds_baseline+=[baseline_score]
+            # with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
+            #     baseline_score = np.array([item for item in baseline_file.readline().split(',')[:-1]]).astype(np.float)
+            #     all_folds_baseline+=[item for item in baseline_score]
+            with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
+                baseline_score = float(baseline_file.readline().split(',')[0])
+                all_folds_baseline+=[baseline_score]
             with open(os.path.join(output_directory,'svm-{}-{}.csv').format(inner_fold,300),'r') as cv_svm_file:
                 svm_score = float(cv_svm_file.readline().split(',')[0])
                 all_folds_SVM+=[svm_score]
@@ -77,7 +78,7 @@ lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 # list_of_300_rfe2=[]
 # list_of_300_lupi2=[]
 # print ('\n\n\n\n')
-# for dataset_num in range(49):
+# for dataset_num in range(num_datasets):
 #     print ('doing dataset',dataset_num)
 #     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
 #     for outer_fold in range (10):
@@ -117,14 +118,14 @@ lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 
 fig = plt.figure()
 
-plt.errorbar(list(range(49)), list_of_baseline_errors, yerr = baseline_error_bars, c='green', label='All features (corrected)')
-plt.errorbar(list(range(49)), list_of_rfe_errors, yerr = rfe_error_bars, c='blue', label='RFE - top 300 features (corrected)')
-plt.errorbar(list(range(49)), list_of_lupi_errors, yerr = lupi_error_bars, c='r', label='LUPI - top 300, rest privileged (corrected)')
+plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, c='green', label='All features (corrected)')
+plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, c='blue', label='RFE - top 300 features (corrected)')
+plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, c='r', label='LUPI - top 300, rest privileged (corrected)')
 
 #
-# plt.errorbar(list(range(49)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
-# plt.errorbar(list(range(49)), list_of_rfe_errors2, yerr = rfe_error_bars2, c='k', label='RFE - top 300 features (original)')
-# plt.errorbar(list(range(49)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
+# plt.errorbar(list(range(num_datasets)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
+# plt.errorbar(list(range(num_datasets)), list_of_rfe_errors2, yerr = rfe_error_bars2, c='k', label='RFE - top 300 features (original)')
+# plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
 
 
 fig.suptitle('TechTC-300 - Error rates', fontsize=20)
