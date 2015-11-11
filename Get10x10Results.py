@@ -12,7 +12,7 @@ num_datasets=49
 
 x = list(range(num_datasets))
 y = list(range(num_datasets))
-experiment_name = '10x4-CsCV-Cplus0.01-Cstarfinegrain-ALLCV'
+experiment_name = '10x10-ALLCV-3to3-nonormalise'
 
 list_of_baselines=[]
 list_of_300_rfe=[]

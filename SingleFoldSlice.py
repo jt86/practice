@@ -17,7 +17,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-ALLCV-3to3/')#.format(c_star_svm_plus))
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-ALLCV-3to3a-l2normalised/')#.format(c_star_svm_plus))
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -169,5 +169,6 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 #     mean_lupi+=lupi_score
 # print (mean_all/num_folds,mean_rfe/num_folds,mean_lupi/num_folds)
 #
-
-# single_fold(k=1, topk=300, dataset='tech', datasetnum=48, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=1, percent_of_priv=100)
+#
+#
+# single_fold(k=3, topk=300, dataset='tech', datasetnum= 1, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100)
