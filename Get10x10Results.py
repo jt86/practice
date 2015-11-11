@@ -12,7 +12,7 @@ num_datasets=49
 
 x = list(range(num_datasets))
 y = list(range(num_datasets))
-experiment_name = '10x10-CsCV-Cplus0-01-Cstarfinegrain'
+experiment_name = '10x10-CsCV-Cplus0.01-Cstarfinegrain-ALLCV'
 
 list_of_baselines=[]
 list_of_300_rfe=[]
@@ -23,7 +23,7 @@ for dataset_num in range(num_datasets):
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
     for outer_fold in range (10):
         output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(experiment_name,dataset_num,outer_fold)))
-        for inner_fold in range(4):
+        for inner_fold in range(10):
             # with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
             #     baseline_score = np.array([item for item in baseline_file.readline().split(',')[:-1]]).astype(np.float)
             #     all_folds_baseline+=[item for item in baseline_score]
@@ -130,7 +130,7 @@ plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_b
 
 fig.suptitle('TechTC-300 - Error rates', fontsize=20)
 plt.legend(loc='best')#bbox_to_anchor=(0.6, 1))#([line1,line2],['All features',['RFE - top 300 features']])
-fig.savefig(experiment_name)
+fig.savefig(experiment_name+'.png')
 plt.show()
 
 
