@@ -63,9 +63,9 @@ print ('lupi errors',[item*100 for item in list_of_lupi_errors])
 
 print(np.argsort(list_of_baseline_errors))
 #
-list_of_rfe_errors = list_of_rfe_errors[np.argsort(list_of_baseline_errors)]
-list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_baseline_errors)]
-list_of_baseline_errors = list_of_baseline_errors[np.argsort(list_of_baseline_errors)]
+# list_of_rfe_errors = list_of_rfe_errors[np.argsort(list_of_baseline_errors)]
+# list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_baseline_errors)]
+# list_of_baseline_errors = list_of_baseline_errors[np.argsort(list_of_baseline_errors)]
 
 baseline_error_bars=list(stats.sem(list_of_baselines,axis=1))
 rfe_error_bars = list(stats.sem(list_of_300_rfe,axis=1))
