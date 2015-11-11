@@ -12,7 +12,7 @@ num_datasets=49
 
 x = list(range(num_datasets))
 y = list(range(num_datasets))
-experiment_name = '10x10-CsCV-Cplus0.01-Cstarfinegrain-ALLCV'
+experiment_name = '10x4-CsCV-Cplus0.01-Cstarfinegrain-ALLCV'
 
 list_of_baselines=[]
 list_of_300_rfe=[]
@@ -21,9 +21,9 @@ list_of_300_lupi=[]
 for dataset_num in range(num_datasets):
     print ('doing dataset',dataset_num)
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
-    for outer_fold in range (10):
-        output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(experiment_name,dataset_num,outer_fold)))
-        for inner_fold in range(10):
+    for seed_num in range (10):
+        output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(experiment_name,dataset_num,seed_num)))
+        for inner_fold in range(4):
             # with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
             #     baseline_score = np.array([item for item in baseline_file.readline().split(',')[:-1]]).astype(np.float)
             #     all_folds_baseline+=[item for item in baseline_score]

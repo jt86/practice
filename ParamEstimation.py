@@ -34,8 +34,10 @@ def get_best_CandCstar(training_data,training_labels, privileged_data, c_values,
     best_Cstar, best_C = Cstar_values[index_of_best[0]],c_values[index_of_best[1]]
     with open(os.path.join(cross_validation_folder,'Cstar-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_Cstar))
+    print('c* values:',Cstar_values)
+    print('c values:',c_values)
     print('cross valid scores:',cv_scores,'=> best C*=',best_Cstar, 'bestC=',best_C)
-    return best_Cstar,best_C
+    return best_C, best_Cstar
 
 
 def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_values,cross_validation_folder,datasetnum,topk):

@@ -17,7 +17,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-CsCV-Cstarfinegrain-ALLCV/')#.format(c_star_svm_plus))
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-ALLCV-3to3/')#.format(c_star_svm_plus))
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -132,7 +132,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         # c_svm_plus=0.01
         # c_svm_plus=10
-        c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
+        # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
         # c_star_values=[0.0001, 0.001, 0.01, 0.1]
         # c_star_values = np.logspace(-4,4,9)
         # print('c star values',c_star_values)
@@ -140,9 +140,9 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
         #                                 c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
         #c_star_svm_plus=1.
+        c_star_values = c_values
 
-
-        c_svm_plus, c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
+        c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
                                          c_values, c_star_values,cross_validation_folder,datasetnum, topk)
 
 
@@ -170,4 +170,4 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 # print (mean_all/num_folds,mean_rfe/num_folds,mean_lupi/num_folds)
 #
 
-# single_fold(k=3, topk=300, dataset='tech', datasetnum=29, kernel='linear', cmin=-2, cmax=2, number_of_cs=5,skfseed=5, percent_of_priv=100)
+# single_fold(k=1, topk=300, dataset='tech', datasetnum=48, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=1, percent_of_priv=100)
