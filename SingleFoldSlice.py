@@ -136,16 +136,16 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # c_star_values=[0.0001, 0.001, 0.01, 0.1]
         # c_star_values = np.logspace(-4,4,9)
         # print('c star values',c_star_values)
-        # c_star_values=c_values
+        c_star_values=c_values
         # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
         #                                 c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
         #c_star_svm_plus=1.
         # c_star_values = [0.05, 0.01, 0.005, 0.001]
         # c_values2=[0.01]
-        c_star_values=[0.00001]
-        c_values2 =[1.]
+        # c_star_values=[0.00001]
+        # c_values2 =[1.]
         c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
-                                         c_values2, c_star_values,cross_validation_folder,datasetnum, topk)
+                                         c_values, c_star_values,cross_validation_folder,datasetnum, topk)
 
 
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
@@ -157,7 +157,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         print('svm+ accuracy',(accuracy_lupi))
         with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
-        print ('c options', c_values2)
+        print ('c options', c_values)
         print ('c', c_svm_plus)
 
         print('c* options',c_star_values)
@@ -167,5 +167,5 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 
-print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100))
+# print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100))
 
