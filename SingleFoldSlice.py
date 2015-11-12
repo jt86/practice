@@ -103,19 +103,19 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
             cv_svm_file.write(str(rfe_accuracy)+",")
         ##############################  BASELINE - all features
 
-        # best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
-        # # best_C_baseline=best_rfe_param
-        # print('all feats best c',best_C_baseline)
-        #
-        # print ('all training shape',all_training.shape)
-        # # if topk == 300 or topk == 5 or topk==10:
-        # clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
-        # clf.fit(all_training, training_labels)
-        # baseline_predictions = clf.predict(all_testing)
-        # print ('baseline',accuracy_score(testing_labels,baseline_predictions))
-        #
-        # with open(os.path.join(cross_validation_folder,'baseline-{}.csv'.format(k)),'a') as baseline_file:
-        #     baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
+        best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
+        # best_C_baseline=best_rfe_param
+        print('all feats best c',best_C_baseline)
+
+        print ('all training shape',all_training.shape)
+        # if topk == 300 or topk == 5 or topk==10:
+        clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
+        clf.fit(all_training, training_labels)
+        baseline_predictions = clf.predict(all_testing)
+        print ('baseline',accuracy_score(testing_labels,baseline_predictions))
+
+        with open(os.path.join(cross_validation_folder,'baseline-{}.csv'.format(k)),'a') as baseline_file:
+            baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
 
@@ -143,7 +143,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # c_star_values = [0.05, 0.01, 0.005, 0.001]
         # c_values2=[0.01]
         # c_star_values=[0.00001]
-        # c_values2 =[1.]
+
         c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
                                          c_values, c_star_values,cross_validation_folder,datasetnum, topk)
 
