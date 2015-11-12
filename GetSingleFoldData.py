@@ -5,6 +5,7 @@ import csv
 from sklearn.preprocessing import  Normalizer
 from scipy import sparse as sp
 from sklearn.cross_validation import StratifiedKFold
+from sklearn import preprocessing
 # import numpy.linalg.norm
 
 
@@ -28,10 +29,16 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
 
 
     #L1 normalization ============================
-    normaliser = Normalizer(norm='l2')
-    train_data=normaliser.fit_transform(train_data)
-    normaliser = Normalizer(norm='l2')
-    test_data=normaliser.fit_transform(test_data)
+    # normaliser = Normalizer(norm='l2')
+    # train_data=normaliser.fit_transform(train_data)
+    # normaliser = Normalizer(norm='l2')
+    # test_data=normaliser.fit_transform(test_data)
+
+    #standardisation =============================
+    train_data = preprocessing.scale(train_data)
+    test_data = preprocessing.scale(test_data)
+
+
 
     print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
     return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)
