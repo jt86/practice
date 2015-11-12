@@ -17,7 +17,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-ALLCV-3to3-l1normalised/')#.format(c_star_svm_plus))
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-ALLCV-3to3-l1normalised-PRACTICE/')#.format(c_star_svm_plus))
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -103,19 +103,19 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
             cv_svm_file.write(str(rfe_accuracy)+",")
         ##############################  BASELINE - all features
 
-        best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
-        # best_C_baseline=best_rfe_param
-        print('all feats best c',best_C_baseline)
-
-        print ('all training shape',all_training.shape)
-        # if topk == 300 or topk == 5 or topk==10:
-        clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
-        clf.fit(all_training, training_labels)
-        baseline_predictions = clf.predict(all_testing)
-        print ('baseline',accuracy_score(testing_labels,baseline_predictions))
-
-        with open(os.path.join(cross_validation_folder,'baseline-{}.csv'.format(k)),'a') as baseline_file:
-            baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
+        # best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
+        # # best_C_baseline=best_rfe_param
+        # print('all feats best c',best_C_baseline)
+        #
+        # print ('all training shape',all_training.shape)
+        # # if topk == 300 or topk == 5 or topk==10:
+        # clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
+        # clf.fit(all_training, training_labels)
+        # baseline_predictions = clf.predict(all_testing)
+        # print ('baseline',accuracy_score(testing_labels,baseline_predictions))
+        #
+        # with open(os.path.join(cross_validation_folder,'baseline-{}.csv'.format(k)),'a') as baseline_file:
+        #     baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
 
@@ -140,10 +140,12 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
         #                                 c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
         #c_star_svm_plus=1.
-        c_star_values = c_values
-
+        # c_star_values = [0.05, 0.01, 0.005, 0.001]
+        # c_values2=[0.01]
+        c_star_values=[0.00001]
+        c_values2 =[1.]
         c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
-                                         c_values, c_star_values,cross_validation_folder,datasetnum, topk)
+                                         c_values2, c_star_values,cross_validation_folder,datasetnum, topk)
 
 
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
@@ -155,20 +157,15 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         print('svm+ accuracy',(accuracy_lupi))
         with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
+        print ('c options', c_values2)
+        print ('c', c_svm_plus)
 
+        print('c* options',c_star_values)
         print ('c*',c_star_svm_plus)
-        return (rfe_accuracy,accuracy_score(testing_labels,baseline_predictions),accuracy_lupi )
+        return (rfe_accuracy,accuracy_lupi )
 
-#
-# num_folds=10
-# mean_rfe,mean_all,mean_lupi = 0,0,0
-# for fold in range(num_folds):
-#     rfe_score, all_score,lupi_score =
-#     mean_all+=all_score
-#     mean_rfe+=rfe_score
-#     mean_lupi+=lupi_score
-# print (mean_all/num_folds,mean_rfe/num_folds,mean_lupi/num_folds)
-#
-#
-#
-# single_fold(k=3, topk=300, dataset='tech', datasetnum= 1, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100)
+
+
+
+print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100))
+

@@ -36,7 +36,7 @@ def get_best_CandCstar(training_data,training_labels, privileged_data, c_values,
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_Cstar))
     print('c* values:',Cstar_values)
     print('c values:',c_values)
-    print('cross valid scores:',cv_scores,'=> best C*=',best_Cstar, 'bestC=',best_C)
+    print('cross valid scores:\n',cv_scores,'=> best C*=',best_Cstar, 'bestC=',best_C)
     return best_C, best_Cstar
 
 
