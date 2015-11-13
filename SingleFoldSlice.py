@@ -10,14 +10,12 @@ from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=100):
-
-
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=5):
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-ALLCV-3to3-featsscaled-500/')#.format(c_star_svm_plus))
+        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-ALLCV-3to3-featsscaled-300-top5/')#.format(c_star_svm_plus))
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -42,10 +40,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
         n_top_feats = topk
-        # if 'tech' in dataset:
-        #     n_top_feats= topk
-        # else:
-        #     n_top_feats = topk*all_training.shape[1]//100
+        # n_top_feats = topk*all_training.shape[1]//100
         print ('n top feats',n_top_feats)
         param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
         ############
@@ -104,46 +99,35 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
 
         print('privileged',privileged_features_training.shape)
-        all_features_ranking=rfe.ranking_
-        print (all_features_ranking.shape)
-        all_features_ranking = all_features_ranking[np.invert(best_n_mask)]
+        all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
         privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
         num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
-        print('number to take', num_of_priv_feats)
         privileged_features_training = privileged_features_training[:,:num_of_priv_feats]
-
         print ('privileged data shape',privileged_features_training.shape)
-
 
         # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
         # c_star_values=[0.0001, 0.001, 0.01, 0.1]
         # c_star_values = np.logspace(-4,4,9)
-        # print('c star values',c_star_values)
+        # c_values2=[0.01]
         c_star_values=c_values
         # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
         #                                 c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
-        #c_star_svm_plus=1.
-        # c_star_values = [0.05, 0.01, 0.005, 0.001]
-        # c_values2=[0.01]
 
         c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
                                          c_values, c_star_values,cross_validation_folder,datasetnum, topk)
 
-
         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
         lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
-        # print ('lupi predictions',lupi_predictions)
-        # print ('\n lupi count',sum(x > 0 for x in lupi_predictions),'of',len(all_testing))
-        accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
 
+        accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
         print('svm+ accuracy',(accuracy_lupi))
         with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
-        print ('c options', c_values)
-        print ('c', c_svm_plus)
 
-        print('c* options',c_star_values)
-        print ('c*',c_star_svm_plus)
+        # print ('c options', c_values)
+        # print ('c', c_svm_plus)
+        # print('c* options',c_star_values)
+        # print ('c*',c_star_svm_plus)
         return (rfe_accuracy,accuracy_lupi )
 
 
