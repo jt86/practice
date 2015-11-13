@@ -12,7 +12,7 @@ num_folds = 10
 num_datasets=49
 n_top_feats= 300
 
-experiment_name = '10x10-ALLCV-3to3-l1normalised-300'
+experiment_name = '10x10-ALLCV-3to3-featsscaled-300a'
 
 
 list_of_baselines=[]
