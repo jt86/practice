@@ -61,10 +61,6 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         ########## GET BEST C FOR RFE
 
         best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize,cross_validation_folder,datasetnum,topk)
-        # best_rfe_param=1
-
-        # with open(os.path.join(cross_validation_folder,'best_rfe_param{}.txt'.format(k)),'a') as best_params_doc:
-        #     best_params_doc.write("\n"+str(best_rfe_param))
         print('best rfe param', best_rfe_param)
 
         ###########  CARRY OUT RFE, GET ACCURACY
@@ -76,17 +72,10 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         print (all_testing.shape,testing_labels.shape)
         print ('num of chosen feats',sum(x == 1 for x in rfe.support_))
 
-
-
         best_n_mask = rfe.support_
         normal_features_training = all_training[:,best_n_mask].copy()
         normal_features_testing = all_testing[:,best_n_mask].copy()
         privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
-
-
-        # print('all testing', all_testing.shape)
-        print('testing labels', testing_labels.shape)
-
 
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
         svc.fit(normal_features_training,training_labels)
@@ -125,8 +114,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         print ('privileged data shape',privileged_features_training.shape)
 
-        # c_svm_plus=0.01
-        # c_svm_plus=10
+
         # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
         # c_star_values=[0.0001, 0.001, 0.01, 0.1]
         # c_star_values = np.logspace(-4,4,9)
@@ -137,7 +125,6 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         #c_star_svm_plus=1.
         # c_star_values = [0.05, 0.01, 0.005, 0.001]
         # c_values2=[0.01]
-        # c_star_values=[0.00001]
 
         c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
                                          c_values, c_star_values,cross_validation_folder,datasetnum, topk)
