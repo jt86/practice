@@ -10,9 +10,10 @@ from scipy import stats
 num_repeats = 10
 num_folds = 10
 num_datasets=49
-n_top_feats= 500
+
+n_top_feats= 300
 percent_of_priv = 100
-experiment_name = 'f'
+experiment_name = '10x10-ALLCV-3to3-featsscaled-300-bottom5'
 
 
 list_of_baselines=[]

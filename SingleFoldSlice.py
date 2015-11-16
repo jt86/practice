@@ -102,7 +102,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
         privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
         num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
-        privileged_features_training = privileged_features_training[:,:num_of_priv_feats]
+        privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
         print ('privileged data shape',privileged_features_training.shape)
 
         # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
