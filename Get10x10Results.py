@@ -12,8 +12,8 @@ num_folds = 10
 num_datasets=49
 
 n_top_feats= 300
-percent_of_priv = 100
-experiment_name = '10x10-ALLCV-3to3-featsscaled-500-bottom5'
+percent_of_priv = 5
+experiment_name = '10x10-ALLCV-3to3-featsscaled-300-bottom5'
 
 
 list_of_baselines=[]

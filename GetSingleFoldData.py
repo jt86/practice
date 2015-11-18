@@ -17,7 +17,6 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     all_labels = np.r_[class0_labels, class1_labels]
     print (all_labels.shape)
 
-
     all_data = np.vstack([class0_data,class1_data])
     print(all_data.shape)
 
@@ -112,3 +111,4 @@ def get_longword_indices(dataset_index):
     return long_words
 
 # get_train_and_test_this_fold('tech',0,1)
+

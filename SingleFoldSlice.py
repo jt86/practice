@@ -8,14 +8,15 @@ from Get_Full_Path import get_full_path
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
+from sklearn import preprocessing
+import sys
 
-
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=5):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=100):
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path('Desktop/Privileged_Data/10x10-ALLCV-3to3-featsscaled-300-bottom5/')#.format(c_star_svm_plus))
+        outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-ALLCV-{}to{}-featsscaled-randompriv-{}/').format(cmin,cmax,topk))
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -98,12 +99,15 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
 
-        print('privileged',privileged_features_training.shape)
-        all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
-        privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
-        num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
-        privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
-        print ('privileged data shape',privileged_features_training.shape)
+        # print('privileged',privileged_features_training.shape)
+        # all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
+        # privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
+        # num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
+        # privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
+        # print ('privileged data shape',privileged_features_training.shape)
+        privileged_features_training = get_random_array(privileged_features_training.shape[0],privileged_features_training.shape[1])
+        print ('random data size',privileged_features_training.shape)
+
 
         # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
         # c_star_values=[0.0001, 0.001, 0.01, 0.1]
@@ -131,7 +135,11 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         return (rfe_accuracy,accuracy_lupi )
 
 
+def get_random_array(num_instances,num_feats):
+    random_array = np.random.rand(num_instances,num_feats)
+    random_array = preprocessing.scale(random_array)
+    return random_array
 
 
 # print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100))
-
+# single_fold(k=9, topk=300, dataset='tech', datasetnum=3, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=3, percent_of_priv=5)
