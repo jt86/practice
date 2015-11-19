@@ -13,8 +13,8 @@ num_folds = 10
 num_datasets=49
 
 n_top_feats= 300
-percent_of_priv = 50
-experiment_name = '10x10-ALLCV--3to3-featsscaled-300-top50'
+percent_of_priv = 100
+experiment_name = '10x10-ALLCV--3to3-featsscaled-top100-300-randomx5'
 
 
 list_of_baselines=[]
@@ -127,16 +127,16 @@ lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 
 fig = plt.figure()
 
-plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, c='hdryh', label='All features (normalised)')
-# plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, c='blue', label='RFE - top 300 features (normalised)')
-# plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, c='hdryh', label='LUPI - top 300, rest privileged (normalised)')
+plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, color='green', label='All features (normalised)')
+plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='RFE - top 300 features (normalised)')
+plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUPI - top 300, rest privileged (normalised)')
 
 
 # plt.errorbar(list(range(num_datasets)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_rfe_errors2, yerr = rfe_error_bars2, c='k', label='RFE - top 300 features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
 
-
+plt.show()
 
 
 lupi_improvements =0
