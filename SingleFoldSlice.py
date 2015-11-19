@@ -71,7 +71,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         best_n_mask = rfe.support_
         normal_features_training = all_training[:,best_n_mask].copy()
         normal_features_testing = all_testing[:,best_n_mask].copy()
-        # privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
+        privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
 
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
         svc.fit(normal_features_training,training_labels)
