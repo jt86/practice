@@ -1,5 +1,5 @@
 __author__ = 'jt306'
-import matplotlib as plt
+import matplotlib
 from Get_Full_Path import get_full_path
 import os
 from matplotlib import pyplot as plt
@@ -7,20 +7,20 @@ import numpy as np
 import sys
 from scipy import stats
 
+print (matplotlib.__version__)
 num_repeats = 10
 num_folds = 10
 num_datasets=49
 
 n_top_feats= 300
-percent_of_priv = 100
-experiment_name = '10x10-ALLCV--3to3-featsscaled-randompriv-300'
+percent_of_priv = 50
+experiment_name = '10x10-ALLCV--3to3-featsscaled-300-top50'
 
 
 list_of_baselines=[]
 list_of_300_rfe=[]
 list_of_300_lupi=[]
 for dataset_num in range(num_datasets):
-    print ('doing dataset',dataset_num)
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
     for seed_num in range (num_repeats):
         output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv={}/cross-validation{}'.format(experiment_name,dataset_num,percent_of_priv,seed_num)))
@@ -66,9 +66,7 @@ list_of_baseline_errors =np.array([1-mean for mean in np.mean(list_of_baselines,
 list_of_rfe_errors = np.array([1-mean for mean in np.mean(list_of_300_rfe,axis=1)])
 list_of_lupi_errors = np.array([1-mean for mean in np.mean(list_of_300_lupi,axis=1)])
 
-print ('all features errors',[item*100 for item in list_of_baseline_errors])
-print ('rfe errors',[item*100 for item in list_of_rfe_errors])
-print ('lupi errors',[item*100 for item in list_of_lupi_errors])
+
 
 print(np.argsort(list_of_baseline_errors))
 
@@ -129,9 +127,9 @@ lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 
 fig = plt.figure()
 
-plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, c='green', label='All features (normalised)')
-plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, c='blue', label='RFE - top 300 features (normalised)')
-plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, c='r', label='LUPI - top 300, rest privileged (normalised)')
+plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, c='hdryh', label='All features (normalised)')
+# plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, c='blue', label='RFE - top 300 features (normalised)')
+# plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, c='hdryh', label='LUPI - top 300, rest privileged (normalised)')
 
 
 # plt.errorbar(list(range(num_datasets)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
@@ -139,10 +137,6 @@ plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_b
 # plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
 
 
-fig.suptitle('Error rates{}'.format(experiment_name), fontsize=20)
-plt.legend(loc='best')#bbox_to_anchor=(0.6, 1))#([line1,line2],['All features',['RFE - top 300 features']])
-fig.savefig(experiment_name+'.png')
-plt.show()
 
 
 lupi_improvements =0

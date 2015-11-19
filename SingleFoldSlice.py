@@ -16,7 +16,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-ALLCV-{}to{}-featsscaled-top{}-{}-randomx5/').format(cmin,cmax,percent_of_priv,topk))
+        outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-ALLCV-{}to{}-featsscaled-bottom{}-{}-randomx5/').format(cmin,cmax,percent_of_priv,topk))
         output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
         print (output_directory)
         try:
@@ -99,20 +99,19 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
         #
-        # print('privileged',privileged_features_training.shape)
-        # all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
-        # privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
-        # num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
-        # privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
-        # print ('privileged data shape',privileged_features_training.shape)
-        privileged_features_training = get_random_array(privileged_features_training.shape[0],privileged_features_training.shape[1]*5)
-        print ('random data size',privileged_features_training.shape)
+        print('privileged',privileged_features_training.shape)
+        all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
+        privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
+        num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
+        privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
+        print ('privileged data shape',privileged_features_training.shape)
+
+        # privileged_features_training = get_random_array(privileged_features_training.shape[0],privileged_features_training.shape[1]*5)
+        # print ('random data size',privileged_features_training.shape)
 
 
         # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
         # c_star_values=[0.0001, 0.001, 0.01, 0.1]
-        # c_star_values = np.logspace(-4,4,9)
-        # c_values2=[0.01]
         c_star_values=c_values
         # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
         #                                 c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
@@ -128,10 +127,6 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
 
-        # print ('c options', c_values)
-        # print ('c', c_svm_plus)
-        # print('c* options',c_star_values)
-        # print ('c*',c_star_svm_plus)
         return (rfe_accuracy,accuracy_lupi )
 
 

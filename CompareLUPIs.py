@@ -22,7 +22,7 @@ for dataset_num in range(num_datasets):
     print ('doing dataset',dataset_num)
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
     for seed_num in range (num_repeats):
-        output_directory = (get_full_path('Desktop/Privileged_Datla/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv={}/cross-validation{}'.format(experiment_name,dataset_num,percent_of_priv,seed_num)))
+        output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv={}/cross-validation{}'.format(experiment_name,dataset_num,percent_of_priv,seed_num)))
         for inner_fold in range(num_folds):
             with open(os.path.join(output_directory,'lupi-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_lupi_file:
                 lupi_score = float(cv_lupi_file.readline().split(',')[0])
@@ -49,6 +49,8 @@ for dataset_num in range(num_datasets):
 list_of_lupi_errors = np.array([1-mean for mean in np.mean(list_of_300_lupi,axis=1)])
 list_of_lupi_errors2 = np.array([1-mean for mean in np.mean(list_of_300_lupi2,axis=1)])
 
+list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_lupi_errors2)]
+list_of_lupi_errors2 = list_of_lupi_errors2[np.argsort(list_of_lupi_errors2)]
 
 print ('lupi errors',[item*100 for item in list_of_lupi_errors])
 print ('lupi errors2',[item*100 for item in list_of_lupi_errors2])
@@ -71,7 +73,7 @@ plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_
 fig.suptitle('Error rates{}'.format(experiment_name), fontsize=20)
 plt.legend(loc='best')#bbox_to_anchor=(0.6, 1))#([line1,line2],['All features',['RFE - top 300 features']])
 fig.savefig('random-normal-comparison-300.png')
-plt.show()
+# plt.show()
 
 
 improvements_list = []
@@ -80,14 +82,16 @@ random_worse = 0
 total_improvement_over_lupi = 0
 for lupi_error, random_error in zip(list_of_lupi_errors,list_of_lupi_errors2):
     total_improvement_over_lupi+=(lupi_error-random_error)
-    improvements_list+=(lupi_error-random_error)
+    improvements_list.append(lupi_error-random_error)
     if lupi_error>random_error:
         random_improvements+=1
     else:
         random_worse+=1
+
 print (improvements_list)
 print('lupi helped in',random_improvements,'cases vs rfe')
 print('mean improvement', total_improvement_over_lupi/len(list_of_lupi_errors))
 
-
-plt.bar(list(range(num_datasets),improvements_list))
+print('improv list',improvements_list)
+plt.bar(list(range(num_datasets)),improvements_list)
+plt.show()
