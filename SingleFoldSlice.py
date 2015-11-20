@@ -7,17 +7,21 @@ from sklearn import svm
 from Get_Full_Path import get_full_path
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
-from GetSingleFoldData import get_train_and_test_this_fold
+# from GetSingleFoldData import get_train_and_test_this_fold
 from sklearn import preprocessing
 import sys
+from GetFeatSelectionData import get_train_and_test_this_fold
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=50):
-        stepsize=0.1
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=100):
+        stepsize=0.01
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
-        outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-ALLCV-{}to{}-featsscaled-bottom{}-{}/').format(cmin,cmax,percent_of_priv,topk))
-        output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
+        # outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV-{}to{}-featsscaled-bottom{}-{}/').format(dataset,cmin,cmax,percent_of_priv,topk))
+        # output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
+
+        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-top{}chosen/').format(dataset,cmin,cmax,stepsize,topk))
+
         print (output_directory)
         try:
             os.makedirs(output_directory)
@@ -40,18 +44,10 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 
-        n_top_feats = topk
-        # n_top_feats = topk*all_training.shape[1]//100
+        # n_top_feats = topk
+        n_top_feats = topk*all_training.shape[1]//100
         print ('n top feats',n_top_feats)
         param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
-        ############
-
-        CV_best_param_folder = os.path.join(output_directory,'{}CV/'.format(dataset))
-        try:
-            os.makedirs(CV_best_param_folder)
-        except OSError:
-            if not os.path.isdir(CV_best_param_folder):
-                raise
 
 
         ########## GET BEST C FOR RFE
@@ -139,4 +135,4 @@ def get_random_array(num_instances,num_feats):
 
 
 # print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100))
-# single_fold(k=9, topk=300, dataset='tech', datasetnum=3, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=3, percent_of_priv=5)
+# single_fold(k=9, topk=5, dataset='arcene', datasetnum=3, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=3, percent_of_priv=100)

@@ -1,10 +1,9 @@
 __author__ = 'jt306'
 import numpy as np
 from Get_Full_Path import get_full_path
-import csv
-from sklearn.preprocessing import  Normalizer
 from scipy import sparse as sp
 from sklearn.cross_validation import StratifiedKFold
+from sklearn import preprocessing
 from sklearn import preprocessing
 # import numpy.linalg.norm
 
@@ -25,13 +24,6 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
         if fold_num==k:
             train_data, test_data = all_data[train_index],all_data[test_index]
             train_labels, test_labels = all_labels[train_index], all_labels[test_index]
-
-
-    #L1 normalization ============================
-    # normaliser = Normalizer(norm='l2')
-    # train_data=normaliser.fit_transform(train_data)
-    # normaliser = Normalizer(norm='l2')
-    # test_data=normaliser.fit_transform(test_data)
 
     #standardisation =============================
     train_data = preprocessing.scale(train_data)

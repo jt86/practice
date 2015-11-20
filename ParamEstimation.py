@@ -29,8 +29,6 @@ def get_best_CandCstar(training_data,training_labels, privileged_data, c_values,
                 # print (cv_scores)
     cv_scores = cv_scores/n_folds
     index_of_best = np.argwhere(cv_scores.max() == cv_scores)[0]
-    print(np.argwhere(cv_scores.max() == cv_scores))
-    print(index_of_best)
     best_Cstar, best_C = Cstar_values[index_of_best[0]],c_values[index_of_best[1]]
     with open(os.path.join(cross_validation_folder,'Cstar-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_Cstar))
