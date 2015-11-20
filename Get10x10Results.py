@@ -14,7 +14,7 @@ num_datasets=49
 
 n_top_feats= 300
 percent_of_priv = 100
-experiment_name = '10x10-ALLCV--3to3-featsscaled-top100-300-randomx5'
+experiment_name = '10x10-ALLCV--3to3-featsscaled-300-randomx5'
 
 
 list_of_baselines=[]
