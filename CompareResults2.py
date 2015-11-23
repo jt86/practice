@@ -69,7 +69,7 @@ setting2 = setting2[np.argsort(setting1)]
 setting1 = setting1[np.argsort(setting1)]
 
 print ('setting2 errors',[item*100 for item in setting1])
-print ('setting1 errors',[item*100 for item in setting1])
+print ('setting1 errors',[item*100 for item in setting2])
 
 baseline_error_bars=list(stats.sem(list_of_baselines,axis=1))
 lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
@@ -88,9 +88,9 @@ plt.errorbar(list(range(num_datasets)), setting2, yerr = lupi_error_bars, color=
 
 
 
-fig.suptitle('Comparison - LUPI-300(all) vs LUPI-300 (top50%)', fontsize=20)
+fig.suptitle('Comparison - LUPI-300(all) vs LUPI-300 (bottom50%)', fontsize=20)
 plt.legend(loc='best')#bbox_to_anchor=(0.6, 1))#([line1,line2],['All features',['RFE - top 300 features']])
-fig.savefig('random-normal-comparison-300.png')
+fig.savefig('random-bottom50-comparison-300.png')
 # plt.show()
 
 

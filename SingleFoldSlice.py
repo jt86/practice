@@ -135,4 +135,4 @@ def get_random_array(num_instances,num_feats):
 
 
 # print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100))
-# single_fold(k=9, topk=5, dataset='arcene', datasetnum=3, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=3, percent_of_priv=100)
+# single_fold(k=10, topk=75, dataset='madelon', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=0, percent_of_priv=100)
