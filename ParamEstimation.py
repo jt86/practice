@@ -81,9 +81,9 @@ def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,cross_
     for i,(train, test) in enumerate(cv):
         # print('iter',i)
         for C_index, C in enumerate(c_values):
-            # print('c index',C_index)
+            print('c index',C_index,'c',C)
             svc = SVC(C=C, kernel="linear", random_state=1)
-            rfe = RFE(estimator=svc, n_features_to_select=top, step=stepsize)
+            rfe = RFE(estimator=svc, n_features_to_select=top, step=stepsize,verbose=10)
             rfe.fit(training_data[train], training_labels[train])
             cv_scores[C_index] += rfe.score(training_data[test], training_labels[test])
         # print 'fold',i,cv_scores

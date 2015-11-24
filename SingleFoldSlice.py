@@ -13,6 +13,7 @@ import sys
 from GetFeatSelectionData import get_train_and_test_this_fold
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=100):
+
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
@@ -78,20 +79,20 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
             cv_svm_file.write(str(rfe_accuracy)+",")
         ##############################  BASELINE - all features
+        if topk==5:
+                best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
+                # best_C_baseline=best_rfe_param
+                print('all feats best c',best_C_baseline)
 
-        best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
-        # best_C_baseline=best_rfe_param
-        print('all feats best c',best_C_baseline)
+                print ('all training shape',all_training.shape)
+                # if topk == 300 or topk == 5 or topk==10:
+                clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
+                clf.fit(all_training, training_labels)
+                baseline_predictions = clf.predict(all_testing)
+                print ('baseline',accuracy_score(testing_labels,baseline_predictions))
 
-        print ('all training shape',all_training.shape)
-        # if topk == 300 or topk == 5 or topk==10:
-        clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
-        clf.fit(all_training, training_labels)
-        baseline_predictions = clf.predict(all_testing)
-        print ('baseline',accuracy_score(testing_labels,baseline_predictions))
-
-        with open(os.path.join(cross_validation_folder,'baseline-{}.csv'.format(k)),'a') as baseline_file:
-            baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
+                with open(os.path.join(cross_validation_folder,'baseline-{}.csv'.format(k)),'a') as baseline_file:
+                    baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
         #
@@ -135,4 +136,4 @@ def get_random_array(num_instances,num_feats):
 
 
 # print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100))
-# single_fold(k=10, topk=75, dataset='madelon', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=0, percent_of_priv=100)
+# single_fold(k=1, topk=10, dataset='madelon', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=0, percent_of_priv=100)

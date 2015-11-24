@@ -120,7 +120,6 @@ def get_dexter_data():
 
 def get_dorothea_data():
     print( "Getting DOROTHEA data")
-
     with open(get_full_path("Desktop/Privileged_Data/DOROTHEA/dorothea_train.data"),"rU") as fh:
         features_array = np.zeros([800, 100000])
         for row_num, line in enumerate(fh):
