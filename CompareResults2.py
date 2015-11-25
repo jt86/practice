@@ -1,5 +1,6 @@
 __author__ = 'jt306'
 import matplotlib as plt
+import seaborn
 from Get_Full_Path import get_full_path
 import os
 from matplotlib import pyplot as plt
