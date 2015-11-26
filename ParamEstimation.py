@@ -30,7 +30,8 @@ def get_best_CandCstar(training_data,training_labels, privileged_data, c_values,
                 # print (cv_scores)
     cv_scores = cv_scores/n_folds
     best_positions = (np.argwhere(cv_scores.max() == cv_scores))
-    index_of_best = best_positions[int(len(best_positions)/2)]
+    index_of_best=best_positions[0]
+    # index_of_best = best_positions[int(len(best_positions)/2)]
 
     print('index of best',index_of_best)
     best_Cstar, best_C = Cstar_values[index_of_best[0]],c_values[index_of_best[1]]
@@ -55,7 +56,8 @@ def get_best_Cstar(training_data,training_labels, privileged_data, C, Cstar_valu
             sys.stdout.flush()
     cv_scores = cv_scores/n_folds
     best_positions = (np.argwhere(cv_scores.max() == cv_scores))
-    index_of_best = best_positions[int(len(best_positions)/2)]
+    index_of_best=best_positions[0]
+    # index_of_best = best_positions[int(len(best_positions)/2)]
     best_Cstar = Cstar_values[index_of_best]
     with open(os.path.join(cross_validation_folder,'Cstar-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_Cstar))
@@ -73,7 +75,8 @@ def get_best_C(training_data,training_labels, c_values, cross_validation_folder,
             sys.stdout.flush()
     cv_scores = cv_scores/5.
     best_positions = (np.argwhere(cv_scores.max() == cv_scores))
-    index_of_best = best_positions[int(len(best_positions)/2)]
+    index_of_best=best_positions[0]
+    # index_of_best = best_positions[int(len(best_positions)/2)]
     best_C = c_values[index_of_best][0]
     with open(os.path.join(cross_validation_folder,'C_fullset-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_C))
@@ -99,41 +102,42 @@ def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,cross_
 
     cv_scores = cv_scores/5.
     best_positions = (np.argwhere(cv_scores.max() == cv_scores))
-    index_of_best = best_positions[int(len(best_positions)/2)]
+    index_of_best=best_positions[0]
+    # index_of_best = best_positions[int(len(best_positions)/2)]
     best_C = c_values[index_of_best]
     with open(os.path.join(cross_validation_folder,'C_fullset-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_C))
     print('cross valid scores (rfe):',cv_scores,'=> best C=',best_C)
     return best_C
 
-
-def param_estimation(param_estimation_file, training_features, training_labels, c_values, inner_folds):
-
-    training_labels=training_labels.ravel()
-    scores_array = np.zeros(len(c_values))
-    rs = StratifiedShuffleSplit(y=training_labels, n_iter=inner_folds, test_size=.2, random_state=0)
-
-
-    for train_indices, test_indices in rs:
-        train_this_fold, test_this_fold = training_features[train_indices], training_features[test_indices]
-        train_labels_this_fold, test_labels_this_fold = training_labels[train_indices], training_labels[test_indices]
-
-
-        scores_array = get_scores_for_this_fold(c_values, train_this_fold, train_labels_this_fold,
-                                                test_this_fold, test_labels_this_fold, scores_array)
-
-    best_indices = np.unravel_index(scores_array.argmax(), scores_array.shape)
-    best_parameters = c_values[best_indices[0]]
-    param_estimation_file.write(np.array2string(scores_array, separator=', ').translate(None, '[]'))
-    return best_parameters
-
-
-def get_scores_for_this_fold(c_values,train_data, train_labels, test_data, test_labels, scores_array):
-
-    for c_index, c_value in enumerate(c_values):
-        clf = svm.SVC(C=c_value, kernel='linear',random_state=1)
-        clf.fit(train_data, train_labels)
-        scores_array[c_index]+=accuracy_score(test_labels, clf.predict(test_data))
-    return scores_array
-
-
+#
+# def param_estimation(param_estimation_file, training_features, training_labels, c_values, inner_folds):
+#
+#     training_labels=training_labels.ravel()
+#     scores_array = np.zeros(len(c_values))
+#     rs = StratifiedShuffleSplit(y=training_labels, n_iter=inner_folds, test_size=.2, random_state=0)
+#
+#
+#     for train_indices, test_indices in rs:
+#         train_this_fold, test_this_fold = training_features[train_indices], training_features[test_indices]
+#         train_labels_this_fold, test_labels_this_fold = training_labels[train_indices], training_labels[test_indices]
+#
+#
+#         scores_array = get_scores_for_this_fold(c_values, train_this_fold, train_labels_this_fold,
+#                                                 test_this_fold, test_labels_this_fold, scores_array)
+#
+#     best_indices = np.unravel_index(scores_array.argmax(), scores_array.shape)
+#     best_parameters = c_values[best_indices[0]]
+#     param_estimation_file.write(np.array2string(scores_array, separator=', ').translate(None, '[]'))
+#     return best_parameters
+#
+#
+# def get_scores_for_this_fold(c_values,train_data, train_labels, test_data, test_labels, scores_array):
+#
+#     for c_index, c_value in enumerate(c_values):
+#         clf = svm.SVC(C=c_value, kernel='linear',random_state=1)
+#         clf.fit(train_data, train_labels)
+#         scores_array[c_index]+=accuracy_score(test_labels, clf.predict(test_data))
+#     return scores_array
+#
+#
