@@ -13,11 +13,11 @@ from scipy import stats
 
 num_repeats = 10
 num_folds = 10
-import seaborn
+
 
 
 percent_of_priv = 100
-experiment_name = '10x10-arcene-ALLCV-3to3-featsscaled-step0.1'
+experiment_name = '10x10-arcene-ALLCV-3to3-featsscaled-step0.25'
 
 
 list_of_baselines,list_of_lupi,list_of_rfe=[],[],[]
@@ -114,10 +114,13 @@ f, axarr = plt.subplots(2, sharex=True)
 
 axarr[0].errorbar(list_of_topk, rfe_means, yerr = errors, color='b', label='SVM: trained on top features')
 axarr[0].errorbar(list_of_topk, lupi_means, yerr = lupi_errors, color='r', label='SVM+: lower features as privileged')
-axarr[0].plot(list_of_topk,baseline_list, linestyle=':', color='black',label='baseline SVM: all features')
+axarr[0].plot(list_of_topk,baseline_list, linestyle=':', color='k',label='baseline SVM: all features')
 axarr[1].bar(list_of_topk,improvements_list)
 
+axarr[0].legend(loc='upper center', bbox_to_anchor=(0.75, 1.), fancybox=True, shadow=True, ncol=1, prop={'size': 10})
 
-
+plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
+# axarr.xlabel('Top % features used as normal information',fontsize=16)
+# axarr[0].ylabel('Accuracy score',fontsize=16)
 
 plt.show()
