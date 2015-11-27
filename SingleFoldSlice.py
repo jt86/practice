@@ -2,7 +2,7 @@ import os
 import numpy as np
 from sklearn.metrics import accuracy_score
 from SVMplus4 import svmplusQP, svmplusQP_Predict
-from ParamEstimation import get_best_Cstar, get_best_C, get_best_RFE_C, get_best_CandCstar
+from ParamEstimation import  get_best_C, get_best_RFE_C, get_best_CandCstar
 from sklearn import svm
 from Get_Full_Path import get_full_path
 from sklearn.feature_selection import RFE
@@ -18,6 +18,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
+        # sys.exit()
 
         # outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV-{}to{}-featsscaled-bottom{}-{}/').format(dataset,cmin,cmax,percent_of_priv,topk))
         # output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
@@ -80,7 +81,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
             cv_svm_file.write(str(rfe_accuracy)+",")
         ##############################  BASELINE - all features
-        if topk==5:
+        if topk==75:
                 best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
                 # best_C_baseline=best_rfe_param
                 print('all feats best c',best_C_baseline)
@@ -97,14 +98,14 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
         #
-        print('privileged',privileged_features_training.shape)
-        all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
-        privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
-        num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
-
-
-        privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
-        print ('privileged data shape',privileged_features_training.shape)
+        # print('privileged',privileged_features_training.shape)
+        # all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
+        # privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
+        # num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
+        #
+        #
+        # privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
+        # print ('privileged data shape',privileged_features_training.shape)
 
         # privileged_features_training = get_random_array(privileged_features_training.shape[0],privileged_features_training.shape[1]*5)
         # print ('random data size',privileged_features_training.shape)
@@ -137,4 +138,4 @@ def get_random_array(num_instances,num_feats):
 
 
 # print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100))
-# single_fold(k=1, topk=10, dataset='madelon', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=1, percent_of_priv=100)
+# single_fold(k=1, topk=10, dataset='madelon', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5,skfseed=1, percent_of_priv=100)

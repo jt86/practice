@@ -70,6 +70,7 @@ def get_techtc_data(dataset_index):
     negative_instances = dok[negative_indices]
     print (positive_instances.shape, negative_instances.shape)
 
+
     return(positive_instances,negative_instances)
 
 
