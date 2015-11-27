@@ -16,7 +16,7 @@ for dataset in ['arcene','madelon','dexter','dorothea','gisette']:
     for seed in range(10):
         for fold_num in range(10):
             for top_k_percent in [5,10,25,50,75]:
-                print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {}'.format(fold_num, top_k_percent, dataset, 0, 'linear', 0, 4, 5, seed, 100))
+                print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {}'.format(fold_num, top_k_percent, dataset, 0, 'linear', 0, 3, 4, seed, 100))
                 count+=1
 
 
