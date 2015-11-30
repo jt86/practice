@@ -22,7 +22,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV-{}to{}-featsscaled-bottom{}-{}/').format(dataset,cmin,cmax,percent_of_priv,topk))
         # output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/REVERSED10x10-{}-ALLCV{}to{}-featsscaled-step{}FIRSTPARAMcv/top{}chosen/').format(dataset,cmin,cmax,stepsize,topk))
+        output_directory = get_full_path(('Desktop/Privileged_Data/REVERSED10x10-{}-ALLCV{}to{}-featsscaled-step{}FIRSTPARAMcv/tech{}-top{}chosen/').format(dataset,cmin,cmax,stepsize,datasetnum,topk))
 
         print (output_directory)
         try:
