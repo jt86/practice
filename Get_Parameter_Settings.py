@@ -12,7 +12,7 @@ count=1
 
 
 #
-for dataset in ['arcene','madelon','dexter','dorothea','gisette']:
+for dataset in ['arcene','dexter','gisette','dorothea','madelon']:
     for seed in range(10):
         for fold_num in range(10):
             for top_k_percent in [5,10,25,50,75]:
