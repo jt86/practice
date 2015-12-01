@@ -11,7 +11,7 @@ from SVMplus4 import svmplusQP, svmplusQP_Predict
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, LinearSVC
 import os,sys
-
+import time
 
 def get_best_CandCstar(training_data,training_labels, privileged_data, c_values, Cstar_values,cross_validation_folder,datasetnum,topk):
     n_folds=5
@@ -86,6 +86,8 @@ def get_best_C(training_data,training_labels, c_values, cross_validation_folder,
 
 
 def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,cross_validation_folder,datasetnum,topk):
+    starttime = time.clock()
+    print ('time', starttime)
     cv = cross_validation.StratifiedKFold(training_labels, 5)
     cv_scores = numpy.zeros(len(c_values))
 
@@ -98,6 +100,7 @@ def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,cross_
             rfe.fit(training_data[train], training_labels[train])
             cv_scores[C_index] += rfe.score(training_data[test], training_labels[test])
             sys.stdout.flush()
+        print ('-------\ntime to complete fold',i,time.clock()-starttime,'\n-------')
         # print 'fold',i,cv_scores
 
     cv_scores = cv_scores/5.
@@ -108,6 +111,8 @@ def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,cross_
     with open(os.path.join(cross_validation_folder,'C_fullset-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} {}".format(cv_scores,best_C))
     print('cross valid scores (rfe):',cv_scores,'=> best C=',best_C)
+    print ('-------\ntime',time.clock()-starttime,'\n-------')
+    # sys.exit()
     return best_C
 
 #

@@ -14,7 +14,7 @@ from GetFeatSelectionData import get_train_and_test_this_fold
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=100):
 
-        stepsize=0.25
+        stepsize=0.95
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
@@ -127,7 +127,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         print('svm+ accuracy',(accuracy_lupi))
         with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
-
+        print ('k=',k, 'seed=',skfseed,'topk',topk)
         return (rfe_accuracy,accuracy_lupi )
 
 
@@ -136,6 +136,6 @@ def get_random_array(num_instances,num_feats):
     random_array = preprocessing.scale(random_array)
     return random_array
 
-
+# value = 1
 # print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100))
-# single_fold(k=1, topk=10, dataset='madelon', datasetnum=0, kernel='linear', cmin=0, cmax=4, number_of_cs=5,skfseed=1, percent_of_priv=100)
+# single_fold(k=5, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,stepsize=0.6)

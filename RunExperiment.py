@@ -1,5 +1,5 @@
 import argparse
-from SingleFoldSliceReversed import single_fold
+from SingleFoldSlice import single_fold
 
 
 if __name__ == '__main__':
