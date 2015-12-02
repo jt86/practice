@@ -14,7 +14,7 @@ num_datasets=49
 
 n_top_feats= 300
 percent_of_priv = 100
-experiment_name = 'REVERSED10x10-tech-ALLCV-3to3-featsscaled-step0.1FIRSTPARAMcv'
+experiment_name = 'f'
 
 
 list_of_baselines=[]

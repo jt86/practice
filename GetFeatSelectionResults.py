@@ -17,7 +17,7 @@ num_folds = 10
 
 
 percent_of_priv = 100
-experiment_name = '10x10-arcene-ALLCV-3to3-featsscaled-step0.25FIRSTPARAMcv'
+experiment_name = '10x10-dexter-ALLCV-3to3-featsscaled-step0.25FIRSTPARAMcv'
 
 
 list_of_baselines,list_of_lupi,list_of_rfe=[],[],[]

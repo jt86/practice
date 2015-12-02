@@ -14,7 +14,7 @@ from GetFeatSelectionData import get_train_and_test_this_fold
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=100):
 
-        stepsize=0.95
+        stepsize=0.2
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
