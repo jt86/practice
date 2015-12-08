@@ -17,7 +17,7 @@ num_folds = 10
 
 
 percent_of_priv = 100
-experiment_name = '10x10-dexter-ALLCV-3to3-featsscaled-step0.25FIRSTPARAMcv'
+experiment_name = '10x10-arcene-ALLCV0to3-featsscaled-step0.2FIRSTPARAMcv'
 
 
 list_of_baselines,list_of_lupi,list_of_rfe=[],[],[]
@@ -40,7 +40,7 @@ for topk in list_of_topk:
                 # print (outer_fold,inner_fold,svm_score)
                 lupi_single_percentage+=[lupi_score]
 
-            if topk ==5:
+            if topk ==75:
                 with open(os.path.join(output_directory,'baseline-{}.csv').format(inner_fold),'r') as cv_baseline_file:
                     baseline_score = float(cv_baseline_file.readline().split(',')[0])
                     all_folds_baseline+=[baseline_score]

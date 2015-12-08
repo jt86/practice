@@ -79,6 +79,6 @@ def get_tech_train_and_test_this_fold(all_data, all_labels ,k, skf_seed):	#N,tes
     print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
     return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)
 
-
-features_array,labels_array = get_techtc_data(0)
-get_tech_train_and_test_this_fold(features_array,labels_array,0,1)
+#
+# features_array,labels_array = get_techtc_data(0)
+# get_tech_train_and_test_this_fold(features_array,labels_array,0,1)

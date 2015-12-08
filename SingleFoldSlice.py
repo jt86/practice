@@ -60,7 +60,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ###########  CARRY OUT RFE, GET ACCURACY
 
-        svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
+        svc = SVC(C=best_rfe_param, kernel=kernel, random_state=k)
         rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
         print ('rfe step size',rfe.step)
         rfe.fit(all_training, training_labels)
@@ -72,7 +72,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         normal_features_testing = all_testing[:,best_n_mask].copy()
         privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
 
-        svc = SVC(C=best_rfe_param, kernel="linear", random_state=1)
+        svc = SVC(C=best_rfe_param, kernel=kernel, random_state=k)
         svc.fit(normal_features_training,training_labels)
         rfe_accuracy = svc.score(normal_features_testing,testing_labels)
         print ('rfe accuracy (using slice):',rfe_accuracy)
@@ -87,8 +87,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
                 print('all feats best c',best_C_baseline)
 
                 print ('all training shape',all_training.shape)
-                # if topk == 300 or topk == 5 or topk==10:
-                clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=1)
+
+                clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=k)
                 clf.fit(all_training, training_labels)
                 baseline_predictions = clf.predict(all_testing)
                 print ('baseline',accuracy_score(testing_labels,baseline_predictions))

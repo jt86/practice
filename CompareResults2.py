@@ -8,85 +8,39 @@ import numpy as np
 import sys
 from scipy import stats
 
-num_repeats = 10
-num_folds = 10
 num_datasets=49
 
-n_top_feats= 300
-percent_of_priv = 100
+
+#load results for baseline, rfe, lupi, as 10x10 arrays, saved using SaveResults.py
 experiment_name = '10x10-ALLCV-3to3-featsscaled-300'
-# experiment_name2 = '110x10-ALLCV--3to3-featsscaled-300-randompriv'
+list_of_baselines= np.load(get_full_path('Desktop/Privileged_Data/all-results/{}-baseline.npy'.format(experiment_name)))
+list_of_300_rfe = np.load(get_full_path('Desktop/Privileged_Data/all-results/{}-rfe.npy'.format(experiment_name)))
+list_of_300_lupi = np.load(get_full_path('Desktop/Privileged_Data/all-results/{}-lupi.npy'.format(experiment_name)))
 
 
-list_of_baselines,list_of_300_lupi,list_of_300_rfe=[],[],[]
-for dataset_num in range(num_datasets):
-    print ('doing dataset',dataset_num)
-    all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
-    for seed_num in range (num_repeats):
-        output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv={}/cross-validation{}'.format(experiment_name,dataset_num,percent_of_priv,seed_num)))
-        for inner_fold in range(num_folds):
-
-            with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
-                baseline_score = float(baseline_file.readline().split(',')[0])
-                all_folds_baseline+=[baseline_score]
-
-            with open(os.path.join(output_directory,'svm-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_svm_file:
-                svm_score = float(cv_svm_file.readline().split(',')[0])
-                all_folds_SVM+=[svm_score]
-                
-            with open(os.path.join(output_directory,'lupi-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_lupi_file:
-                lupi_score = float(cv_lupi_file.readline().split(',')[0])
-                # print (outer_fold,inner_fold,svm_score)
-                all_folds_LUPI+=[lupi_score]
-    list_of_baselines.append(all_folds_baseline)
-    list_of_300_lupi.append(all_folds_LUPI)
-    list_of_300_rfe.append(all_folds_SVM)
-
-#
-#
-# percent_of_priv = 50
-# list_of_300_lupi2=[]
-# for dataset_num in range(num_datasets):
-#     print ('doing dataset',dataset_num)
-#     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
-#     for seed_num in range (num_repeats):
-#         output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv={}/cross-validation{}'.format(experiment_name2,dataset_num,percent_of_priv,seed_num)))
-#         for inner_fold in range(num_folds):
-#             with open(os.path.join(output_directory,'lupi-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_lupi_file:
-#                 lupi_score = float(cv_lupi_file.readline().split(',')[0])
-#                 # print (outer_fold,inner_fold,svm_score)
-#                 all_folds_LUPI+=[lupi_score]
-#     list_of_300_lupi2.append(all_folds_LUPI)
-
-
-
-list1 = list_of_baselines
-list2 = list_of_300_rfe
+list1 = list_of_300_rfe
+list2 = list_of_300_lupi
 
 setting1 =np.array([1-mean for mean in np.mean(list1,axis=1)])
 setting2 = np.array([1-mean for mean in np.mean(list2,axis=1)])
-
 setting2 = setting2[np.argsort(setting1)]
 setting1 = setting1[np.argsort(setting1)]
 
 print ('setting2 errors',[item*100 for item in setting1])
 print ('setting1 errors',[item*100 for item in setting2])
 
-baseline_error_bars=list(stats.sem(list_of_baselines,axis=1))
-lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
-rfe_error_bars= list(stats.sem(list_of_300_rfe,axis=1))
-
-
-
 
 #######################################
 
-fig = plt.figure()
+#plot comparison between two lists setting1 and setting2, sorted by setting1
 
+baseline_error_bars=list(stats.sem(list_of_baselines,axis=1))
+lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
+rfe_error_bars= list(stats.sem(list_of_300_rfe,axis=1))
+fig = plt.figure()
 plt.errorbar(list(range(num_datasets)), setting1, yerr = baseline_error_bars, color='green', label='all features')
 plt.errorbar(list(range(num_datasets)), setting2, yerr = lupi_error_bars, color='blue', label='RFE-300')
 # plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='cyan', label='LUPI - 300 selected, rest priv')
-
 
 
 fig.suptitle('Comparison - all features vs RFE-300', fontsize=20)
@@ -95,7 +49,7 @@ fig.savefig('random-bottom50-comparison-300.png')
 # plt.show()
 
 
-
+#plot corresponding bar graphs showing relative improvement of setting2 over setting1
 
 improvements_list = []
 improvements_count =0
@@ -116,3 +70,4 @@ print('mean improvement', total_improvement/num_datasets)
 print('improv list',improvements_list)
 plt.bar(list(range(num_datasets)),improvements_list)
 plt.show()
+
