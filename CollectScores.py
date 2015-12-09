@@ -8,6 +8,8 @@ cmax=3
 stepsize=0.1
 topk=300
 
+
+
 all_weights = []
 for datasetnum in range(49):
     output_directory = get_full_path(('Desktop/Privileged_Data/GetScore-{}{}-{}to{}-{}-{}-tech{}').format(dataset,datasetnum,cmin,cmax,stepsize,topk,datasetnum))
