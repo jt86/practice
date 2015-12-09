@@ -21,7 +21,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/GetScore-{}-{}to{}-{}-{}').format(dataset,cmin,cmax,stepsize,topk))
+        output_directory = get_full_path(('Desktop/Privileged_Data/GetScore-{}{}-{}to{}-{}-{}-tech{}').format(dataset,datasetnum,cmin,cmax,stepsize,topk))
 
         print (output_directory)
         try:
