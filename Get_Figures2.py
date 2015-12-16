@@ -23,7 +23,7 @@ def get_figures(numbers_of_features_list, all_folds_SVM, all_folds_LUPI,#, all_f
     ax1 = fig.add_subplot(111)
     fig.suptitle(dataset.title(), fontsize=20)
 
-    ax1.errorbar(numbers_of_features_list, results, yerr = errors, c='b', label='SVM: trained on top features')
+    ax1.errorbar(w, results, yerr = errors, c='b', label='SVM: trained on top features')
     ax1.errorbar(numbers_of_features_list[:len(LUPI_results)], LUPI_results, yerr = LUPI_errors, c='r', label='SVM+: lower features as privileged')
 
     # ax1.errorbar(numbers_of_features_list[:len(LUPI_results)], top_results, yerr = top_errors, c='g', label='SVM+: top 50% unselected features')

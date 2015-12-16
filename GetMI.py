@@ -21,7 +21,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/GetCoefficients-{}{}-{}to{}-{}-{}').format(dataset,datasetnum,cmin,cmax,stepsize,topk))
+        output_directory = get_full_path(('Desktop/Privileged_Data/GetCoefficients2/Coefficients{}{}-{}to{}-{}-{}').format(dataset,datasetnum,cmin,cmax,stepsize,topk))
 
         print (output_directory)
         try:
@@ -39,7 +39,9 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         all_features = np.vstack((all_training, all_testing))
         all_labels = np.hstack((training_labels,testing_labels))
 
-        n_top_feats = topk
+        # n_top_feats = topk
+        n_top_feats = all_features.shape[1]//10
+        print('all feats shape',all_features.shape,'n top',n_top_feats)
 
         print ('n top feats',n_top_feats)
         param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
@@ -61,7 +63,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         ###########  CARRY OUT RFE, GET ACCURACY
 
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=k)
-        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize, verbose=10)
+        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
         print ('rfe step size',rfe.step)
         rfe.fit(all_training, training_labels)
         print (all_testing.shape,testing_labels.shape)

@@ -14,7 +14,7 @@ list_of_300_rfe = np.load(get_full_path('Desktop/Privileged_Data/all-results/{}-
 list_of_300_lupi = np.load(get_full_path('Desktop/Privileged_Data/all-results/{}-lupi.npy'.format(experiment_name)))
 
 
-list1 = list_of_baselines
+list1 = list_of_300_rfe
 list2 = list_of_300_lupi
 
 setting1 =np.array([1-mean for mean in np.mean(list1,axis=1)])
@@ -25,14 +25,18 @@ setting2 = np.array([1-mean for mean in np.mean(list2,axis=1)])
 
 rfe_better,lupi_better = [], []
 for index,(setting1_error, setting2_error) in enumerate(zip(setting1,setting2)):
+    print('index',index)
     if setting1_error < setting2_error:
         rfe_better.append(index)
     if setting1_error > setting2_error:
         lupi_better.append(index)
+
+
 np.save(get_full_path('Desktop/Privileged_Data/all-results/rfe_better-{}'.format(experiment_name)),rfe_better)
 np.save(get_full_path('Desktop/Privileged_Data/all-results/lupi_better-{}'.format(experiment_name)),lupi_better)
 
 print('rfe better',len(rfe_better),'lupi better',len(lupi_better))
+print('rfe better',(rfe_better),'lupi better',(lupi_better))
 
 rfe_better_instances, rfe_better_features = [],[]
 for dataset_index in rfe_better:
