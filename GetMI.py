@@ -39,12 +39,11 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         all_features = np.vstack((all_training, all_testing))
         all_labels = np.hstack((training_labels,testing_labels))
 
-        # n_top_feats = topk
-        n_top_feats = all_features.shape[1]//10
-        print('all feats shape',all_features.shape,'n top',n_top_feats)
 
-        print ('n top feats',n_top_feats)
-        param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
+
+
+        n_top_feats = topk
+        print('all feats shape',all_features.shape,'n top',n_top_feats)
 
 
         ########## GET BEST C FOR RFE
@@ -53,29 +52,33 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         print('best rfe param', best_rfe_param)
 
 
-        ########## GET INITIAL WEIGHTS
+
+        ######### DO PENULTIMATE STAGE OF RFE
 
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=k)
-        svc.fit(all_training, training_labels)
-        all_coefficients = svc.coef_
-        print ('coefficients 1',all_coefficients)
-        print ('coefficients 1',all_coefficients.shape)
-        ###########  CARRY OUT RFE, GET ACCURACY
+        n_top_feats_penultimate = all_features.shape[1]//10
+        extra_rfe = RFE(estimator=svc, n_features_to_select=n_top_feats_penultimate, step=stepsize)
+        extra_rfe.fit(all_training, training_labels)
+        penultimate_feature_indices = extra_rfe.support_
+        penultimate_feature_training = all_training[:,penultimate_feature_indices]
+        penultimate_feature_testing = all_testing[:,penultimate_feature_indices]
 
+        ###########  CARRY OUT RFE AGAIN TO GET TOP
+        stepsize=n_top_feats_penultimate
         svc = SVC(C=best_rfe_param, kernel="linear", random_state=k)
         rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
         print ('rfe step size',rfe.step)
-        rfe.fit(all_training, training_labels)
-        print (all_testing.shape,testing_labels.shape)
+        rfe.fit(penultimate_feature_training, training_labels)
+        print (penultimate_feature_testing.shape,testing_labels.shape)
         print ('num of chosen feats',sum(x == 1 for x in rfe.support_))
 
+        all_coefficients = extra_rfe.estimator_.coef_
+        print ('coefficients',all_coefficients)
+        print ('coefficients',all_coefficients.shape)
 
-        print ('coefficients',rfe.estimator_.coef_)
-        print ('coefficients',rfe.estimator_.coef_.shape)
 
 
 
-        ########## USE RFE TO GET UN/SELECTED FEATURES; GET COEFFICIENTS FOR THESE
         priv_coefficients = all_coefficients[:,np.invert(rfe.support_)].copy()
         print('priv coef shape',priv_coefficients.shape)
         print('priv coef',priv_coefficients)
