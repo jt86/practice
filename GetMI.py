@@ -62,38 +62,58 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         penultimate_feature_indices = extra_rfe.support_
         penultimate_feature_training = all_training[:,penultimate_feature_indices]
         penultimate_feature_testing = all_testing[:,penultimate_feature_indices]
-
-        ###########  CARRY OUT RFE AGAIN TO GET TOP
-        stepsize=n_top_feats_penultimate
-        svc = SVC(C=best_rfe_param, kernel="linear", random_state=k)
-        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
-        print ('rfe step size',rfe.step)
-        rfe.fit(penultimate_feature_training, training_labels)
-        print (penultimate_feature_testing.shape,testing_labels.shape)
-        print ('num of chosen feats',sum(x == 1 for x in rfe.support_))
-
         all_coefficients = extra_rfe.estimator_.coef_
-        print ('coefficients',all_coefficients)
-        print ('coefficients',all_coefficients.shape)
+        print('all coeffs',all_coefficients)
+        sorted_coefficients = -np.sort(-np.abs(all_coefficients))
+        print('all coeffs',sorted_coefficients)
 
+        normal_coefficients = sorted_coefficients[0,:300]
+        priv_coefficients = sorted_coefficients[0,300:]
 
-
-
-        priv_coefficients = all_coefficients[:,np.invert(rfe.support_)].copy()
-        print('priv coef shape',priv_coefficients.shape)
-        print('priv coef',priv_coefficients)
-
-        normal_coefficients = all_coefficients[:,rfe.support_].copy()
-        print ('normal coef shape', normal_coefficients.shape)
-        print ('normal coef', normal_coefficients)
-
+        print ('normal',normal_coefficients.shape)
+        print ('priv',priv_coefficients.shape)
 
         with open(os.path.join(output_directory,'normal-coefficients-{}-{}.csv'.format(k,skfseed)),'a') as normal_coefficients_file:
-                for item in normal_coefficients[0]:
+                for item in normal_coefficients:
+                        print('item',item)
                         normal_coefficients_file.write(str(item)+',')
         with open(os.path.join(output_directory,'priv-coefficients-{}-{}.csv'.format(k,skfseed)),'a') as priv_coefficients_file:
-                for item in priv_coefficients[0]:
+                for item in priv_coefficients:
+                        print('item',item)
                         priv_coefficients_file.write(str(item)+',')
+
+
+        # ###########  CARRY OUT RFE AGAIN TO GET TOP
+        # stepsize=n_top_feats_penultimate
+        # svc = SVC(C=best_rfe_param, kernel="linear", random_state=k)
+        # rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
+        # print ('rfe step size',rfe.step)
+        # rfe.fit(penultimate_feature_training, training_labels)
+        # print (penultimate_feature_testing.shape,testing_labels.shape)
+        # print ('num of chosen feats',sum(x == 1 for x in rfe.support_))
+        #
+        # all_coefficients = extra_rfe.estimator_.coef_
+        # print ('coefficients',all_coefficients)
+        # print ('coefficients',all_coefficients.shape)
+        #
+        #
+        #
+        #
+        # priv_coefficients = all_coefficients[:,np.invert(rfe.support_)].copy()
+        # print('priv coef shape',priv_coefficients.shape)
+        # print('priv coef',priv_coefficients)
+        #
+        # normal_coefficients = all_coefficients[:,rfe.support_].copy()
+        # print ('normal coef shape', normal_coefficients.shape)
+        # print ('normal coef', normal_coefficients)
+
+
+        # with open(os.path.join(output_directory,'normal-coefficients-{}-{}.csv'.format(k,skfseed)),'a') as normal_coefficients_file:
+        #         for item in normal_coefficients[0]:
+        #                 normal_coefficients_file.write(str(item)+',')
+        # with open(os.path.join(output_directory,'priv-coefficients-{}-{}.csv'.format(k,skfseed)),'a') as priv_coefficients_file:
+        #         for item in priv_coefficients[0]:
+        #                 priv_coefficients_file.write(str(item)+',')
 
 
 
