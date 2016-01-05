@@ -22,7 +22,7 @@ def get_best_CandCstar(training_data,training_labels, privileged_data, c_values,
     for i,(train, test) in enumerate(cv):
         for Cstar_index, Cstar in enumerate(Cstar_values):
             for C_index, C in enumerate(c_values):
-                print('cstar', Cstar,'c index',C_index,'c',C)
+                # print('cstar', Cstar,'c index',C_index,'c',C)
                 duals,bias = svmplusQP(training_data[train],training_labels[train].copy(),privileged_data[train],C,Cstar)
                 predictions = svmplusQP_Predict(training_data[train],training_data[test],duals,bias).flatten()
                 ACC = np.sum(training_labels[test]==np.sign(predictions))/(1.*len(training_labels[test]))
@@ -70,7 +70,7 @@ def get_best_C(training_data,training_labels, c_values, cross_validation_folder,
     cv_scores = np.zeros(len(c_values))
     for i,(train, test) in enumerate(cv):
         for C_index, C in enumerate(c_values):
-            print('c index',C_index,'c',C)
+            # print('c index',C_index,'c',C)
             svc = SVC(C=C, kernel="linear", random_state=1)
             svc.fit(training_data[train], training_labels[train])
             cv_scores[C_index] += svc.score(training_data[test], training_labels[test])
@@ -96,7 +96,7 @@ def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,cross_
     for i,(train, test) in enumerate(cv):
         # print('iter',i)
         for C_index, C in enumerate(c_values):
-            print('c index',C_index,'c',C)
+            # print('c index',C_index,'c',C)
             svc = SVC(C=C, kernel="linear", random_state=1)
             rfe = RFE(estimator=svc, n_features_to_select=top, step=stepsize)
             rfe.fit(training_data[train], training_labels[train])

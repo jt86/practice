@@ -23,8 +23,8 @@ list2 = list_of_300_lupi
 
 setting1 =np.array([1-mean for mean in np.mean(list1,axis=1)])
 setting2 = np.array([1-mean for mean in np.mean(list2,axis=1)])
-setting2 = setting2[np.argsort(setting1)]
-setting1 = setting1[np.argsort(setting1)]
+# setting2 = setting2[np.argsort(setting1)]
+# setting1 = setting1[np.argsort(setting1)]
 
 print ('setting2 errors',[item*100 for item in setting1])
 print ('setting1 errors',[item*100 for item in setting2])
@@ -43,31 +43,47 @@ plt.errorbar(list(range(num_datasets)), setting2, yerr = lupi_error_bars, color=
 # plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='cyan', label='LUPI - 300 selected, rest priv')
 
 
-fig.suptitle('Comparison - all features vs RFE-300', fontsize=20)
-plt.legend(loc='best')#bbox_to_anchor=(0.6, 1))#([line1,line2],['All features',['RFE - top 300 features']])
-fig.savefig('random-bottom50-comparison-300.png')
-# plt.show()
+# fig.suptitle('Comparison - all features vs RFE-300', fontsize=20)
+# plt.legend(loc='best')#bbox_to_anchor=(0.6, 1))#([line1,line2],['All features',['RFE - top 300 features']])
+# fig.savefig('random-bottom50-comparison-300.png')
+# # plt.show()
 
 
 #plot corresponding bar graphs showing relative improvement of setting2 over setting1
 
+
 improvements_list = []
-improvements_count =0
-worse_count = 0
 total_improvement = 0
 for setting1_error, setting2_error in zip(setting1,setting2):
     total_improvement+=(setting1_error-setting2_error)
     improvements_list.append(setting1_error-setting2_error)
-    if setting1_error>setting2_error:
-        improvements_count+=1
-    else:
-        worse_count+=1
+    # if setting1_error>setting2_error:
+    #     improvements_count+=1
+    # else:
+    #     worse_count+=1
 
-print (improvements_list)
-print('setting2 helped in',improvements_count,'cases vs setting1')
+improvements_list=np.array(improvements_list)
+
+improvements_count=(np.array(improvements_list)>0).sum()
+print('setting2 helped in',improvements_count,'cases vs setting 1')
+print('setting2 didnt help in',49-improvements_count,'cases vs setting 1')
 print('mean improvement', total_improvement/num_datasets)
 
-print('improv list',improvements_list)
+print('unsorted improvements list',improvements_list)
 plt.bar(list(range(num_datasets)),improvements_list)
-plt.show()
+# plt.show()
 
+print('sorted')
+list49 = np.array((list(range(49))))
+print (list49[np.argsort(improvements_list)])
+
+print (sorted(improvements_list))
+print(np.max(improvements_list))
+print(improvements_list[10])
+print(improvements_list[36])
+print (np)
+
+list_of_worse = np.where(improvements_list<-0.01)
+list_of_better = np.where(improvements_list>0.05)
+print(list_of_worse)
+print(list_of_better)

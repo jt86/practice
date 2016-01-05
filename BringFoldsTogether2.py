@@ -75,20 +75,20 @@ list_of_baselines=[]
 list_of_300_rfe=[]
 dataset='tech'
 
-baseline_scores_list,top300scores_list = [],[]
-for i in range(49):
-    print ('doing dataset',i)
-    for j in range(10):
-        output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/10x10tech/ALL/fixedC-10fold-{}-{}-RFE-baseline-step=0.1-percent_of_priv=100').format(dataset,i))
-        # output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/STEP10percent66-33-LONGWORDS-FIXEDC/ALL/not-fixedC-33-66-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100').format(i))
-        # output_directory2 = os.path.join(get_full_path('Desktop/Privileged_Data/66-33/TOP50/not-fixedC-33-66-tech-{}-RFE-baseline-step=1000-percent_of_priv=50').format(i))
-        graph_directory = (get_full_path('Desktop/Privileged_Data/10fold/ALLplots'))
-        cross_validation_folder = os.path.join(output_directory,'cross-validation')
-        # cross_validation_folder2 = os.path.join(output_directory2,'cross-validation')
-        baseline_score, top300score = read_from_disk_and_plot(10,cross_validation_folder,list_of_values,list_of_values,dataset,graph_directory,i)#, cross_validation_folder2)
-        list_of_baselines.append(1-baseline_score)
-        list_of_300_rfe.append(1-top300score)
-print (list_of_baselines)
+# baseline_scores_list,top300scores_list = [],[]
+# for i in range(49):
+#     print ('doing dataset',i)
+#     for j in range(10):
+#         output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/10x10tech/ALL/fixedC-10fold-{}-{}-RFE-baseline-step=0.1-percent_of_priv=100').format(dataset,i))
+#         # output_directory = os.path.join(get_full_path('Desktop/Privileged_Data/STEP10percent66-33-LONGWORDS-FIXEDC/ALL/not-fixedC-33-66-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100').format(i))
+#         # output_directory2 = os.path.join(get_full_path('Desktop/Privileged_Data/66-33/TOP50/not-fixedC-33-66-tech-{}-RFE-baseline-step=1000-percent_of_priv=50').format(i))
+#         graph_directory = (get_full_path('Desktop/Privileged_Data/10fold/ALLplots'))
+#         cross_validation_folder = os.path.join(output_directory,'cross-validation')
+#         # cross_validation_folder2 = os.path.join(output_directory2,'cross-validation')
+#         baseline_score, top300score = read_from_disk_and_plot(10,cross_validation_folder,list_of_values,list_of_values,dataset,graph_directory,i)#, cross_validation_folder2)
+#         list_of_baselines.append(1-baseline_score)
+#         list_of_300_rfe.append(1-top300score)
+# print (list_of_baselines)
 
 # THIS PART TO GET 49-dataset plot
 # print ('length',list_of_300_rfe)
