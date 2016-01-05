@@ -1,6 +1,6 @@
 import argparse
-# from SingleFoldSlice import single_fold
-from GetMI import single_fold
+from SingleFoldSlice import single_fold
+# from GetMI import single_fold
 
 
 if __name__ == '__main__':
