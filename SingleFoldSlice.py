@@ -16,7 +16,7 @@ import sys
 import numpy.random
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances):
-
+        print('using only {}% of training data',percentageofinstances)
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
