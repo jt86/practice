@@ -28,7 +28,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,datasetnum,topk,percentageofinstances))
 
         print (output_directory)
-        sys.exit()
+        # sys.exit()
         try:
             os.makedirs(output_directory)
         except OSError:
