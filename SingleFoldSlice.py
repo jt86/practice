@@ -15,7 +15,7 @@ import sys
 
 import numpy.random
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv=100, percentageofinstances=100):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances):
 
         stepsize=0.1
         np.random.seed(k)
@@ -25,9 +25,10 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV-{}to{}-featsscaled-bottom{}-{}/').format(dataset,cmin,cmax,percent_of_priv,topk))
         # output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}FIRSTPARAMcv/top{}chosen-PRACTICE-{}percentinstances/').format(dataset,cmin,cmax,stepsize,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}/tech{}/top{}chosen-PRACTICE-{}percentinstances/').format(dataset,cmin,cmax,stepsize,datasetnum,topk,percentageofinstances))
 
         print (output_directory)
+        sys.exit()
         try:
             os.makedirs(output_directory)
         except OSError:
@@ -151,5 +152,5 @@ def get_random_array(num_instances,num_feats):
     return random_array
 
 # value = 1
-# print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100, percentage_of_instances=50))
+# print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100, percentageofinstances=50))
 #  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
