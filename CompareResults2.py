@@ -12,7 +12,7 @@ num_datasets=49
 
 
 #load results for baseline, rfe, lupi, as 10x10 arrays, saved using SaveResults.py
-experiment_name = '10x10-ALLCV-3to3-featsscaled-300'
+experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1      '
 list_of_baselines= np.load(get_full_path('Desktop/Privileged_Data/all-results/{}-baseline.npy'.format(experiment_name)))
 list_of_300_rfe = np.load(get_full_path('Desktop/Privileged_Data/all-results/{}-rfe.npy'.format(experiment_name)))
 list_of_300_lupi = np.load(get_full_path('Desktop/Privileged_Data/all-results/{}-lupi.npy'.format(experiment_name)))

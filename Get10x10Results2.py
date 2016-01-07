@@ -14,8 +14,8 @@ num_datasets=49
 
 n_top_feats= 300
 percent_of_priv = 100
-experiment_name = 'f'
-
+experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1'
+percentofinstances=80
 
 list_of_baselines=[]
 list_of_300_rfe=[]
@@ -23,15 +23,16 @@ list_of_300_lupi=[]
 for dataset_num in range(num_datasets):
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
     for seed_num in range (num_repeats):
-        output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}-top{}chosen/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,seed_num)))
+        # output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}-top{}chosen/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,seed_num)))
+        output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num)))
         for inner_fold in range(num_folds):
             # with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
             #     baseline_score = np.array([item for item in baseline_file.readline().split(',')[:-1]]).astype(np.float)
             #     all_folds_baseline+=[item for item in baseline_score]
             #
-            # with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
-            #     baseline_score = float(baseline_file.readline().split(',')[0])
-            #     all_folds_baseline+=[baseline_score]
+            with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
+                baseline_score = float(baseline_file.readline().split(',')[0])
+                all_folds_baseline+=[baseline_score]
             with open(os.path.join(output_directory,'svm-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_svm_file:
                 svm_score = float(cv_svm_file.readline().split(',')[0])
                 # print(('svm score'),svm_score)
@@ -42,22 +43,22 @@ for dataset_num in range(num_datasets):
                 all_folds_LUPI+=[lupi_score]
         # print ('all folds svm', len(all_folds_SVM))
         # print ('all folds lupi', len(all_folds_LUPI))
-    # list_of_baselines.append(all_folds_baseline)
+    list_of_baselines.append(all_folds_baseline)
     list_of_300_rfe.append(all_folds_SVM)
     list_of_300_lupi.append(all_folds_LUPI)
 
 
-experiment_name2='10x10-ALLCV-3to3-featsscaled-300'
-for dataset_num in range(num_datasets):
-    all_folds_baseline=[]
-    for seed_num in range (num_repeats):
-        output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(experiment_name2,dataset_num,seed_num)))
-        for inner_fold in range(num_folds):
-            with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
-                baseline_score = float(baseline_file.readline().split(',')[0])
-                all_folds_baseline+=[baseline_score]
-    list_of_baselines.append(all_folds_baseline)
-print('baselines',np.array(list_of_baselines).shape)
+# experiment_name2='10x10-ALLCV-3to3-featsscaled-300'
+# for dataset_num in range(num_datasets):
+#     all_folds_baseline=[]
+#     for seed_num in range (num_repeats):
+#         output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(experiment_name2,dataset_num,seed_num)))
+#         for inner_fold in range(num_folds):
+#             with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
+#                 baseline_score = float(baseline_file.readline().split(',')[0])
+#                 all_folds_baseline+=[baseline_score]
+#     list_of_baselines.append(all_folds_baseline)
+# print('baselines',np.array(list_of_baselines).shape)
 
 # experiment_name2 = '10x10-ALLCV-3to3-l1normalised-300'
 # for dataset_num in range(num_datasets):
@@ -141,9 +142,9 @@ fig = plt.figure()
 plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, color='green', label='All features')
 plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='RFE - unselected features only')
 plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUPI - top 300 features used as privileged')
-
-plt.title('Reversed: using TOP 300 feats as privileged')
-plt.legend(loc='best')
+#
+# plt.title('Reversed: using TOP 300 feats as privileged')
+# plt.legend(loc='best')
 # plt.errorbar(list(range(num_datasets)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_rfe_errors2, yerr = rfe_error_bars2, c='k', label='RFE - top 300 features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
