@@ -9,11 +9,10 @@ from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 # from GetFeatSelectionData import get_train_and_test_this_fold
-
-from sklearn import preprocessing
 import sys
-
 import numpy.random
+from sklearn import preprocessing
+
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances):
         print('using only {}% of training data',percentageofinstances)
