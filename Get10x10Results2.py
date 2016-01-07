@@ -14,8 +14,8 @@ num_datasets=49
 
 n_top_feats= 300
 percent_of_priv = 100
-experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1'
-percentofinstances=80
+experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances'
+percentofinstances=100
 
 list_of_baselines=[]
 list_of_300_rfe=[]
@@ -79,19 +79,20 @@ list_of_lupi_errors = np.array([1-mean for mean in np.mean(list_of_300_lupi,axis
 
 print (list_of_baseline_errors)
 
-# print(np.argsort(list_of_baseline_errors))
-#
 list_of_rfe_errors = list_of_rfe_errors[np.argsort(list_of_baseline_errors)]
 list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_baseline_errors)]
 list_of_baseline_errors = list_of_baseline_errors[np.argsort(list_of_baseline_errors)]
 
-# list_of_rfe_errors = list_of_rfe_errors[np.argsort(list_of_lupi_errors)]
-# list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_lupi_errors)]
-# list_of_baseline_errors = list_of_baseline_errors[np.argsort(list_of_lupi_errors)]
 
 baseline_error_bars=list(stats.sem(list_of_baselines,axis=1))
 rfe_error_bars = list(stats.sem(list_of_300_rfe,axis=1))
 lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
+
+print('list of baseline ',list_of_baseline_errors)
+print('list rfe', list_of_rfe_errors)
+print('list lupi',list_of_lupi_errors)
+
+
 
 ######################################
 
@@ -143,7 +144,7 @@ plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline
 plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='RFE - unselected features only')
 plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUPI - top 300 features used as privileged')
 #
-# plt.title('Reversed: using TOP 300 feats as privileged')
+# plt.title('')
 # plt.legend(loc='best')
 # plt.errorbar(list(range(num_datasets)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_rfe_errors2, yerr = rfe_error_bars2, c='k', label='RFE - top 300 features (original)')

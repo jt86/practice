@@ -57,9 +57,9 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # sys.exit()
 
 
-        # n_top_feats = topk
+        n_top_feats = topk
 
-        n_top_feats = topk*all_training.shape[1]//100
+        # n_top_feats = topk*all_training.shape[1]//100
         print ('n top feats',n_top_feats)
         param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
 
@@ -91,6 +91,10 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
             cv_svm_file.write(str(rfe_accuracy)+",")
+
+        print('normal train shape {},priv train shape {}'.format(normal_features_training.shape,privileged_features_training.shape))
+        print('normal testing shape {}'.format(normal_features_testing.shape))
+
         ##############################  BASELINE - all features
         # if topk==75:
         best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
