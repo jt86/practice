@@ -14,8 +14,9 @@ num_datasets=49
 
 n_top_feats= 300
 percent_of_priv = 100
-experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances'
 percentofinstances=100
+experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-{}percentinstances'.format(percentofinstances)
+
 
 list_of_baselines=[]
 list_of_300_rfe=[]
