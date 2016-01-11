@@ -27,27 +27,23 @@ for dataset_num in range(num_datasets):
         # output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}-top{}chosen/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,seed_num)))
         output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num)))
         for inner_fold in range(num_folds):
-            # with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
-            #     baseline_score = np.array([item for item in baseline_file.readline().split(',')[:-1]]).astype(np.float)
-            #     all_folds_baseline+=[item for item in baseline_score]
-            #
             with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
                 baseline_score = float(baseline_file.readline().split(',')[0])
                 all_folds_baseline+=[baseline_score]
             with open(os.path.join(output_directory,'svm-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_svm_file:
                 svm_score = float(cv_svm_file.readline().split(',')[0])
-                # print(('svm score'),svm_score)
                 all_folds_SVM+=[svm_score]
             with open(os.path.join(output_directory,'lupi-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_lupi_file:
                 lupi_score = float(cv_lupi_file.readline().split(',')[0])
-                # print (outer_fold,inner_fold,svm_score)
                 all_folds_LUPI+=[lupi_score]
-        # print ('all folds svm', len(all_folds_SVM))
-        # print ('all folds lupi', len(all_folds_LUPI))
     list_of_baselines.append(all_folds_baseline)
     list_of_300_rfe.append(all_folds_SVM)
     list_of_300_lupi.append(all_folds_LUPI)
 
+            # with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
+            #     baseline_score = np.array([item for item in baseline_file.readline().split(',')[:-1]]).astype(np.float)
+            #     all_folds_baseline+=[item for item in baseline_score]
+            #
 
 # experiment_name2='10x10-ALLCV-3to3-featsscaled-300'
 # for dataset_num in range(num_datasets):
