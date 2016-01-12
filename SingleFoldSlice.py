@@ -24,7 +24,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV-{}to{}-featsscaled-bottom{}-{}/').format(dataset,cmin,cmax,percent_of_priv,topk))
         # output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/tech{}TEST/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percentageofinstances,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances-NEW/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percentageofinstances,datasetnum,topk,percentageofinstances))
 
         print (output_directory)
         # sys.exit()
@@ -118,7 +118,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 
-        ##### THIS PART TO GET A SUBSET OF PRIV INFO
+        ##### THIS PART TO GET A SUBSET OF PRIV INFO####
         # print('privileged',privileged_features_training.shape)
         # all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
         # privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
@@ -130,7 +130,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         # privileged_features_training = get_random_array(privileged_features_training.shape[0],privileged_features_training.shape[1]*5)
         # print ('random data size',privileged_features_training.shape)
-
+        #################################
 
         # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
         # c_star_values=[0.0001, 0.001, 0.01, 0.1]
@@ -158,5 +158,5 @@ def get_random_array(num_instances,num_feats):
     return random_array
 
 # value = 1
-# print(single_fold(k=4, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100, percentageofinstances=100))
+# print(single_fold(k=0, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=7, percent_of_priv=100, percentageofinstances=100))
 #  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
