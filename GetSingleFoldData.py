@@ -20,17 +20,17 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     all_data = np.vstack([class0_data,class1_data])
     print(all_data.shape)
     print('skf seed',skf_seed)
-    skf = StratifiedKFold(all_labels, n_folds=10, random_state=skf_seed)
+    skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True,random_state=skf_seed)
     for fold_num, (train_index, test_index) in enumerate(skf):
         if fold_num==k:
             # print('k=',k,'found!')
             train_data, test_data = all_data[train_index],all_data[test_index]
             train_labels, test_labels = all_labels[train_index], all_labels[test_index]
-            # print('fold num', fold_num, 'test index',test_index)
+
             break
 
-
-    # sys.exit()
+    print('fold num', fold_num, 'test index',test_index)
+    sys.exit()
 
     #standardisation =============================
     train_data = preprocessing.scale(train_data)

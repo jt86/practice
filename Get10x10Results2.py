@@ -15,7 +15,7 @@ num_datasets=49
 n_top_feats= 300
 percent_of_priv = 100
 percentofinstances=100
-experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-{}percentinstances'.format(percentofinstances)
+experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-{}percentinstances-NEW-UNIVARIATE'.format(percentofinstances)
 np.set_printoptions(linewidth=132)
 
 list_of_baselines=[]
@@ -25,7 +25,7 @@ for dataset_num in range(num_datasets):
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
     for seed_num in range (num_repeats):
         # output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}-top{}chosen/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,seed_num)))
-        output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}TEST/top{}chosen-{}percentinstances/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num)))
+        output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num)))
         for inner_fold in range(num_folds):
             with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
                 baseline_score = float(baseline_file.readline().split(',')[0])
@@ -36,10 +36,10 @@ for dataset_num in range(num_datasets):
             with open(os.path.join(output_directory,'lupi-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_lupi_file:
                 lupi_score = float(cv_lupi_file.readline().split(',')[0])
                 all_folds_LUPI+=[lupi_score]
-    if dataset_num==1:
-        print ('baseline',np.reshape(all_folds_baseline,(10,10)))
-        print('rfe',all_folds_SVM)
-        print('lupi',all_folds_LUPI)
+    if dataset_num==25:
+        print ('\nbaseline\n',np.reshape(all_folds_baseline,(10,10)))
+        print('\nrfe\n',np.reshape(all_folds_SVM,(10,10)))
+        print('\nlupi\n',np.reshape(all_folds_LUPI,(10,10)))
     list_of_baselines.append(all_folds_baseline)
     list_of_300_rfe.append(all_folds_SVM)
     list_of_300_lupi.append(all_folds_LUPI)
@@ -89,9 +89,9 @@ baseline_error_bars=list(stats.sem(list_of_baselines,axis=1))
 rfe_error_bars = list(stats.sem(list_of_300_rfe,axis=1))
 lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 
-print('list of baseline ',list_of_baseline_errors)
-print('list rfe', list_of_rfe_errors)
-print('list lupi',list_of_lupi_errors)
+# print('list of baseline ',list_of_baseline_errors)
+# print('list rfe', list_of_rfe_errors)
+# print('list lupi',list_of_lupi_errors)
 
 
 

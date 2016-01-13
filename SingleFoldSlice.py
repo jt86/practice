@@ -158,5 +158,5 @@ def get_random_array(num_instances,num_feats):
     return random_array
 
 # value = 1
-print(single_fold(k=7, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=4, percent_of_priv=100, percentageofinstances=100))
+# print(single_fold(k=9, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=100, percentageofinstances=100))
 #  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
