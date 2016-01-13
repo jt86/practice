@@ -7,6 +7,7 @@ from sklearn import preprocessing
 from sklearn import preprocessing
 # import numpy.linalg.norm
 import sys
+np.set_printoptions(linewidth=132)
 
 def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per class
     if dataset=='tech':
@@ -18,7 +19,7 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
 
     all_data = np.vstack([class0_data,class1_data])
     print(all_data.shape)
-
+    print('skf seed',skf_seed)
     skf = StratifiedKFold(all_labels, n_folds=10, random_state=skf_seed)
     for fold_num, (train_index, test_index) in enumerate(skf):
         if fold_num==k:
@@ -28,8 +29,8 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
             # print('fold num', fold_num, 'test index',test_index)
             break
 
-    # print('fold num', fold_num, 'test index',test_index)
 
+    # sys.exit()
 
     #standardisation =============================
     train_data = preprocessing.scale(train_data)

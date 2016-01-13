@@ -12,6 +12,7 @@ from GetSingleFoldData import get_train_and_test_this_fold
 import sys
 import numpy.random
 from sklearn import preprocessing
+from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances):
@@ -24,7 +25,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV-{}to{}-featsscaled-bottom{}-{}/').format(dataset,cmin,cmax,percent_of_priv,topk))
         # output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances-NEW/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percentageofinstances,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances-NEW-UNIVARIATE/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percentageofinstances,datasetnum,topk,percentageofinstances))
 
         print (output_directory)
         # sys.exit()
@@ -57,14 +58,39 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # print (all_training.shape)
         # print (training_labels.shape)
         # print(indices)
-        # sys.exit()
 
 
         n_top_feats = topk
 
+        ######### UNIVARIATE PART
+
+        selector = SelectPercentile(f_classif, percentile=100)
+        selector.fit(all_training, training_labels)
+        scores = selector.pvalues_
+        ordered_feats= np.array(np.argsort(scores))
+
+        sorted_training = all_training[:, ordered_feats]
+        sorted_testing = all_testing[:, ordered_feats]
+
+        normal_features_training = sorted_training[:,:n_top_feats]
+        normal_features_testing = sorted_testing[:,:n_top_feats]
+        privileged_features_training=sorted_training[:,n_top_feats:]
+
+
+
         # n_top_feats = topk*all_training.shape[1]//100
         print ('n top feats',n_top_feats)
         param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
+
+
+
+
+        best_C = get_best_C(normal_features_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
+        clf = svm.SVC(C=best_C, kernel=kernel,random_state=k)
+        clf.fit(normal_features_training, training_labels)
+        svm_predictions = clf.predict(normal_features_testing)
+        with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
+            cv_svm_file.write(str(accuracy_score(testing_labels,svm_predictions))+',')
 
 
         ########## GET BEST C FOR RFE
@@ -74,26 +100,26 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ###########  CARRY OUT RFE, GET ACCURACY
 
-        svc = SVC(C=best_rfe_param, kernel=kernel, random_state=k)
-        rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
-        print ('rfe step size',rfe.step)
-        rfe.fit(all_training, training_labels)
-        print (all_testing.shape,testing_labels.shape)
-        print ('num of chosen feats',sum(x == 1 for x in rfe.support_))
-
-        best_n_mask = rfe.support_
-        normal_features_training = all_training[:,best_n_mask].copy()
-        normal_features_testing = all_testing[:,best_n_mask].copy()
-        privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
-
-        svc = SVC(C=best_rfe_param, kernel=kernel, random_state=k)
-        svc.fit(normal_features_training,training_labels)
-        rfe_accuracy = svc.score(normal_features_testing,testing_labels)
-        print ('rfe accuracy (using slice):',rfe_accuracy)
-
-
-        with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
-            cv_svm_file.write(str(rfe_accuracy)+",")
+        # svc = SVC(C=best_rfe_param, kernel=kernel, random_state=k)
+        # rfe = RFE(estimator=svc, n_features_to_select=n_top_feats, step=stepsize)
+        # print ('rfe step size',rfe.step)
+        # rfe.fit(all_training, training_labels)
+        # print (all_testing.shape,testing_labels.shape)
+        # print ('num of chosen feats',sum(x == 1 for x in rfe.support_))
+        #
+        # best_n_mask = rfe.support_
+        # normal_features_training = all_training[:,best_n_mask].copy()
+        # normal_features_testing = all_testing[:,best_n_mask].copy()
+        # privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
+        #
+        # svc = SVC(C=best_rfe_param, kernel=kernel, random_state=k)
+        # svc.fit(normal_features_training,training_labels)
+        # rfe_accuracy = svc.score(normal_features_testing,testing_labels)
+        # print ('rfe accuracy (using slice):',rfe_accuracy)
+        #
+        #
+        # with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
+        #     cv_svm_file.write(str(rfe_accuracy)+",")
 
         print('normal train shape {},priv train shape {}'.format(normal_features_training.shape,privileged_features_training.shape))
         print('normal testing shape {}'.format(normal_features_testing.shape))
@@ -149,7 +175,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
         print ('k=',k, 'seed=',skfseed,'topk',topk)
-        return (rfe_accuracy,accuracy_lupi )
+
 
 
 def get_random_array(num_instances,num_feats):
@@ -158,5 +184,5 @@ def get_random_array(num_instances,num_feats):
     return random_array
 
 # value = 1
-print(single_fold(k=7, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=4, percent_of_priv=100, percentageofinstances=100))
+# print(single_fold(k=7, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=4, percent_of_priv=100, percentageofinstances=100))
 #  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
