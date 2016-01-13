@@ -30,7 +30,7 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
             break
 
     print('fold num', fold_num, 'test index',test_index)
-    sys.exit()
+    # sys.exit()
 
     #standardisation =============================
     train_data = preprocessing.scale(train_data)
