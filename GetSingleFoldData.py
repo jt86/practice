@@ -12,6 +12,12 @@ np.set_printoptions(linewidth=132)
 def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per class
     if dataset=='tech':
         class0_data,class1_data=get_techtc_data(datasetnum)
+
+
+    if dataset=='awa':
+        class0_data,class1_data=get_awa_data(datasetnum)
+
+
     class0_labels = [-1]*class0_data.shape[0]
     class1_labels = [1]* class1_data.shape[0]
     all_labels = np.r_[class0_labels, class1_labels]
@@ -41,7 +47,16 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
     return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)
 
-
+def get_awa_data(dataset_index):
+    labels = np.load(get_full_path('Desktop/Privileged_Data/data_Joe/labels.npy'))
+    data = np.load(get_full_path('Desktop/Privileged_Data/data_Joe/data{}.npy'.format(dataset_index)))
+    print (np.sum(labels>0))
+    print (data.shape)
+    print (data[0])
+    print (labels.shape)
+    pos_instances,neg_instances = data[:252], data[252:]
+    print (pos_instances.shape, neg_instances.shape)
+    return(pos_instances,neg_instances)
 
 
 def get_techtc_data(dataset_index):

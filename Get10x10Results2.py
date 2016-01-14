@@ -15,8 +15,9 @@ num_datasets=49
 n_top_feats= 300
 percent_of_priv = 100
 percentofinstances=100
-experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-{}percentinstances-NEW-UNIVARIATE'.format(percentofinstances)
+experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances-NEW'.format(percentofinstances)
 np.set_printoptions(linewidth=132)
+
 
 list_of_baselines=[]
 list_of_300_rfe=[]
@@ -142,17 +143,18 @@ lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 fig = plt.figure()
 
 plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, color='green', label='All features')
-plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='RFE - unselected features only')
+plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='ANOVA - unselected features only')
 plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUPI - top 300 features used as privileged')
 #
 # plt.title('')
-# plt.legend(loc='best')
+plt.legend(loc='best')
 # plt.errorbar(list(range(num_datasets)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_rfe_errors2, yerr = rfe_error_bars2, c='k', label='RFE - top 300 features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
 
-plt.show()
 
+plt.savefig(get_full_path('Desktop/All-new-uncanny-results/{}-.png'.format(experiment_name)))
+plt.show()
 
 lupi_improvements =0
 lupi_worse = 0
