@@ -12,10 +12,12 @@ num_repeats = 10
 num_folds = 10
 num_datasets=49
 
+dataset='tech'
 n_top_feats= 300
 percent_of_priv = 100
 percentofinstances=100
-experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances-NEW'.format(percentofinstances)
+step=0.1
+experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}percentinstances-NEW'.format(dataset,step,percentofinstances)
 np.set_printoptions(linewidth=132)
 
 
@@ -147,13 +149,14 @@ plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bar
 plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUPI - top 300 features used as privileged')
 #
 # plt.title('')
-plt.legend(loc='best')
+# plt.legend(loc='best')
 # plt.errorbar(list(range(num_datasets)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_rfe_errors2, yerr = rfe_error_bars2, c='k', label='RFE - top 300 features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
 
-
-plt.savefig(get_full_path('Desktop/All-new-uncanny-results/{}-.png'.format(experiment_name)))
+keyword = '{}-{}feats--3to3-{}instances-{}priv-step0.1'.format(dataset,n_top_feats,percentofinstances,percent_of_priv)
+plt.savefig(get_full_path('Desktop/All-new-results/{}.png'.format(keyword)))
+outputfile=open(get_full_path('Desktop/All-new-results/{}.txt'.format(keyword)),'w')
 plt.show()
 
 lupi_improvements =0
@@ -165,8 +168,11 @@ for rfe_error, lupi_error in zip(list_of_rfe_errors,list_of_lupi_errors):
         lupi_improvements+=1
     else:
         lupi_worse+=1
-print('lupi helped in',lupi_improvements,'cases vs rfe')
+
+print('lupi helped in',lupi_improvements,'cases vs standard SVM')
 print('mean improvement', total_improvement_over_rfe/len(list_of_rfe_errors))
+outputfile.write('\nlupi helped in {} cases vs standard SVM'.format(lupi_improvements))
+outputfile.write('\nmean improvement={}'.format(total_improvement_over_rfe/len(list_of_rfe_errors)))
 
 lupi_improvements =0
 lupi_worse = 0
@@ -176,8 +182,10 @@ for baseline_error, lupi_error in zip(list_of_baseline_errors,list_of_lupi_error
         lupi_improvements+=1
     else:
         lupi_worse+=1
-print('lupi helped in',lupi_improvements,'cases vs baseline')
+print('lupi helped in',lupi_improvements,'cases vs all-feats-baseline')
 print('mean improvement', total_improvement_over_baseline/len(list_of_rfe_errors))
+outputfile.write('\nlupi helped in {} cases vs all-feats-baseline'.format(lupi_improvements))
+outputfile.write('\nmean improvement={}'.format(total_improvement_over_baseline/len(list_of_rfe_errors)))
 
 rfe_improvements =0
 rfe_worse = 0
@@ -187,6 +195,8 @@ for baseline_error, rfe_error in zip(list_of_baseline_errors,list_of_rfe_errors)
         rfe_improvements+=1
     else:
         rfe_worse+=1
-print('rfe helped in',rfe_improvements,'cases vs baseline')
+print('feat selection helped in',rfe_improvements,'cases vs all-feats-baseline')
 print('mean improvement', total_improvement_over_baseline2/len(list_of_rfe_errors))
-
+outputfile.write('\nrfe helped in {} cases vs baseline'.format(rfe_improvements))
+outputfile.write('\nmean improvement={}'.format(total_improvement_over_baseline2/len(list_of_rfe_errors)))
+outputfile.close()
