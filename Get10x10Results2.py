@@ -13,7 +13,7 @@ num_folds = 10
 num_datasets=49
 
 dataset='tech'
-n_top_feats= 300
+n_top_feats= 500
 percent_of_priv = 100
 percentofinstances=100
 step=0.1
