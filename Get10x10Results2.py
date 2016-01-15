@@ -12,12 +12,14 @@ num_repeats = 10
 num_folds = 10
 num_datasets=49
 
+method = 'UNIVARIATE'
 dataset='tech'
-n_top_feats= 500
+n_top_feats= 300
 percent_of_priv = 100
 percentofinstances=100
 step=0.1
-experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}percentinstances-NEW'.format(dataset,step,percentofinstances)
+experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}percentinstances-NEW-{}'.format(dataset,step,percentofinstances,method)
+keyword = '{}-{}feats-{}-3to3-{}instances-{}priv-step0.1'.format(dataset,n_top_feats,method,percentofinstances,percent_of_priv)
 np.set_printoptions(linewidth=132)
 
 
@@ -154,7 +156,7 @@ plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_b
 # plt.errorbar(list(range(num_datasets)), list_of_rfe_errors2, yerr = rfe_error_bars2, c='k', label='RFE - top 300 features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
 
-keyword = '{}-{}feats--3to3-{}instances-{}priv-step0.1'.format(dataset,n_top_feats,percentofinstances,percent_of_priv)
+
 plt.savefig(get_full_path('Desktop/All-new-results/{}.png'.format(keyword)))
 outputfile=open(get_full_path('Desktop/All-new-results/{}.txt'.format(keyword)),'w')
 plt.show()
