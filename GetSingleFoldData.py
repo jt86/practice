@@ -50,13 +50,15 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
 def get_awa_data(dataset_index):
     labels = np.load(get_full_path('Desktop/Privileged_Data/data_Joe/labels.npy'))
     data = np.load(get_full_path('Desktop/Privileged_Data/data_Joe/data{}.npy'.format(dataset_index)))
-    print (np.sum(labels>0))
-    print (data.shape)
-    print (data[0])
-    print (labels.shape)
+
+    # print (np.sum(labels>0))
+    print ('data shape',data.shape)
+    # print (data[0])
+    # print (labels.shape)
     pos_instances,neg_instances = data[:252], data[252:]
     print (pos_instances.shape, neg_instances.shape)
     return(pos_instances,neg_instances)
+
 
 
 def get_techtc_data(dataset_index):

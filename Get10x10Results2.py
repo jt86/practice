@@ -10,11 +10,11 @@ from scipy import stats
 print (matplotlib.__version__)
 num_repeats = 10
 num_folds = 10
-num_datasets=49
+num_datasets=10
 
-method = 'UNIVARIATE'
-dataset='tech'
-n_top_feats= 300
+method = 'RFE'
+dataset='awa'
+n_top_feats= 1000
 percent_of_priv = 100
 percentofinstances=100
 step=0.1
@@ -164,6 +164,8 @@ plt.show()
 lupi_improvements =0
 lupi_worse = 0
 total_improvement_over_rfe, total_improvement_over_baseline, total_improvement_over_baseline2 = 0,0,0
+
+
 for rfe_error, lupi_error in zip(list_of_rfe_errors,list_of_lupi_errors):
     total_improvement_over_rfe+=(rfe_error-lupi_error)
     if rfe_error>lupi_error:
