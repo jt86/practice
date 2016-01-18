@@ -25,7 +25,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV-{}to{}-featsscaled-bottom{}-{}/').format(dataset,cmin,cmax,percent_of_priv,topk))
         # output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentpriv{}percentinstances-NEW/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,percentageofinstances,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}bottompercentpriv{}percentinstances-NEW/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,percentageofinstances,datasetnum,topk,percentageofinstances))
 
         print (output_directory)
         # sys.exit()
@@ -126,7 +126,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
 
 
-        privileged_features_training = privileged_features_training[:,:num_of_priv_feats]
+        privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
         print ('privileged data shape',privileged_features_training.shape)
 
         privileged_features_training = get_random_array(privileged_features_training.shape[0],privileged_features_training.shape[1]*5)

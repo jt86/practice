@@ -17,13 +17,13 @@ count=1
 #
 #
 #
-dataset='awa'
-for seed in range (10):  #4
-    for top_k in [5000]:
-        for datasetnum in range (10): #5
-            for fold_num in range(10): #0
-                print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, 100, 100))
-                count+=1
+# dataset='awa'
+# for seed in range (10):  #4
+#     for top_k in [5000]:
+#         for datasetnum in range (10): #5
+#             for fold_num in range(10): #0
+#                 print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, 100, 100))
+#                 count+=1
 
 dataset='tech'
 
@@ -34,12 +34,13 @@ for top_k in [300,500]:#,500]:#100,200,400,600,700,800,900,1000]:
                 for fold_num in range(10): #0
                     print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100))
                     count+=1
-
-dataset='awa'
-for percentofpriv in [5,50]:
-    for seed in range (10):  #4
-        for top_k in [5000]:
-            for datasetnum in range (10): #5
-                for fold_num in range(10): #0
-                    print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100))
-                    count+=1
+print (count)
+# dataset='awa'
+# for percentofpriv in [5,50]:
+#     for seed in range (10):  #4
+#         for top_k in [5000]:
+#             for datasetnum in range (10): #5
+#                 for fold_num in range(10): #0
+#                     print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100))
+#                     count+=1
+# print (count)

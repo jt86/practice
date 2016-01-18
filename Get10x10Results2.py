@@ -10,15 +10,17 @@ from scipy import stats
 print (matplotlib.__version__)
 num_repeats = 10
 num_folds = 10
-num_datasets=10
+num_datasets=49
 
 method = 'RFE'
-dataset='awa'
-n_top_feats= 1000
-percent_of_priv = 100
+dataset='tech'
+n_top_feats= 300
+percent_of_priv = 5
 percentofinstances=100
+
 step=0.1
-experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}percentinstances-NEW-{}'.format(dataset,step,percentofinstances,method)
+
+experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}percentpriv{}percentinstances-NEW-{}'.format(dataset,step,percent_of_priv,percentofinstances,method)
 keyword = '{}-{}feats-{}-3to3-{}instances-{}priv-step0.1'.format(dataset,n_top_feats,method,percentofinstances,percent_of_priv)
 np.set_printoptions(linewidth=132)
 
