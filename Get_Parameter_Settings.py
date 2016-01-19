@@ -28,7 +28,7 @@ count=1
 dataset='tech'
 
 for top_k in [300,500]:#,500]:#100,200,400,600,700,800,900,1000]:
-    for percentofpriv in [5,50]:
+    for percentofpriv in [5,10,25,50,75]:
         for datasetnum in range (49): #5
             for seed in range (10):
                 for fold_num in range(10): #0
