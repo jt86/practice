@@ -14,7 +14,9 @@ import numpy.random
 from sklearn import preprocessing
 
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances,take_top_t):
+
+
         print('using only {}% of training data',percentageofinstances)
         print('percentage of discarded info used as priv:{}'.format(percent_of_priv))
         stepsize=0.1
@@ -22,8 +24,12 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
 
+        if take_top_t==True:
+                word = 'top'
+        else:
+                word='bottom'
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}bottompercentpriv-{}percentinstances-NEW/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,percentageofinstances,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,word,percentageofinstances,datasetnum,topk,percentageofinstances))
         print (output_directory)
 
         try:
@@ -122,8 +128,10 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
         num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
 
-
-        privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
+        if take_top_t==True:
+                privileged_features_training = privileged_features_training[:,:num_of_priv_feats]
+        else:
+                privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
         print ('privileged data shape',privileged_features_training.shape)
 
 
@@ -158,7 +166,8 @@ def get_random_array(num_instances,num_feats):
     return random_array
 
 # value = 1
-# print(single_fold(k=9, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=50, percentageofinstances=100))
-#  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
+# print(single_fold(k=9, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=50, percentageofinstances=100, take_top_t=True))
 
+
+#  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
 # print(single_fold(k=9, topk=300, dataset='awa', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=100, percentageofinstances=100))

@@ -32,6 +32,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--percentageofinstances', type=int, required=True, help='percentage of training instances used')
 
+    parser.add_argument('--taketopt',type=bool,required=True,help='if True: take top percent ofpriv.if false, take bottom')
+
     args = parser.parse_args()
     print('input is', args.dataset)
     print(' all args',args)
