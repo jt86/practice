@@ -27,24 +27,41 @@ count=1
 
 dataset='tech'
 
-# list_of_nums= [5]+list(range(10,101,10))
 for top_k in [300]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
     for take_top_t in [False]:
-        for percentofpriv in [5,10,25,50,75]:
+        for percentofpriv in [5,50]:#,10,20,30,40,60,70,80,90]:
+            for datasetnum in range (49): #5
+                for seed in range (10):
+                    for fold_num in range(10): #0
+                        print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
+                        count+=1
+# list_of_nums= [5]+list(range(10,101,10))
+for top_k in [300]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
+    for take_top_t in [True]:
+        for percentofpriv in [20,30,40,60,70,80,90]:
             for datasetnum in range (49): #5
                 for seed in range (10):
                     for fold_num in range(10): #0
                         print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
                         count+=1
 
-for top_k in [500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
-    for take_top_t in [True,False]:
-        for percentofpriv in [5,10,25,50,75]:
+for top_k in [300]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
+    for take_top_t in [False]:
+        for percentofpriv in [10,20,30,40,60,70,80,90]:
             for datasetnum in range (49): #5
                 for seed in range (10):
                     for fold_num in range(10): #0
                         print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
                         count+=1
+
+# for top_k in [500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
+#     for take_top_t in [True,False]:
+#         for percentofpriv in [5,10,25,50,75]:
+#             for datasetnum in range (49): #5
+#                 for seed in range (10):
+#                     for fold_num in range(10): #0
+#                         print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
+#                         count+=1
 
 # print(list_of_nums)
 
