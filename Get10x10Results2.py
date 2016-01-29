@@ -15,13 +15,15 @@ num_datasets=49
 method = 'RFE'
 dataset='tech'
 n_top_feats= 300
-percent_of_priv = 80
+percent_of_priv = 100
 percentofinstances=100
-
+toporbottom='bottom'
 step=0.1
 
-experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}bottompercentpriv-{}percentinstances'.format(dataset,step,percent_of_priv,percentofinstances,method)
-keyword = '{}-{}feats-{}-3to3-{}instances-bottom{}priv-step0.1'.format(dataset,n_top_feats,method,percentofinstances,percent_of_priv)
+experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}toppercentpriv-{}percentinstances'.format(dataset,step,percent_of_priv,percentofinstances,method)
+print (experiment_name)
+
+keyword = '{}-{}feats-{}-3to3-{}instances-{}{}priv-step0.1-NEW'.format(dataset,n_top_feats,method,percentofinstances,toporbottom,percent_of_priv)
 np.set_printoptions(linewidth=132)
 
 

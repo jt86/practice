@@ -29,7 +29,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
         print('word',take_top_t)
-        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances-RANDOM/tech{}/top{}chosen-{}percentinstances-RANDOM/').format(dataset,cmin,cmax,stepsize,percent_of_priv,take_top_t,percentageofinstances,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,take_top_t,percentageofinstances,datasetnum,topk,percentageofinstances))
         print (output_directory)
 
         try:
@@ -137,10 +137,10 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ##### THIS PART TO USE RANDOM DATA AS PRIVILEGED
         # privileged_features_training = get_random_array(privileged_features_training.shape[0],privileged_features_training.shape[1]*5)
-        random_array = np.random.rand(privileged_features_training.shape[0],privileged_features_training.shape[1])
-        random_array = preprocessing.scale(random_array)
-        privileged_features_training=random_array
-        print ('random data size',privileged_features_training.shape)
+        # random_array = np.random.rand(privileged_features_training.shape[0],privileged_features_training.shape[1])
+        # random_array = preprocessing.scale(random_array)
+        # privileged_features_training=random_array
+        # print ('random data size',privileged_features_training.shape)
         #################################
 
         # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
@@ -170,8 +170,6 @@ def get_random_array(num_instances,num_feats):
 
 # value = 1
 
-# print(single_fold(k=9, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=50, percentageofinstances=100, take_top_t='top'))
-
-
+# single_fold(k=9, topk=300, dataset='tech', datasetnum=31, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=7, percent_of_priv=20, percentageofinstances=100, take_top_t='top')
 #  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
-# print(single_fold(k=9, topk=300, dataset='awa', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=100, percentageofinstances=100))
+# print(single_fold(k=0, topk=5000, dataset='awa', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=100, percentageofinstances=100,take_top_t='top'))

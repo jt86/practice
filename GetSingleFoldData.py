@@ -47,19 +47,22 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
     return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)
 
-def get_awa_data(dataset_index):
-    labels = np.load(get_full_path('Desktop/Privileged_Data/data_Joe/labels.npy'))
-    data = np.load(get_full_path('Desktop/Privileged_Data/data_Joe/data{}.npy'.format(dataset_index)))
+# def get_awa_data(dataset_index):
+#     data = np.load(get_full_path('Desktop/Privileged_Data/data_Joe/data{}.npy'.format(dataset_index)))
+#     # print (np.sum(labels>0))
+#     print ('data shape',data.shape)
+#     # print (data[0])
+#     # print (labels.shape)
+#     pos_instances,neg_instances = data[:252], data[252:]
+#     print (pos_instances.shape, neg_instances.shape)
+#     return(pos_instances,neg_instances)
 
-    # print (np.sum(labels>0))
-    print ('data shape',data.shape)
-    # print (data[0])
-    # print (labels.shape)
-    pos_instances,neg_instances = data[:252], data[252:]
+def get_awa_data(dataset_index):
+    data = np.load(get_full_path('Desktop/Privileged_Data/data_easyhard_Joe_allsamples/data{}.npy'.format(dataset_index)))
+    labels = np.load(get_full_path('Desktop/Privileged_Data/data_easyhard_Joe_allsamples/labels{}.npy'.format(dataset_index)))
+    pos_instances,neg_instances = data[labels==1.], data[labels==-1.]
     print (pos_instances.shape, neg_instances.shape)
     return(pos_instances,neg_instances)
-
-
 
 def get_techtc_data(dataset_index):
     max_num_of_feats,instances_count =0,0
