@@ -14,8 +14,8 @@ import numpy.random
 from sklearn import preprocessing
 from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances,take_top_t):
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances):
         print('using only {}% of training data',percentageofinstances)
         stepsize=0.1
         np.random.seed(k)
@@ -25,7 +25,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # outer_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV-{}to{}-featsscaled-bottom{}-{}/').format(dataset,cmin,cmax,percent_of_priv,topk))
         # output_directory = os.path.join(get_full_path(outer_directory),'fixedCandCstar-10fold-{}-{}-RFE-baseline-step={}-percent_of_priv={}'.format(dataset,datasetnum,stepsize,percent_of_priv))
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances-NEW-UNIVARIATE/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percentageofinstances,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances-UNIVARIATE/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,take_top_t,percentageofinstances,datasetnum,topk,percentageofinstances))
 
         print (output_directory)
         # sys.exit()
@@ -47,17 +47,6 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
                 raise
 
         all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum,k,skfseed)
-
-
-        ####### This part takes a subset of training instances
-        # orig_num_train_instances = all_training.shape[0]
-        # num_of_train_instances = orig_num_train_instances*percentageofinstances//100
-        # indices = np.random.choice(orig_num_train_instances,num_of_train_instances,replace=False)
-        # all_training = all_training.copy()[indices,:]
-        # training_labels = training_labels[indices]
-        # print (all_training.shape)
-        # print (training_labels.shape)
-        # print(indices)
 
 
         n_top_feats = topk
@@ -125,7 +114,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         print('normal testing shape {}'.format(normal_features_testing.shape))
 
         ##############################  BASELINE - all features
-        # if topk==75:
+
         best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
         # best_C_baseline=best_rfe_param
         print('all feats best c',best_C_baseline)
@@ -144,26 +133,9 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 
-        ##### THIS PART TO GET A SUBSET OF PRIV INFO####
-        # print('privileged',privileged_features_training.shape)
-        # all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
-        # privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
-        # num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
-
-
-        # privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
-        # print ('privileged data shape',privileged_features_training.shape)
-
-        # privileged_features_training = get_random_array(privileged_features_training.shape[0],privileged_features_training.shape[1]*5)
-        # print ('random data size',privileged_features_training.shape)
         #################################
 
-        # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
-        # c_star_values=[0.0001, 0.001, 0.01, 0.1]
         c_star_values=c_values
-        # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
-        #                                 c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
-
         c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
                                          c_values, c_star_values,cross_validation_folder,datasetnum, topk)
 
@@ -183,6 +155,5 @@ def get_random_array(num_instances,num_feats):
     random_array = preprocessing.scale(random_array)
     return random_array
 
-# value = 1
-# print(single_fold(k=7, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=4, percent_of_priv=100, percentageofinstances=100))
-#  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
+
+# print(single_fold(k=7, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='top'))

@@ -12,9 +12,21 @@ num_repeats = 10
 num_folds = 10
 num_datasets=49
 
+method = 'UNIVARIATE'
+dataset='tech'
 n_top_feats= 300
 percent_of_priv = 100
-experiment_name = '10x10-ALLCV--3to3-featsscaled-300-randomx5'
+percentofinstances=100
+toporbottom='bottom'
+step=0.1
+
+# print('10x10-tech-ALLCV-3to3-featsscaled-step0.1-10bottompercentpriv-100percentinstances')
+
+experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
+print (experiment_name)
+
+keyword = '{}-{}feats-{}-3to3-{}{}instances-{}priv-step01'.format(dataset,n_top_feats,method,toporbottom,percentofinstances,percent_of_priv)
+np.set_printoptions(linewidth=132)
 
 
 list_of_baselines=[]
@@ -23,12 +35,9 @@ list_of_300_lupi=[]
 for dataset_num in range(num_datasets):
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
     for seed_num in range (num_repeats):
-        output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv={}/cross-validation{}'.format(experiment_name,dataset_num,percent_of_priv,seed_num)))
+        # output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}-top{}chosen/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,seed_num)))
+        output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num)))
         for inner_fold in range(num_folds):
-            # with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
-            #     baseline_score = np.array([item for item in baseline_file.readline().split(',')[:-1]]).astype(np.float)
-            #     all_folds_baseline+=[item for item in baseline_score]
-
             with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
                 baseline_score = float(baseline_file.readline().split(',')[0])
                 all_folds_baseline+=[baseline_score]
@@ -37,71 +46,21 @@ for dataset_num in range(num_datasets):
                 all_folds_SVM+=[svm_score]
             with open(os.path.join(output_directory,'lupi-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_lupi_file:
                 lupi_score = float(cv_lupi_file.readline().split(',')[0])
-                # print (outer_fold,inner_fold,svm_score)
                 all_folds_LUPI+=[lupi_score]
-        # print ('all folds svm', len(all_folds_SVM))
-        # print ('all folds lupi', len(all_folds_LUPI))
+    if dataset_num==25:
+        print ('\nbaseline\n',np.reshape(all_folds_baseline,(10,10)))
+        print('\nrfe\n',np.reshape(all_folds_SVM,(10,10)))
+        print('\nlupi\n',np.reshape(all_folds_LUPI,(10,10)))
     list_of_baselines.append(all_folds_baseline)
     list_of_300_rfe.append(all_folds_SVM)
     list_of_300_lupi.append(all_folds_LUPI)
 
-#
-# ######## OPTIONAL SECOND EXPERIMENT
-#
-# experiment_name2 = '10x10-ALLCV--3to3-featsscaled-300-randomx5'
-#
-# list_of_baselines2=[]
-# list_of_300_rfe2=[]
-# list_of_300_lupi2=[]
-# for dataset_num in range(num_datasets):
-#     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
-#     for seed_num in range (num_repeats):
-#         output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv={}/cross-validation{}'.format(experiment_name,dataset_num,percent_of_priv,seed_num)))
-#         for inner_fold in range(num_folds):
-#             # with open(os.path.join(output_directory,'baseline.csv'),'r') as baseline_file:
-#             #     baseline_score = np.array([item for item in baseline_file.readline().split(',')[:-1]]).astype(np.float)
-#             #     all_folds_baseline+=[item for item in baseline_score]
-#
-#             with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
-#                 baseline_score = float(baseline_file.readline().split(',')[0])
-#                 all_folds_baseline+=[baseline_score]
-#             with open(os.path.join(output_directory,'svm-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_svm_file:
-#                 svm_score = float(cv_svm_file.readline().split(',')[0])
-#                 all_folds_SVM+=[svm_score]
-#             with open(os.path.join(output_directory,'lupi-{}-{}.csv').format(inner_fold,n_top_feats),'r') as cv_lupi_file:
-#                 lupi_score = float(cv_lupi_file.readline().split(',')[0])
-#                 # print (outer_fold,inner_fold,svm_score)
-#                 all_folds_LUPI+=[lupi_score]
-#         # print ('all folds svm', len(all_folds_SVM))
-#         # print ('all folds lupi', len(all_folds_LUPI))
-#     list_of_baselines2.append(all_folds_baseline)
-#     list_of_300_rfe2.append(all_folds_SVM)
-#     list_of_300_lupi2.append(all_folds_LUPI)
 
-# ########
+list_of_baseline_errors =np.array([1-mean for mean in np.mean(list_of_baselines,axis=1)])*100
+list_of_rfe_errors = np.array([1-mean for mean in np.mean(list_of_300_rfe,axis=1)])*100
+list_of_lupi_errors = np.array([1-mean for mean in np.mean(list_of_300_lupi,axis=1)])*100
 
-# experiment_name2 = '10x10-ALLCV-3to3-l1normalised-300'
-# for dataset_num in range(num_datasets):
-#     print ('doing dataset',dataset_num)
-#     all_folds_baseline = []
-#     for seed_num in range (10):
-#         output_directory = (get_full_path('Desktop/Privileged_Data/{}/fixedCandCstar-10fold-tech-{}-RFE-baseline-step=0.1-percent_of_priv=100/cross-validation{}'.format(experiment_name2,dataset_num,seed_num)))
-#         for inner_fold in range(num_folds):
-#             with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
-#                 baseline_score = float(baseline_file.readline().split(',')[0])
-#                 all_folds_baseline+=[baseline_score]
-#     list_of_baselines.append(all_folds_baseline)
-
-
-list_of_baseline_errors =np.array([1-mean for mean in np.mean(list_of_baselines,axis=1)])
-list_of_rfe_errors = np.array([1-mean for mean in np.mean(list_of_300_rfe,axis=1)])
-list_of_lupi_errors = np.array([1-mean for mean in np.mean(list_of_300_lupi,axis=1)])
-
-list_of_baseline_errors2 =np.array([1-mean for mean in np.mean(list_of_baselines2,axis=1)])
-list_of_rfe_errors2 = np.array([1-mean for mean in np.mean(list_of_300_rfe2,axis=1)])
-list_of_lupi_errors2 = np.array([1-mean for mean in np.mean(list_of_300_lupi2,axis=1)])
-
-
+# print (list_of_baseline_errors)
 
 list_of_rfe_errors = list_of_rfe_errors[np.argsort(list_of_baseline_errors)]
 list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_baseline_errors)]
@@ -112,33 +71,41 @@ baseline_error_bars=list(stats.sem(list_of_baselines,axis=1))
 rfe_error_bars = list(stats.sem(list_of_300_rfe,axis=1))
 lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 
-#######################################
-
-fig = plt.figure()
-
-plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, color='green', label='All features (normalised)')
-plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='RFE - top 300 features (normalised)')
-plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUPI - top 300, rest privileged (normalised)')
 
 
-# plt.errorbar(list(range(num_datasets)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
-# plt.errorbar(list(range(num_datasets)), list_of_rfe_errors2, yerr = rfe_error_bars2, c='k', label='RFE - top 300 features (original)')
-# plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
+plt.subplot(2,1,1)
+plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, color='green', label='All features')
+plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='ANOVA - unselected features only')
+plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUPI - top 300 features used as privileged')
 
-plt.show()
-
+# plt.savefig(get_full_path('Desktop/All-new-results/{}.png'.format(keyword)))
+outputfile=open(get_full_path('Desktop/All-new-results/{}.txt'.format(keyword)),'w')
+# plt.show()
 
 lupi_improvements =0
 lupi_worse = 0
 total_improvement_over_rfe, total_improvement_over_baseline, total_improvement_over_baseline2 = 0,0,0
+improvements_list = []
+
 for rfe_error, lupi_error in zip(list_of_rfe_errors,list_of_lupi_errors):
     total_improvement_over_rfe+=(rfe_error-lupi_error)
     if rfe_error>lupi_error:
         lupi_improvements+=1
+    if rfe_error==lupi_error:
+        print('same error rate!')
     else:
         lupi_worse+=1
-print('lupi helped in',lupi_improvements,'cases vs rfe')
+    improvements_list.append(rfe_error-lupi_error)
+
+improvements_list=np.array(improvements_list)
+print(improvements_list)
+
+print('lupi helped in',lupi_improvements,'cases vs standard SVM')
 print('mean improvement', total_improvement_over_rfe/len(list_of_rfe_errors))
+outputfile.write('\nlupi helped in {} cases vs standard SVM'.format(lupi_improvements))
+outputfile.write('\nmean improvement={}'.format(total_improvement_over_rfe/len(list_of_rfe_errors)))
+
+################################################
 
 lupi_improvements =0
 lupi_worse = 0
@@ -148,8 +115,12 @@ for baseline_error, lupi_error in zip(list_of_baseline_errors,list_of_lupi_error
         lupi_improvements+=1
     else:
         lupi_worse+=1
-print('lupi helped in',lupi_improvements,'cases vs baseline')
+print('lupi helped in',lupi_improvements,'cases vs all-feats-baseline')
 print('mean improvement', total_improvement_over_baseline/len(list_of_rfe_errors))
+outputfile.write('\nlupi helped in {} cases vs all-feats-baseline'.format(lupi_improvements))
+outputfile.write('\nmean improvement={}'.format(total_improvement_over_baseline/len(list_of_rfe_errors)))
+
+#############################################
 
 rfe_improvements =0
 rfe_worse = 0
@@ -159,6 +130,21 @@ for baseline_error, rfe_error in zip(list_of_baseline_errors,list_of_rfe_errors)
         rfe_improvements+=1
     else:
         rfe_worse+=1
-print('rfe helped in',rfe_improvements,'cases vs baseline')
+print('feat selection helped in',rfe_improvements,'cases vs all-feats-baseline')
 print('mean improvement', total_improvement_over_baseline2/len(list_of_rfe_errors))
+outputfile.write('\nrfe helped in {} cases vs baseline'.format(rfe_improvements))
+outputfile.write('\nmean improvement={}'.format(total_improvement_over_baseline2/len(list_of_rfe_errors)))
+outputfile.close()
+##########################################
 
+plt.ylabel('Error rate (%)')
+plt.subplot(2,1,2)
+plt.bar(list(range(num_datasets)),improvements_list)
+plt.ylabel('LUFe accuracy improvement over RFE (%)')
+plt.xlabel('Dataset number')
+# plt.axes('')
+plt.savefig(get_full_path('Desktop/All-new-results/Combined-plots/{}.png'.format(keyword)))
+plt.show()
+
+list_of_worse = np.where(improvements_list<0)
+print(list_of_worse)

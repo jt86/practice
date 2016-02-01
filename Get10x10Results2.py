@@ -17,13 +17,14 @@ dataset='tech'
 n_top_feats= 300
 percent_of_priv = 100
 percentofinstances=100
-toporbottom='bottom'
+toporbottom='top'
 step=0.1
 
-experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}toppercentpriv-{}percentinstances'.format(dataset,step,percent_of_priv,percentofinstances,method)
+print('10x10-tech-ALLCV-3to3-featsscaled-step0.1-10bottompercentpriv-100percentinstances')
+experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
 print (experiment_name)
 
-keyword = '{}-{}feats-{}-3to3-{}instances-{}{}priv-step0.1-NEW'.format(dataset,n_top_feats,method,percentofinstances,toporbottom,percent_of_priv)
+keyword = '{}-{}feats-{}-3to3-{}{}instances-{}priv-step01'.format(dataset,n_top_feats,method,toporbottom,percentofinstances,percent_of_priv)
 np.set_printoptions(linewidth=132)
 
 
@@ -83,9 +84,9 @@ for dataset_num in range(num_datasets):
 #     list_of_baselines.append(all_folds_baseline)
 
 
-list_of_baseline_errors =np.array([1-mean for mean in np.mean(list_of_baselines,axis=1)])
-list_of_rfe_errors = np.array([1-mean for mean in np.mean(list_of_300_rfe,axis=1)])
-list_of_lupi_errors = np.array([1-mean for mean in np.mean(list_of_300_lupi,axis=1)])
+list_of_baseline_errors =np.array([1-mean for mean in np.mean(list_of_baselines,axis=1)])*100
+list_of_rfe_errors = np.array([1-mean for mean in np.mean(list_of_300_rfe,axis=1)])*100
+list_of_lupi_errors = np.array([1-mean for mean in np.mean(list_of_300_lupi,axis=1)])*100
 
 print (list_of_baseline_errors)
 
@@ -148,8 +149,9 @@ lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 
 #######################################
 
-fig = plt.figure()
 
+
+plt.subplot(2,1,1)
 plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, color='green', label='All features')
 plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='ANOVA - unselected features only')
 plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUPI - top 300 features used as privileged')
@@ -161,14 +163,14 @@ plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_b
 # plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
 
 
-plt.savefig(get_full_path('Desktop/All-new-results/{}.png'.format(keyword)))
+# plt.savefig(get_full_path('Desktop/All-new-results/{}.png'.format(keyword)))
 outputfile=open(get_full_path('Desktop/All-new-results/{}.txt'.format(keyword)),'w')
-plt.show()
+# plt.show()
 
 lupi_improvements =0
 lupi_worse = 0
 total_improvement_over_rfe, total_improvement_over_baseline, total_improvement_over_baseline2 = 0,0,0
-
+improvements_list = []
 
 for rfe_error, lupi_error in zip(list_of_rfe_errors,list_of_lupi_errors):
     total_improvement_over_rfe+=(rfe_error-lupi_error)
@@ -176,6 +178,9 @@ for rfe_error, lupi_error in zip(list_of_rfe_errors,list_of_lupi_errors):
         lupi_improvements+=1
     else:
         lupi_worse+=1
+    improvements_list.append(rfe_error-lupi_error)
+
+improvements_list=np.array(improvements_list)
 
 print('lupi helped in',lupi_improvements,'cases vs standard SVM')
 print('mean improvement', total_improvement_over_rfe/len(list_of_rfe_errors))
@@ -208,3 +213,16 @@ print('mean improvement', total_improvement_over_baseline2/len(list_of_rfe_error
 outputfile.write('\nrfe helped in {} cases vs baseline'.format(rfe_improvements))
 outputfile.write('\nmean improvement={}'.format(total_improvement_over_baseline2/len(list_of_rfe_errors)))
 outputfile.close()
+
+
+
+
+
+plt.ylabel('Error rate (%)')
+plt.subplot(2,1,2)
+plt.bar(list(range(num_datasets)),improvements_list)
+plt.ylabel('LUFe accuracy improvement (%)')
+plt.xlabel('Dataset number')
+# plt.axes('')
+plt.savefig(get_full_path('Desktop/All-new-results/Combined-plots/{}.png'.format(keyword)))
+plt.show()
