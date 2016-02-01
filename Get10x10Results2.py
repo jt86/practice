@@ -12,7 +12,7 @@ num_repeats = 10
 num_folds = 10
 num_datasets=49
 
-method = 'RFE'
+method = 'UNIVARIATE'
 dataset='tech'
 n_top_feats= 300
 percent_of_priv = 100
@@ -20,11 +20,11 @@ percentofinstances=100
 toporbottom='top'
 step=0.1
 
-print('10x10-tech-ALLCV-3to3-featsscaled-step0.1-10bottompercentpriv-100percentinstances')
-experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
+print('10x10-tech-ALLCV-3to3-featsscaled-step0.1-10bottompercentpriv-100percentinstances-{}'.format(method))
+experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances-{}'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
 print (experiment_name)
 
-keyword = '{}-{}feats-{}-3to3-{}{}instances-{}priv-step01'.format(dataset,n_top_feats,method,toporbottom,percentofinstances,percent_of_priv)
+keyword = '{}-{}feats-{}-3to3-{}{}instances-{}priv-step01-{}'.format(dataset,n_top_feats,method,toporbottom,percentofinstances,percent_of_priv,method)
 np.set_printoptions(linewidth=132)
 
 
@@ -152,12 +152,12 @@ lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
 
 
 plt.subplot(2,1,1)
-plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, color='green', label='All features')
-plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='ANOVA - unselected features only')
-plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUPI - top 300 features used as privileged')
+plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, color='green', label='ALL')
+plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='{}-{}'.format(method,n_top_feats))
+plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUFe-{}-{}'.format(method,n_top_feats))
 #
 # plt.title('')
-# plt.legend(loc='best')
+plt.legend(loc='lower right',prop={'size':10})
 # plt.errorbar(list(range(num_datasets)), list_of_baseline_errors2, yerr = baseline_error_bars2, c='cyan', label='All features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_rfe_errors2, yerr = rfe_error_bars2, c='k', label='RFE - top 300 features (original)')
 # plt.errorbar(list(range(num_datasets)), list_of_lupi_errors2, yerr = lupi_error_bars2, c='magenta', label='LUPI - top 300, rest privileged (original)')
@@ -223,6 +223,5 @@ plt.subplot(2,1,2)
 plt.bar(list(range(num_datasets)),improvements_list)
 plt.ylabel('LUFe accuracy improvement (%)')
 plt.xlabel('Dataset number')
-# plt.axes('')
 plt.savefig(get_full_path('Desktop/All-new-results/Combined-plots/{}.png'.format(keyword)))
 plt.show()

@@ -9,7 +9,7 @@ count=1
 #
 
 dataset='tech'
-for top_k in [300]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
+for top_k in [500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
     for take_top_t in ['top']:#,'bottom']:
         for percentofpriv in [100]:#,10,20,30,40,60,70,80,90]:
             for datasetnum in range (49): #5
