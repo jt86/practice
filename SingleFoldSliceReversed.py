@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from sklearn.metrics import accuracy_score
-from SVMplus4 import svmplusQP, svmplusQP_Predict
+from SVMplus import svmplusQP, svmplusQP_Predict
 from ParamEstimation import get_best_C, get_best_RFE_C, get_best_CandCstar
 from sklearn import svm
 from Get_Full_Path import get_full_path

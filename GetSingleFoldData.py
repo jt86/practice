@@ -1,3 +1,9 @@
+'''
+Called by SingleFoldSlice.py and SingleFoldUnivariate.py
+Gets the subset of data for one fold, for one setting
+'''
+
+
 __author__ = 'jt306'
 import numpy as np
 from Get_Full_Path import get_full_path

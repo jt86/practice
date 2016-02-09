@@ -1,7 +1,17 @@
+'''
+This is the main function.
+Things to check before running: (1) values of C, (2) output directory and whether old output is there
+(3) number of jobs in go-practice-submit.sh matches desired number of settings to run in Run Experiment
+(4) that there is no code test run
+(5) data is regularised as desired in GetSingleFoldData
+(6) params including number of folds and stepsize set correctly
+'''
+
+
 import os
 import numpy as np
 from sklearn.metrics import accuracy_score
-from SVMplus4 import svmplusQP, svmplusQP_Predict
+from SVMplus import svmplusQP, svmplusQP_Predict
 from ParamEstimation import  get_best_C, get_best_RFE_C, get_best_CandCstar
 from sklearn import svm
 from Get_Full_Path import get_full_path
@@ -11,8 +21,8 @@ from GetSingleFoldData import get_train_and_test_this_fold
 # from GetFeatSelectionData import get_train_and_test_this_fold
 import sys
 import numpy.random
-from sklearn import preprocessing
-
+from sklearn import preprocessinge
+from time import time
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances,take_top_t):
 
@@ -29,7 +39,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
         print('word',take_top_t)
-        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,take_top_t,percentageofinstances,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/PRACTICE 10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,take_top_t,percentageofinstances,datasetnum,topk,percentageofinstances))
         print (output_directory)
 
         try:
@@ -70,7 +80,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         print ('n top feats',n_top_feats)
         param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats,k))
 
-
+        start_time=time()
         ########## GET BEST C FOR RFE
 
         best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize,cross_validation_folder,datasetnum,topk)
@@ -101,6 +111,8 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         print('normal train shape {},priv train shape {}'.format(normal_features_training.shape,privileged_features_training.shape))
         print('normal testing shape {}'.format(normal_features_testing.shape))
+
+
 
         ##############################  BASELINE - all features
 
@@ -170,6 +182,6 @@ def get_random_array(num_instances,num_feats):
 
 # value = 1
 
-# single_fold(k=1, topk=300, dataset='tech', datasetnum=39, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=5, percent_of_priv=90, percentageofinstances=100, take_top_t='bottom')
+single_fold(k=3, topk=500, dataset='tech', datasetnum=39, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
 #  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
 # print(single_fold(k=0, topk=5000, dataset='awa', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=100, percentageofinstances=100,take_top_t='top'))

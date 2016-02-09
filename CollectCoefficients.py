@@ -1,3 +1,7 @@
+'''
+Module used in comparing coefficients
+'''
+
 __author__ = 'jt306'
 import os
 from matplotlib import pyplot as plt

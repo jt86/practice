@@ -1,5 +1,9 @@
-count=1
+'''
+Generate list of parameters. Called by RunExperiment.py when running on cluster
+'''
 
+
+count=1
 # for dataset in ['arcene','dexter','gisette','dorothea','madelon']:
 #     for seed in range(10):
 #         for fold_num in range(10):

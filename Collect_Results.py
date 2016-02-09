@@ -27,11 +27,11 @@ dataset='tech'
 n_top_feats= 300
 percent_of_priv = 100
 percentofinstances=100
-toporbottom='top'
+toporbottom='bottom'
 step=0.1
 
 all_settings_list=[]
-for percent_of_priv in [100]:#list(range(10,101,10)):
+for percent_of_priv in list(range(10,101,10)):
     experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
     # print (experiment_name)
 

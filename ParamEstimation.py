@@ -7,7 +7,7 @@ import numpy as np
 import numpy
 import pdb
 from sklearn import cross_validation, linear_model
-from SVMplus4 import svmplusQP, svmplusQP_Predict
+from SVMplus import svmplusQP, svmplusQP_Predict
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, LinearSVC
 import os,sys
@@ -116,34 +116,3 @@ def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,cross_
     # sys.exit()
     return best_C
 
-#
-# def param_estimation(param_estimation_file, training_features, training_labels, c_values, inner_folds):
-#
-#     training_labels=training_labels.ravel()
-#     scores_array = np.zeros(len(c_values))
-#     rs = StratifiedShuffleSplit(y=training_labels, n_iter=inner_folds, test_size=.2, random_state=0)
-#
-#
-#     for train_indices, test_indices in rs:
-#         train_this_fold, test_this_fold = training_features[train_indices], training_features[test_indices]
-#         train_labels_this_fold, test_labels_this_fold = training_labels[train_indices], training_labels[test_indices]
-#
-#
-#         scores_array = get_scores_for_this_fold(c_values, train_this_fold, train_labels_this_fold,
-#                                                 test_this_fold, test_labels_this_fold, scores_array)
-#
-#     best_indices = np.unravel_index(scores_array.argmax(), scores_array.shape)
-#     best_parameters = c_values[best_indices[0]]
-#     param_estimation_file.write(np.array2string(scores_array, separator=', ').translate(None, '[]'))
-#     return best_parameters
-#
-#
-# def get_scores_for_this_fold(c_values,train_data, train_labels, test_data, test_labels, scores_array):
-#
-#     for c_index, c_value in enumerate(c_values):
-#         clf = svm.SVC(C=c_value, kernel='linear',random_state=1)
-#         clf.fit(train_data, train_labels)
-#         scores_array[c_index]+=accuracy_score(test_labels, clf.predict(test_data))
-#     return scores_array
-#
-#

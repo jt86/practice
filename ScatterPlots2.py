@@ -2,7 +2,7 @@ __author__ = 'jt306'
 
 from Get_Full_Path import get_full_path
 import numpy as np
-from GetTechData import get_techtc_data
+from GetSingleFoldData import get_techtc_data
 import matplotlib.pyplot as plt
 num_datasets=49
 

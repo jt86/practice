@@ -1,3 +1,7 @@
+'''
+Takes the end of a path (relative_path) and appends the correct start, depending on host (cluster or local machine)
+'''
+
 __author__ = 'jt306'
 def get_full_path(relative_path):
     from socket import gethostname

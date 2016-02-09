@@ -1,3 +1,7 @@
+'''
+Main function used to collect results over 10x10 folds and plot two results (line and bar) comparing three settings
+'''
+
 __author__ = 'jt306'
 import matplotlib
 from Get_Full_Path import get_full_path
@@ -6,6 +10,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 import sys
 from scipy import stats
+import matplotlib.cm as cm
+
 
 print (matplotlib.__version__)
 num_repeats = 10
@@ -17,13 +23,13 @@ dataset='tech'
 n_top_feats= 300
 percent_of_priv = 100
 percentofinstances=100
-toporbottom='bottom'
+toporbottom='top'
 step=0.1
 
-# print('10x10-tech-ALLCV-3to3-featsscaled-step0.1-10bottompercentpriv-100percentinstances')
+#NB if 'method' is RFE doesn't work - delete last "-{}" from line below
+experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances-{}'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
+# experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-100toppercentpriv-100percentinstances'
 
-experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
-print (experiment_name)
 
 keyword = '{}-{}feats-{}-3to3-{}{}instances-{}priv-step01'.format(dataset,n_top_feats,method,toporbottom,percentofinstances,percent_of_priv)
 np.set_printoptions(linewidth=132)
@@ -67,16 +73,29 @@ list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_baseline_errors)]
 list_of_baseline_errors = list_of_baseline_errors[np.argsort(list_of_baseline_errors)]
 
 
-baseline_error_bars=list(stats.sem(list_of_baselines,axis=1))
-rfe_error_bars = list(stats.sem(list_of_300_rfe,axis=1))
-lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1))
+baseline_error_bars=list(stats.sem(list_of_baselines,axis=1)*100)
+rfe_error_bars = list(stats.sem(list_of_300_rfe,axis=1)*100)
+lupi_error_bars = list(stats.sem(list_of_300_lupi,axis=1)*100)
+
+
+if method=='UNIVARIATE':
+    method='ANOVA'
+
+
+plt.style.use('grayscale')
+# plt.subplot(2,1,1)
+
+ax0 = plt.subplot2grid((3, 1), (0, 0), rowspan=2)
+
+
+ax0.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, label='LUFe-{}-{}'.format(method,n_top_feats),marker='x',markersize=3,fillstyle='none')#, linestyle='-.')
+ax0.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, label='{}-{}'.format(method,n_top_feats),marker='s',markersize=3,fillstyle='none')#, linestyle='-.')
+ax0.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, label='ALL',linestyle='--')
+ax0.legend(loc='lower right',prop={'size':10})
+ax0.set_ylabel('Error rate (%)')
 
 
 
-plt.subplot(2,1,1)
-plt.errorbar(list(range(num_datasets)), list_of_baseline_errors, yerr = baseline_error_bars, color='green', label='All features')
-plt.errorbar(list(range(num_datasets)), list_of_rfe_errors, yerr = rfe_error_bars, color='blue', label='ANOVA - unselected features only')
-plt.errorbar(list(range(num_datasets)), list_of_lupi_errors, yerr = lupi_error_bars, color='red', label='LUPI - top 300 features used as privileged')
 
 # plt.savefig(get_full_path('Desktop/All-new-results/{}.png'.format(keyword)))
 outputfile=open(get_full_path('Desktop/All-new-results/{}.txt'.format(keyword)),'w')
@@ -137,14 +156,32 @@ outputfile.write('\nmean improvement={}'.format(total_improvement_over_baseline2
 outputfile.close()
 ##########################################
 
-plt.ylabel('Error rate (%)')
-plt.subplot(2,1,2)
-plt.bar(list(range(num_datasets)),improvements_list)
-plt.ylabel('LUFe accuracy improvement over RFE (%)')
-plt.xlabel('Dataset number')
+ax1 = plt.subplot2grid((3,1), (2,0))
+# ax1.plot(y, x)
+
+
+# ax1.subplot(2,1,2)
+ax1.bar(list(range(num_datasets)),improvements_list)
+ax1.set_ylabel('Improvement by LUFe(%)')
+ax1.set_ylim(-4,10)
+ax1.set_xlabel('Dataset number')
 # plt.axes('')
 plt.savefig(get_full_path('Desktop/All-new-results/Combined-plots/{}.png'.format(keyword)))
 plt.show()
 
+
 list_of_worse = np.where(improvements_list<0)
 print(list_of_worse)
+
+total_lupi = np.sum(list_of_lupi_errors)/49
+print ('lupi',100-total_lupi)
+
+total_all = np.sum(list_of_baseline_errors)/49
+print ('all',100-total_all)
+
+total_rfe = np.sum(list_of_rfe_errors)/49
+print ('rfe',100-total_rfe)
+
+print (total_rfe-total_lupi)
+print (total_all-total_lupi)
+print (total_all-total_rfe)

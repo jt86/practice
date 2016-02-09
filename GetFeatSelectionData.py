@@ -1,3 +1,8 @@
+'''
+Get the data for one fold for Arcene, Gisette etc
+'''
+
+
 __author__ = 'jt306'
 import numpy as np
 from Get_Full_Path import get_full_path

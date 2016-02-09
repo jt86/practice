@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from sklearn.metrics import accuracy_score
-from SVMplus4 import svmplusQP, svmplusQP_Predict
+from SVMplus import svmplusQP, svmplusQP_Predict
 from ParamEstimation import  get_best_C, get_best_RFE_C, get_best_CandCstar
 from sklearn import svm
 from Get_Full_Path import get_full_path
@@ -13,6 +13,11 @@ import sys
 import numpy.random
 from sklearn import preprocessing
 from sklearn.feature_selection import SelectPercentile, f_classif, chi2
+
+'''
+Like SingleFoldSlice but used for univariate (ANOVA) setting
+'''
+
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances,take_top_t):
 
@@ -156,4 +161,4 @@ def get_random_array(num_instances,num_feats):
     return random_array
 
 
-# print(single_fold(k=7, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='top'))
+# print(single_fold(k=3, topk=500, dataset='tech', datasetnum=28, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='top'))
