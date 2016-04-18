@@ -178,10 +178,16 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         combined_clf = svm.SVC(C=best_C_combined, kernel=kernel, random_state=k)
         combined_clf.fit(all_training, training_labels)
         combined_predictions = combined_clf.predict(all_testing)
-        print('combined classifier score', accuracy_score(testing_labels, combined_predictions))
 
-        with open(os.path.join(cross_validation_folder,'combined_score-{}.csv'.format(k)),'a') as combined_file:
-            combined_file.write (str(accuracy_score(testing_labels,combined_predictions))+',')
+        combined_score = accuracy_score(testing_labels, combined_predictions)
+
+        print('combined classifier score', combined_score)
+
+        # with open(os.path.join(cross_validation_folder,'combined_score-{}.csv'.format(k)),'a') as combined_file:
+        #     combined_file.write (str(accuracy_score(testing_labels,combined_predictions))+',')0
+
+        with open(os.path.join(cross_validation_folder,'combined_score-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
+            cv_svm_file.write(str(combined_score)+",")
 
         ###############
 
@@ -212,6 +218,6 @@ def get_random_array(num_instances,num_feats):
 #
 # for i in range (49):
 #     print ('\n\n\n i')
-# single_fold(k=3, topk=500, dataset='tech', datasetnum=40, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=10, percentageofinstances=100, take_top_t='top')
+single_fold(k=3, topk=500, dataset='tech', datasetnum=40, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=10, percentageofinstances=100, take_top_t='top')
 # single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
 # print(single_fold(k=0, topk=5000, dataset='awa', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=100, percentageofinstances=100,take_top_t='top'))
