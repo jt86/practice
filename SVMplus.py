@@ -97,7 +97,7 @@ def svmplusQP_Predict(X,Xtest,alphas,bias):
     return predicted
     #return np.sign(predicted)
     
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    X = random.randn(1000,999)
 #    Xtest = random.randn(200,999)
 #    Xstar = random.randn(1000,90)
@@ -106,6 +106,6 @@ def svmplusQP_Predict(X,Xtest,alphas,bias):
 #    Cstar = 0.1
 #    duals,bias = svmplusQP(X,Y,Xstar,C,Cstar)
 #    predicted = svmplusQP_Predict(X,Xtest,duals,bias)
-    
+#
 #    print predicted
-#    pdb.set_trace() 
+#    pdb.set_trace()

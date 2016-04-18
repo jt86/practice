@@ -1,4 +1,4 @@
-__author__ = 'jt306'
+C__author__ = 'jt306'
 import matplotlib
 from Get_Full_Path import get_full_path
 import os

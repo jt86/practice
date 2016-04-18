@@ -17,7 +17,7 @@ num_repeats = 10
 num_folds = 10
 num_datasets=49
 
-method = 'UNIVARIATE'
+method = 'RFE'
 dataset='tech'
 n_top_feats= 300
 percent_of_priv = 100
@@ -26,7 +26,7 @@ toporbottom='top'
 step=0.1
 
 print('10x10-tech-ALLCV-3to3-featsscaled-step0.1-10bottompercentpriv-100percentinstances-{}'.format(method))
-experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances-{}'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
+experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
 print (experiment_name)
 
 random_expt_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-100toppercentpriv-100percentinstances-RANDOM'

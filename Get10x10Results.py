@@ -11,14 +11,15 @@ import numpy as np
 import sys
 from scipy import stats
 import matplotlib.cm as cm
+import csv
 
-
+print (sys.version)
 print (matplotlib.__version__)
 num_repeats = 10
 num_folds = 10
 num_datasets=49
 
-method = 'UNIVARIATE'
+method = 'RFE'
 dataset='tech'
 n_top_feats= 300
 percent_of_priv = 100
@@ -27,10 +28,12 @@ toporbottom='top'
 step=0.1
 
 #NB if 'method' is RFE doesn't work - delete last "-{}" from line below
-experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances-{}'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
+experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
 # experiment_name = '10x10-tech-ALLCV-3to3-featsscaled-step0.1-100toppercentpriv-100percentinstances'
-
-
+print(experiment_name)
+print('10x10-tech-ALLCV-3to3-featsscaled-step0.1-100toppercentpriv-100percentinstances')
+if experiment_name == ('10x10-tech-ALLCV-3to3-featsscaled-step0.1-100toppercentpriv-100percentinstances'):
+    print (True)
 keyword = '{}-{}feats-{}-3to3-{}{}instances-{}priv-step01'.format(dataset,n_top_feats,method,toporbottom,percentofinstances,percent_of_priv)
 np.set_printoptions(linewidth=132)
 
@@ -42,7 +45,7 @@ for dataset_num in range(num_datasets):
     all_folds_baseline, all_folds_SVM,all_folds_LUPI = [],[],[]
     for seed_num in range (num_repeats):
         # output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}-top{}chosen/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,seed_num)))
-        output_directory = (get_full_path('Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num)))
+        output_directory = ('/Volumes/LocalDataHD/j/jt/jt306/Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num))
         for inner_fold in range(num_folds):
             with open(os.path.join(output_directory,'baseline-{}.csv'.format(inner_fold)),'r') as baseline_file:
                 baseline_score = float(baseline_file.readline().split(',')[0])
@@ -98,7 +101,7 @@ ax0.set_ylabel('Error rate (%)')
 
 
 # plt.savefig(get_full_path('Desktop/All-new-results/{}.png'.format(keyword)))
-outputfile=open(get_full_path('Desktop/All-new-results/{}.txt'.format(keyword)),'w')
+outputfile=open(get_full_path('Desktop/All-new-results2/{}.txt'.format(keyword)),'w')
 # plt.show()
 
 lupi_improvements =0
@@ -136,7 +139,9 @@ for baseline_error, lupi_error in zip(list_of_baseline_errors,list_of_lupi_error
         lupi_worse+=1
 print('lupi helped in',lupi_improvements,'cases vs all-feats-baseline')
 print('mean improvement', total_improvement_over_baseline/len(list_of_rfe_errors))
-outputfile.write('\nlupi helped in {} cases vs all-feats-baseline'.format(lupi_improvements))
+
+
+a.write('\nlupi helped in {} cases vs all-feats-baseline'.format(lupi_improvements))
 outputfile.write('\nmean improvement={}'.format(total_improvement_over_baseline/len(list_of_rfe_errors)))
 
 #############################################

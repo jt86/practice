@@ -12,5 +12,5 @@ def get_full_path(relative_path):
         print('apollo in hostname')
         prefix = '/lustre/scratch/inf/jt306'
     else:
-        prefix = '/Volumes/LocalDataHD/jt306'
+        prefix = '/Volumes/LocalDataHD/j/jt/jt306'
     return os.path.join(prefix, relative_path)
