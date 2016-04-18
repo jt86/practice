@@ -32,6 +32,7 @@ from sklearn import preprocessing
 
 
 def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances,take_top_t):
+        print ('running SingleFoldSliceRevision.py')
 
         if take_top_t not in ['top','bottom']:
                 print('take top t should be "top"or "bottom"')
@@ -107,15 +108,15 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         normal_features_testing = all_testing[:,best_n_mask].copy()
         privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
         privileged_features_testing=all_testing[:,np.invert(rfe.support_)].copy()
-
-        svc = SVC(C=best_rfe_param, kernel=kernel, random_state=k)
-        svc.fit(normal_features_training,training_labels)
-        rfe_accuracy = svc.score(normal_features_testing,testing_labels)
-        print ('rfe accuracy (using slice):',rfe_accuracy)
-
-
-        with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
-            cv_svm_file.write(str(rfe_accuracy)+",")
+        #
+        # svc = SVC(C=best_rfe_param, kernel=kernel, random_state=k)
+        # svc.fit(normal_features_training,training_labels)
+        # rfe_accuracy = svc.score(normal_features_testing,testing_labels)
+        # print ('rfe accuracy (using slice):',rfe_accuracy)
+        #
+        #
+        # with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,topk)),'a') as cv_svm_file:
+        #     cv_svm_file.write(str(rfe_accuracy)+",")
 
         print('normal train shape {},priv train shape {}'.format(normal_features_training.shape,privileged_features_training.shape))
         print('normal testing shape {}'.format(normal_features_testing.shape))
@@ -124,19 +125,19 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ##############################  BASELINE - all features
 
-        best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
-        # best_C_baseline=best_rfe_param
-        print('all feats best c',best_C_baseline)
-
-        print ('all training shape',all_training.shape)
-
-        clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=k)
-        clf.fit(all_training, training_labels)
-        baseline_predictions = clf.predict(all_testing)
-        print ('baseline',accuracy_score(testing_labels,baseline_predictions))
-
-        with open(os.path.join(cross_validation_folder,'baseline-{}.csv'.format(k)),'a') as baseline_file:
-            baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
+        # best_C_baseline = get_best_C(all_training, training_labels, c_values, cross_validation_folder,datasetnum,topk)
+        # # best_C_baseline=best_rfe_param
+        # print('all feats best c',best_C_baseline)
+        #
+        # print ('all training shape',all_training.shape)
+        #
+        # clf = svm.SVC(C=best_C_baseline, kernel=kernel,random_state=k)
+        # clf.fit(all_training, training_labels)
+        # baseline_predictions = clf.predict(all_testing)
+        # print ('baseline',accuracy_score(testing_labels,baseline_predictions))
+        #
+        # with open(os.path.join(cross_validation_folder,'baseline-{}.csv'.format(k)),'a') as baseline_file:
+        #     baseline_file.write (str(accuracy_score(testing_labels,baseline_predictions))+',')
 
         ############# SVM PLUS - PARAM ESTIMATION AND RUNNING
 
@@ -170,28 +171,36 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         print (normal_features_training.shape, privileged_features_training.shape, combined_feature_set_training.shape)
         print(normal_features_testing.shape, privileged_features_testing.shape, combined_feature_set_testing.shape)
 
-        combined_clf = svm.SVC(C=best_C_baseline, kernel=kernel, random_state=k)
+
+        ####### NEW PART #######
+
+        best_C_combined = get_best_C(combined_feature_set_training, training_labels, c_values, cross_validation_folder, datasetnum, topk)
+        combined_clf = svm.SVC(C=best_C_combined, kernel=kernel, random_state=k)
         combined_clf.fit(all_training, training_labels)
         combined_predictions = combined_clf.predict(all_testing)
         print('combined classifier score', accuracy_score(testing_labels, combined_predictions))
 
-        c_star_values=c_values
-        # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
-        #                                 c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
+        with open(os.path.join(cross_validation_folder,'combined_score-{}.csv'.format(k)),'a') as combined_file:
+            combined_file.write (str(accuracy_score(testing_labels,combined_predictions))+',')
 
+        ###############
 
-        c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
-                                         c_values, c_star_values,cross_validation_folder,datasetnum, topk)
-
-        duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
-        lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
-
-        accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
-        print('svm+ accuracy',(accuracy_lupi))
-        with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
-            cv_lupi_file.write(str(accuracy_lupi)+',')
-        print ('k=',k, 'seed=',skfseed,'topk',topk)
-        return (rfe_accuracy,accuracy_lupi )
+        #
+        # c_star_values=c_values
+        # # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
+        # #                                 c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
+        # c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
+        #                                  c_values, c_star_values,cross_validation_folder,datasetnum, topk)
+        #
+        # duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
+        # lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
+        #
+        # accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
+        # print('svm+ accuracy',(accuracy_lupi))
+        # with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
+        #     cv_lupi_file.write(str(accuracy_lupi)+',')
+        # print ('k=',k, 'seed=',skfseed,'topk',topk)
+        # return (rfe_accuracy,accuracy_lupi )
 
 
 def get_random_array(num_instances,num_feats):
@@ -203,6 +212,6 @@ def get_random_array(num_instances,num_feats):
 #
 # for i in range (49):
 #     print ('\n\n\n i')
-#     single_fold(k=3, topk=500, dataset='tech', datasetnum=i, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=10, percentageofinstances=100, take_top_t='top')
-#  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
+# single_fold(k=3, topk=500, dataset='tech', datasetnum=40, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=10, percentageofinstances=100, take_top_t='top')
+# single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
 # print(single_fold(k=0, topk=5000, dataset='awa', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=100, percentageofinstances=100,take_top_t='top'))
