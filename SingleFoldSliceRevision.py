@@ -47,7 +47,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
         print('word',take_top_t)
-        output_directory = get_full_path(('Desktop/Privileged_Data/NEWApril-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,take_top_t,percentageofinstances,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/CombinedNormalPriv-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,take_top_t,percentageofinstances,datasetnum,topk,percentageofinstances))
         print (output_directory)
 
         try:
