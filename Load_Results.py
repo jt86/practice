@@ -1,4 +1,6 @@
 '''
+Makes plot for experiment 3: comparing LUFe with ALL and RFE, in terms of
+(a) mean improvement (b) number of datasets improved
 Loads final results, which are collected and saved by Collect_Results.py
 '''
 
