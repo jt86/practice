@@ -30,12 +30,11 @@ toporbottom='top'
 step=0.1
 
 def compare_two_results(list1,list2,name1,name2):
-    print('\n\n')
     list1_better, list2_better = 0,0
     for error1, error2 in zip (list1,list2):
         if error1 > error2:
             list2_better += 1
-        else:
+        if error1 < error2:
             list1_better += 1
     print ('{} helped in {} cases vs {}'.format(name1,list1_better,name2))
     print ('{} was worse in {} cases vs {}'.format(name1,list2_better,name2))
@@ -45,7 +44,7 @@ def compare_two_results(list1,list2,name1,name2):
 
 
 all_settings_list=[]
-for percent_of_priv in list(range(10,90,10)):
+for percent_of_priv in list(range(100,101,10)):
     print('\n\n\n\n percent of priv',percent_of_priv)
     experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances-RFE'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
     experiment_name2 = 'CombinedNormalPriv-10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances'.\
@@ -92,7 +91,6 @@ for percent_of_priv in list(range(10,90,10)):
     list_of_lupi_errors = np.array([1-mean for mean in np.mean(list_of_300_lupi,axis=1)])
     list_of_combined_errors = np.array([1 - mean for mean in np.mean(list_of_combined, axis=1)])
 
-    print (list_of_combined_errors)
     list_of_combined_errors = list_of_combined_errors[np.argsort(list_of_baseline_errors)]
     list_of_rfe_errors = list_of_rfe_errors[np.argsort(list_of_baseline_errors)]
     list_of_lupi_errors = list_of_lupi_errors[np.argsort(list_of_baseline_errors)]
@@ -111,105 +109,59 @@ for percent_of_priv in list(range(10,90,10)):
     # #########################
 
 
-    mean1, lupi_improvements=compare_two_results(list_of_rfe_errors,list_of_lupi_errors,'rfe','LUFe')
-    #
-    # #########################
-    #
-    # lupi_improvements2 =0
-    # lupi_worse2 = 0
-    # for baseline_error, lupi_error in zip(list_of_baseline_errors,list_of_lupi_errors):
-    #     total_improvement_over_baseline+=(baseline_error-lupi_error)
-    #     if baseline_error>lupi_error:
-    #         lupi_improvements2+=1
-    #     else:
-    #         lupi_worse2+=1
-    # print('lupi helped in',lupi_improvements2,'cases vs all-feats-baseline')
-    # print('mean improvement', total_improvement_over_baseline/len(list_of_rfe_errors))
-    # mean2=total_improvement_over_baseline/len(list_of_rfe_errors)
-    #
-    # #########################
-    #
-    # rfe_improvements =0
-    # rfe_worse = 0
-    # for baseline_error, rfe_error in zip(list_of_baseline_errors,list_of_rfe_errors):
-    #     rfe_total_improvement_over_baseline+=(baseline_error - rfe_error)
-    #     if baseline_error>rfe_error:
-    #         rfe_improvements+=1
-    #     else:
-    #         rfe_worse+=1
-    # print('feat selection helped in',rfe_improvements,'cases vs all-feats-baseline')
-    # print('mean improvement', rfe_total_improvement_over_baseline / len(list_of_rfe_errors))
-    # mean3 = rfe_total_improvement_over_baseline / len(list_of_rfe_errors)
-    #
-    # #########################
+    lufe_vs_rfe_mean, lufe_vs_rfe_count=compare_two_results(list_of_lupi_errors, list_of_rfe_errors, 'LUFe', 'rfe')
+    lufe_vs_baseline_mean, lufe_vs_baseline_count = compare_two_results(list_of_lupi_errors, list_of_baseline_errors, 'LUFe', 'baseline')
+    rfe_vs_baseline_mean, rfe_vs_baseline_count = compare_two_results(list_of_rfe_errors, list_of_baseline_errors, 'RFE', 'baseline')
+    lufe_vs_combined_mean, lufe_vs_combined_count = compare_two_results(list_of_lupi_errors, list_of_combined_errors, 'LUFe', 'combined')
 
-    # improvements_over_combined = 0
-    # worse_than_combined = 0
-    #
-    # for combined_error, lupi_error in zip(list_of_combined_errors,list_of_lupi_errors):
-    #     total_improvement_over_combined+=(combined_error-lupi_error)
-    #     if combined_error>lupi_error:
-    #         improvements_over_combined+=1
-    #     else:
-    #         worse_than_combined+=1
-    # #
-    # print('lupi helped in',improvements_over_combined,'cases vs combined')
-    # print('lupi was worse than combined in',worse_than_combined,'cases')
-    # mean4 = total_improvement_over_combined/len(list_of_rfe_errors)
-    # print('mean improvement',mean4)
-    # total_improvement_over_combined2=np.mean(list_of_combined_errors)-np.mean(list_of_lupi_errors)
-    # print(total_improvement_over_combined2)
-    #
-    # print('\n')
-    # compare_two_results(list_of_combined_errors,list_of_lupi_errors,'combined','LUFe')
-
-    ##########################
+    combined_vs_rfe_mean, combined_vs_rfe_count = compare_two_results(list_of_combined_errors,list_of_rfe_errors, 'combined', 'RFE')
+    combined_vs_baseline_mean, combined_vs_baseline_count = compare_two_results(list_of_combined_errors, list_of_baseline_errors,'combined', 'baseline')
+    print ('mean improvemnt vs baseline',combined_vs_baseline_mean)
 
 
-    #
-    # single_setting_list = [lupi_improvements,lupi_improvements2,rfe_improvements,mean1,mean2,mean3,improvements_over_combined,mean4]
-    # print(percent_of_priv,single_setting_list)
-    # all_settings_list.append(single_setting_list)
-    # print(all_settings_list)
+    all_results_this_percentage = [lufe_vs_rfe_count, lufe_vs_baseline_count, rfe_vs_baseline_count, lufe_vs_rfe_mean, lufe_vs_baseline_mean, rfe_vs_baseline_mean, lufe_vs_combined_count, lufe_vs_combined_mean]
+    print(percent_of_priv, all_results_this_percentage)
+    all_settings_list.append(all_results_this_percentage)
+    print(len(all_settings_list))
 
-# print(type(all_settings_list))
-#
-#
-#
-# all_settings_list=np.array(all_settings_list)
-# print(all_settings_list.shape)
-#
-# folder=(get_full_path('Desktop/Privileged_Data/Collected_results_NEW/'))
-#
-# lupi_vs_rfe_list=all_settings_list[:,0]
-# print(lupi_vs_rfe_list)
-# np.save(folder+'lupi_vs_rfe_list-{}'.format(toporbottom),lupi_vs_rfe_list)
-#
-# lupi_vs_all_list=all_settings_list[:,1]
-# print(lupi_vs_all_list)
-# np.save(folder+'lupi_vs_all_list-{}'.format(toporbottom),lupi_vs_all_list)
-#
-# rfe_vs_all_list=all_settings_list[:,2]
-# print(rfe_vs_all_list)
-# np.save(folder+'rfe_vs_all_list-{}'.format(toporbottom),rfe_vs_all_list)
-#
-# lupi_vs_rfe_mean=all_settings_list[:,3]
-# print(lupi_vs_rfe_mean)
-# np.save(folder+'lupi_vs_rfe_mean-{}'.format(toporbottom),lupi_vs_rfe_mean)
-#
-# lupi_vs_all_mean=all_settings_list[:,4]
-# print(lupi_vs_all_mean)
-# np.save(folder+'lupi_vs_all_mean-{}'.format(toporbottom),lupi_vs_all_mean)
-#
-# rfe_vs_all_mean=all_settings_list[:,5]
-# print(rfe_vs_all_mean)
-# np.save(folder+'rfe_vs_all_mean-{}'.format(toporbottom),rfe_vs_all_mean)
-#
-# lupi_vs_combined_list = all_settings_list[:,6]
-# print(lupi_vs_combined_list)
-# np.save(folder+'lupi_vs_combined-{}'.format(toporbottom),lupi_vs_combined_list)
-#
-# lupi_vs_combined_mean=all_settings_list[:,7]
-# print(lupi_vs_combined_mean)
-# np.save(folder+'lupi_vs_combined_mean-{}'.format(toporbottom),lupi_vs_combined_mean)
+print(type(all_settings_list))
+
+
+
+all_settings_list=np.array(all_settings_list)
+print(all_settings_list.shape)
+
+folder=(get_full_path('Desktop/Privileged_Data/Collected_results_NEW/'))
+
+lupi_vs_rfe_list=all_settings_list[:,0]
+print(lupi_vs_rfe_list)
+np.save(folder+'lupi_vs_rfe_list-{}'.format(toporbottom),lupi_vs_rfe_list)
+
+lupi_vs_all_list=all_settings_list[:,1]
+print(lupi_vs_all_list)
+np.save(folder+'lupi_vs_all_list-{}'.format(toporbottom),lupi_vs_all_list)
+
+rfe_vs_all_list=all_settings_list[:,2]
+print(rfe_vs_all_list)
+np.save(folder+'rfe_vs_all_list-{}'.format(toporbottom),rfe_vs_all_list)
+
+lupi_vs_rfe_mean=all_settings_list[:,3]
+print(lupi_vs_rfe_mean)
+np.save(folder+'lupi_vs_rfe_mean-{}'.format(toporbottom),lupi_vs_rfe_mean)
+
+lupi_vs_all_mean=all_settings_list[:,4]
+print(lupi_vs_all_mean)
+np.save(folder+'lupi_vs_all_mean-{}'.format(toporbottom),lupi_vs_all_mean)
+
+rfe_vs_all_mean=all_settings_list[:,5]
+print(rfe_vs_all_mean)
+np.save(folder+'rfe_vs_all_mean-{}'.format(toporbottom),rfe_vs_all_mean)
+
+lupi_vs_combined_list = all_settings_list[:,6]
+print(lupi_vs_combined_list)
+np.save(folder+'lupi_vs_combined-{}'.format(toporbottom),lupi_vs_combined_list)
+
+lupi_vs_combined_mean=all_settings_list[:,7]
+print(lupi_vs_combined_mean)
+np.save(folder+'lupi_vs_combined_mean-{}'.format(toporbottom),lupi_vs_combined_mean)
 
