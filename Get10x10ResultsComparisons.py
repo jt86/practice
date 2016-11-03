@@ -27,9 +27,9 @@ percentofinstances=100
 toporbottom='top'
 step=0.1
 
-lufecolor='green'
-rfecolor='cornflowerblue'
-basecolor='orange'
+lufecolor='forestgreen'
+rfecolor='purple'
+basecolor='dodgerblue'
 
 
 #NB if 'method' is RFE doesn't work - delete last "-{}" from line below
@@ -103,7 +103,8 @@ ax0.legend(loc='lower right',prop={'size':10})
 ax0.set_ylabel('Error rate (%)')
 
 
-
+os.makedirs(get_full_path('Desktop/All-new-results/Combined-plots/Comparison_plots/{}-{}-{}'.format(lufecolor,rfecolor,basecolor)))
+save_path = get_full_path('Desktop/All-new-results/Combined-plots/Comparison_plots/{}-{}-{}'.format(lufecolor,rfecolor,basecolor))
 
 # plt.savefig(get_full_path('Desktop/All-new-results/{}.png'.format(keyword)))
 outputfile=open(get_full_path('Desktop/All-new-results2/{}.txt'.format(keyword)),'w')
@@ -172,24 +173,58 @@ outputfile.write('\nmean improvement={}'.format(total_improvement_over_baseline2
 outputfile.close()
 ##########################################
 
-ax1 = plt.subplot2grid((3,1), (2,0))
+# ax1 = plt.subplot2grid((3,1), (2,0))
 # ax1.plot(y, x)
 
+ax1=plt.axes()
 
 list_of_worse = np.where(lufe_vs_rfe_improvements < 0)[0]
 print('list of worse',list_of_worse)
 list_of_better = np.where(lufe_vs_rfe_improvements > 0)[0]
 print('list of better',list_of_better)
-# ax1.subplot(2,1,2)
-# ax1.bar(list(range(num_datasets)),improvements_list,color=lufecolor)
+
 ax1.bar(list_of_better, lufe_vs_rfe_improvements[list_of_better], color=lufecolor)
 ax1.bar(list_of_worse, lufe_vs_rfe_improvements[list_of_worse], color=rfecolor)
 ax1.set_ylabel('Reduction in error rate \n by LUFe vs {}(%)'.format(method))
-ax1.set_ylim(-4,10)
+# ax1.set_ylim(-7,15)
 ax1.set_xlabel('Dataset index')
 # plt.axes('')
-plt.savefig(get_full_path('Desktop/All-new-results/Combined-plots/{}-colour.png'.format(keyword)))
+plt.savefig(get_full_path('{}/lufe_vs_rfe.png'.format(save_path)))
 plt.show()
+
+ax2=plt.axes()
+
+
+list_of_worse2 = np.where(lufe_vs_all_improvements < 0)[0]
+print('list of worse',list_of_worse2)
+list_of_better2 = np.where(lufe_vs_all_improvements > 0)[0]
+print('list of better',list_of_better2)
+
+ax2.bar(list_of_better2, lufe_vs_all_improvements[list_of_better2], color=lufecolor)
+ax2.bar(list_of_worse2, lufe_vs_all_improvements[list_of_worse2], color=basecolor)
+ax2.set_ylabel('Reduction in error rate \n by LUFe vs ALL(%)')
+ax2.set_ylim(-7,15)
+ax2.set_xlabel('Dataset index')
+# plt.axes('')
+plt.savefig(get_full_path('{}/lufe_vs_all.png'.format(save_path)))
+plt.show()
+
+ax3=plt.axes()
+
+list_of_worse3 = np.where(rfe_vs_all_improvements < 0)[0]
+print('list of worse',list_of_worse3)
+list_of_better3 = np.where(rfe_vs_all_improvements > 0)[0]
+print('list of better',list_of_better3)
+
+ax3.bar(list_of_better3, rfe_vs_all_improvements[list_of_better3], color=rfecolor)
+ax3.bar(list_of_worse3, rfe_vs_all_improvements[list_of_worse3], color=basecolor)
+ax3.set_ylabel('Reduction in error rate \n by {} vs ALL(%)'.format(method))
+ax3.set_ylim(-7,15)
+ax3.set_xlabel('Dataset index')
+# plt.axes('')
+plt.savefig(get_full_path('{}/rfe_vs_all.png'.format(save_path)))
+plt.show()
+
 
 
 

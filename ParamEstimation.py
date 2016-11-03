@@ -87,7 +87,7 @@ def get_best_C(training_data,training_labels, c_values, cross_validation_folder,
 
 
 
-def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,cross_validation_folder,datasetnum,topk):
+def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,datasetnum,topk):
     starttime = time.clock()
     print ('time', starttime)
     cv = cross_validation.StratifiedKFold(training_labels, 5)
@@ -109,8 +109,8 @@ def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,cross_
     index_of_best=best_positions[0]
     # index_of_best = best_positions[int(len(best_positions)/2)]
     best_C = c_values[index_of_best]
-    with open(os.path.join(cross_validation_folder,'C_fullset-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
-        cross_validation_doc.write("\n{} {}".format(cv_scores,best_C))
+    # with open(os.path.join(cross_validation_folder,'C_fullset-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
+    #     cross_validation_doc.write("\n{} {}".format(cv_scores,best_C))
     print('cross valid scores (rfe):',cv_scores,'=> best C=',best_C)
     print ('-------\ntime',time.clock()-starttime,'\n-------')
     # sys.exit()

@@ -39,12 +39,12 @@ def compare_two_results(list1,list2,name1,name2):
     print ('{} helped in {} cases vs {}'.format(name1,list1_better,name2))
     print ('{} was worse in {} cases vs {}'.format(name1,list2_better,name2))
 
-    mean = (np.mean(list1)-np.mean(list2))
+    mean = (np.mean(list2)-np.mean(list1))
     return (mean,list1_better)
 
 
 all_settings_list=[]
-for percent_of_priv in list(range(100,101,10)):
+for percent_of_priv in list(range(10,101,10)):
     print('\n\n\n\n percent of priv',percent_of_priv)
     experiment_name = '10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances-RFE'.format(dataset,step,percent_of_priv,toporbottom,percentofinstances,method)
     experiment_name2 = 'CombinedNormalPriv-10x10-{}-ALLCV-3to3-featsscaled-step{}-{}{}percentpriv-{}percentinstances'.\
@@ -119,14 +119,14 @@ for percent_of_priv in list(range(100,101,10)):
     print ('mean improvemnt vs baseline',combined_vs_baseline_mean)
 
 
-    all_results_this_percentage = [lufe_vs_rfe_count, lufe_vs_baseline_count, rfe_vs_baseline_count, lufe_vs_rfe_mean, lufe_vs_baseline_mean, rfe_vs_baseline_mean, lufe_vs_combined_count, lufe_vs_combined_mean]
+    all_results_this_percentage = [lufe_vs_rfe_count, lufe_vs_rfe_mean, lufe_vs_baseline_count, lufe_vs_baseline_mean, rfe_vs_baseline_count,  rfe_vs_baseline_mean, lufe_vs_combined_count, lufe_vs_combined_mean]
     print(percent_of_priv, all_results_this_percentage)
     all_settings_list.append(all_results_this_percentage)
     print(len(all_settings_list))
 
 print(type(all_settings_list))
 
-
+print ('all settings',all_settings_list)
 
 all_settings_list=np.array(all_settings_list)
 print(all_settings_list.shape)
@@ -137,21 +137,21 @@ lupi_vs_rfe_list=all_settings_list[:,0]
 print(lupi_vs_rfe_list)
 np.save(folder+'lupi_vs_rfe_list-{}'.format(toporbottom),lupi_vs_rfe_list)
 
-lupi_vs_all_list=all_settings_list[:,1]
-print(lupi_vs_all_list)
-np.save(folder+'lupi_vs_all_list-{}'.format(toporbottom),lupi_vs_all_list)
-
-rfe_vs_all_list=all_settings_list[:,2]
-print(rfe_vs_all_list)
-np.save(folder+'rfe_vs_all_list-{}'.format(toporbottom),rfe_vs_all_list)
-
-lupi_vs_rfe_mean=all_settings_list[:,3]
+lupi_vs_rfe_mean=all_settings_list[:,1]
 print(lupi_vs_rfe_mean)
 np.save(folder+'lupi_vs_rfe_mean-{}'.format(toporbottom),lupi_vs_rfe_mean)
 
-lupi_vs_all_mean=all_settings_list[:,4]
+lupi_vs_all_list=all_settings_list[:,2]
+print(lupi_vs_all_list)
+np.save(folder+'lupi_vs_all_list-{}'.format(toporbottom),lupi_vs_all_list)
+
+lupi_vs_all_mean=all_settings_list[:,3]
 print(lupi_vs_all_mean)
 np.save(folder+'lupi_vs_all_mean-{}'.format(toporbottom),lupi_vs_all_mean)
+
+rfe_vs_all_list=all_settings_list[:,4]
+print(rfe_vs_all_list)
+np.save(folder+'rfe_vs_all_list-{}'.format(toporbottom),rfe_vs_all_list)
 
 rfe_vs_all_mean=all_settings_list[:,5]
 print(rfe_vs_all_mean)

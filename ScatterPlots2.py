@@ -5,7 +5,12 @@ import numpy as np
 from GetSingleFoldData import get_techtc_data
 import matplotlib.pyplot as plt
 num_datasets=49
-
+import os
+try:
+    user_paths = os.environ['PYTHONPATH'].split(os.pathsep)
+except KeyError:
+    user_paths = []
+print(user_paths)
 
 #load results for baseline, rfe, lupi, as 10x10 arrays, saved using SaveResults.py
 experiment_name = '10x10-ALLCV-3to3-featsscaled-300'

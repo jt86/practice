@@ -33,12 +33,12 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     print(all_data.shape)
     print('skf seed',skf_seed)
     skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True,random_state=skf_seed)
+
     for fold_num, (train_index, test_index) in enumerate(skf):
         if fold_num==k:
-            # print('k=',k,'found!')
             train_data, test_data = all_data[train_index],all_data[test_index]
             train_labels, test_labels = all_labels[train_index], all_labels[test_index]
-
+            train_indices,test_indices=train_index,test_index
             break
 
     print('fold num', fold_num, 'test index',test_index)
@@ -49,9 +49,9 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     test_data = preprocessing.scale(test_data)
 
 
-
+    print ('train',train_indices.shape, 'test',test_indices.shape)
     print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
-    return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)
+    return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels), train_indices, test_indices
 
 # def get_awa_data(dataset_index):
 #     data = np.load(get_full_path('Desktop/Privileged_Data/data_Joe/data{}.npy'.format(dataset_index)))
@@ -102,7 +102,6 @@ def get_techtc_data(dataset_index):
     positive_instances = dok[positive_indices]
     negative_instances = dok[negative_indices]
     print (positive_instances.shape, negative_instances.shape)
-
 
     return(positive_instances,negative_instances)
 
