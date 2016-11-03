@@ -35,7 +35,6 @@ count=1
 #                         count+=1
 
 #CVPR2016_Rcode jt306$ R 500 39 3 4 --no-save < run_scripts.R
-
 for top_k in [300,500]:
     for datasetnum in range(49):  # 5
         for seed in range(1):
