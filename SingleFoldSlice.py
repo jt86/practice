@@ -28,7 +28,7 @@ from GetSingleFoldData import get_techtc_data
 
 
 
-def save_instance_and_feature_indices_for_R(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances):
+def save_instance_and_feature_indices_for_R(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed):
 
         stepsize=0.1
         np.random.seed(k)
@@ -60,7 +60,7 @@ def save_instance_and_feature_indices_for_R(k, topk, dataset,datasetnum, kernel,
 
 
 
-save_instance_and_feature_indices_for_R(k=3, topk=500, dataset='tech', datasetnum=40, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100)#, take_top_t='bottom')
+# save_instance_and_feature_indices_for_R(k=3, topk=500, dataset='tech', datasetnum=40, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100)#, take_top_t='bottom')
 
 
 def save_dataset_for_R(datasetnum):
@@ -83,27 +83,27 @@ def save_dataset_for_R(datasetnum):
         print(type(all_labels[0]))
 
 
-save_dataset_for_R(39)
+# save_dataset_for_R(39)
 
 #
 
-
-data = np.load(get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Documents/CVPR2016_Rcode/saved_datasets/tech39data.npy'))
-
-print (data[0,0:130])
-labels = np.load(get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Documents/CVPR2016_Rcode/saved_datasets/tech39labels.npy'))
-
-topk=500;dataset='tech';datasetnum=39;k=3;skfseed=4
-
-
-saved_training_indices = [int(item) for item in np.loadtxt(get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Documents/CVPR2016_Rcode/saved_indices/top{}-{}{}-{}-{}-train_instances_indices'.format(topk,dataset,datasetnum,k,skfseed)))]
-print (len(saved_training_indices))
-
-saved_testing_indices = [int(item) for item in np.loadtxt(get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Documents/CVPR2016_Rcode/saved_indices/top{}-{}{}-{}-{}-test_instances_indices'.format(topk,dataset,datasetnum,k,skfseed)))]
-print (len(saved_testing_indices))
-
-train_items = data[saved_training_indices,:]
-print (train_items.shape)
-
-test_items = data[saved_testing_indices,:]
-print (test_items.shape)
+#
+# data = np.load(get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Documents/CVPR2016_Rcode/saved_datasets/tech39data.npy'))
+#
+# print (data[0,0:130])
+# labels = np.load(get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Documents/CVPR2016_Rcode/saved_datasets/tech39labels.npy'))
+#
+# topk=500;dataset='tech';datasetnum=39;k=3;skfseed=4
+#
+#
+# saved_training_indices = [int(item) for item in np.loadtxt(get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Documents/CVPR2016_Rcode/saved_indices/top{}-{}{}-{}-{}-train_instances_indices'.format(topk,dataset,datasetnum,k,skfseed)))]
+# print (len(saved_training_indices))
+#
+# saved_testing_indices = [int(item) for item in np.loadtxt(get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Documents/CVPR2016_Rcode/saved_indices/top{}-{}{}-{}-{}-test_instances_indices'.format(topk,dataset,datasetnum,k,skfseed)))]
+# print (len(saved_testing_indices))
+#
+# train_items = data[saved_training_indices,:]
+# print (train_items.shape)
+#
+# test_items = data[saved_testing_indices,:]
+# print (test_items.shape)
