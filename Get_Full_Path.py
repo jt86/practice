@@ -8,6 +8,7 @@ def get_full_path(relative_path):
     import os
 
     h = gethostname()
+    print (h)
     if 'apollo' in h or 'node' in h:
         print('apollo in hostname')
         prefix = '/lustre/scratch/inf/jt306'
