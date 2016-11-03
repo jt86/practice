@@ -52,7 +52,7 @@ def save_instance_and_feature_indices_for_R(k, topk, dataset,datasetnum, kernel,
         print('unselected', unselected_feat_indices.shape)
 
         # save_string = get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Documents/CVPR2016_Rcode/saved_indices/top{}-{}{}-{}-{}-'.format(topk,dataset,datasetnum,k,skfseed))
-        save_string = get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Desktop/Rcode/saved_indices/top{}-{}{}-{}-{}-'.format(topk, dataset,datasetnum,k,skfseed))
+        save_string = get_full_path('Desktop/Rcode/saved_indices/top{}-{}{}-{}-{}-'.format(topk, dataset,datasetnum,k,skfseed))
 
         np.savetxt(save_string+'train_instances_indices',train_indices)
         np.savetxt(save_string + 'test_instances_indices',test_indices)
@@ -76,7 +76,7 @@ def save_dataset_for_R(datasetnum):
         print (all_data.shape)
         print (all_labels.shape)
 
-        save_string = get_full_path('/Volumes/LocalDataHD/j/jt/jt306/Documents/CVPR2016_Rcode/saved_datasets/tech{}'.format(datasetnum))
+        save_string = get_full_path('Desktop/Rcode/saved_datasets/tech{}'.format(datasetnum))
         np.savetxt(save_string + 'data', all_data)
         np.savetxt(save_string + 'labels', all_labels)
 
