@@ -4,7 +4,7 @@ Takes the end of a path (relative_path) and appends the correct start, depending
 
 __author__ = 'jt306'
 def get_full_path(relative_path):
-    from socket import gethostname
+    s
     import os
 
     h = gethostname()

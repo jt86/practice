@@ -12,16 +12,16 @@ count=1
 #                 count+=1
 #
 
-dataset='tech'
-for top_k in [300,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
-    for take_top_t in ['top']:#,'bottom']:
-        # for percentofpriv in [10,20,30,40,50,60,70,80,90]:
-        for percentofpriv in [100]:
-            for datasetnum in range (49): #5
-                for seed in range (10):
-                    for fold_num in range(10): #0
-                        print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
-                        # count+=1
+# dataset='tech'
+# for top_k in [300,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
+#     for take_top_t in ['top']:#,'bottom']:
+#         # for percentofpriv in [10,20,30,40,50,60,70,80,90]:
+#         for percentofpriv in [100]:
+#             for datasetnum in range (49): #5
+#                 for seed in range (10):
+#                     for fold_num in range(10): #0
+#                         print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
+#                         # count+=1
 # print(count)
 
 # dataset = 'awa'
@@ -34,9 +34,11 @@ for top_k in [300,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
 #                         print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
 #                         count+=1
 
-# #CVPR2016_Rcode jt306$ R 500 39 3 4 --no-save < run_scripts.R
-# for top_k in [300,500]:
-#     for datasetnum in range(49):  # 5
-#         for seed in range(1):
-#             for fold_num in range(1):
-#                 print('R {} {} {} {} --no-save < run_scripts.R'.format(top_k,datasetnum,seed,fold_num))
+#CVPR2016_Rcode jt306$ R 500 39 3 4 --no-save < run_scripts.R
+for top_k in [300,500]:
+    for datasetnum in range(49):  # 5
+        for seed in range(10):
+            for fold_num in range(10):
+                print('R {} {} {} {} --no-save < run_scripts.R'.format(top_k,datasetnum,seed,fold_num))
+                # count+=1
+# print (count)
