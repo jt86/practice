@@ -39,6 +39,6 @@ for top_k in [300,500]:
     for datasetnum in range(49):  # 5
         for seed in range(10):
             for fold_num in range(10):
-                print('R {} {} {} {} --no-save < run_scripts.R'.format(top_k,datasetnum,seed,fold_num))
+                print('load R; R {} {} {} {} --no-save < run_scripts.R'.format(top_k,datasetnum,seed,fold_num))
                 # count+=1
 # print (count)
