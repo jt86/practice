@@ -35,10 +35,35 @@ count=1
 #                         count+=1
 
 #CVPR2016_Rcode jt306$ R 500 39 3 4 --no-save < run_scripts.R
-for top_k in [300,500]:
-    for datasetnum in range(49):  # 5
-        for seed in range(10):
-            for fold_num in range(10):
-                print('R {} {} {} {} --no-save < run_scripts.R'.format(top_k,datasetnum,seed,fold_num))
+# for number_selected in [300, 500]:
+#     for datasetnum in range(49):  # 5
+#         for seed in range(10):
+#             for fold_num in range(10):
+#                 # print('R {} {} {} {} --no-save < run_scripts.R'.format(top_k,datasetnum,seed,fold_num))
+#                 print('{} {} {} {}'.format(number_selected, datasetnum, seed, fold_num))
                 # count+=1
 # print (count)
+
+print ("500 7 0 4")
+print ("500 7 0 9")
+print ("500 7 1 6")
+print ("500 7 2 5")
+print ("500 7 2 8")
+print ("500 7 3 7")
+print ("500 7 3 9")
+print ("500 7 4 7")
+print ("500 7 5 4")
+print ("500 7 5 9")
+print ("500 7 6 4")
+print ("500 7 6 8")
+print ("500 7 7 6")
+print ("500 7 7 9")
+print ("500 7 8 6")
+print ("500 7 8 8")
+print ("500 7 8 9")
+print ("500 7 9 4")
+print ("500 8 1 0")
+print ("500 8 4 0")
+print ("500 8 7 0")
+print ("500 8 8 0")
+
