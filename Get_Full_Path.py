@@ -1,13 +1,13 @@
 '''
 Takes the end of a path (relative_path) and appends the correct start, depending on host (cluster or local machine)
 '''
-
+import socket
 __author__ = 'jt306'
 def get_full_path(relative_path):
-    s
+
     import os
 
-    h = gethostname()
+    h = socket.gethostname()
     print (h)
     if 'apollo' in h or 'node' in h:
         print('apollo in hostname')
