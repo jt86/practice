@@ -14,7 +14,7 @@
 
 
 import os
-path = '/Volumes/LocalDataHD/j/jt/jt306/Desktop/finalresults'
+path = '/Volumes/LocalDataHD/j/jt/jt306/Desktop/finalresults2'
 count=0
 
 for root, dirs, files in os.walk(path, topdown=True):
@@ -30,7 +30,7 @@ for root, dirs, files in os.walk(path, topdown=True):
             print (score)
 
         location = 'error-100-{}-tech-{}-{}-{}-.txt'.format(num_selected, datasetnum, seed, fold)
-        with open (os.path.join(root, location)) as newfile:
+        with open (os.path.join(root, location),'a') as newfile:
             newfile.write(score)
 # for num_selected in [300,500]w:
 #     for datasetnum in range(49):

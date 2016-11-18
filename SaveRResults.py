@@ -22,20 +22,20 @@ def save_r_results():
                             # print('value',value)
                             if value=='':
                                 print ('print ("{} {} {} {}")'.format(num_selected,datasetnum,seed,fold))
-                            # score = float(value)
-                            # all_folds_single_setting.append(score)
-                            # print (len(all_folds_single_setting))
-#             all_results+=([all_folds_single_setting])
-#             # print ('len all results',len(all_results))
-#
-#     all_results = np.array(all_results)
-#     print (all_results.shape)
-#     means = np.mean(all_results,axis=1)
-#     print (means)
-#
-#     print(all_results.shape)
-#     np.save(os.path.join(path,'mean_results'),means)
-#
+    #                         score = float(value)
+    #                         all_folds_single_setting.append(score)
+    #                         print (len(all_folds_single_setting))
+    #         all_results+=([all_folds_single_setting])
+    #         # print ('len all results',len(all_results))
+    #
+    # all_results = np.array(all_results)
+    # print (all_results.shape)
+    # means = np.mean(all_results,axis=1)
+    # print (means)
+    #
+    # print(all_results.shape)
+    # np.save(os.path.join(path,'mean_results'),means)
+
 save_r_results()
 
 # gpc_conf_results = np.load(os.path.join(path,'mean_results.npy'))
