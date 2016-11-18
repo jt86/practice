@@ -34,15 +34,15 @@ count=1
 #                         print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
 #                         count+=1
 
-#CVPR2016_Rcode jt306$ R 500 39 3 4 --no-save < run_scripts.R
-# for number_selected in [300, 500]:
-#     for datasetnum in range(49):  # 5
-#         for seed in range(10):
-#             for fold_num in range(10):
-#                 # print('R {} {} {} {} --no-save < run_scripts.R'.format(top_k,datasetnum,seed,fold_num))
-#                 print('{} {} {} {}'.format(number_selected, datasetnum, seed, fold_num))
-                # count+=1
-# print (count)
+# CVPR2016_Rcode jt306$ R 500 39 3 4 --no-save < run_scripts.R
+for number_selected in [300, 500]:
+    for datasetnum in range(49):  # 5
+        for seed in range(10):
+            for fold_num in range(10):
+                # print('R {} {} {} {} --no-save < run_scripts.R'.format(top_k,datasetnum,seed,fold_num))
+                print('{} {} {} {}'.format(number_selected, datasetnum, seed, fold_num))
+                count+=1
+print (count)
 
 # print ("500 7 0 4")
 # print ("500 7 0 9")
@@ -80,4 +80,4 @@ count=1
 # print ("500 6 9 2")
 # print ("500 6 9 5")
 # print ("500 6 9 9")
-print ("500 6 0 5")
+# print ("500 6 0 5")
