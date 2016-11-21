@@ -44,7 +44,8 @@ if __name__ == '__main__':
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
     single_fold(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum=args.datasetnum,
                                             kernel=args.kernel, cmin=args.cmin, cmax=args.cmax,
-                                            number_of_cs=args.numberofcs, skfseed=args.skfseed)
+                                            number_of_cs=args.numberofcs, skfseed=args.skfseed,
+                percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances, take_top_t=args.taketopt)
     # save_instance_and_feature_indices_for_R(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, skfseed=args.skfseed)
 
@@ -53,3 +54,6 @@ if __name__ == '__main__':
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, skfseed=args.skfseed)
     #
     # save_dataset_for_R(args.datasetnum)
+
+    # single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, skfseed, percent_of_priv,
+    #             percentageofinstances, take_top_t):
