@@ -181,8 +181,9 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi)+',')
 
-        print ('k=',k, 'seed=',skfseed,'topk',topk,'svm+ accuracy=',(accuracy_lupi))
-        return (rfe_accuracy,accuracy_lupi )
+        print ('k=',k, 'seed=',skfseed,'topk',topk,'rfe accuracy=\n',rfe_accuracy,'svm+ accuracy=\n',accuracy_lupi,'baseline accuracy=\n',accuracy_score(testing_labels,baseline_predictions))
+
+        return (rfe_accuracy,accuracy_lupi)
 
 
 def get_random_array(num_instances,num_feats):
@@ -192,6 +193,6 @@ def get_random_array(num_instances,num_feats):
 
 # value = 1
 
-# single_fold(k=3, topk=500, dataset='tech', datasetnum=39, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
+# single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
 #  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
 # print(single_fold(k=0, topk=5000, dataset='awa', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=100, percentageofinstances=100,take_top_t='top'))
