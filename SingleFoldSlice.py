@@ -188,7 +188,7 @@ def get_random_array(num_instances,num_feats):
     random_array = preprocessing.scale(random_array)
     return random_array
 
-# value = 1
+
 
 # single_fold(k=3, topk=500, dataset='tech', datasetnum=39, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
 #  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
