@@ -1,8 +1,8 @@
 import argparse
-# from SingleFoldSlice import single_fold
+from SingleFoldSlice import single_fold
 # from GetMI import single_fold
 # from SingleFoldUnivariate import single_fold
-from SingleFoldSlice import save_instance_and_feature_indices_for_R, save_dataset_for_R
+# from SingleFoldSlice import save_instance_and_feature_indices_for_R, save_dataset_for_R
 
 if __name__ == '__main__':
 
@@ -42,9 +42,14 @@ if __name__ == '__main__':
     # dataset='awa{}'.format(args.dataset_num)
     # single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
+    single_fold(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum=args.datasetnum,
+                                            kernel=args.kernel, cmin=args.cmin, cmax=args.cmax,
+                                            number_of_cs=args.numberofcs, skfseed=args.skfseed)
+    # save_instance_and_feature_indices_for_R(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
+    #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, skfseed=args.skfseed)
 
 
-    save_instance_and_feature_indices_for_R(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
-                kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, skfseed=args.skfseed)
-
-    save_dataset_for_R(args.datasetnum)
+    # save_instance_and_feature_indices_for_R(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
+    #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, skfseed=args.skfseed)
+    #
+    # save_dataset_for_R(args.datasetnum)
