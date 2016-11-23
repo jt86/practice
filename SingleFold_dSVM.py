@@ -38,7 +38,7 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/SavedSlacks294-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset, cmin, cmax, stepsize, percent_of_priv, take_top_t, percentageofinstances, datasetnum, top_k, percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/dSVM295-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset, cmin, cmax, stepsize, percent_of_priv, take_top_t, percentageofinstances, datasetnum, top_k, percentageofinstances))
         print (output_directory)
 
         try:
@@ -159,4 +159,4 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
 
 
-single_fold(k=3, top_k=500, dataset='tech', datasetnum=294, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
+# single_fold(k=3, top_k=500, dataset='tech', datasetnum=294, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
