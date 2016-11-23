@@ -108,14 +108,14 @@ def get_techtc_data(dataset_index):
 
 
 def get_tech_address(dataset_index):
-    with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_246.txt"), "r") as infile:
+    with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_295.txt"), "r") as infile:
     # with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_49.txt"), "r") as infile:
         line = infile.readlines()[dataset_index]
         return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/vectors.dat".format(line.strip('\r\n'))))
 
 
 def get_words(dataset_index):
-    with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_246.txt"), "r") as infile:
+    with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_295.txt"), "r") as infile:
     # with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_49.txt"), "r") as infile:
         line = infile.readlines()[dataset_index]
         return (get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/{}/features.idx".format(line.strip('\r\n'))))
