@@ -159,4 +159,4 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
 
 
-# single_fold(k=3, n_top_feats=500, dataset='tech', datasetnum=294, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
+single_fold(k=3, top_k=500, dataset='tech', datasetnum=294, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
