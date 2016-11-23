@@ -90,7 +90,8 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
         ######### Fit SVM to just the privileged features and then take the slacks
 
-        svc = SVC(C=best_rfe_param, kernel=kernel, random_state=k)
+        c = get_best_C(privileged_features_training, training_labels, c_values, cross_validation_folder, datasetnum, top_k)
+        svc = SVC(C=c, kernel=kernel, random_state=k)
         svc.fit(privileged_features_training,training_labels)
         # rfe_accuracy = svc.score(normal_features_testing,testing_labels)
         # print ('rfe accuracy (using slice):',rfe_accuracy
