@@ -66,7 +66,7 @@ for n_top_feats in[300,500]:
             for inner_fold in range(num_folds):
                 if not os.path.exists(os.path.join(output_directory,'lupi-{}-{}.csv').format(inner_fold,n_top_feats)):
                     # print ('datasetnum {} seednum {} inner_fold {}'.format(dataset_num,seed_num,inner_fold))
-                    # count+=1
-                    # print (count)
+                    count+=1
+                    print (count)
                     print('print ("--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}")'.format(
                             inner_fold, n_top_feats, dataset, dataset_num, 'linear', -3, 3, 7, seed_num, percent_of_priv, 100,'top'))
