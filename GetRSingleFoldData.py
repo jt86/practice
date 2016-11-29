@@ -51,17 +51,7 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
 
     print ('train',train_indices.shape, 'test',test_indices.shape)
     print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
-    return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels), train_indices, test_indices
-
-# def get_awa_data(dataset_index):
-#     data = np.load(get_full_path('Desktop/Privileged_Data/data_Joe/data{}.npy'.format(dataset_index)))
-#     # print (np.sum(labels>0))
-#     print ('data shape',data.shape)
-#     # print (data[0])
-#     # print (labels.shape)
-#     pos_instances,neg_instances = data[:252], data[252:]
-#     print (pos_instances.shape, neg_instances.shape)
-#     return(pos_instances,neg_instances)
+    return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)#, train_indices, test_indices
 
 def get_awa_data(dataset_index):
     data = np.load(get_full_path('Desktop/Privileged_Data/data_easyhard_Joe_allsamples/data{}.npy'.format(dataset_index)))
