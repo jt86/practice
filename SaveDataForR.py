@@ -19,12 +19,12 @@ from sklearn import svm
 from Get_Full_Path import get_full_path
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
-from GetSingleFoldData import get_train_and_test_this_fold
+from GetRSingleFoldData import get_train_and_test_this_fold,get_techtc_data
 # from GetFeatSelectionData import get_train_and_test_this_fold
 import sys
 import numpy.random
 from sklearn import preprocessing
-from GetRSingleFoldData import get_techtc_data
+
 
 
 
