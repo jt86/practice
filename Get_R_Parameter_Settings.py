@@ -3,7 +3,7 @@ Generate list of parameters. Called by RunExperiment.py when running on cluster
 '''
 
 from SaveDataForR import save_instance_and_feature_indices_for_R, save_dataset_for_R
-count=1
+count=0
 
 dataset='tech'
 for top_k in [300,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
@@ -11,12 +11,12 @@ for top_k in [300,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
         # for percentofpriv in [10,20,30,40,50,60,70,80,90]:
         for percentofpriv in [100]:
             for datasetnum in range (86,295): #5
-                save_dataset_for_R(datasetnum)
+                # save_dataset_for_R(datasetnum)
                 for seed in range (10):
                     for fold_num in range(10): #0
                         print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
-                        # count+=1
-# # print(count)
+#                         count+=1
+# print(count)
 #                         save_instance_and_feature_indices_for_R(k=fold_num, dataset=dataset, topk=top_k,
 #                                                                 datasetnum=datasetnum,kernel='linear', cmin=-3, cmax=3,
 #                                                                 number_of_cs=7, skfseed=seed)
