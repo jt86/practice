@@ -24,7 +24,7 @@ from GetSingleFoldData import get_train_and_test_this_fold
 import sys
 import numpy.random
 from sklearn import preprocessing
-from GetSingleFoldData import get_techtc_data
+from GetRSingleFoldData import get_techtc_data
 
 
 
