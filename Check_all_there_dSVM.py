@@ -58,7 +58,7 @@ np.set_printoptions(linewidth=132)
 
 count=0
 dsvm_lufe=[]
-for n_top_feats in[300,500]:
+for n_top_feats in[300,5500]:
     for dataset_num in range(num_datasets):
         all_folds_baseline, all_folds_SVM, all_folds_lufe1 = [], [], []
         for seed_num in range (num_repeats):
