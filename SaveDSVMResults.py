@@ -21,7 +21,7 @@ num_folds = 10
 
 method = 'RFE'
 dataset='tech'
-n_top_feats= 500
+n_top_feats= 300
 percent_of_priv = 100
 percentofinstances=100
 toporbottom='top'
@@ -198,70 +198,70 @@ plt.savefig(os.path.join(save_path,'just_lufe_and_{}-nobars.png'.format(keyword)
 #
 #
 # ################################################
-#
-#
-# def compare_two_settings(setting_one_errors,setting_two_errors,name_one,name_two):
-#     improvements_list=[]
-#     for error_one, error_two in zip(setting_one_errors, setting_two_errors):
-#         improvements_list.append(error_one - error_two)
-#     improvements_list = np.array(improvements_list)
-#     print('lupi helped in', len(np.where(improvements_list > 0)[0]), 'cases vs all-feats-baseline')
-#     print('mean improvement', np.mean(improvements_list))
-#     with open(os.path.join(save_path, '{}.txt'.format(keyword)), 'a') as outputfile:
-#         outputfile.write('\n{} vs {}: {} helped in {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),np.mean(improvements_list)))
-#     return(improvements_list)
-#
-#
-#
-# ##########################################      PLOTTING
-#
-# ax1 = plt.subplot2grid((3,1), (2,0))
-# # ax1.plot(y, x)
-#
-# def plot_figures(list_of_improvements,name1,name2,color1,color2):
-#     list_of_worse = np.where(list_of_improvements < 0)[0]
-#     list_of_better = np.where(list_of_improvements > 0)[0]
-#     ax1 = plt.axes()
-#     ax1.set_ylim(-7, 15)
-#     ax1.bar(range(295),list_of_improvements)
-#     ax1.bar(list_of_better, list_of_improvements[list_of_better], color=color1,)
-#     ax1.bar(list_of_worse, list_of_improvements[list_of_worse], color=color2)
-#     ax1.set_ylabel('Reduction in error rate \n by {} vs {}(%)'.format(name1,name2))
-#     ax1.set_xlabel('Dataset index')
-#     plt.savefig(get_full_path('{}/{}_vs_{}2.png'.format(save_path,name1,name2)))
-#     plt.clf()
-#
-# ##########################################
-#
-# def compare_and_plot(setting_one_errors,setting_two_errors,name_one,name_two,color1,color2):
-#     improvements_list = compare_two_settings(setting_one_errors,setting_two_errors,name_one,name_two)
-#     plot_figures(improvements_list,name_one,name_two,color1,color2)
-#
-# compare_and_plot(list_of_rfe_errors,list_of_lufe_errors,'RFE','LUFe',rfecolor,lufecolor)
-# compare_and_plot(list_of_all_errors, list_of_lufe_errors, 'ALL', 'LUFe', rfecolor, lufecolor)
-# compare_and_plot(list_of_all_errors,list_of_rfe_errors,'ALL','RFE',rfecolor,lufecolor)
-# compare_and_plot(list_of_rfe_errors,list_of_dsvm_errors,'RFE','dSVM+',rfecolor,lufecolor)
-# compare_and_plot(list_of_all_errors,list_of_dsvm_errors,'ALL','dSVM+',rfecolor,lufecolor)
-# compare_and_plot(list_of_lufe_errors,list_of_dsvm_errors,'LUFe','dSVM+',rfecolor,lufecolor)
-#
-# ##########################################
-#
-# total_lufe = np.sum(list_of_lufe_errors) / len(list_of_rfe_errors)
-# print ('lufe', 100 - total_lufe)
-#
-# total_all = np.sum(list_of_all_errors) / len(list_of_rfe_errors)
-# print ('all',100-total_all)
-#
-# total_rfe = np.sum(list_of_rfe_errors)/len(list_of_rfe_errors)
-# print ('rfe',100-total_rfe)
-#
-# print (total_rfe - total_lufe)
-# print (total_all - total_lufe)
-# print (total_all-total_rfe)
-#
-# print ('total lufe error', total_lufe)
-# print ('total rfe error', total_rfe)
-# print ('total all error', total_all)
-#
-# print ((total_rfe-total_lufe)/total_rfe*100)
-# print ((total_all-total_lufe)/total_all*100)
+
+
+def compare_two_settings(setting_one_errors,setting_two_errors,name_one,name_two):
+    improvements_list=[]
+    for error_one, error_two in zip(setting_one_errors, setting_two_errors):
+        improvements_list.append(error_one - error_two)
+    improvements_list = np.array(improvements_list)
+    print('){} vs {}: {} helped in {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),np.mean(improvements_list)))
+    print('mean improvement', np.mean(improvements_list))
+    with open(os.path.join(save_path, '{}.txt'.format(keyword)), 'a') as outputfile:
+        outputfile.write('\n{} vs {}: {} helped in {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),np.mean(improvements_list)))
+    return(improvements_list)
+
+
+
+##########################################      PLOTTING
+
+ax1 = plt.subplot2grid((3,1), (2,0))
+# ax1.plot(y, x)
+
+def plot_figures(list_of_improvements,name1,name2,color1,color2):
+    list_of_worse = np.where(list_of_improvements < 0)[0]
+    list_of_better = np.where(list_of_improvements > 0)[0]
+    ax1 = plt.axes()
+    ax1.set_ylim(-7, 15)
+    ax1.bar(range(295),list_of_improvements)
+    ax1.bar(list_of_better, list_of_improvements[list_of_better], color=color1,)
+    ax1.bar(list_of_worse, list_of_improvements[list_of_worse], color=color2)
+    ax1.set_ylabel('Reduction in error rate \n by {} vs {}(%)'.format(name2,name1))
+    ax1.set_xlabel('Dataset index')
+    plt.savefig(get_full_path('{}/{}_vs_{}2.png'.format(save_path,name2,name1)))
+    plt.clf()
+
+##########################################
+
+def compare_and_plot(setting_one_errors,setting_two_errors,name_one,name_two,color1,color2):
+    improvements_list = compare_two_settings(setting_one_errors,setting_two_errors,name_one,name_two)
+    plot_figures(improvements_list,name_one,name_two,color1,color2)
+
+compare_and_plot(list_of_rfe_errors,list_of_lufe_errors,'RFE','LUFe',rfecolor,lufecolor)
+compare_and_plot(list_of_all_errors, list_of_lufe_errors, 'ALL', 'LUFe', rfecolor, lufecolor)
+compare_and_plot(list_of_all_errors,list_of_rfe_errors,'ALL','RFE',rfecolor,lufecolor)
+compare_and_plot(list_of_rfe_errors,list_of_dsvm_errors,'RFE','dSVM+',rfecolor,lufecolor)
+compare_and_plot(list_of_all_errors,list_of_dsvm_errors,'ALL','dSVM+',rfecolor,lufecolor)
+compare_and_plot(list_of_lufe_errors,list_of_dsvm_errors,'LUFe','dSVM+',rfecolor,lufecolor)
+
+##########################################
+
+total_lufe = np.sum(list_of_lufe_errors) / len(list_of_rfe_errors)
+print ('lufe', 100 - total_lufe)
+
+total_all = np.sum(list_of_all_errors) / len(list_of_rfe_errors)
+print ('all',100-total_all)
+
+total_rfe = np.sum(list_of_rfe_errors)/len(list_of_rfe_errors)
+print ('rfe',100-total_rfe)
+
+print (total_rfe - total_lufe)
+print (total_all - total_lufe)
+print (total_all-total_rfe)
+
+print ('total lufe error', total_lufe)
+print ('total rfe error', total_rfe)
+print ('total all error', total_all)
+
+print ((total_rfe-total_lufe)/total_rfe*100)
+print ((total_all-total_lufe)/total_all*100)
