@@ -2,7 +2,7 @@
 Generate list of parameters. Called by RunExperiment.py when running on cluster
 '''
 
-from SaveDataForR import save_instance_and_feature_indices_for_R, save_dataset_for_R
+# from SaveDataForR import save_instance_and_feature_indices_for_R, save_dataset_for_R
 count=0
 
 # dataset='tech'
