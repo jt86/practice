@@ -33,13 +33,19 @@ from sklearn import preprocessing
 
 def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, skfseed, percent_of_priv, percentageofinstances, take_top_t):
 
+
+
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
-        print('cvalues',c_values)
+        # print('cvalues',c_values)
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/dSVM295-FIXEDCpoint1-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset, cmin, cmax, stepsize, percent_of_priv, take_top_t, percentageofinstances, datasetnum, top_k, percentageofinstances))
-        print (output_directory)
+        output_directory = get_full_path('Desktop/Privileged_Data/dSVM295-CHECK-VALUE')
+        # print (output_directory)
+        #
+        #
+        # with open(os.path.join(output_directory, 'tech{}-dScore.csv'),'a') as savefile:
+        #     savefile.write('hello,hello')
 
         try:
             os.makedirs(output_directory)
@@ -63,24 +69,26 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
         param_estimation_file.write("\n\n n={},fold={}".format(top_k, k))
 
-        # all_training = all_training[:,:2000]
-        # all_testing = all_testing[:, :2000]
+
+        # all_training = all_training[:,:1000]
+        # all_testing = all_testing[:, :1000]
+
 
         ########## GET BEST C FOR RFE
 
         # best_rfe_param = get_best_RFE_C(all_training,training_labels, c_values, n_top_feats,stepsize,cross_validation_folder,datasetnum,topk)
         best_rfe_param = get_best_RFE_C(all_training, training_labels, c_values, top_k, stepsize,
                                         datasetnum, top_k)
-        print('best rfe param', best_rfe_param)
+        # print('best rfe param', best_rfe_param)
 
         ###########  CARRY OUT RFE, GET ACCURACY
 
         svc = SVC(C=best_rfe_param, kernel=kernel, random_state=k)
         rfe = RFE(estimator=svc, n_features_to_select=top_k, step=stepsize)
-        print ('rfe step size',rfe.step)
+        # print ('rfe step size',rfe.step)
         rfe.fit(all_training, training_labels)
-        print (all_testing.shape,testing_labels.shape)
-        print ('num of chosen feats',sum(x == 1 for x in rfe.support_))
+        # print (all_testing.shape,testing_labels.shape)
+        # print ('num of chosen feats',sum(x == 1 for x in rfe.support_))
 
 
         normal_features_training = all_training[:,rfe.support_].copy()
@@ -90,20 +98,17 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
         ######### Fit SVM to just the privileged features and then take the slacks
 
-        # c = get_best_C(privileged_features_training, training_labels, c_values, cross_validation_folder, datasetnum, top_k)
-
-        c=0.1
-
+        c = get_best_C(privileged_features_training, training_labels, c_values, cross_validation_folder, datasetnum, top_k)
         svc = SVC(C=c, kernel=kernel, random_state=k)
         svc.fit(privileged_features_training,training_labels)
         # rfe_accuracy = svc.score(normal_features_testing,testing_labels)
         # print ('rfe accuracy (using slice):',rfe_accuracy
-        print('coefficient:',svc.coef_)
-        print('coefficient:', svc.coef_.shape)
-
-        print('intercept:',svc.intercept_)
-        print ('decision function:\n',svc.decision_function(privileged_features_training))
-        print ('\nslacks\n')
+        # print('coefficient:',svc.coef_)
+        # print('coefficient:', svc.coef_.shape)
+        #
+        # print('intercept:',svc.intercept_)
+        # print ('decision function:\n',svc.decision_function(privileged_features_training))
+        # print ('\nslacks\n')
 
 
         # save decion functions for SVC trained on privileged features only. Dec function = (coefficients*values) + bias
@@ -115,51 +120,52 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
         print (d_i.shape)
         d_i = np.reshape(d_i, (d_i.shape[0], 1))
 
-        print (training_labels)
-        print (svc.decision_function(privileged_features_training))
-        print (training_labels * svc.decision_function(privileged_features_training))
+        # print (training_labels)
+        # print (svc.decision_function(privileged_features_training))
+        # print (training_labels * svc.decision_function(privileged_features_training))
+        #
+        # print('best c rfe', best_rfe_param)
+        # print('best c', c)
+        # print('di',d_i)
 
-
-        print(d_i)
-
-
-        # for decision,item in zip(svc.decision_function(privileged_features_training),privileged_features_training):
-        #     print (decision)
-        #     number = np.sum(svc.coef_ * item)+svc.intercept_
-        #     print (number)
-        #     print (number.shape)
-
-
-        # with open(os.path.join(cross_validation_folder,'svm-{}-{}.csv'.format(k,n_top_feats)),'a') as cv_svm_file:
-        #     cv_svm_file.write(str(rfe_accuracy)+",")
-
-        ######### Train SVM with d_i used as privileged info
-
-        c_star_values = c_values
-        c_svm_plus, c_star_svm_plus = get_best_CandCstar(normal_features_training, training_labels,
-                                                         d_i,
-                                                         c_values, c_star_values, cross_validation_folder, datasetnum,
-                                                         top_k)
-
-        duals, bias = svmplusQP(normal_features_training, training_labels.copy(), d_i,
-                                c_svm_plus, c_star_svm_plus)
-        lupi_predictions = svmplusQP_Predict(normal_features_training, normal_features_testing, duals, bias).flatten()
-
-        accuracy_lupi = np.sum(testing_labels == np.sign(lupi_predictions)) / (1. * len(testing_labels))
-
-        with open(os.path.join(cross_validation_folder, 'lupi-{}-{}.csv'.format(k, top_k)), 'a') as cv_lupi_file:
-            cv_lupi_file.write(str(accuracy_lupi) + ',')
-
-        print('svm+ accuracy=\n',accuracy_lupi)
-
-        return (accuracy_lupi)
+        with open(os.path.join(output_directory, 'tech{}-Cparams.csv'.format(datasetnum)),'a') as savefile:
+            savefile.write('rfe'+str(best_rfe_param)+'\n')
+            savefile.write('svm on unselected'+str(c)+'\n')
+            savefile.write('svm on unselected' + str(c) + '\n')
+            savefile.write('svm on unselected' + str(c) + '\n')
 
 
 
-        print('normal train shape {},priv train shape {}'.format(normal_features_training.shape,d_i.shape))
-        print('normal testing shape {}'.format(normal_features_testing.shape))
+        # with open(os.path.join(output_directory, 'tech{}-dScore.csv'.format(datasetnum)),'a') as savefile:
+        #     savefile.write(str(best_rfe_param)+'\n')
+        #     savefile.write(str(c)+'\n')
+        #     for item in d_i:
+        #         savefile.write(str(item).strip('[]')+',')
+        #     savefile.write('\n')
+        #     savefile.write('mean,'+str(np.mean(d_i))+'\n')
+        #     savefile.write('max,' + str(np.max(d_i))+'\n')
+        #     savefile.write('min,' + str(np.min(d_i))+'\n')
+        #     savefile.write('stdev,' + str(np.std(d_i))+'\n')
+
+        return(d_i)
+
+mins,maxes,means,stdevs=[],[],[],[]
+dataset='tech'
+for datasetnum in range (295): #5
+    d_i=single_fold(k=1, top_k=300, dataset='tech', datasetnum=datasetnum, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
+    print ('di',d_i)
+    print(np.min(d_i))
+    mins.append(np.min(d_i))
+    maxes.append(np.max(d_i))
+    means.append(np.mean(d_i))
+    stdevs.append(np.std(d_i))
+print ('maxes',maxes)
+print ('mins',mins)
+print ('means',means)
+print ('stdevs',stdevs)
 
 
-
-
-# single_fold(k=3, top_k=500, dataset='tech', datasetnum=294, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
+np.save(os.path.join(get_full_path('Desktop/Privileged_Data/dSVM295-CHECK-VALUE/maxes')),np.array(maxes))
+np.save(os.path.join(get_full_path('Desktop/Privileged_Data/dSVM295-CHECK-VALUE/mins')),np.array(mins))
+np.save(os.path.join(get_full_path('Desktop/Privileged_Data/dSVM295-CHECK-VALUE/means')),np.array(means))
+np.save(os.path.join(get_full_path('Desktop/Privileged_Data/dSVM295-CHECK-VALUE/stdevs')),np.array(stdevs))

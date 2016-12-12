@@ -27,11 +27,11 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     class0_labels = [-1]*class0_data.shape[0]
     class1_labels = [1]* class1_data.shape[0]
     all_labels = np.r_[class0_labels, class1_labels]
-    print (all_labels.shape)
+    # print (all_labels.shape)
 
     all_data = np.vstack([class0_data,class1_data])
-    print(all_data.shape)
-    print('skf seed',skf_seed)
+    # print(all_data.shape)
+    # print('skf seed',skf_seed)
     skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True,random_state=skf_seed)
 
     for fold_num, (train_index, test_index) in enumerate(skf):
@@ -41,7 +41,7 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
             train_indices,test_indices=train_index,test_index
             break
 
-    print('fold num', fold_num, 'test index',test_index)
+    # print('fold num', fold_num, 'test index',test_index)
     # sys.exit()
 
     #standardisation =============================
@@ -49,8 +49,8 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     test_data = preprocessing.scale(test_data)
 
 
-    print ('train',train_indices.shape, 'test',test_indices.shape)
-    print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
+    # print ('train',train_indices.shape, 'test',test_indices.shape)
+    # print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
     return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)#, train_indices, test_indices
 
 # def get_awa_data(dataset_index):
@@ -101,7 +101,7 @@ def get_techtc_data(dataset_index):
     dok=np.array(dok.todense(), dtype=float)
     positive_instances = dok[positive_indices]
     negative_instances = dok[negative_indices]
-    print (positive_instances.shape, negative_instances.shape)
+    # print (positive_instances.shape, negative_instances.shape)
 
     return(positive_instances,negative_instances)
 

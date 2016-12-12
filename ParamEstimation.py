@@ -89,7 +89,7 @@ def get_best_C(training_data,training_labels, c_values, cross_validation_folder,
 
 def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,datasetnum,topk):
     starttime = time.clock()
-    print ('time', starttime)
+    # print ('time', starttime)
     cv = cross_validation.StratifiedKFold(training_labels, 5)
     cv_scores = numpy.zeros(len(c_values))
 
