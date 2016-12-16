@@ -20,7 +20,7 @@ for top_k in [300,500]:#:,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
             for datasetnum in range (295): #5
                 for seed in range (10):
                     for fold_num in range(10): #0
-                        print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {} --dSVMC {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t, dSVMC))
+                        print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
                         count+=1
 
 # print(count)
