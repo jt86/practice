@@ -135,12 +135,15 @@ list_of_dsvm_errors = np.array([1 - mean for mean in np.mean(dsvm_lufe, axis=1)]
 # print (list_of_dsvm_errors)
 # print (len(list_of_dsvm_errors))
 
-# plt.scatter(means,list_of_dsvm_errors)
+plt.scatter(means,list_of_dsvm_errors)
+plt.xlabel('mean d value')
+plt.ylabel('error by dsvm+')
 # plt.show()
+
 
 ####################################### THIS PART TO GET SVM+ ACCURACIES
 
-####################################################################### This part to get the first 40
+####################################################################### This part to get the first 49
 
 list_of_all=[]
 list_of_300_rfe=[]
@@ -227,10 +230,64 @@ print(c_values[sorted_indices][:20])
 fig1,ax1=plt.subplots()
 ax1.set_yscale('log')
 plt.scatter(range(295),c_values[sorted_indices])
-plt.show()
+plt.ylabel('C parameter')
+plt.xlabel('dataset ranking in terms of improvement vs RFE [worse <-----> better]')
+# plt.show()
 
 ### Plot improvement vs RFE, vs C parameter chosen. No pattern
 fig2,ax2=plt.subplots()
 ax2.set_yscale('log')
 plt.scatter(differences,c_values)
+plt.ylabel('C parameter')
+plt.xlabel('improvement vs RFE')
+# plt.show()
+
+
+# Getting mean improvement over RFE for different C values
+
+counts=defaultdict(int)
+print(counts)
+output_directory = get_full_path('Desktop/Privileged_Data/dSVM295-CHECK-VALUE')
+for datasetnum in range(num_datasets):
+    with open(os.path.join(output_directory, 'cross-validation1/C_fullset-crossvalid-{}-300.txt'.format(datasetnum)) ,'r') as savefile:
+        lines=(savefile.readlines())
+        c_value=(lines[1].split(']')[1].strip('\n'))
+        counts[c_value]+=1
+print(counts)
+
+list_of_pairs =[]
+for c_value,count in counts.items():
+    print (c_value,count)
+    list_of_pairs.append([c_value,count])
+list_of_pairs.sort()
+print(list_of_pairs)
+
+number_to_take = 50
+smallest_stdevs = (np.argsort(stdevs)[:number_to_take])
+biggest_stdevs = (np.argsort(stdevs)[-number_to_take:])
+diffs_for_smallest = differences[smallest_stdevs]
+diffs_for_biggest = differences[biggest_stdevs]
+
+
+
+
+plt.hold(False)
+plt.bar(range(number_to_take),differences[smallest_stdevs],color ='red', label='{} smallest stdevs'.format(number_to_take))
+plt.hold(True)
+plt.bar(range(number_to_take,2*number_to_take),differences[biggest_stdevs],color ='green', label='{} biggest stdevs'.format(number_to_take))
+plt.ylabel('Improvement by dSVM+ vs RFE')
+plt.xlabel('Dataset')
+plt.title('Improvement by dSVM+ vs RFE for {} lowest and highest stdevs \n lowest = {} improvement, highest = {} improvement'.format(number_to_take,round(np.mean(diffs_for_smallest),2),round(np.mean(diffs_for_biggest),2)))
+plt.legend(loc="upper left", bbox_to_anchor=(1,1))
 plt.show()
+# plt.save(get_full_path('Desktop/biggest_smallest'))
+# print(stdevs[27],stdevs[233],stdevs[82],stdevs[164],stdevs[131])
+
+# fig3,ax3=plt.subplots()
+# plt.scatter(np.argsort(stdevs),np.argsort(differences))
+# plt.xlabel('standard deviation of d value')
+# plt.ylabel('improvement vs rfe')
+# ax3.set_yscale('log')
+# plt.show()
+
+

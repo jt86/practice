@@ -31,7 +31,7 @@ from sklearn import preprocessing
 
 
 
-def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, skfseed, percent_of_priv, percentageofinstances, take_top_t):
+def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, skfseed, percent_of_priv, percentageofinstances, take_top_t, dSVMC):
 
         stepsize=0.1
         np.random.seed(k)
@@ -92,7 +92,7 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
         # c = get_best_C(privileged_features_training, training_labels, c_values, cross_validation_folder, datasetnum, top_k)
 
-        c=0.1
+        c=dSVMC
 
         svc = SVC(C=c, kernel=kernel, random_state=k)
         svc.fit(privileged_features_training,training_labels)

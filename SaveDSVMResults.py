@@ -31,6 +31,7 @@ rfecolor='purple'
 basecolor='dodgerblue'
 dsvmcolor= 'red'
 ###########################################################
+print('1')
 
 num_datasets=295
 
@@ -62,6 +63,7 @@ dsvm_error_bars_295 = list(stats.sem(dsvm_lufe, axis=1) * 100)
 
 
 ####################################################################### This part to get the first 40
+print('2')
 
 list_of_all=[]
 list_of_300_rfe=[]
@@ -106,7 +108,7 @@ rfe_error_bars_49 = list(stats.sem(list_of_300_rfe,axis=1)*100)
 lufe_error_bars_49 = list(stats.sem(list_of_300_lufe, axis=1) * 100)
 
 ######################################################################## This part to get the next 246
-
+print('3')
 num_datasets=246
 
 #NB if 'method' is RFE doesn't work - delete last "-{}" from line below
@@ -265,3 +267,5 @@ print ('total all error', total_all)
 
 print ((total_rfe-total_lufe)/total_rfe*100)
 print ((total_all-total_lufe)/total_all*100)
+
+np.save(get_full_path('Desktop/dSVMimprovementsVsRFE'),compare_two_settings(list_of_rfe_errors,list_of_dsvm_errors,'RFE','dSVM+'))
