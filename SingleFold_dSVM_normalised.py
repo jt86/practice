@@ -39,7 +39,7 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/dSVM295-FIXEDC-NORMED-PRACTICE-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset, cmin, cmax, stepsize, percent_of_priv, take_top_t, percentageofinstances, datasetnum, top_k, percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/dSVM295-FIXEDC-NORMAlISED-PRACTICE-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset, cmin, cmax, stepsize, percent_of_priv, take_top_t, percentageofinstances, datasetnum, top_k, percentageofinstances))
         print (output_directory)
 
         try:
@@ -60,14 +60,9 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
                 raise
 
         all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset,datasetnum,k,skfseed)
-        all_training=all_training[:,:320]
-        all_testing = all_testing[:, :320]
-
 
         param_estimation_file.write("\n\n n={},fold={}".format(top_k, k))
 
-        # all_training = all_training[:,:2000]
-        # all_testing = all_testing[:, :2000]
 
         ########## GET BEST C FOR RFE
 
@@ -112,7 +107,7 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
             print ('\nslacks\n')
 
 
-            # save decion functions for SVC trained on privileged features only. Dec function = (coefficients*values) + bias
+            # save decision functions for SVC trained on privileged features only. Dec function = (coefficients*values) + bias
             decision_functions = svc.decision_function(privileged_features_training)
 
             # d_i = 1 - y *(privileged value)
