@@ -39,7 +39,7 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/dSVM295-FIXEDC-NORMAlISED-PRACTICE-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset, cmin, cmax, stepsize, percent_of_priv, take_top_t, percentageofinstances, datasetnum, top_k, percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/dSVM295-FIXEDC-NORMAlISED-PRACTICE-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset, cmin, cmax, stepsize, take_top_t, percentageofinstances, datasetnum, top_k, percentageofinstances))
         print (output_directory)
 
         try:
@@ -63,6 +63,8 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
         param_estimation_file.write("\n\n n={},fold={}".format(top_k, k))
 
+        all_training=all_training[:,:500]
+        all_testing = all_testing[:, :500]
 
         ########## GET BEST C FOR RFE
 
@@ -85,56 +87,57 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
         normal_features_testing = all_testing[:,rfe.support_].copy()
         privileged_features_training=all_training[:,np.invert(rfe.support_)].copy()
 
-        num_of_priv_feats = percent_of_priv * privileged_features_training.shape[1] // 100
-        privileged_features_training = privileged_features_training[:, :num_of_priv_feats]
-        print('privileged data shape', privileged_features_training.shape)
 
         ######### Fit SVM to just the privileged features and then take the slacks
 
         # c = get_best_C(privileged_features_training, training_labels, c_values, cross_validation_folder, datasetnum, top_k)
 
-        for dSVMC in [1,10,100,1000,10000]:
+        for dSVMC in [1,10,100,1000]:
+            for percent_of_priv in [10,25,50,75,100]:
+                privileged_features_training = all_training[:, np.invert(rfe.support_)].copy()
+                num_of_priv_feats = percent_of_priv * privileged_features_training.shape[1] // 100
+                privileged_features_training = privileged_features_training[:, :num_of_priv_feats]
+                print('percent of priv {} number of priv {}'.format(percent_of_priv,num_of_priv_feats))
+                print('privileged data shape', privileged_features_training.shape)
 
-            svc = SVC(C=dSVMC, kernel=kernel, random_state=k)
-            svc.fit(privileged_features_training,training_labels)
-            # rfe_accuracy = svc.score(normal_features_testing,testing_labels)
-            # print ('rfe accuracy (using slice):',rfe_accuracy
-            print('coefficient:',svc.coef_)
-            print('coefficient:', svc.coef_.shape)
+                svc = SVC(C=dSVMC, kernel=kernel, random_state=k)
+                svc.fit(privileged_features_training,training_labels)
+                # rfe_accuracy = svc.score(normal_features_testing,testing_labels)
+                # print ('rfe accuracy (using slice):',rfe_accuracy
+                print('coefficient:',svc.coef_)
+                print('coefficient:', svc.coef_.shape)
 
-            print('intercept:',svc.intercept_)
-            print ('decision function:\n',svc.decision_function(privileged_features_training))
-            print ('\nslacks\n')
-
-
-            # save decision functions for SVC trained on privileged features only. Dec function = (coefficients*values) + bias
-            decision_functions = svc.decision_function(privileged_features_training)
-
-            # d_i = 1 - y *(privileged value)
-
-            d_i = np.array([1 - (training_labels[i] * svc.decision_function(privileged_features_training)[i])  for i in range(len(training_labels))])
-            d_i = preprocessing.scale(d_i)
-            d_i = np.reshape(d_i, (d_i.shape[0], 1))
+                print('intercept:',svc.intercept_)
+                print ('decision function:\n',svc.decision_function(privileged_features_training))
+                print ('\nslacks\n')
 
 
-            # ######## Train SVM with d_i used as privileged info
+                #  decision functions for SVC trained on privileged features only. Dec function = (coefficients*values) + bias
+                # d_i = 1 - y *(privileged value)
 
-            c_star_values = c_values
-            c_svm_plus, c_star_svm_plus = get_best_CandCstar(normal_features_training, training_labels,
-                                                             d_i,
-                                                             c_values, c_star_values, cross_validation_folder, datasetnum,
-                                                             top_k)
+                d_i = np.array([1 - (training_labels[i] * svc.decision_function(privileged_features_training)[i])  for i in range(len(training_labels))])
+                d_i = preprocessing.scale(d_i)
+                d_i = np.reshape(d_i, (d_i.shape[0], 1))
 
-            duals, bias = svmplusQP(normal_features_training, training_labels.copy(), d_i,
-                                    c_svm_plus, c_star_svm_plus)
-            lupi_predictions = svmplusQP_Predict(normal_features_training, normal_features_testing, duals, bias).flatten()
 
-            accuracy_lupi = np.sum(testing_labels == np.sign(lupi_predictions)) / (1. * len(testing_labels))
+                # ######## Train SVM with d_i used as privileged info
 
-            with open(os.path.join(cross_validation_folder, 'lupi-{}-{}-C={}.csv'.format(k, top_k, dSVMC)), 'a') as cv_lupi_file:
-                cv_lupi_file.write(str(accuracy_lupi) + ',')
+                c_star_values = c_values
+                c_svm_plus, c_star_svm_plus = get_best_CandCstar(normal_features_training, training_labels,
+                                                                 d_i,
+                                                                 c_values, c_star_values, cross_validation_folder, datasetnum,
+                                                                 top_k)
 
-            print('svm+ accuracy=\n',accuracy_lupi,'C={}'.format(dSVMC))
+                duals, bias = svmplusQP(normal_features_training, training_labels.copy(), d_i,
+                                        c_svm_plus, c_star_svm_plus)
+                lupi_predictions = svmplusQP_Predict(normal_features_training, normal_features_testing, duals, bias).flatten()
+
+                accuracy_lupi = np.sum(testing_labels == np.sign(lupi_predictions)) / (1. * len(testing_labels))
+
+                with open(os.path.join(cross_validation_folder, 'lupi-{}-{}-C={}-percentpriv={}.csv'.format(k, top_k, dSVMC, percent_of_priv)), 'a') as cv_lupi_file:
+                    cv_lupi_file.write(str(accuracy_lupi) + ',')
+
+                print('svm+ accuracy=\n',accuracy_lupi,'C={}'.format(dSVMC))
 
         return (accuracy_lupi)
 
