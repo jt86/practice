@@ -46,10 +46,36 @@ def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,ex
 
 
 percent_of_priv=100
+# for c_value in [1,10,100,1000]:
+#     for percent_of_priv in [10,25,50,75,100]:
+#         for n_top_feats in [300,500]:
+#             for setting in ['lupi']:
+#                 experiment_name = 'dSVM295-FIXEDC-NORMALISED-PRACTICE-10x10-tech-ALLCV-3to3-featsscaled-step0.1-top-100percentinstances'
+#                 save_to_np_array(295,setting,n_top_feats,c_value,percent_of_priv,experiment_name=experiment_name)
 
-for c_value in [1,10,100,1000]:
-    for percent_of_priv in [10,25,50,75,100]:
-        for n_top_feats in [300,500]:
-            for setting in ['lupi']:
-                experiment_name = 'dSVM295-FIXEDC-NORMALISED-PRACTICE-10x10-tech-ALLCV-3to3-featsscaled-step0.1-top-100percentinstances'
-                save_to_np_array(295,setting,n_top_feats,c_value,percent_of_priv,experiment_name=experiment_name)
+
+def save_to_np_array2(num_datasets,setting,n_top_feats,c_value,percent_of_priv,experiment_name):
+    list_of_all_datasets = []
+    for dataset_num in range(num_datasets):
+        all_folds_scores = []
+        for seed_num in range (num_repeats):
+            output_directory = ('/Volumes/LocalDataHD/j/jt/jt306/Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num))
+            n_top_feats2=''
+            if setting != 'baseline':
+                n_top_feats2='-{}'.format(n_top_feats)
+            for inner_fold in range(num_folds):
+                if not (os.path.exists(os.path.join(output_directory,'{}-{}{}-{}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)))):
+                    # print(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)
+                    print("print('--k {} --topk 300 --dataset tech --datasetnum {} --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv 100 --percentageofinstances 100 --taketopt top')".format(inner_fold,dataset_num,seed_num))
+
+    #             with open(os.path.join(output_directory,'{}-{}{}-{}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)),'r') as result_file:
+    #                 single_score = float(result_file.readline().split(',')[0])
+    #                 all_folds_scores+=[single_score]
+    #     list_of_all_datasets.append(all_folds_scores)
+    # print(np.array(list_of_all_datasets).shape)
+    # np.save(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}'.format(num_datasets,setting,n_top_feats,c_value,percent_of_priv)),list_of_all_datasets)
+    #
+
+experiment_name = 'dSVM295-SAVEd-NORMAlISED-10x10-tech-ALLCV-3to3-featsscaled-step0.1-top-100percentinstances'
+save_to_np_array2(295,'dsvm',300,'cross-val',100,experiment_name)
+
