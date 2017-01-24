@@ -63,8 +63,8 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
         param_estimation_file.write("\n\n n={},fold={}".format(top_k, k))
 
-        all_training=all_training[:,:500]
-        all_testing = all_testing[:, :500]
+        # all_training=all_training[:,:500]
+        # all_testing = all_testing[:, :500]
 
         ########## GET BEST C FOR RFE
 

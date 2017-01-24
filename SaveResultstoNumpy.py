@@ -54,28 +54,31 @@ percent_of_priv=100
 #                 save_to_np_array(295,setting,n_top_feats,c_value,percent_of_priv,experiment_name=experiment_name)
 
 
-def save_to_np_array2(num_datasets,setting,n_top_feats,c_value,percent_of_priv,experiment_name):
+def save_to_np_array_with_d_value(num_datasets, setting, n_top_feats, c_value, percent_of_priv, experiment_name):
     list_of_all_datasets = []
     for dataset_num in range(num_datasets):
-        all_folds_scores = []
+        all_folds_scores, all_folds_d_values = [],[]
         for seed_num in range (num_repeats):
             output_directory = ('/Volumes/LocalDataHD/j/jt/jt306/Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num))
             n_top_feats2=''
             if setting != 'baseline':
                 n_top_feats2='-{}'.format(n_top_feats)
             for inner_fold in range(num_folds):
-                if not (os.path.exists(os.path.join(output_directory,'{}-{}{}-{}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)))):
-                    # print(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)
-                    print("print('--k {} --topk 300 --dataset tech --datasetnum {} --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv 100 --percentageofinstances 100 --taketopt top')".format(inner_fold,dataset_num,seed_num))
+                # if not (os.path.exists(os.path.join(output_directory,'{}-{}{}-{}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)))):
+                    # print("print('--k {} --topk 300 --dataset tech --datasetnum {} --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv 100 --percentageofinstances 100 --taketopt top')".format(inner_fold,dataset_num,seed_num))
+                with open(os.path.join(output_directory,'{}-{}{}-{}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)),'r') as result_file:
+                    single_score = float(result_file.readline().split(',')[0])
+                    all_folds_scores+=[single_score]
+                with open(os.path.join(output_directory,'dvalue-{}{}-{}-percentpriv=100.csv'.format(inner_fold,n_top_feats2,c_value)),'r') as result_file:
+                    dvalues = [float(item.strip(', []\n')) for item in result_file.readlines()]
+                    print((dvalues))
+                    all_folds_d_values+=[dvalues]
+                    np.save(get_full_path('Desktop/SavedDvalues/{}-{}-{}-{}-{}-{}-{}'.format(setting,n_top_feats,c_value,percent_of_priv,dataset_num,seed_num,inner_fold)),dvalues)
+        list_of_all_datasets.append(all_folds_scores)
+    print(np.array(list_of_all_datasets).shape)
+    np.save(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}'.format(num_datasets,setting,n_top_feats,c_value,percent_of_priv)),list_of_all_datasets)
 
-    #             with open(os.path.join(output_directory,'{}-{}{}-{}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)),'r') as result_file:
-    #                 single_score = float(result_file.readline().split(',')[0])
-    #                 all_folds_scores+=[single_score]
-    #     list_of_all_datasets.append(all_folds_scores)
-    # print(np.array(list_of_all_datasets).shape)
-    # np.save(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}'.format(num_datasets,setting,n_top_feats,c_value,percent_of_priv)),list_of_all_datasets)
-    #
 
 experiment_name = 'dSVM295-SAVEd-NORMAlISED-10x10-tech-ALLCV-3to3-featsscaled-step0.1-top-100percentinstances'
-save_to_np_array2(295,'dsvm',300,'cross-val',100,experiment_name)
+save_to_np_array_with_d_value(295, 'dsvm', 300, 'cross-val', 100, experiment_name)
 

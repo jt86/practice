@@ -15,15 +15,15 @@ count=1
 
 
 
-# dataset='tech'
-# for top_k in [300]:#,500]:#,500]:#:,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
-#     for take_top_t in ['top']:#,'bottom']:
-#         # for percentofpriv in [10,20,30,40,50,60,70,80,90]:
-#         for percentofpriv in [100]:
-#             for datasetnum in range (295): #5
-#                 for seed in range (10):
-#                     for fold_num in range(10): #0
-#                         print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
+dataset='tech'
+for top_k in [300]:#,500]:#,500]:#:,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
+    for take_top_t in ['top']:#,'bottom']:
+        # for percentofpriv in [10,20,30,40,50,60,70,80,90]:
+        for percentofpriv in [100]:
+            for datasetnum in range (295): #5
+                for seed in range (10):
+                    for fold_num in range(10): #0
+                        print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t))
 #                         count+=1
 #
 # print(count)
@@ -32,10 +32,10 @@ count=1
 # print('--k 6 --topk 300 --dataset tech --datasetnum 168 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 2 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 # print('--k 3 --topk 300 --dataset tech --datasetnum 168 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 3 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 
-print('--k 8 --topk 300 --dataset tech --datasetnum 18 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 5 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
-print('--k 0 --topk 300 --dataset tech --datasetnum 133 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 4 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
-print('--k 7 --topk 300 --dataset tech --datasetnum 179 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 4 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
-print('--k 0 --topk 300 --dataset tech --datasetnum 274 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 8 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+# print('--k 8 --topk 300 --dataset tech --datasetnum 18 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 5 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+# print('--k 0 --topk 300 --dataset tech --datasetnum 133 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 4 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+# print('--k 7 --topk 300 --dataset tech --datasetnum 179 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 4 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+# print('--k 0 --topk 300 --dataset tech --datasetnum 274 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 8 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 
 
 # dataset = 'awa'
