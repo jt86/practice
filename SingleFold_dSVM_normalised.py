@@ -143,10 +143,10 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
         return (accuracy_lupi)
 
-for dataset in ['madelon','gisette','dexter','dorothea']:
-    for skfseed in range(10):
-        for k in range(10):
-            single_fold(k=k, top_k=300, dataset=dataset, datasetnum=None, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=skfseed, percent_of_priv=100, percentageofinstances=100, take_top_t='top')
+# for dataset in ['madelon','gisette','dexter','dorothea']:
+#     for skfseed in range(10):
+#         for k in range(10):
+#             single_fold(k=k, top_k=300, dataset=dataset, datasetnum=None, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=skfseed, percent_of_priv=100, percentageofinstances=100, take_top_t='top')
 #
 # for percent_of_priv in [50,75]:
 #     single_fold(k=3, top_k=300, dataset='tech', datasetnum=294, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=percent_of_priv, percentageofinstances=100, take_top_t='top')
