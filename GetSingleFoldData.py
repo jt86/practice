@@ -11,18 +11,34 @@ from scipy import sparse as sp
 from sklearn.cross_validation import StratifiedKFold
 from sklearn import preprocessing
 from sklearn import preprocessing
+from GetFeatSelectionData import get_arcene_data,get_madelon_data,get_gisette_data,get_dexter_data,get_dorothea_data
 # import numpy.linalg.norm
 import sys
 np.set_printoptions(linewidth=132)
 
-def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per class
+def load_dataset_from_name(dataset,datasetnum):
     if dataset=='tech':
         class0_data,class1_data=get_techtc_data(datasetnum)
-
-
     if dataset=='awa':
         class0_data,class1_data=get_awa_data(datasetnum)
+    if dataset=='arcene':
+        class0_data, class1_data = get_arcene_data()
+    if dataset=='madelon':
+        class0_data, class1_data = get_madelon_data()
+    if dataset=='gisette':
+        class0_data, class1_data = get_gisette_data()
+    if dataset=='dexter':
+        class0_data, class1_data = get_dexter_data()
+    if dataset=='dorothea':
+        class0_data, class1_data = get_dorothea_data()
 
+    return class0_data,class1_data
+
+
+
+def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per class
+
+    class0_data, class1_data = load_dataset_from_name(dataset,datasetnum)
 
     class0_labels = [-1]*class0_data.shape[0]
     class1_labels = [1]* class1_data.shape[0]
@@ -30,8 +46,6 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     # print (all_labels.shape)
 
     all_data = np.vstack([class0_data,class1_data])
-    # print(all_data.shape)
-    # print('skf seed',skf_seed)
     skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True,random_state=skf_seed)
 
     for fold_num, (train_index, test_index) in enumerate(skf):
@@ -41,10 +55,6 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
             train_indices,test_indices=train_index,test_index
             break
 
-    # print('fold num', fold_num, 'test index',test_index)
-    # sys.exit()
-
-    #standardisation =============================
     train_data = preprocessing.scale(train_data)
     test_data = preprocessing.scale(test_data)
 

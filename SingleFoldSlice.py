@@ -46,7 +46,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
         print('word',take_top_t)
-        output_directory = get_full_path(('Desktop/Privileged_Data/246DATASETS-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,take_top_t,percentageofinstances,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,take_top_t,percentageofinstances,dataset,datasetnum,topk,percentageofinstances))
         print (output_directory)
 
         try:
@@ -193,6 +193,12 @@ def get_random_array(num_instances,num_feats):
 
 # value = 1
 
+for dataset in ['madelon','gisette','dexter','dorothea']:
+        for skfseed in range(10):
+            for k in range(10):
+                    single_fold(k=k, topk=300, dataset=dataset, datasetnum=None, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=skfseed, percent_of_priv=100, percentageofinstances=100,take_top_t='top')
+
+
 # single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
-#  single_fold(k=1, topk=5, dataset='arcene', datasetnum=0, kernel='linear', cmin=value, cmax=value, number_of_cs=1,skfseed=9, percent_of_priv=100,percentage_of_instances=50)
+
 # print(single_fold(k=0, topk=5000, dataset='awa', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=100, percentageofinstances=100,take_top_t='top'))

@@ -15,7 +15,6 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 from SVMplus import svmplusQP, svmplusQP_Predict
 from ParamEstimation import  get_best_C, get_best_RFE_C, get_best_CandCstar
-from sklearn import svm
 from Get_Full_Path import get_full_path
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
@@ -39,7 +38,7 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/dSVM295-SAVEd-NORMAlISED-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}-{}percentinstances/tech{}/top{}chosen-{}percentinstances/').format(dataset, cmin, cmax, stepsize, take_top_t, percentageofinstances, datasetnum, top_k, percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/dSVM295-SAVEd-NORMALISED-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(dataset, cmin, cmax, stepsize, take_top_t, percentageofinstances, dataset, datasetnum, top_k, percentageofinstances))
         print (output_directory)
 
         try:
@@ -144,7 +143,10 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
         return (accuracy_lupi)
 
-
+for dataset in ['madelon','gisette','dexter','dorothea']:
+    for skfseed in range(10):
+        for k in range(10):
+            single_fold(k=k, top_k=300, dataset=dataset, datasetnum=None, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=skfseed, percent_of_priv=100, percentageofinstances=100, take_top_t='top')
 #
 # for percent_of_priv in [50,75]:
 #     single_fold(k=3, top_k=300, dataset='tech', datasetnum=294, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=percent_of_priv, percentageofinstances=100, take_top_t='top')

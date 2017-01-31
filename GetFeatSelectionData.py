@@ -14,6 +14,7 @@ from sklearn.cross_validation import StratifiedKFold
 # import numpy.linalg.norm
 from sklearn import preprocessing
 
+
 def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per class
     if dataset=='arcene':
         class0_data, class1_data = get_arcene_data()
@@ -54,7 +55,7 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
 
 
 
-def get_arcene_data(debug=False):
+def get_arcene_data():
     print('Reading Arcene data from disk')
     with open(get_full_path("Desktop/Privileged_Data/ARCENE/arcene_train.data"), "r+") as infile:
         features_array = np.loadtxt(infile, dtype=float)
@@ -66,6 +67,8 @@ def get_arcene_data(debug=False):
     positive_instances = (features_array[labels_array==1])
     negative_instances = (features_array[labels_array==-1])
     return positive_instances, negative_instances
+
+# arcene_data1,arcene_data2 = get_arcene_data()
 
 # train_data, test_data, train_labels, test_labels = get_train_and_test_this_fold('arcene',14,30)
 # print train_data.shape, test_data.shape, train_labels.shape, test_labels.shape
