@@ -64,21 +64,30 @@ def save_to_np_array_with_d_value(num_datasets, setting, n_top_feats, c_value, p
             if setting != 'baseline':
                 n_top_feats2='-{}'.format(n_top_feats)
             for inner_fold in range(num_folds):
-                if not (os.path.exists(os.path.join(output_directory,'{}-{}{}-{}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)))):
-                    print("print('--k {} --topk 300 --dataset tech --datasetnum {} --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv 100 --percentageofinstances 100 --taketopt top')".format(inner_fold,dataset_num,seed_num))
-    #             with open(os.path.join(output_directory,'{}-{}{}-{}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)),'r') as result_file:
-    #                 single_score = float(result_file.readline().split(',')[0])
-    #                 all_folds_scores+=[single_score]
-    #             with open(os.path.join(output_directory,'dvalue-{}{}-{}-percentpriv=100.csv'.format(inner_fold,n_top_feats2,c_value)),'r') as result_file:
-    #                 dvalues = [float(item.strip(', []\n')) for item in result_file.readlines()]
-    #                 print((dvalues))
-    #                 all_folds_d_values+=[dvalues]
-    #                 if not os.path.exists(get_full_path('Desktop/SavedDvalues/{}-{}-{}-{}'.format(setting,n_top_feats,c_value,percent_of_priv))):
-    #                     os.mkdir(get_full_path('Desktop/SavedDvalues/{}-{}-{}-{}'.format(setting,n_top_feats,c_value,percent_of_priv)))
-    #                 np.save(get_full_path('Desktop/SavedDvalues/{}-{}-{}-{}/{}-{}-{}'.format(setting,n_top_feats,c_value,percent_of_priv,dataset_num,seed_num,inner_fold)),dvalues)
-    #     list_of_all_datasets.append(all_folds_scores)
-    # print(np.array(list_of_all_datasets).shape)
-    # np.save(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}'.format(num_datasets,setting,n_top_feats,c_value,percent_of_priv)),list_of_all_datasets)
+                dvalues = []
+                # if not (os.path.exists(os.path.join(output_directory,'{}-{}{}-{}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)))):
+                #     print("print('--k {} --topk 300 --dataset tech --datasetnum {} --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv 100 --percentageofinstances 100 --taketopt top')".format(inner_fold,dataset_num,seed_num))
+                with open(os.path.join(output_directory,'{}-{}{}-{}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)),'r') as result_file:
+                    single_score = float(result_file.readline().split(',')[0])
+                    all_folds_scores+=[single_score]
+                with open(os.path.join(output_directory,'dvalue-{}{}-{}-percentpriv=100.csv'.format(inner_fold,n_top_feats2,c_value)),'r') as result_file:
+
+                    for item in result_file.readlines():
+                          # print(open(os.path.join(output_directory,'dvalue-{}{}-{}-percentpriv=100.csv'.format(inner_fold,n_top_feats2,c_value))))
+                          # print (item)
+                        if ']],[[' in item:
+                            item = item.split(']],[[')[0]
+                        dvalues.append(float(item.strip(' [],]\n')))
+                        if ']],[[' in item:
+                            break
+                        print(dvalues)
+                    all_folds_d_values.append(dvalues)
+                    if not os.path.exists(get_full_path('Desktop/SavedDvalues/{}-{}-{}-{}'.format(setting,n_top_feats,c_value,percent_of_priv))):
+                        os.mkdir(get_full_path('Desktop/SavedDvalues/{}-{}-{}-{}'.format(setting,n_top_feats,c_value,percent_of_priv)))
+                    np.save(get_full_path('Desktop/SavedDvalues/{}-{}-{}-{}/{}-{}-{}'.format(setting,n_top_feats,c_value,percent_of_priv,dataset_num,seed_num,inner_fold)),dvalues)
+        list_of_all_datasets.append(all_folds_scores)
+    print(np.array(list_of_all_datasets).shape)
+    np.save(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}'.format(num_datasets,setting,n_top_feats,c_value,percent_of_priv)),list_of_all_datasets)
 
 
 experiment_name = 'dSVM295-SAVEd-NORMAlISED-10x10-tech-ALLCV-3to3-featsscaled-step0.1-top-100percentinstances'
