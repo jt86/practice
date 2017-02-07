@@ -115,7 +115,6 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
             d_i = preprocessing.scale(d_i)
             d_i = np.reshape(d_i, (d_i.shape[0], 1))
 
-
             with open(os.path.join(cross_validation_folder, 'dvalue-{}-{}-cross-val-percentpriv={}.csv'.format(k, top_k, percent_of_priv)), 'a') as cv_lupi_file:
                 cv_lupi_file.write(str(d_i) + ',')
 
