@@ -38,7 +38,8 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
         c_values = np.logspace(cmin,cmax,number_of_cs)
         print('cvalues',c_values)
 
-        output_directory = get_full_path(('Desktop/Privileged_Data/dSVM295-SAVEd-NORMALISED-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(dataset, cmin, cmax, stepsize, take_top_t, percentageofinstances, dataset, datasetnum, top_k, percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/dSVM295-SAVEd-NORMALISED-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv/{}{}/top{}chosen-{}percentinstances/').
+                                         format(dataset, cmin, cmax, stepsize, take_top_t, percent_of_priv, dataset, datasetnum, top_k, percentageofinstances))
         print (output_directory)
 
         try:

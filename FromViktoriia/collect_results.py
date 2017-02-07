@@ -61,11 +61,11 @@ def main_binary_AwA(dataset, all_classes, all_data, test_classes, PATH_methods, 
 	output=numpy.r_[[output1],[output2],[output3],[output4],[output5],[output6]]
 	methodnames='SVM\t\t privfeatRFE 0.05\t privfeatRFE 0.10\t privfeatRFE 0.25\t privfeatRFE 0.50\t privfeatRFE 0.75\t'
 
-        print "Priv features RFE 0.05 - SVM", numpy.sum([output2-output1])
-        print "Priv features RFE 0.10 - SVM", numpy.sum([output3-output1])
-        print "Priv features RFE 0.25 - SVM", numpy.sum([output4-output1])
-        print "Priv features RFE 0.50 - SVM", numpy.sum([output5-output1])
-        print "Priv features RFE 0.75 - SVM", numpy.sum([output6-output1])
+        print ("Priv features RFE 0.05 - SVM", numpy.sum([output2-output1]))
+        print ("Priv features RFE 0.10 - SVM", numpy.sum([output3-output1]))
+        print ("Priv features RFE 0.25 - SVM", numpy.sum([output4-output1]))
+        print ("Priv features RFE 0.50 - SVM", numpy.sum([output5-output1]))
+        print ("Priv features RFE 0.75 - SVM", numpy.sum([output6-output1]))
 
         return output,methodnames
 
@@ -98,13 +98,13 @@ def main_binary_arcene(dataset, all_classes, all_data, test_classes, PATH_method
 	output=numpy.r_[[output1],[output2],[output3],[output4],[output5],[output6],[output7],[output8]]
 	methodnames='SVM\t\t privfeatRFE 0.05\t privfeatRFE 0.10\t privfeatRFE 0.25\t privfeatRFE 0.50\t privfeatRFE 0.75\t'
 
-        print "Priv features RFE 0.05 - SVM", numpy.sum([output2-output1])
-        print "Priv features RFE 0.10 - SVM", numpy.sum([output3-output1])
-        print "Priv features RFE 0.2 - SVM", numpy.sum([output4-output1])
-        print "Priv features RFE 0.3 - SVM", numpy.sum([output5-output1])
-        print "Priv features RFE 0.4 - SVM", numpy.sum([output6-output1])
-        print "Priv features RFE 0.5 - SVM", numpy.sum([output7-output1])
-        print "Priv features RFE 0.75 - SVM", numpy.sum([output8-output1])
+        print ("Priv features RFE 0.05 - SVM", numpy.sum([output2-output1]))
+        print ("Priv features RFE 0.10 - SVM", numpy.sum([output3-output1]))
+        print ("Priv features RFE 0.2 - SVM", numpy.sum([output4-output1]))
+        print ("Priv features RFE 0.3 - SVM", numpy.sum([output5-output1]))
+        print ("Priv features RFE 0.4 - SVM", numpy.sum([output6-output1]))
+        print ("Priv features RFE 0.5 - SVM", numpy.sum([output7-output1]))
+        print ("Priv features RFE 0.75 - SVM", numpy.sum([output8-output1]))
 
         return output,methodnames
 

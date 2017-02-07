@@ -26,7 +26,7 @@ def main():
     topK=eval(sys.argv[6])		#top features(fraction of features) to select for privfeat_rfe; for example, 0.05, 0.1, 0.25, 0.5, 0.75
     dataset = sys.argv[7]
 
-    print method+" method; "+dataset+" dataset; "+class_id+" class id; "+"%d"%k+" repeat; "+"N=%d number of positive samples;"%N+" Top %.2ffeatures"%topK
+    print (method+" method; "+dataset+" dataset; "+class_id+" class id; "+"%d"%k+" repeat; "+"N=%d number of positive samples;"%N+" Top %.2ffeatures"%topK)
 
     PATH_data = PATH + dataset + "/data_" + dataset + "/"
     PATH_CV_results = PATH + dataset + "/CV/"
@@ -41,18 +41,18 @@ def main():
         (data, test_data, Y, test_Y) = getdata_arcene(PATH_data, class_id, N, test_N)
         reg_array= [1.0, 10., 100., 1000., 10000., 100000., 1000000., 10000000.]
     #
-    # print 'data first item',data[0]
-    # print 'len of data first item', len(data[0])
-    # print 'number of items in data', len(data)
+    # print ('data first item',data[0])
+    # print ('len of data first item', len(data[0]))
+    # print ('number of items in data', len(data))
     #
-    # print 'test first item',test_data[0]
-    # print 'len of test first item', len(test_data[0])
-    # print 'number of items in test', len(test_data)
+    # print ('test first item',test_data[0])
+    # print ('len of test first item', len(test_data[0]))
+    # print ('number of items in test', len(test_data))
     #
-    # print 'labels',Y
-    # print 'number of labels', len(Y)
-    # print 'test labels', test_Y
-    # print 'num of test labels',len(test_Y)
+    # print ('labels',Y)
+    # print ('number of labels', len(Y))
+    # print ('test labels', test_Y)
+    # print ('num of test labels',len(test_Y))
 
     top=int(topK*data.shape[1])	#top features to select
 
@@ -61,7 +61,7 @@ def main():
         outer_directory = get_full_path('Desktop/Privileged_Data/FixedCandCStar12/')
         output_directory = os.path.join(get_full_path(outer_directory),'awa'+str(class_id))
         PATH_CV_results = os.path.join(outer_directory,'CV/')
-        print str((PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k))
+        print (str((PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)))
 
 
 
@@ -70,10 +70,10 @@ def main():
         # reg_best=numpy.loadtxt(PATH_CV_results + dataset + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
 
         best_rfe_param=numpy.loadtxt(PATH_CV_results + 'AwA' + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)
-        print 'best rfe param', best_rfe_param
+        print ('best rfe param', best_rfe_param)
         reg_best=best_rfe_param
-        print str((PATH_CV_results + dataset + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k))
-        print "svm+rfe Regularization:", reg_best
+        print (str((PATH_CV_results + dataset + "_" + method + "_SVMRFE_%.2ftop"%topK+ "_" +class_id + "class_"+ "%ddata_best.txt"%k)))
+        print ("svm+rfe Regularization:", reg_best)
 
         svc = SVC(C=reg_best, kernel="linear", random_state=1)
         rfe = RFE(estimator=svc, n_features_to_select=top, step=1)
@@ -82,11 +82,11 @@ def main():
         selected = rfe.support_
         notselected = numpy.invert(rfe.support_)
         # numpy.set_printoptions(threshold=numpy.nan)
-        # print rfe.support_
+        # print (rfe.support_)
 
         filename=PATH_results+dataset+"_"+method
         numpy.savetxt(filename + "_SVMRFE_%.2ftop_"%topK+class_id+"class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]),fmt='%f')
-        print 'Accuracy at selecting: ', ACC
+        print ('Accuracy at selecting: ', ACC)
 
         with open(os.path.join(output_directory, 'scores_each_fold2.csv'), "a")as scores_each_fold:
             scores_each_fold.write('\nfold num {}, {}%, {}'.format(k, int(topK*100), ACC))
@@ -107,14 +107,14 @@ def main():
             scores_each_fold_lupi.write('\nfold num {}, {}%, {}'.format(k, int(topK*100), ACC))
 
         numpy.savetxt(filename + "_%.2ftop_"%topK + class_id + "class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]), fmt='%f')
-        print 'Privileged selection: ', ACC
+        print ('Privileged selection: ', ACC)
 
     #baselines that do not depend on parameter top================================================================
     if (method == 'privfeat_svml1'):
 
         #feature selection with L1 regularized SVM with squared hinge loss
         reg_best = do_CV_svml1_5fold(data,Y, reg_array, dataset, PATH_CV_results, method + "_L1SVM", class_id, k)
-        print "L1svm, Regularization:", reg_best
+        print ("L1svm, Regularization:", reg_best)
 
         svc = LinearSVC(C=reg_best, penalty="l1", dual=False, random_state=1)
         svc.fit(data, Y)
@@ -126,7 +126,7 @@ def main():
 
         numpy.savetxt(PATH_results+dataset+"_"+method+ "_L1SVM_" +class_id + "class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]), fmt='%f')
         numpy.savetxt(PATH_results+dataset+"_"+method+ "_" +class_id + "class_"+ "%ddata_selectedfeatidx.txt"%k, numpy.asarray(idx), fmt='%d')
-        print 'Accuracy at selecting: ', ACC
+        print ('Accuracy at selecting: ', ACC)
 
 
         #SVM+ part
@@ -140,13 +140,13 @@ def main():
         ACC = numpy.sum(test_Y==numpy.sign(testXranked))/(1.*len(test_Y))
 
         numpy.savetxt(PATH_results + dataset + "_" + method +"_" + class_id + "class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]), fmt='%f')
-        print 'Privileged selection: ', ACC
+        print ('Privileged selection: ', ACC)
 
 
     if (method == 'privfeat_logreg'):
         ##feature selection with L1 regularized logistic regression
         reg_best = do_CV_logreg_5fold(data,Y, reg_array, dataset, PATH_CV_results, method + "_L1LR", class_id, k)
-        print "Logreg, Regularization:", reg_best
+        print ("Logreg, Regularization:", reg_best)
 
         svc = linear_model.LogisticRegression(C=reg_best, penalty="l1", dual=False, random_state=1)
         svc.fit(data, Y)
@@ -158,7 +158,7 @@ def main():
 
         numpy.savetxt(PATH_results+dataset+"_"+method+ "_L1LR_" +class_id + "class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]), fmt='%f')
         numpy.savetxt(PATH_results+dataset+"_"+method+ "_" +class_id + "class_"+ "%ddata_selectedfeatidx.txt"%k, numpy.asarray(idx), fmt='%d')
-        print 'Accuracy at selecting: ', ACC
+        print ('Accuracy at selecting: ', ACC)
 
         #SVM+ part
         X_selected=data[:,selected].copy();
@@ -171,18 +171,18 @@ def main():
         ACC = numpy.sum(test_Y==numpy.sign(testXranked))/(1.*len(test_Y))
 
         numpy.savetxt(PATH_results + dataset + "_" + method +"_" + class_id + "class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]), fmt='%f')
-        print 'Privileged selection: ', ACC
+        print ('Privileged selection: ', ACC)
 
     if (method == 'svm'):
         #SVM baseline on data
         reg_best = do_CV_svm_5x5fold(data,Y, reg_array, dataset, PATH_CV_results, method, class_id, k)
-        print "Regularization:", reg_best
+        print ("Regularization:", reg_best)
 
         svc = SVC(C=reg_best, kernel="linear", random_state=1)
         svc.fit(data, Y)
         ACC = svc.score(test_data, test_Y)
         numpy.savetxt(PATH_results+dataset+"_"+method+ "_" + class_id + "class_"+ "%ddata_ACC.txt"%k, numpy.asarray([[ACC]]), fmt='%f')
-        print 'SVM accuracy: ', ACC
+        print ('SVM accuracy: ', ACC)
 
 if __name__ == '__main__':
     main()

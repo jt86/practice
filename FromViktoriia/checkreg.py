@@ -26,9 +26,9 @@ def main_svm():
 
 	numpy.set_printoptions(precision=6)
 	numpy.set_printoptions(suppress=True)
-	print "Hyperparameters: SVM"
-	print "Creg"
-	print Creg
+	print ("Hyperparameters: SVM")
+	print ("Creg")
+	print (Creg)
 
 def main_svm_plus():
 
@@ -42,11 +42,11 @@ def main_svm_plus():
                         Cstar[c_ind,d_ind]=numpy.loadtxt(PATH_CV_results + dataset + "_svm_plus_" +class_id + "class_" + "%ddata_best_star.txt"%data_id)
         numpy.set_printoptions(precision=6)
         numpy.set_printoptions(suppress=True)
-        print "Hyperparameters: SVM+"
-        print "Creg"
-        print Creg
-        print "Cstar"
-        print Cstar
+        print ("Hyperparameters: SVM+")
+        print ("Creg")
+        print (Creg)
+        print ("Cstar")
+        print (Cstar)
 
 
 def main(method):
@@ -63,11 +63,11 @@ def main(method):
 			
 	numpy.set_printoptions(precision=8)
 	numpy.set_printoptions(suppress=True)
-	print "Hyperparameters: ", method
-	print "Creg"
-	print Creg
-	print "Cstar"
-	print Cstar
+	print ("Hyperparameters: ", method)
+	print ("Creg")
+	print (Creg)
+	print ("Cstar")
+	print (Cstar)
 	
 def main2(method):
 
@@ -81,9 +81,9 @@ def main2(method):
 
         numpy.set_printoptions(precision=8)
         numpy.set_printoptions(suppress=True)
-        print "Hyperparameters: ", method
-        print "Creg"
-        print Creg
+        print ("Hyperparameters: ", method)
+        print ("Creg")
+        print (Creg)
 		
 				
 if __name__ == '__main__':

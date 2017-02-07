@@ -18,17 +18,17 @@ toporbottom='top'
 step=0.1
 
 class Setting:
-    def __init__(self,num_datasets,setting,n_top_feats,c_value,percent_of_priv):
+    def __init__(self,num_datasets,classifier_type,n_top_feats,c_value,percent_of_priv):
         self.num_datasets = num_datasets
-        self.setting = setting
+        self.classifier_type = classifier_type
         self.n_top_feats = n_top_feats
         self.c_value = c_value
         self.percent_of_priv = percent_of_priv
-        self.name = '{}-{}-{}'.format(setting,c_value,percent_of_priv)
+        self.name = '{}-{}-{}'.format(classifier_type,c_value,percent_of_priv)
 
 
 def get_errors(setting):
-    scores = np.load(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}.npy'.format(setting.num_datasets,setting.setting,setting.n_top_feats,setting.c_value,setting.percent_of_priv)))
+    scores = np.load(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}.npy'.format(setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,setting.percent_of_priv)))
     errors = (np.array([1-mean for mean in np.mean(scores,axis=1)])*100)
     return errors
 
@@ -46,32 +46,77 @@ def compare_two_settings(setting_one, setting_two):
     #     outputfile.write('\n{} vs {}: {} helped in {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),np.mean(improvements_list)))
     return(improvements_list)
 
+
+
+def get_errors_single_fold(setting):
+    scores = np.load(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}.npy'.format(setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,setting.percent_of_priv)))
+    errors = np.array([1-score for score in scores])*100
+    return errors
+
+def compare_two_settings_ind_folds(setting_one, setting_two):
+    setting_one_errors = get_errors_single_fold(setting_one)
+    setting_two_errors = get_errors_single_fold(setting_two)
+    name_one,name_two = setting_one.name, setting_two.name
+    improvements_list=[]
+    for error_one, error_two in zip(setting_one_errors, setting_two_errors):
+        improvements_list.append(error_one - error_two)
+    improvements_list = np.array(improvements_list)
+    shape = setting_one_errors.shape[0]*setting_one_errors.shape[1]
+    print('{} vs {}: {} helped in {} of {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),shape,np.mean(improvements_list)))
+    # with open(os.path.join(save_path, '{}.txt'.format(keyword)), 'a') as outputfile:
+    #     outputfile.write('\n{} vs {}: {} helped in {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),np.mean(improvements_list)))
+    return(improvements_list)
+
+
+
+
+
 lufe_baseline = Setting(295,'lupi',300,'cross-val',100)
 all_baseline = Setting(295,'baseline',300,'cross-val',100)
 svm_baseline = Setting(295,'svm',300,'cross-val',100)
-compare_two_settings(all_baseline,lufe_baseline)
-compare_two_settings(svm_baseline,lufe_baseline)#, 'svm baseline','lufe baseline')
+dsvm_crossval = Setting(295,'dsvm',300,'cross-val',100)
+# compare_two_settings(all_baseline,lufe_baseline)
+# compare_two_settings(svm_baseline,lufe_baseline)#, 'svm baseline','lufe baseline')
 
-print('Comparing dSVM+ LUFe and SVM+ LUFe...')
-for c in [1,10,100,1000]:
-    print('\n C = {}'.format(c))
-    for percent_of_priv in [10,25,50,75,100]:
-        dsvm = Setting(295,'lupi',300,c,percent_of_priv)
-        compare_two_settings(lufe_baseline,dsvm)
-print('\n Comparing dSVM+ LUFe and standard RFE...')
+print (get_errors_single_fold(dsvm_crossval).shape)
+# compare_two_settings_ind_folds(lufe_baseline,dsvm_crossval)
+# dsvm_errors = get_errors(dsvm_crossval)
+# print ((dsvm_errors.shape),dsvm_errors)
+#
+# compare_two_settings(dsvm_crossval,lufe_baseline)
+# compare_two_settings(dsvm_crossval,all_baseline)
+# compare_two_settings(svm_baseline,dsvm_crossval)
 
-for c in [1,10,100,1000]:
-    print('\n C = {}'.format(c))
-    for percent_of_priv in [10,25,50,75,100]:
-        dsvm = Setting(295,'lupi',300,c,percent_of_priv)
-        compare_two_settings(svm_baseline,dsvm)
-print('\n Comparing dSVM+ LUFe and all-features SVM...')
 
-for c in [1, 10, 100, 1000]:
-    print('\n C = {}'.format(c))
-    for percent_of_priv in [10, 25, 50, 75, 100]:
-        dsvm = Setting(295, 'lupi', 300, c, percent_of_priv)
-        compare_two_settings(all_baseline, dsvm)
+
+
+##########  COMPARING FIXED ############
+
+# print('Comparing dSVM+ LUFe and SVM+ LUFe...')
+# for c in [1,10,100,1000]:
+#     print('\n C = {}'.format(c))
+#     for percent_of_priv in [10,25,50,75,100]:
+#         dsvm = Setting(295,'lupi',300,c,percent_of_priv)
+#         compare_two_settings(lufe_baseline,dsvm)
+# print('\n Comparing dSVM+ LUFe and standard RFE...')
+#
+# for c in [1,10,100,1000]:
+#     print('\n C = {}'.format(c))
+#     for percent_of_priv in [10,25,50,75,100]:
+#         dsvm = Setting(295,'lupi',300,c,percent_of_priv)
+#         compare_two_settings(svm_baseline,dsvm)
+# print('\n Comparing dSVM+ LUFe and all-features SVM...')
+#
+# for c in [1, 10, 100, 1000]:
+#     print('\n C = {}'.format(c))
+#     for percent_of_priv in [10, 25, 50, 75, 100]:
+#         dsvm = Setting(295, 'lupi', 300, c, percent_of_priv)
+#         compare_two_settings(all_baseline, dsvm)
+
+
+
+
+
 
         #
 # dsvm_lufe_1,dsvm_lufe_10,dsvm_lufe_100,dsvm_lufe_1000=[],[],[],[]

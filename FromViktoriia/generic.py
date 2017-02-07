@@ -73,8 +73,8 @@ class CKernel(object):
     # @param x2 [read] The second data point.
     #
     def K(self, x1, x2):
-        raise NotImplementedError, \
-              'CKernel.K in abstract class is not implemented'
+        raise (NotImplementedError, \
+               'CKernel.K in abstract class is not implemented')
     
     ## Compute the kernel between the data points in x1 and those in x2.
     # It returns a matrix with entry $(ij)$ equal to $K(x1_i, x1_j)$.
@@ -90,8 +90,8 @@ class CKernel(object):
     # @param output [write] The buffer where the output matrix is written into.
     #
     def Dot(self, x1, x2, index1=None, index2=None, output=None):
-        raise NotImplementedError, \
-              'CKernel.Dot in abstract class is not implemented' 
+        raise (NotImplementedError, \
+              'CKernel.Dot in abstract class is not implemented')
 
     ## Compute the kernel between the data points in x1 and those in x2,
     # then multiply the resulting kernel matrix by alpha2.
@@ -106,8 +106,8 @@ class CKernel(object):
     # @param output [write] The buffer where the output matrix is written into.
     #
     def Expand(self, x1, x2, alpha2, index1=None, index2=None, output=None):
-        raise NotImplementedError, \
-              'CKernel.Expand in abstract class is not implemented' 
+        raise (NotImplementedError, \
+              'CKernel.Expand in abstract class is not implemented')
 
     ## Compute the kernel between the data points in x1 and those in x2,
     # then multiply the resulting kernel matrix elementwiesely by the
@@ -123,8 +123,8 @@ class CKernel(object):
     # @param output [write] The buffer where the output matrix is written into.
     #
     def Tensor(self, x1, y1, x2, y2, index1=None, index2=None, output=None):
-        raise NotImplementedError, \
-              'CKernel.Tensor in abstract class is not implemented' 
+        raise (NotImplementedError, \
+              'CKernel.Tensor in abstract class is not implemented')
 
     ## Compute the kernel between the data points in x1 and those in x2,
     # then multiply the resulting kernel matrix elementwiesely by the
@@ -142,8 +142,8 @@ class CKernel(object):
     #
     def TensorExpand(self, x1, y1, x2, y2, alpha2, index1=None, index2=None, \
                      output=None):
-        raise NotImplementedError, \
-              'CKernel.TensorExpand in abstract class is not implemented'
+        raise (NotImplementedError, \
+              'CKernel.TensorExpand in abstract class is not implemented')
     
     ## Remember the data by performing necessary preprossing on
     # the data, storing it in the cache and indexing it by the id of
@@ -153,8 +153,8 @@ class CKernel(object):
     # @param x [read] The data to be remembered.
     #
     def Remember(self, x):
-        raise NotImplementedError, \
-              'CKernel.Remember in abstract class is not implemented' 
+        raise (NotImplementedError, \
+              'CKernel.Remember in abstract class is not implemented')
 
     ## Remove a remembered data from the cache. If x is not given, then
     # all the data remembered in the cache  will be removed. If a given
@@ -163,6 +163,6 @@ class CKernel(object):
     # @param x [read] The data to be removed.
     #
     def Forget(self, x=None):
-        raise NotImplementedError, \
-              'CKernel.Forget in abstract class is not implemented' 
+        raise (NotImplementedError, \
+              'CKernel.Forget in abstract class is not implemented')
    

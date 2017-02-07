@@ -67,7 +67,7 @@ def do_CV_logreg_5x5fold(Xorig,Yorig, reg_array, dataset, PATH_CV_results, metho
 
 	X = Xorig.copy(); Y = Yorig.copy()	
 	cv_scores = numpy.zeros(len(reg_array))	
-	for rep in xrange(5):
+	for rep in range(5):
 		rep_idx=numpy.random.permutation(len(Y))  
 		Y = Y[rep_idx].copy()
 		X = X[rep_idx].copy()

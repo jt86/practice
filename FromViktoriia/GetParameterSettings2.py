@@ -14,4 +14,4 @@ num_folds=1
 for fold_num in range(num_folds):
     for dataset_num in range(1):
         dataset='awa{}'.format(dataset_num)
-        print '--fold-num {} --num-folds {} --dataset {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, 10, dataset, 'linear', 0, 5,6)
+        print ('--fold-num {} --num-folds {} --dataset {} --kernel {} --cmin {} --cmax {} --numberofcs {}'.format(fold_num, 10, dataset, 'linear', 0, 5,6))
