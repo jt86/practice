@@ -75,7 +75,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # indices = np.random.choice(orig_num_train_instances,num_of_train_instances,replace=False)
         # all_training = all_training.copy()[indices,:]
         # training_labels = training_labels[indices]
-        # print (all_training.shape)
+        print (all_training.shape)
         # print (training_labels.shape)
         # print(indices)
         # sys.exit()
@@ -193,12 +193,14 @@ def get_random_array(num_instances,num_feats):
 
 # value = 1
 
+single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
+
 for dataset in ['madelon','gisette','dexter','dorothea']:
         for skfseed in range(10):
             for k in range(10):
                     single_fold(k=k, topk=300, dataset=dataset, datasetnum=None, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=skfseed, percent_of_priv=100, percentageofinstances=100,take_top_t='top')
 
 
-# single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
+
 
 # print(single_fold(k=0, topk=5000, dataset='awa', datasetnum=0, kernel='linear', cmin=-3, cmax=3, number_of_cs=4,skfseed=9, percent_of_priv=100, percentageofinstances=100,take_top_t='top'))

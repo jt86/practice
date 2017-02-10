@@ -90,10 +90,10 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
         ######### Fit SVM to just the privileged features and then take the slacks
 
-        c = get_best_C(privileged_features_training, training_labels, c_values, cross_validation_folder, datasetnum, top_k)
+        # c = get_best_C(privileged_features_training, training_labels, c_values, cross_validation_folder, datasetnum, top_k)
 
-        # for dSVMC in [1,10,100,1000]:
-        for dSVMC in [c]:
+        for dSVMC in [1,10,100,1000]:
+        # for dSVMC in [c]:
             privileged_features_training = all_training[:, np.invert(rfe.support_)].copy()
             num_of_priv_feats = percent_of_priv * privileged_features_training.shape[1] // 100
             privileged_features_training = privileged_features_training[:, :num_of_priv_feats]
@@ -132,11 +132,11 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 
             accuracy_lupi = np.sum(testing_labels == np.sign(lupi_predictions)) / (1. * len(testing_labels))
 
-            # with open(os.path.join(cross_validation_folder, 'lupi-{}-{}-C={}-percentpriv={}.csv'.format(k, top_k, dSVMC, percent_of_priv)), 'a') as cv_lupi_file:
-            #     cv_lupi_file.write(str(accuracy_lupi) + ',')
-            with open(os.path.join(cross_validation_folder,
-                                   'dsvm-{}-{}-cross-val-percentpriv={}.csv'.format(k, top_k, percent_of_priv)), 'a') as cv_lupi_file:
+            with open(os.path.join(cross_validation_folder, 'lupi-{}-{}-C={}-percentpriv={}.csv'.format(k, top_k, dSVMC, percent_of_priv)), 'a') as cv_lupi_file:
                 cv_lupi_file.write(str(accuracy_lupi) + ',')
+            # with open(os.path.join(cross_validation_folder,
+            #                        'dsvm-{}-{}-cross-val-percentpriv={}.csv'.format(k, top_k, percent_of_priv)), 'a') as cv_lupi_file:
+            #     cv_lupi_file.write(str(accuracy_lupi) + ',')
 
 
             print('svm+ accuracy=\n',accuracy_lupi,'C={}'.format(dSVMC))
@@ -150,3 +150,5 @@ def single_fold(k, top_k, dataset, datasetnum, kernel, cmin, cmax, number_of_cs,
 #
 # for percent_of_priv in [50,75]:
 #     single_fold(k=3, top_k=300, dataset='tech', datasetnum=294, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=percent_of_priv, percentageofinstances=100, take_top_t='top')
+
+# single_fold(k=1, top_k=300, dataset='tech', datasetnum=182, kernel='linear', cmin=3, cmax=3, number_of_cs=7, skfseed=3, percent_of_priv=10, percentageofinstances=100, take_top_t='top')

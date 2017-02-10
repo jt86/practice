@@ -8,6 +8,7 @@ import sys
 from scipy import stats
 import matplotlib.cm as cm
 import csv
+import pandas
 
 num_repeats = 10
 num_folds = 10
@@ -28,10 +29,20 @@ class Setting:
 
 
 def get_errors(setting):
-    scores = np.load(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}.npy'.format(setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,setting.percent_of_priv)))
+    scores = np.load(get_full_path('Desktop/SavedNPArrayResults/{}/{}-{}-{}-{}-{}.npy'.format(dataset,setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,setting.percent_of_priv)))
     errors = (np.array([1-mean for mean in np.mean(scores,axis=1)])*100)
     return errors
 
+
+
+def plot_bars(improvements_list):
+    # print('shape',improvements_list.shape)
+    # print(np.where(improvements_list>0))
+    # # print('shape',np.where(improvements_list > 0))
+    # print((improvements_list[improvements_list>0])[0].shape)
+    # plt.bar(np.where(improvements_list>0),improvements_list[improvements_list>0][0])
+    plt.bar(range(295),improvements_list)
+    plt.show()
 
 def compare_two_settings(setting_one, setting_two):
     setting_one_errors = get_errors(setting_one)
@@ -41,6 +52,7 @@ def compare_two_settings(setting_one, setting_two):
     for error_one, error_two in zip(setting_one_errors, setting_two_errors):
         improvements_list.append(error_one - error_two)
     improvements_list = np.array(improvements_list)
+    plot_bars(improvements_list)
     print('{} vs {}: {} helped in {} of {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),len(setting_one_errors),np.mean(improvements_list)))
     # with open(os.path.join(save_path, '{}.txt'.format(keyword)), 'a') as outputfile:
     #     outputfile.write('\n{} vs {}: {} helped in {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),np.mean(improvements_list)))
@@ -48,8 +60,10 @@ def compare_two_settings(setting_one, setting_two):
 
 
 
+
+
 def get_errors_single_fold(setting):
-    scores = np.load(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}.npy'.format(setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,setting.percent_of_priv)))
+    scores = np.load(get_full_path('Desktop/SavedNPArrayResults/{}/{}-{}-{}-{}-{}.npy'.format(dataset,setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,setting.percent_of_priv)))
     errors = np.array([1-score for score in scores])*100
     return errors
 
@@ -75,11 +89,21 @@ lufe_baseline = Setting(295,'lupi',300,'cross-val',100)
 all_baseline = Setting(295,'baseline',300,'cross-val',100)
 svm_baseline = Setting(295,'svm',300,'cross-val',100)
 dsvm_crossval = Setting(295,'dsvm',300,'cross-val',100)
+dsvm_top10 =  Setting(295,'dsvm',300,'cross-val',10)
+dsvm_top50 = Setting(295,'dsvm',300,'cross-val',50)
 # compare_two_settings(all_baseline,lufe_baseline)
 # compare_two_settings(svm_baseline,lufe_baseline)#, 'svm baseline','lufe baseline')
 
-print (get_errors_single_fold(dsvm_crossval).shape)
+
 # compare_two_settings_ind_folds(lufe_baseline,dsvm_crossval)
+compare_two_settings(dsvm_crossval,dsvm_top10)
+compare_two_settings(dsvm_crossval,dsvm_top50)
+compare_two_settings(dsvm_top10,all_baseline)
+# print(compare_two_settings(lufe_baseline,dsvm_top10))
+
+# print(get_errors(dsvm_top10))
+
+
 # dsvm_errors = get_errors(dsvm_crossval)
 # print ((dsvm_errors.shape),dsvm_errors)
 #
@@ -90,7 +114,7 @@ print (get_errors_single_fold(dsvm_crossval).shape)
 
 
 
-##########  COMPARING FIXED ############
+##########  COMPARING FIXED C WITH CROSS-VALIDATED ############
 
 # print('Comparing dSVM+ LUFe and SVM+ LUFe...')
 # for c in [1,10,100,1000]:

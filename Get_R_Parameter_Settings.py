@@ -36,7 +36,7 @@ count=0
 
 # CVPR2016_Rcode jt306$ R 500 39 3 4 --no-save < run_scripts.R
 for number_selected in [300, 500]:
-    for datasetnum in range(49,295):  # 5
+    for datasetnum in range(295):  # 5
         for seed in range(10):
             for fold_num in range(10):
                 # print('R {} {} {} {} --no-save < run_scripts.R'.format(top_k,datasetnum,seed,fold_num))
