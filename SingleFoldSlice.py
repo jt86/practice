@@ -59,7 +59,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
 
-        cross_validation_folder = os.path.join(output_directory,'cross-validation{}-{}{}'.format(skfseed,take_top_t,percent_of_priv))
+        cross_validation_folder = os.path.join(output_directory,'cross-validation{}'.format(skfseed))
         try:
             os.makedirs(cross_validation_folder)
         except OSError:
@@ -175,7 +175,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
                 accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
 
-                with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
+                with open(os.path.join(cross_validation_folder,'{}-{}'.format(take_top_t,percent_of_priv),'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
                     cv_lupi_file.write(str(accuracy_lupi)+',')
 
                 print ('k=',k, 'seed=',skfseed,'topk',topk,'rfe accuracy=\n',rfe_accuracy,'svm+ accuracy=\n',accuracy_lupi,'baseline accuracy=\n',accuracy_score(testing_labels,baseline_predictions))
