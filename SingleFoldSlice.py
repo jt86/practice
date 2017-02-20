@@ -38,7 +38,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
                 sys.exit()
 
         print('using  {}% of training data instances'.format(percentageofinstances))
-        print('percentage of discarded info used as priv:{}'.format(percent_of_priv))
+        # print('percentage of discarded info used as priv:{}'.format(percent_of_priv))
         stepsize=0.1
         np.random.seed(k)
         c_values = np.logspace(cmin,cmax,number_of_cs)
@@ -46,7 +46,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
         print('word',take_top_t)
-        output_directory = get_full_path(('Desktop/Privileged_Data/10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}{}percentpriv-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percent_of_priv,take_top_t,percentageofinstances,dataset,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/LUFeSubset-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percentageofinstances,dataset,datasetnum,topk,percentageofinstances))
         print (output_directory)
 
         try:
@@ -144,16 +144,18 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
         ##### THIS PART TO GET A SUBSET OF PRIV INFO####
-        print('privileged',privileged_features_training.shape)
-        all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
-        privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
-        num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
 
-        if take_top_t=='top':
-                privileged_features_training = privileged_features_training[:,:num_of_priv_feats]
-        if take_top_t=='bottom':
-                privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
-        print ('privileged data shape',privileged_features_training.shape)
+        for percent_of_priv in [10, 25, 50, 75]:
+                print('privileged',privileged_features_training.shape)
+                all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
+                privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
+                num_of_priv_feats=percent_of_priv*privileged_features_training.shape[1]//100
+
+                if take_top_t=='top':
+                        privileged_features_training = privileged_features_training[:,:num_of_priv_feats]
+                if take_top_t=='bottom':
+                        privileged_features_training = privileged_features_training[:,-num_of_priv_feats:]
+                print ('privileged data shape',privileged_features_training.shape)
 
 
         ##### THIS PART TO USE RANDOM DATA AS PRIVILEGED
@@ -164,26 +166,21 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         # print ('random data size',privileged_features_training.shape)
         #################################
 
-        # c_star_values = [10., 5., 2., 1., 0.5, 0.2, 0.1]
-        # c_star_values=[0.0001, 0.001, 0.01, 0.1]
-        c_star_values=c_values
-        # c_star_svm_plus=get_best_Cstar(normal_features_training,training_labels, privileged_features_training,
-        #                                 c_svm_plus, c_star_values,cross_validation_folder,datasetnum, topk)
+                c_star_values=c_values
+                c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
+                                                 c_values, c_star_values,cross_validation_folder,datasetnum, topk)
 
-        c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
-                                         c_values, c_star_values,cross_validation_folder,datasetnum, topk)
+                duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
+                lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
 
-        duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
-        lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
+                accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
 
-        accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
+                with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
+                    cv_lupi_file.write(str(accuracy_lupi)+',')
 
-        with open(os.path.join(cross_validation_folder,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
-            cv_lupi_file.write(str(accuracy_lupi)+',')
+                print ('k=',k, 'seed=',skfseed,'topk',topk,'rfe accuracy=\n',rfe_accuracy,'svm+ accuracy=\n',accuracy_lupi,'baseline accuracy=\n',accuracy_score(testing_labels,baseline_predictions))
 
-        print ('k=',k, 'seed=',skfseed,'topk',topk,'rfe accuracy=\n',rfe_accuracy,'svm+ accuracy=\n',accuracy_lupi,'baseline accuracy=\n',accuracy_score(testing_labels,baseline_predictions))
-
-        return (rfe_accuracy,accuracy_lupi)
+                return (rfe_accuracy,accuracy_lupi)
 
 
 def get_random_array(num_instances,num_feats):
@@ -193,13 +190,13 @@ def get_random_array(num_instances,num_feats):
 
 # value = 1
 
-single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
+# single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
 
-for dataset in ['madelon','gisette','dexter','dorothea']:
-        for skfseed in range(10):
-            for k in range(10):
-                    single_fold(k=k, topk=300, dataset=dataset, datasetnum=None, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=skfseed, percent_of_priv=100, percentageofinstances=100,take_top_t='top')
-
+# for dataset in ['madelon','gisette','dexter','dorothea']:
+#         for skfseed in range(10):
+#             for k in range(10):
+#                     single_fold(k=k, topk=300, dataset=dataset, datasetnum=None, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=skfseed, percent_of_priv=100, percentageofinstances=100,take_top_t='top')
+#
 
 
 

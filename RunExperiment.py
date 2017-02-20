@@ -1,7 +1,7 @@
 import argparse
-# from SingleFoldSlice import single_fold
+from SingleFoldSlice import single_fold
 # from GetMI import single_fold
-from SingleFold_dSVM_normalised import single_fold
+# from SingleFold_dSVM_normalised import single_fold
 # from SingleFoldUnivariate import single_fold
 # from SingleFoldSlice import save_instance_and_feature_indices_for_R, save_dataset_for_R
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--skfseed', type=int, required=True, help='seed for random division of SKF - to allow 10x10fold')
 
-    parser.add_argument('--percentofpriv', type=int, required=True, help='percentage of priv info to take')
+    parser.add_argument('--percentofpriv', required=True, help='percentage of priv info to take')
 
     parser.add_argument('--percentageofinstances', type=int, required=True, help='percentage of training instances used')
 
