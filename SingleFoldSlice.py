@@ -31,7 +31,7 @@ from sklearn import preprocessing
 
 
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances,take_top_t):
+def single_fold(k, top_k, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances,take_top_t):
 
         if take_top_t not in ['top','bottom']:
                 print('take top t should be "top"or "bottom"')
