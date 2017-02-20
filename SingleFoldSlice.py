@@ -145,7 +145,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ##### THIS PART TO GET A SUBSET OF PRIV INFO####
 
-        for percent_of_priv in [10, 25, 50, 75]:
+        for percent_of_priv in [10,25,50]:
                 print('privileged',privileged_features_training.shape)
                 all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
                 privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
