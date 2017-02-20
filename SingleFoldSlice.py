@@ -59,7 +59,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
 
-        cross_validation_folder = os.path.join(output_directory,'cross-validation{}'.format(skfseed))
+        cross_validation_folder = os.path.join(output_directory,'cross-validation{}-{}{}'.format(skfseed,take_top_t,percent_of_priv))
         try:
             os.makedirs(cross_validation_folder)
         except OSError:
