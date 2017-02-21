@@ -146,6 +146,16 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
         ##### THIS PART TO GET A SUBSET OF PRIV INFO####
 
         for percent_of_priv in [10,25,50]:
+
+                cross_validation_folder2 = os.path.join(cross_validation_folder,'{}-{}'.format(take_top_t, percent_of_priv))
+                try:
+                        os.makedirs(cross_validation_folder2)
+                except OSError:
+                        if not os.path.isdir(cross_validation_folder2):
+                                raise
+
+
+
                 print('privileged',privileged_features_training.shape)
                 all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
                 privileged_features_training = privileged_features_training[:,np.argsort(all_features_ranking)]
@@ -168,14 +178,14 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
                 c_star_values=c_values
                 c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training,
-                                                 c_values, c_star_values,cross_validation_folder,datasetnum, topk)
+                                                 c_values, c_star_values,cross_validation_folder2,datasetnum, topk)
 
                 duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training,  c_svm_plus, c_star_svm_plus)
                 lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
 
                 accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
 
-                with open(os.path.join(cross_validation_folder,'{}-{}'.format(take_top_t,percent_of_priv),'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
+                with open(os.path.join(cross_validation_folder2,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
                     cv_lupi_file.write(str(accuracy_lupi)+',')
 
                 print ('k=',k, 'seed=',skfseed,'topk',topk,'rfe accuracy=\n',rfe_accuracy,'svm+ accuracy=\n',accuracy_lupi,'baseline accuracy=\n',accuracy_score(testing_labels,baseline_predictions))
