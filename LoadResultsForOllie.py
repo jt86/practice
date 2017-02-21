@@ -17,6 +17,7 @@ datasetnum=254
 skfseed=0
 k=0
 output_directory = get_full_path(('Desktop/Privileged_Data/Save_For_Ollie/tech'))
+
 data = np.load(os.path.join(output_directory,'tech{}-{}-{}-train_normal.npy'.format(datasetnum,skfseed,k)))
 testdata = np.load(os.path.join(output_directory,'tech{}-{}-{}-test_normal.npy'.format(datasetnum,skfseed,k)))
 priv = np.load(os.path.join(output_directory,'tech{}-{}-{}-train_priv.npy'.format(datasetnum,skfseed,k)))

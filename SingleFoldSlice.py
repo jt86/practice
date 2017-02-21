@@ -190,7 +190,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
                 print ('k=',k, 'seed=',skfseed,'topk',topk,'rfe accuracy=\n',rfe_accuracy,'svm+ accuracy=\n',accuracy_lupi,'baseline accuracy=\n',accuracy_score(testing_labels,baseline_predictions))
 
-                return (rfe_accuracy,accuracy_lupi)
+
 
 
 def get_random_array(num_instances,num_feats):
