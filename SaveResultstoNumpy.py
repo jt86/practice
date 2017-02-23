@@ -1,5 +1,5 @@
 '''
-Main function used to collect results over 10x10 folds and plot two results (line and bar) comparing three settings
+Main function used to collect results over 10x10 folds
 '''
 
 __author__ = 'jt306'
