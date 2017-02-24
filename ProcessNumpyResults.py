@@ -35,13 +35,18 @@ def get_errors(setting):
 
 
 
-def plot_bars(improvements_list):
+def plot_bars(improvements_list,name_one,name_two):
     # print('shape',improvements_list.shape)
     # print(np.where(improvements_list>0))
     # # print('shape',np.where(improvements_list > 0))
     # print((improvements_list[improvements_list>0])[0].shape)
     # plt.bar(np.where(improvements_list>0),improvements_list[improvements_list>0][0])
-    plt.bar(range(295),improvements_list)
+    plt.bar(range(len(improvements_list)),improvements_list, color='black')
+    plt.title('{} vs {} \n Improvement by {} = {}%, {} of {} cases'.format(name_one, name_two, name_two, round(np.mean(improvements_list),2),len(np.where(improvements_list > 0)[0]),len(improvements_list)))
+    plt.ylabel('<---{} better  (%)   {} better--->'.format(name_one,name_two))
+    plt.xlabel('dataset index')
+    plt.ylim(-2,2.5)
+    plt.savefig(get_full_path('Desktop/SavedNPArrayResults/tech/{}VS{}'.format(name_one,name_two)))
     plt.show()
 
 def compare_two_settings(setting_one, setting_two):
@@ -52,8 +57,18 @@ def compare_two_settings(setting_one, setting_two):
     for error_one, error_two in zip(setting_one_errors, setting_two_errors):
         improvements_list.append(error_one - error_two)
     improvements_list = np.array(improvements_list)
-    plot_bars(improvements_list)
+    # plot_bars(improvements_list,name_one,name_two)
     print('{} vs {}: {} helped in {} of {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),len(setting_one_errors),np.mean(improvements_list)))
+
+    setting_one_errors=setting_one_errors[np.argsort(setting_two_errors[:200])]
+    setting_two_errors = setting_two_errors[np.argsort(setting_two_errors[:200])]
+    plt.plot(range(200),setting_one_errors[:200],color='blue',label=name_one)
+    plt.plot(range(200), setting_two_errors[:200],color='red',label=name_two)
+    plt.ylabel('Error (%)')
+    plt.xlabel('Dataset number (sorted)')
+    plt.legend(loc='best')
+    plt.savefig(get_full_path('Desktop/SavedNPArrayResults/tech/TOTALERROR{}VS{}'.format(name_one, name_two)))
+    plt.show()
     # with open(os.path.join(save_path, '{}.txt'.format(keyword)), 'a') as outputfile:
     #     outputfile.write('\n{} vs {}: {} helped in {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),np.mean(improvements_list)))
     return(improvements_list)
@@ -92,9 +107,22 @@ dsvm_crossval = Setting(295,'dsvm',300,'cross-val',100)
 dsvm_top10 =  Setting(295,'dsvm',300,'cross-val',10)
 dsvm_top50 = Setting(295,'dsvm',300,'cross-val',50)
 
-improvements_list = compare_two_settings(svm_baseline,lufe_baseline)
-print(improvements_list[np.argsort(improvements_list)[-5:]])
-print(np.argsort(improvements_list)[-5:])
+top_10_lufe_200 = Setting(200,'lupi',300,'cross-val',10)
+top_25_lufe_200 = Setting(200,'lupi',300,'cross-val',25)
+top_50_lufe_200 = Setting(200,'lupi',300,'cross-val',50)
+
+
+
+compare_two_settings(top_25_lufe_200,lufe_baseline)
+
+
+
+# improvements_list = compare_two_settings(svm_baseline,lufe_baseline)
+# print(improvements_list[np.argsort(improvements_list)[-5:]])
+# print(np.argsort(improvements_list)[-5:])
+
+
+
 
 # compare_two_settings(svm_baseline,dsvm_crossval)#, 'svm baseline','lufe baseline')
 # compare_two_settings(lufe_baseline,dsvm_crossval)

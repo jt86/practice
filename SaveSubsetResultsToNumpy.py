@@ -30,6 +30,7 @@ experiment = 'LUFeSubset-10x10-tech-ALLCV-3to3-featsscaled-step01-100percentinst
 
 
 def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,experiment_name):
+    count = 0
     list_of_all_datasets = []
     for dataset_num in range(num_datasets):
         all_folds_scores = []
@@ -42,20 +43,29 @@ def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,ex
             # if setting != 'baseline':
             #     n_top_feats2='-{}'.format(n_top_feats)
             for inner_fold in range(num_folds):
+
+                # if os.path.exists(os.path.join(output_directory,'{}-{}-{}.csv'.format(setting,inner_fold,n_top_feats)).format(inner_fold,n_top_feats)):
+                #     # print ('datasetnum {} seednum {} inner_fold {}'.format(dataset_num,seed_num,inner_fold))
+                #     count += 1
+                #     print(count)
+                #     print('print ("--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {}")'.format(
+                #             inner_fold, n_top_feats, dataset, dataset_num, 'linear', -3, 3, 7, seed_num, percent_of_priv, 100,'top'))
+
+
                 with open(os.path.join(output_directory,'{}-{}-{}.csv'.format(setting,inner_fold,n_top_feats)),'r') as result_file:
                     single_score = float(result_file.readline().split(',')[0])
                     all_folds_scores+=[single_score]
         list_of_all_datasets.append(all_folds_scores)
     print(np.array(list_of_all_datasets).shape)
     np.save(get_full_path('Desktop/SavedNPArrayResults/{}/{}-{}-{}-{}-{}'.format(dataset,num_datasets,setting,n_top_feats,c_value,percent_of_priv)),list_of_all_datasets)
-
+    #
 
 
 percent_of_priv=100
 for c_value in ['cross-val']:
-    for percent_of_priv in [10,25,50]:
+    for percent_of_priv in [50]:#,50]:
         for n_top_feats in [300]:
             for setting in ['lupi']:
                 # experiment_name = 'dSVM295-FIXEDC-NORMALISED-PRACTICE-10x10-tech-ALLCV-3to3-featsscaled-step0.1-top-100percentinstances'
                 experiment_name = 'LUFeSubset-10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances'
-                save_to_np_array(1,setting,n_top_feats,c_value,percent_of_priv,experiment_name=experiment_name)
+                save_to_np_array(295,setting,n_top_feats,c_value,percent_of_priv,experiment_name=experiment_name)
