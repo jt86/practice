@@ -150,7 +150,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 
-        for percent_of_priv in [10,25,50,100]:
+        for percent_of_priv in [10,20,50,70,100]:
                 num_of_priv_feats = percent_of_priv * privileged_features_training.shape[1] // 100
                 print('privileged', privileged_features_training.shape)
 
