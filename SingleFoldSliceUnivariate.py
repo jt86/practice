@@ -31,7 +31,7 @@ from sklearn.feature_selection import SelectPercentile, f_classif, chi2, mutual_
 
 
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances,take_top_t, feat_sel):
+def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, skfseed, percent_of_priv, percentageofinstances, take_top_t, featsel):
 
         if take_top_t not in ['top','bottom']:
                 print('take top t should be "top"or "bottom"')
@@ -46,7 +46,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
         print('word',take_top_t)
-        output_directory = get_full_path(('Desktop/Privileged_Data/LUFeSubsetMUTINFO-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percentageofinstances,dataset,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/LUFeSubset-{}-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(featsel, dataset, cmin, cmax, stepsize, percentageofinstances, dataset, datasetnum, topk, percentageofinstances))
         print (output_directory)
 
         try:
@@ -82,7 +82,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ## ANOVA
 
-        if feat_sel == 'anova':
+        if featsel == 'anova':
                 print('shapes:',all_training.shape,all_testing.shape)
                 selector = VarianceThreshold()
                 all_data = np.vstack([all_training,all_testing])
@@ -121,7 +121,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ## MUTUAL INFO
 
-        if feat_sel == 'mutinfo':
+        if featsel == 'mutinfo':
                 scores = mutual_info_classif(all_training, training_labels)
                 print('scores', len(scores))
                 print('scores', scores)
@@ -200,7 +200,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
 
-        for percent_of_priv in [10,20,50,70,100]:
+        for percent_of_priv in [10,100]:
                 num_of_priv_feats = percent_of_priv * privileged_features_training.shape[1] // 100
                 print('privileged', privileged_features_training.shape)
 
@@ -251,7 +251,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 # value = 1
 
-single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', feat_sel='anova')
+# single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', feat_sel='anova')
 
 # for dataset in ['madelon','gisette','dexter','dorothea']:
 #         for skfseed in range(10):

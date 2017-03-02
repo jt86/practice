@@ -36,6 +36,9 @@ if __name__ == '__main__':
 
     parser.add_argument('--taketopt',type=str,required=True,help='if top: take top percent ofpriv.if bottom, take bottom')
 
+    parser.add_argument('--featsel', required=True,
+                        help='metric for univariate')
+
     # parser.add_argument('--dSVMC',type=str,required=True,help='fixed C parameter for the SVM used to get d-values')
 
     args = parser.parse_args()
@@ -46,9 +49,9 @@ if __name__ == '__main__':
     # single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
     single_fold(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum=args.datasetnum,
-                                            kernel=args.kernel, cmin=args.cmin, cmax=args.cmax,
-                                            number_of_cs=args.numberofcs, skfseed=args.skfseed,
-                percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances, take_top_t=args.taketopt)
+                kernel=args.kernel, cmin=args.cmin, cmax=args.cmax,
+                number_of_cs=args.numberofcs, skfseed=args.skfseed,
+                percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances, take_top_t=args.taketopt, featsel=args.featsel)
 
 
     # save_instance_and_feature_indices_for_R(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
