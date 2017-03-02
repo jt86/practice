@@ -38,7 +38,7 @@ def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,ex
 
             # Change Subsets Incomplete to PRivileged_Data
 
-            output_directory = ('/Volumes/LocalDataHD/j/jt/jt306/Desktop/Subsets_Incomplete/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/top-{}'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num,percent_of_priv))
+            output_directory = ('/Volumes/LocalDataHD/j/jt/jt306/Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/top-{}'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num,percent_of_priv))
             # n_top_feats2=''
             # if setting != 'baseline':
             #     n_top_feats2='-{}'.format(n_top_feats)
@@ -63,7 +63,7 @@ def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,ex
 
 percent_of_priv=100
 for c_value in ['cross-val']:
-    for percent_of_priv in [50]:#,50]:
+    for percent_of_priv in [10,25,50]:#,50]:
         for n_top_feats in [300]:
             for setting in ['lupi']:
                 # experiment_name = 'dSVM295-FIXEDC-NORMALISED-PRACTICE-10x10-tech-ALLCV-3to3-featsscaled-step0.1-top-100percentinstances'

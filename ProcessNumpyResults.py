@@ -107,13 +107,13 @@ dsvm_crossval = Setting(295,'dsvm',300,'cross-val',100)
 dsvm_top10 =  Setting(295,'dsvm',300,'cross-val',10)
 dsvm_top50 = Setting(295,'dsvm',300,'cross-val',50)
 
-top_10_lufe_200 = Setting(200,'lupi',300,'cross-val',10)
-top_25_lufe_200 = Setting(200,'lupi',300,'cross-val',25)
-top_50_lufe_200 = Setting(200,'lupi',300,'cross-val',50)
+top_10_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 10)
+top_25_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 25)
+top_50_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 50)
 
 
 
-compare_two_settings(top_25_lufe_200,lufe_baseline)
+compare_two_settings(top_50_lufe_295, lufe_baseline)
 
 
 

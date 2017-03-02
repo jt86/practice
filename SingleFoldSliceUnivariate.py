@@ -25,13 +25,13 @@ import sys
 import numpy.random
 from sklearn import preprocessing
 # from time import time
-from sklearn.feature_selection import SelectPercentile, f_classif, chi2
+from sklearn.feature_selection import SelectPercentile, f_classif, chi2, mutual_info_classif, VarianceThreshold
 # print (PYTHONPATH)
 
 
 
 
-def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances,take_top_t):
+def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skfseed, percent_of_priv, percentageofinstances,take_top_t, feat_sel):
 
         if take_top_t not in ['top','bottom']:
                 print('take top t should be "top"or "bottom"')
@@ -46,7 +46,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 
         print('word',take_top_t)
-        output_directory = get_full_path(('Desktop/Privileged_Data/LUFeSubsetANOVA-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percentageofinstances,dataset,datasetnum,topk,percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/LUFeSubsetMUTINFO-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(dataset,cmin,cmax,stepsize,percentageofinstances,dataset,datasetnum,topk,percentageofinstances))
         print (output_directory)
 
         try:
@@ -80,15 +80,65 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
         ######### UNIVARIATE PART
 
-        selector = SelectPercentile(f_classif, percentile=100)
-        selector.fit(all_training, training_labels)
-        scores = selector.pvalues_
-        ordered_feats = np.array(np.argsort(scores))
+        ## ANOVA
 
-        sorted_training = all_training[:, ordered_feats]
+        if feat_sel == 'anova':
+                print('shapes:',all_training.shape,all_testing.shape)
+                selector = VarianceThreshold()
+                all_data = np.vstack([all_training,all_testing])
+                # selector.fit(all_data)
+                selector.fit_transform(all_training)
+                non_neg_indices = selector.get_support()
+                neg_indices = np.invert(non_neg_indices)
+
+
+                print((non_neg_indices))
+                print((neg_indices))
+                print(len(non_neg_indices))
+                print(len(neg_indices))
+
+                sys.exit()
+
+                all_training=all_training[:,non_neg_indices]
+                all_testing = all_testing[:, non_neg_indices]
+
+
+                print('shapes:', all_training.shape, all_testing.shape)
+
+                selector = SelectPercentile(f_classif, percentile=100)
+                selector.fit(all_training, training_labels)
+                scores = selector.scores_
+                print('scores', len(scores))
+                print('scores', scores)
+
+
+
+                print('sorted scores', scores[np.argsort(scores)[::-1]][:5000])
+                ordered_feats = np.array(np.argsort(scores)[::-1])
+                # ordered_feats = np.array(np.argsort(scores))
+                print ('ordered feats', ordered_feats.shape)
+                print('ordered feats', ordered_feats)
+
+        ## MUTUAL INFO
+
+        if feat_sel == 'mutinfo':
+                scores = mutual_info_classif(all_training, training_labels)
+                print('scores', len(scores))
+                print('scores', scores)
+
+                # [::-1]
+
+
+                print('sorted scores',scores[np.argsort(scores)[::-1]]) # argsort(scores) gives them from smallest to biggest - indexing reverses this
+                ordered_feats = np.array(np.argsort(scores)[::-1])    # ordered feats is np array of indices from biggest to smallest
+                print('ordered feats', ordered_feats.shape)
+                print('ordered feats', ordered_feats)
+
+
+        sorted_training = all_training[:, ordered_feats]  # sort all instances' features from smallest to biggest
         sorted_testing = all_testing[:, ordered_feats]
 
-        normal_features_training = sorted_training[:, :n_top_feats]
+        normal_features_training = sorted_training[:, :n_top_feats]  # take the first n_top_feats
         normal_features_testing = sorted_testing[:, :n_top_feats]
         privileged_features_training = sorted_training[:, n_top_feats:]
 
@@ -201,7 +251,7 @@ def single_fold(k, topk, dataset,datasetnum, kernel, cmin,cmax,number_of_cs, skf
 
 # value = 1
 
-# single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom')
+single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', feat_sel='anova')
 
 # for dataset in ['madelon','gisette','dexter','dorothea']:
 #         for skfseed in range(10):
