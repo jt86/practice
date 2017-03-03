@@ -111,11 +111,11 @@ top_10_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 10)
 top_25_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 25)
 top_50_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 50)
 
+top_228_anova_228 = Setting(228, 'lupiANOVA', 300, 'cross-val', 100)
 
+# compare_two_settings(top_50_lufe_295, lufe_baseline)
 
-compare_two_settings(top_50_lufe_295, lufe_baseline)
-
-
+compare_two_settings(top_228_anova_228, lufe_baseline)
 
 # improvements_list = compare_two_settings(svm_baseline,lufe_baseline)
 # print(improvements_list[np.argsort(improvements_list)[-5:]])

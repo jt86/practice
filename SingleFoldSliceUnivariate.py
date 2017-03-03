@@ -83,27 +83,27 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
         ## ANOVA
 
         if featsel == 'anova':
-                print('shapes:',all_training.shape,all_testing.shape)
-                selector = VarianceThreshold()
-                all_data = np.vstack([all_training,all_testing])
-                # selector.fit(all_data)
-                selector.fit_transform(all_training)
-                non_neg_indices = selector.get_support()
-                neg_indices = np.invert(non_neg_indices)
-
-
-                print((non_neg_indices))
-                print((neg_indices))
-                print(len(non_neg_indices))
-                print(len(neg_indices))
-
-                sys.exit()
-
-                all_training=all_training[:,non_neg_indices]
-                all_testing = all_testing[:, non_neg_indices]
-
-
-                print('shapes:', all_training.shape, all_testing.shape)
+                # print('shapes:',all_training.shape,all_testing.shape)
+                # selector = VarianceThreshold()
+                # all_data = np.vstack([all_training,all_testing])
+                # # selector.fit(all_data)
+                # selector.fit_transform(all_training)
+                # non_neg_indices = selector.get_support()
+                # neg_indices = np.invert(non_neg_indices)
+                #
+                #
+                # print((non_neg_indices))
+                # print((neg_indices))
+                # print(len(non_neg_indices))
+                # print(len(neg_indices))
+                #
+                # sys.exit()
+                #
+                # all_training=all_training[:,non_neg_indices]
+                # all_testing = all_testing[:, non_neg_indices]
+                #
+                #
+                # print('shapes:', all_training.shape, all_testing.shape)
 
                 selector = SelectPercentile(f_classif, percentile=100)
                 selector.fit(all_training, training_labels)

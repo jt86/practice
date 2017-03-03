@@ -25,8 +25,8 @@ step=0.1
 
 np.set_printoptions(linewidth=132)
 
-experiment = 'LUFeSubset-10x10-tech-ALLCV-3to3-featsscaled-step01-100percentinstances'#/{}{}/top{}chosen-{}percentinstances/')#.format(dataset,cmin,cmax,stepsize,percentageofinstances,dataset,datasetnum,topk,percentageofinstances))
-
+# experiment = 'LUFeSubset-10x10-tech-ALLCV-3to3-featsscaled-step01-100percentinstances'#/{}{}/top{}chosen-{}percentinstances/')#.format(dataset,cmin,cmax,stepsize,percentageofinstances,dataset,datasetnum,topk,percentageofinstances))
+experiment = 'LUFeSubsetANOVA-10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances-Bottom'
 
 
 def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,experiment_name):
@@ -57,15 +57,17 @@ def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,ex
                     all_folds_scores+=[single_score]
         list_of_all_datasets.append(all_folds_scores)
     print(np.array(list_of_all_datasets).shape)
+    setting = setting+'ANOVA'
     np.save(get_full_path('Desktop/SavedNPArrayResults/{}/{}-{}-{}-{}-{}'.format(dataset,num_datasets,setting,n_top_feats,c_value,percent_of_priv)),list_of_all_datasets)
     #
 
 
 percent_of_priv=100
 for c_value in ['cross-val']:
-    for percent_of_priv in [10,25,50]:#,50]:
+    for percent_of_priv in [100]:#,50]:
         for n_top_feats in [300]:
             for setting in ['lupi']:
                 # experiment_name = 'dSVM295-FIXEDC-NORMALISED-PRACTICE-10x10-tech-ALLCV-3to3-featsscaled-step0.1-top-100percentinstances'
-                experiment_name = 'LUFeSubset-10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances'
-                save_to_np_array(295,setting,n_top_feats,c_value,percent_of_priv,experiment_name=experiment_name)
+                # experiment_name = 'LUFeSubset-10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances'
+                experiment_name = 'LUFeSubsetANOVA-10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances-Bottom'
+                save_to_np_array(228,setting,n_top_feats,c_value,percent_of_priv,experiment_name=experiment_name)
