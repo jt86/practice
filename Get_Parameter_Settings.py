@@ -20,8 +20,6 @@ dataset='tech'
 for featsel in ['anova','chi2']:#,'mutinfo']:
     for top_k in [300]:#,500]:#,500]:#:,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
         for take_top_t in ['top']:#,'bottom']:
-            # for percentofpriv in [10,20,30,40,50,60,70,80,90]:
-            # for percentofpriv in [10,25,50,75]:#,50]:
             for percentofpriv in ['varied']:
                 for datasetnum in range (295): #5
                     for seed in range (10):
