@@ -12,7 +12,7 @@ import os
 # print os.environ['HOME']
 
 import numpy as np
-# from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score
 from SVMplus import svmplusQP, svmplusQP_Predict
 from ParamEstimation import  get_best_C, get_best_RFE_C, get_best_CandCstar
 from sklearn import svm
@@ -98,7 +98,7 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
 
 
         print('word',take_top_t)
-        output_directory = get_full_path(('Desktop/Privileged_Data/PRACTICE-{}-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(featsel, dataset, cmin, cmax, stepsize, percentageofinstances, dataset, datasetnum, topk, percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/Subset-{}-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(featsel, dataset, cmin, cmax, stepsize, percentageofinstances, dataset, datasetnum, topk, percentageofinstances))
         print (output_directory)
 
         try:
@@ -151,58 +151,13 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
 
         ######### BASELINE SVM WITH FEAT SELECTION
 
-        best_param = get_best_C(all_training, training_labels, c_values, cross_validation_folder, datasetnum, topk)
+        best_param=get_best_C(all_training,training_labels, c_values, cross_validation_folder,datasetnum,topk)
         svc = SVC(C=best_param, kernel=kernel, random_state=k)
         svc.fit(normal_features_training, training_labels)
-        svm_accuracy = svc.score(normal_features_testing, testing_labels)
-        print('SVM accuracy (using slice):', svm_accuracy)
-
-        with open(os.path.join(cross_validation_folder,'svm-{}-{}-{}.csv'.format(featsel,k,topk)),'a') as cv_svm_file:
-            cv_svm_file.write(str(svm_accuracy)+",")
-
-        # n_top_feats = topk*all_training.shape[1]//100
-        print('n top feats', n_top_feats)
-        param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats, k))
+        rfe_accuracy = svc.score(normal_features_testing, testing_labels)
+        print('SVM accuracy (using slice):', rfe_accuracy)
 
 
-        for percent_of_priv in [100]:#,10]:
-                num_of_priv_feats = percent_of_priv * privileged_features_training.shape[1] // 100
-                print('privileged', privileged_features_training.shape)
-
-                cross_validation_folder2 = os.path.join(cross_validation_folder,'{}-{}'.format(take_top_t, percent_of_priv))
-                try:
-                        os.makedirs(cross_validation_folder2)
-                except OSError:
-                        if not os.path.isdir(cross_validation_folder2):
-                                raise
-
-
-                if take_top_t=='top':
-                        privileged_features_training2 = privileged_features_training[:,:num_of_priv_feats]
-                if take_top_t=='bottom':
-                        privileged_features_training2 = privileged_features_training[:,-num_of_priv_feats:]
-                print ('privileged data shape',privileged_features_training2.shape)
-
-
-                c_star_values=c_values
-                c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training2,
-                                                 c_values, c_star_values,cross_validation_folder2,datasetnum, topk)
-
-                duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training2,  c_svm_plus, c_star_svm_plus)
-                lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
-
-                accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
-
-                with open(os.path.join(cross_validation_folder2,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
-                    cv_lupi_file.write(str(accuracy_lupi)+',')
-
-                print ('k=',k, 'seed=',skfseed,'topk',topk,'svm+ accuracy=\n',accuracy_lupi)#'baseline accuracy=\n',accuracy_score(testing_labels,baseline_predictions))
-
-
-
-
-
-single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', featsel='chi2')
 
 #
 # def get_random_array(num_instances,num_feats):
@@ -211,7 +166,7 @@ single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin
 #     return random_array
 
 # value = 1
-
+#
 # for skfseed in range(10):
 #     for k in range(10):
 #         for datasetnum in range(211,242):

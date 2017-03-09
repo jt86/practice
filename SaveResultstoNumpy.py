@@ -31,21 +31,24 @@ def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,ex
     for dataset_num in range(num_datasets):
         all_folds_scores = []
         for seed_num in range (num_repeats):
-            output_directory = ('/Volumes/LocalDataHD/j/jt/jt306/Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num))
+            output_directory = ('/Volumes/LocalDataHD/j/jt/jt306/Desktop/Privileged_Data/{}/tech{}/top{}chosen-{}percentinstances/cross-validation{}/top-{}/'.format(experiment_name,dataset_num,n_top_feats,percentofinstances,seed_num,percent_of_priv))
             n_top_feats2=''
             if setting != 'baseline':
                 n_top_feats2='-{}'.format(n_top_feats)
             for inner_fold in range(num_folds):
-                with open(os.path.join(output_directory,'{}-{}{}-C={}-percentpriv={}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)),'r') as result_file:
+                with open(os.path.join(output_directory,'{}-{}{}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)),'r') as result_file:
                     single_score = float(result_file.readline().split(',')[0])
                     all_folds_scores+=[single_score]
         list_of_all_datasets.append(all_folds_scores)
     print(np.array(list_of_all_datasets).shape)
-    np.save(get_full_path('Desktop/SavedNPArrayResults/{}-{}-{}-{}-{}'.format(num_datasets,setting,n_top_feats,c_value,percent_of_priv)),list_of_all_datasets)
+    np.save(get_full_path('Desktop/SavedNPArrayResults/tech/{}-{}-{}-{}-{}-CHI2'.format(num_datasets,setting,n_top_feats,c_value,percent_of_priv)),list_of_all_datasets)
 
 
 
 percent_of_priv=100
+experiment_name = 'Subset-chi2-10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances'
+save_to_np_array(295,'lupi',300,'cross-val',100,experiment_name)
+
 # for c_value in [1,10,100,1000]:
 #     for percent_of_priv in [10,25,50,75,100]:
 #         for n_top_feats in [300,500]:
@@ -92,7 +95,7 @@ def save_to_np_array_with_d_value(num_datasets, setting, n_top_feats, c_value, p
 
 experiment_name = 'dSVM295-SAVEd-NORMALISED-10x10-tech-ALLCV-3to3-featsscaled-step0.1-top50percentpriv'
 # experiment_name = 'dSVM295-SAVEd-NORMAlISED-10x10-tech-ALLCV-3to3-featsscaled-step0.1-top-100percentinstances'
-save_to_np_array_with_d_value(295, 'dsvm', 300, 'cross-val', 50, experiment_name)
+# save_to_np_array_with_d_value(295, 'dsvm', 300, 'cross-val', 50, experiment_name)
 
 
 # def save_to_np_array_with_d_value(dataset,num_datasets, setting, n_top_feats, c_value, percent_of_priv, experiment_name):

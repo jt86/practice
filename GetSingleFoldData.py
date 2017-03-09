@@ -8,7 +8,7 @@ __author__ = 'jt306'
 import numpy as np
 from Get_Full_Path import get_full_path
 from scipy import sparse as sp
-from sklearn.cross_validation import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold
 from sklearn import preprocessing
 from sklearn import preprocessing
 from GetFeatSelectionData import get_arcene_data,get_madelon_data,get_gisette_data,get_dexter_data,get_dorothea_data
@@ -46,9 +46,11 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     # print (all_labels.shape)
 
     all_data = np.vstack([class0_data,class1_data])
-    skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True,random_state=skf_seed)
+    skf = StratifiedKFold(n_splits=10, shuffle=True,random_state=skf_seed)
+    splits = skf.split(X=all_data,y=all_labels)
 
-    for fold_num, (train_index, test_index) in enumerate(skf):
+    for fold_num, (train_index, test_index) in enumerate(splits):
+        print(fold_num,train_index,test_index)
         if fold_num==k:
             train_data, test_data = all_data[train_index],all_data[test_index]
             train_labels, test_labels = all_labels[train_index], all_labels[test_index]

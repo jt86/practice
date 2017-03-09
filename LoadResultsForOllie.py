@@ -22,3 +22,7 @@ data = np.load(os.path.join(output_directory,'tech{}-{}-{}-train_normal.npy'.for
 testdata = np.load(os.path.join(output_directory,'tech{}-{}-{}-test_normal.npy'.format(datasetnum,skfseed,k)))
 priv = np.load(os.path.join(output_directory,'tech{}-{}-{}-train_priv.npy'.format(datasetnum,skfseed,k)))
 print(data.shape,testdata.shape,priv.shape)
+
+
+for k in range(1,10):
+    for datasetnum in [254,174, 219, 197, 137]:
