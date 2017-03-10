@@ -8,25 +8,14 @@ Things to check before running: (1) values of C, (2) output directory and whethe
 '''
 
 import os
-
-# print os.environ['HOME']
-
 import numpy as np
-# from sklearn.metrics import accuracy_score
 from SVMplus import svmplusQP, svmplusQP_Predict
 from ParamEstimation import  get_best_C, get_best_RFE_C, get_best_CandCstar
-from sklearn import svm
 from Get_Full_Path import get_full_path
-from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
-# from GetFeatSelectionData import get_train_and_test_this_fold
 import sys
-import numpy.random
-from sklearn import preprocessing
-# from time import time
 from sklearn.feature_selection import SelectPercentile, f_classif, chi2, mutual_info_classif, VarianceThreshold
-# print (PYTHONPATH)
 
 def get_anova_ordered_indices(all_training,training_labels):
 
@@ -53,11 +42,7 @@ def get_chi2_ordered_indices(all_training, training_labels):
 
         # add values so that all features of training data are non-zero
         min_value = np.min(all_training)
-        print(len(np.where(all_training<0)[0]))
-        print(min_value)
         all_training=all_training-min_value
-        print(len(np.where(all_training < 0)[0]))
-
 
         # get array of scores in the same order as original features
         selector = SelectPercentile(chi2, percentile=100)
@@ -72,14 +57,7 @@ def get_chi2_ordered_indices(all_training, training_labels):
 
 def get_mutinfo_ordered_indices(all_training,training_labels):
         scores = mutual_info_classif(all_training, training_labels)
-        print('scores', len(scores))
-        print('scores', scores)
-
-        print('sorted scores',
-              scores[np.argsort(scores)[::-1]])  # argsort(scores) gives them from smallest to biggest - indexing reverses this
         ordered_indices = np.array(np.argsort(scores)[::-1])  # ordered feats is np array of indices from biggest to smallest
-        print('ordered feats', ordered_indices.shape)
-        print('ordered feats', ordered_indices)
         return ordered_indices
 
 
@@ -98,7 +76,7 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
 
 
         print('word',take_top_t)
-        output_directory = get_full_path(('Desktop/Privileged_Data/PRACTICE-{}-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(featsel, dataset, cmin, cmax, stepsize, percentageofinstances, dataset, datasetnum, topk, percentageofinstances))
+        output_directory = get_full_path(('Desktop/Privileged_Data/{}-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(featsel, dataset, cmin, cmax, stepsize, percentageofinstances, dataset, datasetnum, topk, percentageofinstances))
         print (output_directory)
 
         try:
@@ -198,8 +176,15 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
 
                 print ('k=',k, 'seed=',skfseed,'topk',topk,'svm+ accuracy=\n',accuracy_lupi)#'baseline accuracy=\n',accuracy_score(testing_labels,baseline_predictions))
 
-
-
+dataset = 'tech'
+for seed in range(1):
+    for fold_num in range(10):  # 0
+        for featsel in ['anova', 'chi2']:  # ,'mutinfo']:
+            for top_k in [300]:  # ,500]:#,500]:#:,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
+                for take_top_t in ['top']:  # ,'bottom']:
+                    for datasetnum in range(15,295,16):  # 5
+                        # print (datasetnum)
+                        single_fold(fold_num, 300, dataset, datasetnum, 'linear', -3, 3, 7, seed,100, 100, 'top', featsel)
 
 
 # single_fold(k=3, topk=500, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, number_of_cs=7,skfseed=4, percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', featsel='chi2')
