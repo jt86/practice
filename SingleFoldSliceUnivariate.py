@@ -143,46 +143,47 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
         param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats, k))
 
 
-        for percent_of_priv in [100]:#,10]:
-                num_of_priv_feats = percent_of_priv * privileged_features_training.shape[1] // 100
-                print('privileged', privileged_features_training.shape)
-
-                cross_validation_folder2 = os.path.join(cross_validation_folder,'{}-{}'.format(take_top_t, percent_of_priv))
-                try:
-                        os.makedirs(cross_validation_folder2)
-                except OSError:
-                        if not os.path.isdir(cross_validation_folder2):
-                                raise
-
-
-                if take_top_t=='top':
-                        privileged_features_training2 = privileged_features_training[:,:num_of_priv_feats]
-                if take_top_t=='bottom':
-                        privileged_features_training2 = privileged_features_training[:,-num_of_priv_feats:]
-                print ('privileged data shape',privileged_features_training2.shape)
-
-
-                c_star_values=c_values
-                c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training2,
-                                                 c_values, c_star_values,cross_validation_folder2,datasetnum, topk)
-
-                duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training2,  c_svm_plus, c_star_svm_plus)
-                lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
-
-                accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
-
-                with open(os.path.join(cross_validation_folder2,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
-                    cv_lupi_file.write(str(accuracy_lupi)+',')
-
-                print ('k=',k, 'seed=',skfseed,'topk',topk,'svm+ accuracy=\n',accuracy_lupi)#'baseline accuracy=\n',accuracy_score(testing_labels,baseline_predictions))
+        # for percent_of_priv in [100]:#,10]:
+        #         num_of_priv_feats = percent_of_priv * privileged_features_training.shape[1] // 100
+        #         print('privileged', privileged_features_training.shape)
+        #
+        #         cross_validation_folder2 = os.path.join(cross_validation_folder,'{}-{}'.format(take_top_t, percent_of_priv))
+        #         try:
+        #                 os.makedirs(cross_validation_folder2)
+        #         except OSError:
+        #                 if not os.path.isdir(cross_validation_folder2):
+        #                         raise
+        #
+        #
+        #         if take_top_t=='top':
+        #                 privileged_features_training2 = privileged_features_training[:,:num_of_priv_feats]
+        #         if take_top_t=='bottom':
+        #                 privileged_features_training2 = privileged_features_training[:,-num_of_priv_feats:]
+        #         print ('privileged data shape',privileged_features_training2.shape)
+        #
+        #
+        #         c_star_values=c_values
+        #         c_svm_plus,c_star_svm_plus = get_best_CandCstar(normal_features_training,training_labels, privileged_features_training2,
+        #                                          c_values, c_star_values,cross_validation_folder2,datasetnum, topk)
+        #
+        #         duals,bias = svmplusQP(normal_features_training, training_labels.copy(), privileged_features_training2,  c_svm_plus, c_star_svm_plus)
+        #         lupi_predictions = svmplusQP_Predict(normal_features_training,normal_features_testing ,duals,bias).flatten()
+        #
+        #         accuracy_lupi = np.sum(testing_labels==np.sign(lupi_predictions))/(1.*len(testing_labels))
+        #
+        #         with open(os.path.join(cross_validation_folder2,'lupi-{}-{}.csv'.format(k,topk)),'a') as cv_lupi_file:
+        #             cv_lupi_file.write(str(accuracy_lupi)+',')
+        #
+        #         print ('k=',k, 'seed=',skfseed,'topk',topk,'svm+ accuracy=\n',accuracy_lupi)#'baseline accuracy=\n',accuracy_score(testing_labels,baseline_predictions))
 
 dataset = 'tech'
 for seed in range(1):
-    for fold_num in range(10):  # 0
-        for featsel in ['anova', 'chi2']:  # ,'mutinfo']:
+    for fold_num in range(8,10):  # 0
+        for featsel in ['mutinfo']:#'anova', 'chi2']::
             for top_k in [300]:  # ,500]:#,500]:#:,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
                 for take_top_t in ['top']:  # ,'bottom']:
-                    for datasetnum in range(15,295,16):  # 5
+                    # for datasetnum in range(210,240):  # 5
+                    for datasetnum in [240]:
                         # print (datasetnum)
                         single_fold(fold_num, 300, dataset, datasetnum, 'linear', -3, 3, 7, seed,100, 100, 'top', featsel)
 

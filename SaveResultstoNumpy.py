@@ -14,7 +14,7 @@ import matplotlib.cm as cm
 import csv
 
 num_repeats = 1
-num_folds = 4
+num_folds = 10
 # method = 'RFE'
 dataset='tech'
 percentofinstances=100
@@ -27,19 +27,23 @@ np.set_printoptions(linewidth=132)
 
 
 def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,experiment_name,featsel):
+    toporbottom='bottom'
     root_dir = '/Volumes/LocalDataHD/j/jt/jt306/Desktop/Privileged_Data/{}'.format(experiment_name)
     list_of_all_datasets = []
     for dataset_num in range(num_datasets):
         all_folds_scores = []
+        # if dataset_num > 240:
+        #     toporbottom='top'
         for seed_num in range (num_repeats):
-            # output_directory = (os.path.join(root_dir,'tech{}/top{}chosen-{}percentinstances/cross-validation{}/top-{}/'.format(dataset_num,n_top_feats,percentofinstances,seed_num,percent_of_priv)))
-            output_directory = (os.path.join(root_dir,'tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(dataset_num,n_top_feats,percentofinstances,seed_num,percent_of_priv)))
+            # output_directory = (os.path.join(root_dir,'tech{}/top{}chosen-{}percentinstances/cross-validation{}/{}-{}/'.format(dataset_num,n_top_feats,percentofinstances,seed_num,toporbottom,percent_of_priv)))
+            output_directory  = (os.path.join(root_dir,'tech{}/top{}chosen-{}percentinstances/cross-validation{}/'.format(dataset_num,n_top_feats,percentofinstances,seed_num,percent_of_priv)))
             n_top_feats2=''
             if setting != 'baseline':
                 n_top_feats2='-{}'.format(n_top_feats)
             for inner_fold in range(num_folds):
-                # with open(os.path.join(output_directory,'{}-{}{}.csv'.format(setting,inner_fold,n_top_feats2,c_value,percent_of_priv)),'r') as result_file:
+
                 with open(os.path.join(output_directory,'{}-{}-{}{}.csv'.format(setting,featsel,inner_fold,n_top_feats2)),'r') as result_file:
+                # with open(os.path.join(output_directory,'{}-{}{}.csv'.format(setting,inner_fold,n_top_feats2)),'r') as result_file:
                     single_score = float(result_file.readline().split(',')[0])
                     all_folds_scores+=[single_score]
         list_of_all_datasets.append(all_folds_scores)
@@ -47,7 +51,7 @@ def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,ex
     np.save(get_full_path('Desktop/SavedNPArrayResults/tech/{}-{}-{}-{}-{}-{}'.format(num_datasets,setting,n_top_feats,c_value,percent_of_priv,featsel)),list_of_all_datasets)
 
 
-featsel='anova'
+featsel='mutinfo'
 percent_of_priv=100
 experiment_name = '{}-10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances'.format(featsel)
 save_to_np_array(295,'svm',300,'cross-val',percent_of_priv,experiment_name,featsel)

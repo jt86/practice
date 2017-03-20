@@ -131,19 +131,25 @@ anova_svm = Setting(295, 'svm', 300, 'cross-val', 100, 'anova')
 chi2_lupi = Setting(295, 'lupi', 300, 'cross-val', 100, 'chi2')
 chi2_svm = Setting(295, 'svm', 300, 'cross-val', 100, 'chi2')
 
-mutinfo_lupi_100 = Setting(240, 'lupi', 300, 'cross-val', 100, 'mutinfo')
-mutinfo_lupi_10 = Setting(240, 'lupi', 300, 'cross-val', 10, 'mutinfo')
 
+# mutinfo_lupi_10 = Setting(240, 'lupi', 300, 'cross-val', 10, 'mutinfo')
+
+mutinfo_lupi_100 = Setting(295, 'lupi', 300, 'cross-val', 100, 'mutinfo')
+mutinfo_svm = Setting(295,'svm',300,'cross-val',100,'mutinfo')
+
+#
 # compare_two_settings(anova_lupi, chi2_lupi)
 # compare_two_settings(svm_baseline, chi2_svm)
 # compare_two_settings(svm_baseline, anova_svm)
 #
 # compare_two_settings(lufe_baseline, chi2_lupi)
 # compare_two_settings(lufe_baseline, anova_lupi)
-compare_two_settings(svm_baseline,lufe_baseline)
+# compare_two_settings(svm_baseline,lufe_baseline)
 
 
-
+compare_two_settings(chi2_svm, chi2_lupi)
+compare_two_settings(anova_svm, anova_lupi)
+compare_two_settings(mutinfo_svm, mutinfo_lupi_100)
 
 
 ##########  COMPARING FIXED C WITH CROSS-VALIDATED ############
