@@ -181,8 +181,8 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
         with open(os.path.join(cross_validation_folder2, 'lupi-{}-{}.csv'.format(k, topk)), 'a') as cv_lupi_file:
             cv_lupi_file.write(str(accuracy_lupi) + ',')
 
-        print('k=', k, 'seed=', skfseed, 'topk', topk, 'rfe accuracy=\n', rfe_accuracy, 'svm+ accuracy=\n',
-              accuracy_lupi, 'baseline accuracy=\n', accuracy_score(testing_labels, baseline_predictions))
+        # print('k=', k, 'seed=', skfseed, 'topk', topk, 'rfe accuracy=\n', rfe_accuracy, 'svm+ accuracy=\n',
+        #       accuracy_lupi, 'baseline accuracy=\n', accuracy_score(testing_labels, baseline_predictions))
 
 
 def get_random_array(num_instances, num_feats):
