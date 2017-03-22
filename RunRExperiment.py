@@ -30,6 +30,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--taketopt',type=str,required=True,help='if top: take top percent ofpriv.if bottom, take bottom')
 
+    parser.add_argument('--lupimethod', type=str, required=True,help='which lupi method to use')
+
     args = parser.parse_args()
     print('input is', args.dataset)
     print(' all args',args)
@@ -40,7 +42,8 @@ if __name__ == '__main__':
     single_fold(k=args.k, dataset=args.dataset, top_k=args.topk, datasetnum=args.datasetnum,
                                             kernel=args.kernel, cmin=args.cmin, cmax=args.cmax,
                                             number_of_cs=args.numberofcs, skfseed=args.skfseed,
-                percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances, take_top_t=args.taketopt)
+                percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances, take_top_t=args.taketopt,
+                lupimethod=args.lupimethod)
     # save_instance_and_feature_indices_for_R(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, skfseed=args.skfseed)
 
