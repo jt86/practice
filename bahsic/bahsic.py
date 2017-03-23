@@ -191,11 +191,14 @@ class CBAHSIC(object):
 
 from GetSingleFoldData import get_train_and_test_this_fold
 import numpy as np
-all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold('tech',1,1,1)
-x = np.vstack((all_training,all_testing))
-y = np.hstack((training_labels,testing_labels))
-y = np.reshape(y,[y.shape[0],1])
-print(y.shape)
+# all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold('tech',1,1,1)
+# x = np.vstack((all_training,all_testing))
+# y = np.hstack((training_labels,testing_labels))
+# y = np.reshape(y,[y.shape[0],1])
+# print(y.shape)
+
+x  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_normal.npy')
+x  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_labels.npy')
 
 cbahsic= CBAHSIC
 cbahsic.BAHSICOpt(cbahsic,x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=300, flg4=0.1)
