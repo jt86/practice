@@ -2,11 +2,11 @@ __author__ = 'jt306'
 
 from sklearn.metrics import accuracy_score, pairwise
 from sklearn import svm
-from sklearn.model_selection import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
+# from sklearn.model_selection import StratifiedKFold,KFold, ShuffleSplit, StratifiedShuffleSplit
 import numpy as np
 import numpy
 import pdb
-from sklearn import model_selection, linear_model
+from sklearn import linear_model, cross_validation
 from SVMplus import svmplusQP, svmplusQP_Predict
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVC, LinearSVC
@@ -18,7 +18,7 @@ from Models import SVMdp, SVMu, get_accuracy_score
 
 def get_best_params_dp(training_data, training_labels, privileged_data, c_values, gamma_values, delta_values, cross_validation_folder, datasetnum, topk):
     n_folds=5
-    skf = model_selection.StratifiedKFold(n_folds)
+    skf = cross_validation.StratifiedKFold(n_folds)
     cv = skf.split(training_data, training_labels)
     cv_scores = np.zeros((len(c_values),len(gamma_values), len(delta_values)))
     print ('cv scores shape',cv_scores.shape)
@@ -51,7 +51,7 @@ def get_best_params_dp(training_data, training_labels, privileged_data, c_values
 
 def get_best_CandCstar(training_data,training_labels, privileged_data, c_values, Cstar_values,cross_validation_folder,datasetnum,topk):
     n_folds=5
-    skf = model_selection.StratifiedKFold(n_folds)
+    skf = cross_validation.StratifiedKFold(n_folds)
     cv = skf.split(training_data, training_labels)
     cv_scores = np.zeros((len(Cstar_values),len(c_values)))	#join cross validation on X, X*
     print ('cv scores shape',cv_scores.shape)
@@ -103,7 +103,7 @@ def get_best_CandCstar(training_data,training_labels, privileged_data, c_values,
 #     return best_Cstar
 
 def get_best_C(training_data,training_labels, c_values, cross_validation_folder,datasetnum,topk):
-    skf = model_selection.StratifiedKFold(5)
+    skf = cross_validation.StratifiedKFold(5)
     cv = skf.split(training_data,training_labels)
     cv_scores = np.zeros(len(c_values))
     for i,(train, test) in enumerate(cv):
@@ -128,7 +128,7 @@ def get_best_C(training_data,training_labels, c_values, cross_validation_folder,
 def get_best_RFE_C(training_data,training_labels, c_values, top, stepsize,datasetnum,topk):
     starttime = time.clock()
     # print ('time', starttime)
-    skf = model_selection.StratifiedKFold(5)
+    skf = cross_validation.StratifiedKFold(5)
     cv = skf.split(training_data, training_labels)
     cv_scores = numpy.zeros(len(c_values))
 

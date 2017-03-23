@@ -8,31 +8,31 @@ __author__ = 'jt306'
 import numpy as np
 from Get_Full_Path import get_full_path
 from scipy import sparse as sp
-from sklearn.model_selection import StratifiedKFold
+from sklearn.cross_validation import StratifiedKFold
 from sklearn import preprocessing
 from sklearn import preprocessing
-from GetFeatSelectionData import get_arcene_data,get_madelon_data,get_gisette_data,get_dexter_data,get_dorothea_data
+# from GetFeatSelectionData import get_arcene_data,get_madelon_data,get_gisette_data,get_dexter_data,get_dorothea_data
 # import numpy.linalg.norm
 import sys
 np.set_printoptions(linewidth=132)
-
+#
 def load_dataset_from_name(dataset,datasetnum):
     if dataset=='tech':
-        class0_data,class1_data=get_techtc_data(datasetnum)
-    if dataset=='awa':
-        class0_data,class1_data=get_awa_data(datasetnum)
-    if dataset=='arcene':
-        class0_data, class1_data = get_arcene_data()
-    if dataset=='madelon':
-        class0_data, class1_data = get_madelon_data()
-    if dataset=='gisette':
-        class0_data, class1_data = get_gisette_data()
-    if dataset=='dexter':
-        class0_data, class1_data = get_dexter_data()
-    if dataset=='dorothea':
-        class0_data, class1_data = get_dorothea_data()
-
-    return class0_data,class1_data
+         class0_data,class1_data=get_techtc_data(datasetnum)
+#     if dataset=='awa':
+#         class0_data,class1_data=get_awa_data(datasetnum)
+#     if dataset=='arcene':
+#         class0_data, class1_data = get_arcene_data()
+#     if dataset=='madelon':
+#         class0_data, class1_data = get_madelon_data()
+#     if dataset=='gisette':
+#         class0_data, class1_data = get_gisette_data()
+#     if dataset=='dexter':
+#         class0_data, class1_data = get_dexter_data()
+#     if dataset=='dorothea':
+#         class0_data, class1_data = get_dorothea_data()
+#
+#     return class0_data,class1_data
 
 
 
