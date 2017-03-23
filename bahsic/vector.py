@@ -230,7 +230,7 @@ class CVectorKernel(CKernel):
         # default behavior        
         if x is not None:
             assert len(x.shape) == 2, "Argument 1 has wrong shape"
-            if self._cacheKernel.has_key(id(x)) is False:
+            if (id(x)) in self._cacheKernel is False:
                 return False
             else:
                 del self._cacheKernel[id(x)]
@@ -299,9 +299,9 @@ class CVectorKernel(CKernel):
         # default behavior        
         assert len(x.shape)==2, "Argument 1 has wrong shape"
         # assert self._cacheKernel.has_key(id(x)) == True, \
-        assert id(x) in self._cacheKernel == True, \
-               "Argument 1 has not been cached"
-    
+        # assert id(x) in self._cacheKernel == True, \
+        #        "Argument 1 has not been cached"     #### COMMENTED OUT 23/3
+
         if param is not None:
             self.SetParam(param)
 
@@ -589,11 +589,11 @@ class CLinearKernel(CVectorKernel):
     #
     def DotCacheKernel(self, x, param=None, output=None):
         assert len(x.shape)==2, 'Argument 1 has wrong shape'
-        assert self._cacheKernel.has_key(id(x)) == True, \
-               'Argument 1 has not been cached'
+        # assert (id(x)) in self._cacheKernel== True, \
+        #        'Argument 1 has not been cached'           #### COMMENTED OUT
         
         n = x.shape[0]
-        nb = n / self._blocksize  
+        nb = n // self._blocksize
         tmpCacheKernel = self._cacheKernel[id(x)]
 
         # set parameters.
@@ -625,11 +625,11 @@ class CLinearKernel(CVectorKernel):
         assert len(x2.shape) == 2, 'Argument 2 has wrong shape'
         assert x1.shape[0] == x2.shape[0], \
                'Argument 1 and 2 have different number of data points'
-        assert self._cacheKernel.has_key(id(x1)) == True, \
-               'Argument 1 has not been cached'
+        # assert (id(x1)) in self._cacheKernel == True, \
+        #        'Argument 1 has not been cached'           # COMMENTED OUT
 
         n = x1.shape[0]
-        nb = n / self._blocksize
+        nb = n // self._blocksize
         tmpCacheKernel = self._cacheKernel[id(x1)]
 
         # blocking
@@ -660,11 +660,11 @@ class CLinearKernel(CVectorKernel):
         assert len(x2.shape) == 2, 'Argument 2 has wrong shape'
         assert x1.shape[0] == x2.shape[0], \
                'Argument 1 and 2 have different number of data points'
-        assert self._cacheKernel.has_key(id(x1)) == True, \
-               'Argument 1 has not been cached'
+        # assert (id(x1)) in self._cacheKernel == True, \
+        #        'Argument 1 has not been cached'                   # COMMENTETD OUT 23/03/17
         
         n = x1.shape[0]
-        nb = n / self._blocksize    
+        nb = n // self._blocksize
         tmpCacheKernel = self._cacheKernel[id(x1)]
 
         # set parameters.    

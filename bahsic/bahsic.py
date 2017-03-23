@@ -197,8 +197,20 @@ import numpy as np
 # y = np.reshape(y,[y.shape[0],1])
 # print(y.shape)
 
-x  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_normal.npy')
-x  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_labels.npy')
+x  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_priv.npy')
+y  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_labels.npy')
+y = np.reshape(y,[y.shape[0],1])
 
-cbahsic= CBAHSIC
-cbahsic.BAHSICOpt(cbahsic,x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=300, flg4=0.1)
+print(x.shape)
+cbahsic= CBAHSIC()
+output =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=100, flg4=0.5)))
+print(output)
+print(len(output))
+
+output =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=50, flg4=0.5)))
+print(output)
+print(len(output))
+
+output =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=10, flg4=0.5)))
+print(output)
+print(len(output))

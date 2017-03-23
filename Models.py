@@ -7,7 +7,7 @@ import logging
 class SVM():
     def get_name(self):
         return "SVM"
-    def train(self, x, prob : svm_problem):
+    def train(self, x, prob):#svm_problem):
         x = x
         y = prob.Y
         C = prob.C
@@ -59,7 +59,7 @@ class SVM():
 class SVMp():
     def get_name(self):
         return "SVM+"
-    def train(self, prob : svm_problem):
+    def train(self, prob):#svm_problem):
         self.prob = prob
         self.C = self.prob.C
 
@@ -200,7 +200,7 @@ class SVMp():
 class SVMdp_simp():
     def get_name(self):
         return "SVMd+ - simplified approach"
-    def train(self, prob : svm_problem):
+    def train(self, prob):# : svm_problem):
         x = prob.X
         xStar = prob.Xstar
         y = prob.Y
@@ -271,7 +271,7 @@ class SVMdp_simp():
 class SVMdp():
     def get_name(self):
         return "SVMd+"
-    def train(self, prob : svm_problem):
+    def train(self, prob):#svm_problem):
         self.prob = prob
         #self.kernel = self.prob.kernel
         self.C = self.prob.C
@@ -430,7 +430,7 @@ class SVMdp():
 class SVMu():
     def get_name(self):
         return "SVM Idea"
-    def train(self, prob : svm_problem):
+    def train(self, prob):#svm_problem):
         self.prob = prob
         self.C = self.prob.C
 
