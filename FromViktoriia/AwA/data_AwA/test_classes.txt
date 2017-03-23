@@ -1,0 +1,3 @@
+test_classes = ["chimpanzee", "giant+panda", "leopard", "persian+cat", "pig", "hippopotamus", "humpback+whale", "raccoon", "rat", "seal"]
+test_classes_id = [0,1,2,3,4,5,6,7,8,9]
+test_numexamples = [701, 942, 608, 714, 331, 723, 716, 633, 303, 509]
