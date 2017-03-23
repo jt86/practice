@@ -1,6 +1,6 @@
 from Kernels import *
 import numpy as np
-from sklearn.preprocessing import RobustScaler as ss
+# from sklearn.preprocessing import RobustScaler as ss
 from sklearn.metrics import accuracy_score
 
 class svm_problem():
