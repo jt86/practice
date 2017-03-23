@@ -32,7 +32,7 @@ def load_dataset_from_name(dataset,datasetnum):
 #     if dataset=='dorothea':
 #         class0_data, class1_data = get_dorothea_data()
 #
-#     return class0_data,class1_data
+    return class0_data,class1_data
 
 
 
