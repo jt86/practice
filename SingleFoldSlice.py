@@ -151,8 +151,8 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
         if not os.path.isdir(cross_validation_folder2):
             raise
 
-    privileged_features_training2 = get_priv_subset(privileged_features_training, take_top_t, percent_of_priv)
-
+    # privileged_features_training2 = get_priv_subset(privileged_features_training, take_top_t, percent_of_priv)
+    privileged_features_training2=privileged_features_training
     #################################
     if lupimethod == 'dp':
         C, gamma, delta = get_best_params_dp(normal_features_training, training_labels, privileged_features_training2,

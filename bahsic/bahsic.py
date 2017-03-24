@@ -202,15 +202,26 @@ y  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_labels.npy')
 y = np.reshape(y,[y.shape[0],1])
 
 print(x.shape)
+# import sys
+# sys.exit()
 cbahsic= CBAHSIC()
-output =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=100, flg4=0.5)))
-print(output)
-print(len(output))
 
-output =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=50, flg4=0.5)))
-print(output)
-print(len(output))
+output1 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=100, flg4=0.5)))
+print(output1)
+print(len(output1))
 
-output =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=10, flg4=0.5)))
-print(output)
-print(len(output))
+output2 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=50, flg4=0.5)))
+print(output2)
+print(len(output2))
+
+output3 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=10, flg4=0.5)))
+print(output3)
+print(len(output3))
+
+i=0
+for count,(item1,item2,item3) in enumerate(zip(output1,output2,output3)):
+    print (count, item1,item2,item3 )
+    if item1 !=item2 or item2 !=item3 or item1 != item3:
+        print('    no match!     ')
+        i+=1
+print(i)
