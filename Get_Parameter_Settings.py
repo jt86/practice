@@ -18,7 +18,7 @@ count=1
 for seed in range(1):
     for fold_num in range(10):  # 0
         dataset='tech'
-        for lupimethod in ['ds']:
+        for lupimethod in ['dp']:
         # for featsel in ['anova','chi2']:#,'mutinfo']:
             for top_k in [300]:#,500]:#,500]:#:,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
                 for take_top_t in ['top']:#,'bottom']:

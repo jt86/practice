@@ -155,6 +155,7 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
     privileged_features_training2=privileged_features_training
     #################################
     if lupimethod == 'dp':
+        print('delta plus')
         C, gamma, delta = get_best_params_dp(normal_features_training, training_labels, privileged_features_training2,
                                              c_values, c_values, c_values, cross_validation_folder, datasetnum, topk)
         problem = svm_problem(normal_features_training, privileged_features_training2, training_labels, C=C,
