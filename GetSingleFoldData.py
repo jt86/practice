@@ -48,10 +48,12 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     # print (all_labels.shape)
 
     all_data = np.vstack([class0_data,class1_data])
-    skf = StratifiedKFold(n_splits=10, shuffle=True,random_state=skf_seed)
-    splits = skf.split(X=all_data,y=all_labels)
+    # skf = StratifiedKFold(n_splits=10, shuffle=True,random_state=skf_seed)
+    # splits = skf.split(X=all_data,y=all_labels)
+    skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True, random_state=skf_seed)
 
-    for fold_num, (train_index, test_index) in enumerate(splits):
+    # for fold_num, (train_index, test_index) in enumerate(splits):
+    for fold_num, (train_index, test_index) in enumerate(skf):
         print(fold_num,train_index,test_index)
         if fold_num==k:
             train_data, test_data = all_data[train_index],all_data[test_index]
