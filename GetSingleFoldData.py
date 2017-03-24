@@ -15,6 +15,8 @@ from sklearn import preprocessing
 # import numpy.linalg.norm
 import sys
 np.set_printoptions(linewidth=132)
+import sklearn
+print('The scikit-learn version is {}.'.format(sklearn.__version__))
 #
 def load_dataset_from_name(dataset,datasetnum):
     if dataset=='tech':
