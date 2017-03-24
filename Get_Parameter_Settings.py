@@ -24,7 +24,7 @@ for seed in range(1):
                 for take_top_t in ['top']:#,'bottom']:
                     for percentofpriv in [100]:
                         for datasetnum in range (295): #5
-                            print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {} --lupimethod {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 7, seed, percentofpriv, 100, take_top_t, lupimethod))
+                            print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {} --lupimethod {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', -3, 3, 1, seed, percentofpriv, 100, take_top_t, lupimethod))
                             # count+=1
 
 #
