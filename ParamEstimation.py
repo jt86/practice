@@ -16,6 +16,37 @@ from New import svm_problem,svm_u_problem
 from Models import SVMdp, SVMu, get_accuracy_score
 from sklearn.cross_validation import StratifiedKFold
 
+def get_best_params_dp2(training_data, training_labels, privileged_data, c_values, gamma_values, delta_values, cross_validation_folder, datasetnum, topk):
+    delta = delta_values[:-1]
+    n_folds=5
+    # skf = cross_validation.StratifiedKFold(n_folds)
+    # cv = skf.split(training_data, training_labels)
+    cv = StratifiedKFold(training_labels, n_folds=5, shuffle=True)
+    cv_scores = np.zeros((len(c_values),len(gamma_values)))
+    print ('cv scores shape',cv_scores.shape)
+    for i,(train, test) in enumerate(cv):
+        for C_index, C in enumerate(c_values):
+            for gamma_index, gamma in enumerate(gamma_values):
+                problem = svm_problem(training_data[train], privileged_data[train], training_labels[train].copy(), C=C, gamma=gamma, delta=delta)
+                dp_classifier = SVMdp()
+                c2 = dp_classifier.train(prob=problem)
+                ACC = (get_accuracy_score(c2, training_data[test], training_labels[test]))
+                cv_scores[C_index,gamma_index] += ACC
+                sys.stdout.flush()
+                # print (cv_scores)
+    cv_scores = cv_scores/n_folds
+    best_positions = (np.argwhere(cv_scores.max() == cv_scores))
+    index_of_best=best_positions[0]
+    # index_of_best = best_positions[int(len(best_positions)/2)]
+
+    print('index of best',index_of_best)
+    best_C, best_gamma  = c_values[index_of_best[0]], gamma_values[index_of_best[1]]
+
+    with open(os.path.join(cross_validation_folder,'Cstar-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
+        cross_validation_doc.write("\n{} => best C={},best gamma={},best delta={}".format(cv_scores,best_C,best_gamma,delta))
+    print('cross valid scores:\n',cv_scores,'=> best C',best_C,  'best gamma',best_gamma, 'fixed delta',delta)
+    return best_C, best_gamma, delta
+
 def get_best_params_dp(training_data, training_labels, privileged_data, c_values, gamma_values, delta_values, cross_validation_folder, datasetnum, topk):
     n_folds=5
     # skf = cross_validation.StratifiedKFold(n_folds)
@@ -41,9 +72,8 @@ def get_best_params_dp(training_data, training_labels, privileged_data, c_values
     best_positions = (np.argwhere(cv_scores.max() == cv_scores))
     index_of_best=best_positions[0]
     # index_of_best = best_positions[int(len(best_positions)/2)]
-
     print('index of best',index_of_best)
-    best_C, best_delta, best_gamma  = c_values[index_of_best[0]], gamma_values[index_of_best[1]], delta_values[index_of_best[2]]
+    best_C, best_gamma, best_delta  = c_values[index_of_best[0]], gamma_values[index_of_best[1]], delta_values[index_of_best[2]]
     with open(os.path.join(cross_validation_folder,'Cstar-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} => best C={},best gamma={},best delta={}".format(cv_scores,best_C,best_gamma,best_delta))
     print('cross valid scores:\n',cv_scores,'=> best C',best_C, 'best delta',best_delta, 'best gamma',best_gamma)

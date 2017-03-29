@@ -14,7 +14,7 @@ import os
 import numpy as np
 from sklearn.metrics import accuracy_score
 from SVMplus import svmplusQP, svmplusQP_Predict
-from ParamEstimation import get_best_C, get_best_RFE_C, get_best_CandCstar, get_best_params_dp
+from ParamEstimation import get_best_C, get_best_RFE_C, get_best_CandCstar, get_best_params_dp, get_best_params_dp2
 from sklearn import svm
 from Get_Full_Path import get_full_path
 from sklearn.feature_selection import RFE
@@ -58,7 +58,7 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
 
     print('word', take_top_t)
     output_directory = get_full_path((
-                                     'Desktop/Privileged_Data/LUFe-SVMdelta-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(
+                                     'Desktop/Privileged_Data/LUFe-FixedDelta-SVMdelta-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(
         dataset, cmin, cmax, stepsize, percentageofinstances, dataset, datasetnum, topk, percentageofinstances))
     print(output_directory)
 
@@ -112,7 +112,7 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
     rfe_accuracy = svc.score(normal_features_testing, testing_labels)
     print('rfe accuracy (using slice):', rfe_accuracy)
 
-    np.save(get_full_path('Desktop/Privileged_Data/SavedIndices/top{}RFE/{}{}-{}-{}'.format(n_top_feats,dataset,datasetnum,skfseed,k)),best_n_mask)
+    # np.save(get_full_path('Desktop/Privileged_Data/SavedIndices/top{}RFE/{}{}-{}-{}'.format(n_top_feats,dataset,datasetnum,skfseed,k)),best_n_mask)
 
 
     # with open(os.path.join(cross_validation_folder, 'svm-{}-{}.csv'.format(k, topk)), 'a') as cv_svm_file:
@@ -156,7 +156,7 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
     #################################
     if lupimethod == 'dp':
         print('delta plus')
-        C, gamma, delta = get_best_params_dp(normal_features_training, training_labels, privileged_features_training2,
+        C, gamma, delta = get_best_params_dp2(normal_features_training, training_labels, privileged_features_training2,
                                              c_values, c_values, c_values, cross_validation_folder, datasetnum, topk)
         problem = svm_problem(normal_features_training, privileged_features_training2, training_labels, C=C,
                               gamma=gamma, delta=delta)

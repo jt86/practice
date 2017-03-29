@@ -31,26 +31,31 @@ class Setting:
         self.name = '{}-{}-{}{}'.format(classifier_type, c_value, percent_of_priv,featsel)
 
 def get_errors(setting):
+    scores = get_scores(setting)
+    return (np.array([1-mean for mean in np.mean(scores,axis=1)])*100)
+
+
+def get_scores(setting):
     if setting.featsel != '':
         featsel = '-{}'.format(setting.featsel)
     else:
         featsel=''
-    scores = np.load(get_full_path('Desktop/SavedNPArrayResults/{}/{}-{}-{}-{}-{}{}.npy'.format(dataset,setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,setting.percent_of_priv,featsel)))
-    errors = (np.array([1-mean for mean in np.mean(scores,axis=1)])*100)
-    return errors
+    return np.load(get_full_path('Desktop/SavedNPArrayResults/{}/{}-{}-{}-{}-{}{}.npy'.format(dataset,setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,setting.percent_of_priv,featsel)))
 
 
-
-def plot_bars(improvements_list,name_one,name_two):
+def plot_bars(setting_one,setting_two):
+    name_one, name_two = setting_one.name, setting_two.name
+    improvements_list = get_improvements_list(setting_one,setting_two)
     plt.bar(range(len(improvements_list)),improvements_list, color='black')
     plt.title('{} vs {} \n Improvement by {} = {}%, {} of {} cases'.format(name_one, name_two, name_two, round(np.mean(improvements_list),2),len(np.where(improvements_list > 0)[0]),len(improvements_list)))
     plt.ylabel('<---{} better  (%)   {} better--->'.format(name_one,name_two))
     plt.xlabel('dataset index')
-    # plt.ylim(-2,2.5)
+    plt.ylim(-10,15)
     plt.savefig(get_full_path('Desktop/SavedNPArrayResults/tech/plots/{}_VS_{}'.format(name_one,name_two)))
     plt.show()
 
-num_datasets=240
+num_datasets=295
+
 
 all_baseline = Setting(295,'baseline',300,'cross-val',100, '')
 
@@ -70,16 +75,17 @@ def plot_total_comparison(setting_one,setting_two, baseline_setting=all_baseline
     plt.savefig(get_full_path('Desktop/SavedNPArrayResults/tech/plots/TOTALERROR{}VS{}'.format(setting_one.name, setting_two.name)))
     plt.show()
 
-
-
-def compare_two_settings(setting_one, setting_two):
+def get_improvements_list(setting_one, setting_two):
     setting_one_errors = get_errors(setting_one)
     setting_two_errors = get_errors(setting_two)
-    name_one,name_two = setting_one.name, setting_two.name
-    improvements_list=[]
+    improvements_list = []
     for error_one, error_two in zip(setting_one_errors, setting_two_errors):
         improvements_list.append(error_one - error_two)
-    improvements_list = np.array(improvements_list)
+    return np.array(improvements_list)
+
+def compare_two_settings(setting_one, setting_two):
+    improvements_list = get_improvements_list()
+    name_one, name_two = setting_one.name, setting_two.name
     plot_bars(improvements_list,name_one,name_two)
     plot_total_comparison(setting_one, setting_two)
     print('{} vs {}: {} helped in {} of {} cases, mean improvement={}%'.format(name_two,name_one,name_two,len(np.where(improvements_list > 0)[0]),len(setting_one_errors),np.mean(improvements_list)))
@@ -126,16 +132,16 @@ top_50_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 50, '')
 
 # compare_two_settings(top_50_lufe_295, lufe_baseline)
 
-anova_lupi = Setting(295, 'lupi', 300, 'cross-val', 100, 'anova')
-anova_svm = Setting(295, 'svm', 300, 'cross-val', 100, 'anova')
-chi2_lupi = Setting(295, 'lupi', 300, 'cross-val', 100, 'chi2')
-chi2_svm = Setting(295, 'svm', 300, 'cross-val', 100, 'chi2')
+# anova_lupi = Setting(295, 'lupi', 300, 'cross-val', 100, 'anova')
+# anova_svm = Setting(295, 'svm', 300, 'cross-val', 100, 'anova')
+# chi2_lupi = Setting(295, 'lupi', 300, 'cross-val', 100, 'chi2')
+# chi2_svm = Setting(295, 'svm', 300, 'cross-val', 100, 'chi2')
 
 
 # mutinfo_lupi_10 = Setting(240, 'lupi', 300, 'cross-val', 10, 'mutinfo')
 
-mutinfo_lupi_100 = Setting(295, 'lupi', 300, 'cross-val', 100, 'mutinfo')
-mutinfo_svm = Setting(295,'svm',300,'cross-val',100,'mutinfo')
+# mutinfo_lupi_100 = Setting(295, 'lupi', 300, 'cross-val', 100, 'mutinfo')
+# mutinfo_svm = Setting(295,'svm',300,'cross-val',100,'mutinfo')
 
 #
 # compare_two_settings(anova_lupi, chi2_lupi)
@@ -147,9 +153,9 @@ mutinfo_svm = Setting(295,'svm',300,'cross-val',100,'mutinfo')
 # compare_two_settings(svm_baseline,lufe_baseline)
 
 
-compare_two_settings(chi2_svm, chi2_lupi)
-compare_two_settings(anova_svm, anova_lupi)
-compare_two_settings(mutinfo_svm, mutinfo_lupi_100)
+# compare_two_settings(chi2_svm, chi2_lupi)
+# compare_two_settings(anova_svm, anova_lupi)
+# compare_two_settings(mutinfo_svm, mutinfo_lupi_100)
 
 
 ##########  COMPARING FIXED C WITH CROSS-VALIDATED ############
