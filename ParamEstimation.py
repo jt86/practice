@@ -17,7 +17,7 @@ from Models import SVMdp, SVMu, get_accuracy_score
 from sklearn.cross_validation import StratifiedKFold
 
 def get_best_params_dp2(training_data, training_labels, privileged_data, c_values, gamma_values, delta_values, cross_validation_folder, datasetnum, topk):
-    delta = delta_values[:-1]
+    delta = delta_values[-1]
     n_folds=5
     # skf = cross_validation.StratifiedKFold(n_folds)
     # cv = skf.split(training_data, training_labels)
