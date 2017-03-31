@@ -220,7 +220,7 @@ print(len(output3))
 
 i=0
 for count,(item1,item2,item3) in enumerate(zip(output1,output2,output3)):
-    print (count, item1,item2,item3 )
+    print (count, item1,item2,item3,'{}'.format('<----------' if item1 !=item2 or item2 !=item3 or item1 != item3 else ))
     if item1 !=item2 or item2 !=item3 or item1 != item3:
         print('    no match!     ')
         i+=1

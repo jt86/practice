@@ -42,6 +42,14 @@ def get_priv_subset(feature_set,take_top_t,percent_of_priv):
     print('privileged data shape', privileged_features_training2.shape)
     return privileged_features_training2
 
+def make_directory(directory):
+    try:
+        os.makedirs(directory)
+    except OSError:
+        if not os.path.isdir(directory):
+            raise
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, skfseed, percent_of_priv,
                 percentageofinstances, take_top_t, lupimethod=None):
@@ -58,30 +66,16 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
 
     print('word', take_top_t)
     output_directory = get_full_path((
-                                     'Desktop/Privileged_Data/LUFe-FixedDelta-SVMdelta-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(
+                                     'Desktop/Privileged_Data/LUFe-SVMdelta-10x10-{}-ALLCV{}to{}-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(
         dataset, cmin, cmax, stepsize, percentageofinstances, dataset, datasetnum, topk, percentageofinstances))
     print(output_directory)
-
-    try:
-        os.makedirs(output_directory)
-    except OSError:
-        if not os.path.isdir(output_directory):
-            raise
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
-
+    make_directory(output_directory)
     param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
-
     cross_validation_folder = os.path.join(output_directory, 'cross-validation{}'.format(skfseed))
-    try:
-        os.makedirs(cross_validation_folder)
-    except OSError:
-        if not os.path.isdir(cross_validation_folder):
-            raise
+    make_directory(cross_validation_folder)
 
     all_training, all_testing, training_labels, testing_labels = get_train_and_test_this_fold(dataset, datasetnum, k,
                                                                                               skfseed)
-
     n_top_feats = topk
     param_estimation_file.write("\n\n n={},fold={}".format(n_top_feats, k))
 
@@ -145,18 +139,14 @@ def single_fold(k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, 
     # for percent_of_priv in [10,25,50]:
 
     cross_validation_folder2 = os.path.join(cross_validation_folder, '{}-{}'.format(take_top_t, percent_of_priv))
-    try:
-        os.makedirs(cross_validation_folder2)
-    except OSError:
-        if not os.path.isdir(cross_validation_folder2):
-            raise
+    make_directory(cross_validation_folder2)
 
     # privileged_features_training2 = get_priv_subset(privileged_features_training, take_top_t, percent_of_priv)
     privileged_features_training2=privileged_features_training
     #################################
     if lupimethod == 'dp':
         print('delta plus')
-        C, gamma, delta = get_best_params_dp2(normal_features_training, training_labels, privileged_features_training2,
+        C, gamma, delta = get_best_params_dp(normal_features_training, training_labels, privileged_features_training2,
                                              c_values, c_values, c_values, cross_validation_folder, datasetnum, topk)
         problem = svm_problem(normal_features_training, privileged_features_training2, training_labels, C=C,
                               gamma=gamma, delta=delta)

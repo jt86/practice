@@ -116,17 +116,17 @@ def compare_two_settings_ind_folds(setting_one, setting_two):
 
 
 
-
-lufe_baseline = Setting(295,'lupi',300,'cross-val',100, '')
-
-svm_baseline = Setting(295,'svm',300,'cross-val',100, '')
-dsvm_crossval = Setting(295,'dsvm',300,'cross-val',100, '')
-dsvm_top10 =  Setting(295,'dsvm',300,'cross-val',10, '')
-dsvm_top50 = Setting(295,'dsvm',300,'cross-val',50, '')
-
-top_10_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 10, '')
-top_25_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 25, '')
-top_50_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 50, '')
+#
+# lufe_baseline = Setting(295,'lupi',300,'cross-val',100, '')
+#
+# svm_baseline = Setting(295,'svm',300,'cross-val',100, '')
+# dsvm_crossval = Setting(295,'dsvm',300,'cross-val',100, '')
+# dsvm_top10 =  Setting(295,'dsvm',300,'cross-val',10, '')
+# dsvm_top50 = Setting(295,'dsvm',300,'cross-val',50, '')
+#
+# top_10_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 10, '')
+# top_25_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 25, '')
+# top_50_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 50, '')
 
 # top_228_anova_228 = Setting(228, 'lupiANOVA', 300, 'cross-val', 100, '')
 
@@ -140,22 +140,10 @@ top_50_lufe_295 = Setting(295, 'lupi', 300, 'cross-val', 50, '')
 
 # mutinfo_lupi_10 = Setting(240, 'lupi', 300, 'cross-val', 10, 'mutinfo')
 
-# mutinfo_lupi_100 = Setting(295, 'lupi', 300, 'cross-val', 100, 'mutinfo')
-# mutinfo_svm = Setting(295,'svm',300,'cross-val',100,'mutinfo')
-
-#
-# compare_two_settings(anova_lupi, chi2_lupi)
-# compare_two_settings(svm_baseline, chi2_svm)
-# compare_two_settings(svm_baseline, anova_svm)
-#
-# compare_two_settings(lufe_baseline, chi2_lupi)
-# compare_two_settings(lufe_baseline, anova_lupi)
-# compare_two_settings(svm_baseline,lufe_baseline)
+mutinfo_lupi_100 = Setting(295, 'lupi', 300, 'cross-val', 100, 'mutinfo')
+mutinfo_svm = Setting(295,'svm',300,'cross-val',100,'mutinfo')
 
 
-# compare_two_settings(chi2_svm, chi2_lupi)
-# compare_two_settings(anova_svm, anova_lupi)
-# compare_two_settings(mutinfo_svm, mutinfo_lupi_100)
 
 
 ##########  COMPARING FIXED C WITH CROSS-VALIDATED ############
