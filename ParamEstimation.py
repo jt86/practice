@@ -76,7 +76,7 @@ def get_best_params_dp(training_data, training_labels, privileged_data, c_values
     best_C, best_gamma, best_delta  = c_values[index_of_best[0]], gamma_values[index_of_best[1]], delta_values[index_of_best[2]]
     with open(os.path.join(cross_validation_folder,'Cstar-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} => best C={},best gamma={},best delta={}".format(cv_scores,best_C,best_gamma,best_delta))
-    print('cross valid scores:\n',cv_scores,'=> best C',best_C, 'best delta',best_delta, 'best gamma',best_gamma)
+    print('cross valid scores:\n',cv_scores,'=> best C',best_C, 'best gamma',best_gamma,'best delta',best_delta)
     return best_C, best_gamma, best_delta
 
 
