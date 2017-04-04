@@ -117,7 +117,9 @@ def compare_two_settings_ind_folds(setting_one, setting_two):
 
 
 #
-# lufe_baseline = Setting(295,'lupi',300,'cross-val',100, '')
+lufe_baseline = Setting(295,'lupi',300,'cross-val',100, '')
+
+print(get_scores(lufe_baseline).shape)
 #
 # svm_baseline = Setting(295,'svm',300,'cross-val',100, '')
 # dsvm_crossval = Setting(295,'dsvm',300,'cross-val',100, '')

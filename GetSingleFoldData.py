@@ -38,9 +38,9 @@ def load_dataset_from_name(dataset,datasetnum):
 
 
 
-def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per class
+def get_train_and_test_this_fold(setting):	#N,test_N per class
 
-    class0_data, class1_data = load_dataset_from_name(dataset,datasetnum)
+    class0_data, class1_data = load_dataset_from_name(setting.dataset,setting.datasetnum)
 
     class0_labels = [-1]*class0_data.shape[0]
     class1_labels = [1]* class1_data.shape[0]
@@ -50,12 +50,12 @@ def get_train_and_test_this_fold(dataset,datasetnum,k, skf_seed):	#N,test_N per 
     all_data = np.vstack([class0_data,class1_data])
     # skf = StratifiedKFold(n_splits=10, shuffle=True,random_state=skf_seed)
     # splits = skf.split(X=all_data,y=all_labels)
-    skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True, random_state=skf_seed)
+    skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True, random_state=setting.skfseed)
 
     # for fold_num, (train_index, test_index) in enumerate(splits):
     for fold_num, (train_index, test_index) in enumerate(skf):
         print(fold_num,train_index,test_index)
-        if fold_num==k:
+        if fold_num==setting.k:
             train_data, test_data = all_data[train_index],all_data[test_index]
             train_labels, test_labels = all_labels[train_index], all_labels[test_index]
             train_indices,test_indices=train_index,test_index
