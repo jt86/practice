@@ -105,10 +105,6 @@ def use_rfe(s, normal_train, priv_train, labels_train, normal_test, labels_test,
 
 
 
-
-
-
-
 def do_baseline(s, all_train, labels_train, all_test, labels_test, cross_val_folder):
     best_C_baseline = get_best_C(s, all_train, labels_train, cross_val_folder)
     print('all training shape', all_train.shape)
