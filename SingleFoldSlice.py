@@ -92,9 +92,9 @@ def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     priv_train = all_train[:, np.invert(rfe.support_)].copy()
     np.save(get_full_path('Desktop/Privileged_Data/SavedIndices/top{}RFE/{}{}-{}-{}'.
                           format(setting.topk, s.dataset, s.datasetnum, s.skfseed, s.k)), best_n_mask)
-    return normal_train, normal_test, priv_train
 
-def use_rfe(s, normal_train, priv_train, labels_train, normal_test, labels_test, best_rfe_param, cross_val_folder):
+
+
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.k)
     svc.fit(normal_train, labels_train)
     rfe_accuracy = svc.score(normal_test, labels_test)
@@ -103,7 +103,7 @@ def use_rfe(s, normal_train, priv_train, labels_train, normal_test, labels_test,
     with open(os.path.join(cross_val_folder, 'svm-{}-{}.csv'.format(s.k, s.topk)), 'a') as cv_svm_file:
         cv_svm_file.write(str(rfe_accuracy) + ",")
 
-
+    return normal_train, normal_test, priv_train
 
 def do_baseline(s, all_train, labels_train, all_test, labels_test, cross_val_folder):
     best_C_baseline = get_best_C(s, all_train, labels_train, cross_val_folder)
@@ -113,6 +113,25 @@ def do_baseline(s, all_train, labels_train, all_test, labels_test, cross_val_fol
     baseline_predictions = clf.predict(all_test)
     print('baseline', accuracy_score(labels_test, baseline_predictions))
     with open(os.path.join(cross_val_folder, 'baseline-{}.csv'.format(setting.k)), 'a') as baseline_file:
+        baseline_file.write(str(accuracy_score(labels_test, baseline_predictions)) + ',')
+
+def load_saved(s):
+    best_n_mask = np.load(get_full_path('Desktop/Privileged_Data/SavedIndices/top{}RFE/{}{}-{}-{}'.
+                                        format(setting.topk, s.dataset, s.datasetnum, s.skfseed, s.k)))
+    return best_n_mask
+
+
+
+def do_unselected_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder):
+    best_n_mask = load_saved(s)
+    unselected_train = all_train[:, np.invert(best_n_mask)]
+    unselected_test = all_test[:, np.invert(best_n_mask)]
+    best_C = get_best_C(s, unselected_train, labels_train, cross_val_folder)
+    clf = svm.SVC(C=best_C, kernel=s.kernel, random_state=s.k)
+    clf.fit(unselected_train, labels_train)
+    baseline_predictions = clf.predict(unselected_test)
+    print('baseline', accuracy_score(labels_test, baseline_predictions))
+    with open(os.path.join(cross_val_folder, 'unselectedsvm-{}.csv'.format(setting.k)), 'a') as baseline_file:
         baseline_file.write(str(accuracy_score(labels_test, baseline_predictions)) + ',')
 
 
@@ -136,10 +155,10 @@ def single_fold(s):
 
 
     # RFE returns which feature are normal, and which are priv
-    normal_train, normal_test, priv_train = do_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder)
-    do_baseline(s, all_train, labels_train, all_test, labels_test, cross_val_folder)
-    do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
-
+    # normal_train, normal_test, priv_train = do_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder)
+    # do_baseline(s, all_train, labels_train, all_test, labels_test, cross_val_folder)
+    # do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
+    do_unselected_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder)
 
 def get_random_array(num_instances, num_feats):
     random_array = np.random.rand(num_instances, num_feats)
@@ -179,7 +198,7 @@ class Experiment_Setting:
 
 
 
-setting = Experiment_Setting(k=3, topk=300, dataset='tech', datasetnum=245, kernel='linear', cvalues=[-3,3,1], skfseed=4,
-            percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', lupimethod='dp')
-single_fold(setting)
+# setting = Experiment_Setting(k=3, topk=300, dataset='tech', datasetnum=245, kernel='linear', cvalues=[-3,3,1], skfseed=4,
+#             percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', lupimethod='dp')
+# single_fold(setting)
 

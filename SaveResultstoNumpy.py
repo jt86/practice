@@ -56,8 +56,8 @@ def save_to_np_array(num_datasets,setting,n_top_feats,c_value,percent_of_priv,ex
 featsel='mutinfo'
 percent_of_priv=100
 # experiment_name = '{}-10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances'.format(featsel)
-experiment_name = 'LUFe-FixedDelta-SVMdelta-10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances'
-save_to_np_array(295,'dp',300,'wrongparams',percent_of_priv,experiment_name,featsel)
+experiment_name = 'LUFe-SVMdelta-10x10-tech-ALLCV-3to3-featsscaled-step0.1-100percentinstances'
+save_to_np_array(295,'dp',300,'all-cross-val',percent_of_priv,experiment_name,featsel)
 
 # for c_value in [1,10,100,1000]:
 #     for percent_of_priv in [10,25,50,75,100]:

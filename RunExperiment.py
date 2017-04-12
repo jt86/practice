@@ -1,6 +1,6 @@
 import argparse
 # from SingleFoldSliceUnivariate import single_fold
-from SingleFoldSlice import single_fold
+from SingleFoldSlice import single_fold, Experiment_Setting
 # from GetMI import single_fold# from SingleFold_dSVM_normalised import single_fold
 # from SingleFoldUnivariate import single_fold
 # from SingleFoldSlice import save_instance_and_feature_indices_for_R, save_dataset_for_R
@@ -50,10 +50,13 @@ if __name__ == '__main__':
     # dataset='awa{}'.format(args.dataset_num)
     # single_fold(k=args.k, dataset=args.dataset, percentage=args.percentage,
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
-    single_fold(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum=args.datasetnum,
-                kernel=args.kernel, cmin=args.cmin, cmax=args.cmax,
-                number_of_cs=args.numberofcs, skfseed=args.skfseed,
-                percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances, take_top_t=args.taketopt,lupimethod=args.lupimethod)
+
+
+    s = Experiment_Setting(k=args.k,  topk=args.topk, dataset=args.dataset,datasetnum=args.datasetnum,
+                kernel=args.kernel, cvalues = args.cvalues, skfseed=args.skfseed,
+                percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances,
+                take_top_t=args.taketopt,lupimethod=args.lupimethod)
+    single_fold(s)
 
     # save_instance_and_feature_indices_for_R(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs, skfseed=args.skfseed)
