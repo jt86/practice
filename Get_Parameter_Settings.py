@@ -1,8 +1,6 @@
 '''
 Generate list of parameters. Called by RunExperiment.py when running on cluster
 '''
-
-
 count=1
 # for dataset in ['arcene','dexter','gisette','dorothea','madelon']:
 #     for seed in range(10):
@@ -10,8 +8,7 @@ count=1
 #             for top_k_percent in [5,10,25,50,75]:
 #                 print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin {} --cmax {} --numberofcs {} --skfseed {} --percentofpriv {}'.format(fold_num, top_k_percent, dataset, 0, 'linear', 0, 3, 4, seed, 100))
 #                 count+=1
-#
-#
+
 
 # print('--k 4 --topk 300 --dataset tech --datasetnum 123 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 1 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 
