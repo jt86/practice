@@ -29,7 +29,7 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 from New import svm_problem, svm_u_problem
 from Models import SVMdp, SVMu, get_accuracy_score
-
+from sklearn.feature_selection import SelectPercentile, f_classif, chi2, mutual_info_classif
 
 # print (PYTHONPATH)
 
@@ -62,6 +62,16 @@ def delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_te
     with open(os.path.join(cross_val_folder2, 'dp-{}-{}.csv'.format(s.k, s.topk)), 'a') as cv_lupi_file:
         cv_lupi_file.write(str(dp_score) + ',')
 
+def reversed_delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder3):
+    C, gamma, delta = get_best_params_dp(s, normal_train, labels_train, priv_train, cross_val_folder3)
+    problem = svm_problem(normal_train, priv_train, labels_train, C=C,
+                          gamma=gamma, delta=delta)
+    s2 = SVMdp()
+    dp_classifier = s2.train(prob=problem)
+    dp_score = get_accuracy_score(dp_classifier, normal_test, labels_test)
+    with open(os.path.join(cross_val_folder3, 'dp-{}-{}.csv'.format(s.k, s.topk)), 'a') as cv_lupi_file:
+        cv_lupi_file.write(str(dp_score) + ',')
+
 def svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder2):
     c_svm_plus, c_star_svm_plus = get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_folder2)
     duals, bias = svmplusQP(normal_train, labels_train.copy(), priv_train, c_svm_plus, c_star_svm_plus)
@@ -69,6 +79,7 @@ def svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test
     accuracy_lupi = np.sum(labels_test == np.sign(lupi_predictions)) / (1. * len(labels_test))
     with open(os.path.join(cross_val_folder2, 'lupi-{}-{}.csv'.format(s.k, s.topk)), 'a') as cv_lupi_file:
         cv_lupi_file.write(str(accuracy_lupi) + ',')
+
 
 
 def do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
@@ -87,37 +98,61 @@ def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=s.stepsize)
     rfe.fit(all_train, labels_train)
     best_n_mask = rfe.support_
+    np.save(get_full_path('Desktop/Privileged_Data/SavedIndices/top{}{}/{}{}-{}-{}'.
+                          format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.k)), best_n_mask)
     normal_train = all_train[:, best_n_mask].copy()
     normal_test = all_test[:, best_n_mask].copy()
-    priv_train = all_train[:, np.invert(rfe.support_)].copy()
-    np.save(get_full_path('Desktop/Privileged_Data/SavedIndices/top{}RFE/{}{}-{}-{}'.
-                          format(setting.topk, s.dataset, s.datasetnum, s.skfseed, s.k)), best_n_mask)
+    priv_train = all_train[:, np.invert(best_n_mask)].copy()
+    priv_test = all_test[:, np.invert(best_n_mask)].copy()
+    # all_features_ranking = rfe.ranking_[np.invert(best_n_mask)] # gets just the unselected features' rankings
+    # priv_train = priv_train[:, np.argsort(all_features_ranking)] #reorder train and test using this
+    # priv_test = priv_test[:, np.argsort(all_features_ranking)]
+    return normal_train, normal_test, priv_train, priv_test
 
+
+def do_mutinfo(s, all_train, labels_train, all_test):
+    scores = mutual_info_classif(all_train, labels_train)
+    ordered_indices = np.array(np.argsort(scores)[::-1])  # ordered feats is np array of indices from biggest to smallest
+
+    sorted_training = all_train[:, ordered_indices]
+    sorted_testing = all_test[:, ordered_indices]
+
+    normal_features_training = sorted_training[:, :s.topk]  # take the first n_top_feats
+    normal_features_testing = sorted_testing[:, :s.topk]
+    privileged_features_training = sorted_training[:, s.topk:]
+
+
+
+def do_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder,best_rfe_param, best_n_mask):
 
 
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.k)
     svc.fit(normal_train, labels_train)
     rfe_accuracy = svc.score(normal_test, labels_test)
-    all_features_ranking = rfe.ranking_[np.invert(best_n_mask)]
-    priv_train = priv_train[:, np.argsort(all_features_ranking)]
+
     with open(os.path.join(cross_val_folder, 'svm-{}-{}.csv'.format(s.k, s.topk)), 'a') as cv_svm_file:
         cv_svm_file.write(str(rfe_accuracy) + ",")
 
-    return normal_train, normal_test, priv_train
+def do_featsel(s, all_train, all_test, labels_train, labels_test,cross_val_folder,featsel):
+    if featsel == 'RFE':
+        do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder)
+    if featsel == 'MI':
+        do_mutinfo(all_train, labels_train)
+
 
 def do_baseline(s, all_train, labels_train, all_test, labels_test, cross_val_folder):
     best_C_baseline = get_best_C(s, all_train, labels_train, cross_val_folder)
     print('all training shape', all_train.shape)
-    clf = svm.SVC(C=best_C_baseline, kernel=setting.kernel, random_state=setting.k)
+    clf = svm.SVC(C=best_C_baseline, kernel=s.kernel, random_state=s.k)
     clf.fit(all_train, labels_train)
     baseline_predictions = clf.predict(all_test)
     print('baseline', accuracy_score(labels_test, baseline_predictions))
-    with open(os.path.join(cross_val_folder, 'baseline-{}.csv'.format(setting.k)), 'a') as baseline_file:
+    with open(os.path.join(cross_val_folder, 'baseline-{}.csv'.format(s.k)), 'a') as baseline_file:
         baseline_file.write(str(accuracy_score(labels_test, baseline_predictions)) + ',')
 
 def load_saved(s):
-    best_n_mask = np.load(get_full_path('Desktop/Privileged_Data/SavedIndices/top{}RFE/{}{}-{}-{}'.
-                                        format(setting.topk, s.dataset, s.datasetnum, s.skfseed, s.k)))
+    best_n_mask = np.load(get_full_path('Desktop/Privileged_Data/SavedIndices/top{}{}/{}{}-{}-{}'.
+                                        format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.k)))
     return best_n_mask
 
 
@@ -131,8 +166,9 @@ def do_unselected_svm(s, all_train, all_test, labels_train, labels_test, cross_v
     clf.fit(unselected_train, labels_train)
     baseline_predictions = clf.predict(unselected_test)
     print('baseline', accuracy_score(labels_test, baseline_predictions))
-    with open(os.path.join(cross_val_folder, 'unselectedsvm-{}.csv'.format(setting.k)), 'a') as baseline_file:
+    with open(os.path.join(cross_val_folder, 'unselectedsvm-{}.csv'.format(s.k)), 'a') as baseline_file:
         baseline_file.write(str(accuracy_score(labels_test, baseline_predictions)) + ',')
+
 
 
 
@@ -155,10 +191,18 @@ def single_fold(s):
 
 
     # RFE returns which feature are normal, and which are priv
-    # normal_train, normal_test, priv_train = do_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder)
-    # do_baseline(s, all_train, labels_train, all_test, labels_test, cross_val_folder)
-    # do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
-    do_unselected_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder)
+    if s.featsel == 'RFE':
+        normal_train, normal_test, priv_train, priv_test = do_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder)
+        do_baseline(s, all_train, labels_train, all_test, labels_test, cross_val_folder)
+        do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
+        do_unselected_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder)
+
+    if s.featsel == 'MI':
+        do_mutinfo(all_train, labels_train)
+
+
+
+##################################################################################################
 
 def get_random_array(num_instances, num_feats):
     random_array = np.random.rand(num_instances, num_feats)
@@ -182,7 +226,7 @@ def take_subset(all_training, training_labels, percentageofinstances):
 
 class Experiment_Setting:
     def __init__(self, k, topk, dataset, datasetnum, kernel, cvalues, skfseed,
-            percent_of_priv, percentageofinstances, take_top_t, lupimethod):
+            percent_of_priv, percentageofinstances, take_top_t, lupimethod, featsel):
         self.k = k
         self.topk = topk
         self.dataset = dataset
@@ -195,7 +239,7 @@ class Experiment_Setting:
         self.take_top_t = take_top_t
         self.lupimethod =lupimethod
         self.stepsize=0.1
-
+        self.featsel = featsel
 
 
 # setting = Experiment_Setting(k=3, topk=300, dataset='tech', datasetnum=245, kernel='linear', cvalues=[-3,3,1], skfseed=4,
