@@ -268,7 +268,6 @@ class Experiment_Setting:
         self.lupimethod =lupimethod
         self.stepsize=0.1
         self.featsel = featsel
-        print (cvalues)
 
 #
 # setting = Experiment_Setting(k=3, topk=300, dataset='tech', datasetnum=245, kernel='linear', cvalues='-3,3,1', skfseed=4,
