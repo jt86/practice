@@ -19,9 +19,11 @@ if __name__ == '__main__':
     # parser.add_argument('--peeking', dest='peeking', action='store_true',
     #                     help='whether or not parameter estimation is performed peeking at the test data each fold')
 
-    parser.add_argument('--cmin', type=int, required = True, help='power of lowest value for c (bottom end of log range)')
-    parser.add_argument('--cmax', type=int, required = True, help='power of highest value for c (top of log range)')
-    parser.add_argument('--numberofcs', type=int, help = 'the number of values to investigate for c and c*')
+    # parser.add_argument('--cmin', type=int, required = True, help='power of lowest value for c (bottom end of log range)')
+    # parser.add_argument('--cmax', type=int, required = True, help='power of highest value for c (top of log range)')
+    # parser.add_argument('--numberofcs', type=int, help = 'the number of values to investigate for c and c*')
+
+    parser.add_argument('--cvalues', type=list)
 
     parser.add_argument('--kernel', type=str)#, choices = ('rbf','linear'))
 
@@ -55,7 +57,7 @@ if __name__ == '__main__':
     s = Experiment_Setting(k=args.k,  topk=args.topk, dataset=args.dataset,datasetnum=args.datasetnum,
                 kernel=args.kernel, cvalues = args.cvalues, skfseed=args.skfseed,
                 percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances,
-                take_top_t=args.taketopt,lupimethod=args.lupimethod)
+                take_top_t=args.taketopt,lupimethod=args.lupimethod, featsel=args.featsel)
     single_fold(s)
 
     # save_instance_and_feature_indices_for_R(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
