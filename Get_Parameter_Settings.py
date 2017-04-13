@@ -16,17 +16,22 @@ count=1
 # print('--k 4 --topk 300 --dataset tech --datasetnum 123 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 1 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 
 cvalues = [-3,3,7]
-for seed in range(1):
-    for fold_num in range(10):  # 0
-        dataset='tech'
-        for lupimethod in ['dp']:
-        # for featsel in ['anova','chi2']:#,'mutinfo']:
-            for top_k in [300]:#,500]:#,500]:#:,500]:#,500]:#,500]:#100,200,400,600,700,800,900,1000]:
-                for take_top_t in ['top']:#,'bottom']:
-                    for percentofpriv in [100]:
-                        for datasetnum in range (295): #5
-                            print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cvalues {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {} --lupimethod {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', cvalues, seed, percentofpriv, 100, take_top_t, lupimethod))
-                            # count+=1
+seed = 1
+dataset='tech'
+featsel = 'MI'
+top_k = 300
+take_top_t ='top'
+percentofpriv = 100
+
+for lupimethod in ['dp','svmplus']:
+    for featsel in ['MI','RFE']:
+        for fold_num in range(10):
+            for lupimethod in ['dp', 'svmplus']:
+                for datasetnum in range (295): #5
+                    print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cvalues {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {} --lupimethod {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', cvalues, seed, percentofpriv, 100, take_top_t, lupimethod))
+
+
+
 
 # (k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, skfseed, percent_of_priv,
 #                 percentageofinstances, take_top_t, lupimethod=None)

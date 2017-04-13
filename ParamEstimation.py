@@ -54,7 +54,7 @@ def get_best_params_dp(setting, normal_train, labels_train, priv_train, cross_va
     print(c_values)
     # skf = cross_validation.StratifiedKFold(n_folds)
     # cv = skf.split(training_data, training_labels)
-    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True)
+    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=setting.k)
     cv_scores = np.zeros((len(c_values),len(gamma_values), len(delta_values)))
     print ('cv scores shape',cv_scores.shape)
     for i,(train, test) in enumerate(cv):
@@ -85,7 +85,7 @@ def get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_fold
     n_folds=5
     # skf = cross_validation.StratifiedKFold(n_folds)
     # cv = skf.split(training_data, training_labels)
-    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True)
+    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=s.k)
     cv_scores = np.zeros((len(s.cvalues),len(s.cvalues)))	#join cross validation on X, X*
     print ('cv scores shape',cv_scores.shape)
     for i,(train, test) in enumerate(cv):
@@ -137,12 +137,12 @@ def get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_fold
 def get_best_C(s, all_train, labels_train, cross_val_folder):
     # skf = cross_validation.StratifiedKFold(5)
     # cv = skf.split(training_data,training_labels)
-    cv =StratifiedKFold(labels_train, n_folds=5, shuffle=True)
+    cv =StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=s.k)
     cv_scores = np.zeros(len(s.cvalues))
     for i,(train, test) in enumerate(cv):
         for C_index, C in enumerate(s.cvalues):
             # print('c index',C_index,'c',C)
-            svc = SVC(C=C, kernel="linear", random_state=1)
+            svc = SVC(C=C, kernel="linear", random_state=s.k)
             svc.fit(all_train[train], labels_train[train])
             cv_scores[C_index] += svc.score(all_train[test], labels_train[test])
             sys.stdout.flush()
@@ -165,7 +165,7 @@ def get_best_RFE_C(setting, all_train, labels_train):
     # print ('time', starttime)
     # skf = cross_validation.StratifiedKFold(5)
     # cv = skf.split(training_data, training_labels)
-    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True)
+    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=setting.k)
     cv_scores = numpy.zeros(len(setting.cvalues))
 
     for i,(train, test) in enumerate(cv):

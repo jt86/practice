@@ -52,45 +52,37 @@ def make_directory(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-def delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder2):
+def delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder2, classifier):
     C, gamma, delta = get_best_params_dp(s, normal_train, labels_train, priv_train, cross_val_folder2)
     problem = svm_problem(normal_train, priv_train, labels_train, C=C,
                           gamma=gamma, delta=delta)
     s2 = SVMdp()
     dp_classifier = s2.train(prob=problem)
     dp_score = get_accuracy_score(dp_classifier, normal_test, labels_test)
-    with open(os.path.join(cross_val_folder2, 'dp-{}-{}.csv'.format(s.k, s.topk)), 'a') as cv_lupi_file:
+    with open(os.path.join(cross_val_folder2, '{}-{}-{}.csv'.format(classifier, s.k, s.topk)), 'a') as cv_lupi_file:
         cv_lupi_file.write(str(dp_score) + ',')
 
-def reversed_delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder3):
-    C, gamma, delta = get_best_params_dp(s, normal_train, labels_train, priv_train, cross_val_folder3)
-    problem = svm_problem(normal_train, priv_train, labels_train, C=C,
-                          gamma=gamma, delta=delta)
-    s2 = SVMdp()
-    dp_classifier = s2.train(prob=problem)
-    dp_score = get_accuracy_score(dp_classifier, normal_test, labels_test)
-    with open(os.path.join(cross_val_folder3, 'dp-{}-{}.csv'.format(s.k, s.topk)), 'a') as cv_lupi_file:
-        cv_lupi_file.write(str(dp_score) + ',')
 
-def svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder2):
+
+def svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder2, classifier):
     c_svm_plus, c_star_svm_plus = get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_folder2)
     duals, bias = svmplusQP(normal_train, labels_train.copy(), priv_train, c_svm_plus, c_star_svm_plus)
     lupi_predictions = svmplusQP_Predict(normal_train, normal_test, duals, bias).flatten()
     accuracy_lupi = np.sum(labels_test == np.sign(lupi_predictions)) / (1. * len(labels_test))
-    with open(os.path.join(cross_val_folder2, 'lupi-{}-{}.csv'.format(s.k, s.topk)), 'a') as cv_lupi_file:
+    with open(os.path.join(cross_val_folder2, '{}-{}-{}.csv'.format(classifier, s.k, s.topk)), 'a') as cv_lupi_file:
         cv_lupi_file.write(str(accuracy_lupi) + ',')
 
 
 
-def do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
+def do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder, classifier):
     cross_val_folder2 = os.path.join(cross_val_folder, '{}-{}'.format(s.take_top_t, s.percent_of_priv))
     make_directory(cross_val_folder2)
     priv_train = get_priv_subset(priv_train, s.take_top_t, s.percent_of_priv)
 
     if s.lupimethod == 'dp':
-        delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder2)
-    else:
-        svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder2)
+        delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder2, classifier)
+    if s.lupimethod == 'svmplus':
+        svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder2, classifier)
 
 def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     best_rfe_param = get_best_RFE_C(s, all_train, labels_train)
@@ -128,7 +120,7 @@ def do_mutinfo(s, all_train, labels_train, all_test):
     return normal_train, normal_test, priv_train, priv_test
 
 
-def do_svm(s, normal_train, normal_test, labels_train, labels_test, cross_val_folder,best_rfe_param, best_n_mask):
+def do_svm_for_rfe(s, normal_train, normal_test, labels_train, labels_test, cross_val_folder, best_rfe_param, best_n_mask):
 
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.k)
     svc.fit(normal_train, labels_train)
@@ -161,20 +153,26 @@ def load_saved(s):
 
 
 
-def do_unselected_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder):
-    best_n_mask = load_saved(s)
-    unselected_train = all_train[:, np.invert(best_n_mask)]
-    unselected_test = all_test[:, np.invert(best_n_mask)]
-    best_C = get_best_C(s, unselected_train, labels_train, cross_val_folder)
+def do_unselected_svm(s, priv_train, priv_test, labels_train, labels_test, cross_val_folder):
+    # best_n_mask = load_saved(s)
+    # unselected_train = all_train[:, np.invert(best_n_mask)]
+    # unselected_test = all_test[:, np.invert(best_n_mask)]
+    best_C = get_best_C(s, priv_train, labels_train, cross_val_folder)
     clf = svm.SVC(C=best_C, kernel=s.kernel, random_state=s.k)
-    clf.fit(unselected_train, labels_train)
-    baseline_predictions = clf.predict(unselected_test)
+    clf.fit(priv_train, labels_train)
+    baseline_predictions = clf.predict(priv_test)
     print('baseline', accuracy_score(labels_test, baseline_predictions))
     with open(os.path.join(cross_val_folder, 'unselectedsvm-{}.csv'.format(s.k)), 'a') as baseline_file:
         baseline_file.write(str(accuracy_score(labels_test, baseline_predictions)) + ',')
 
 
-
+def do_svm_for_mutinfo(s, normal_train, labels_train, normal_test, labels_test, cross_val_folder):
+    best_param = get_best_C(s, normal_train, labels_train, cross_val_folder)
+    svc = SVC(C=best_param, kernel=s.kernel, random_state=s.k)
+    svc.fit(normal_train, labels_train)
+    svm_accuracy = svc.score(normal_test, labels_test)
+    with open(os.path.join(cross_val_folder, 'svm-{}-{}.csv'.format(s.k, s.topk)), 'a') as cv_svm_file:
+        cv_svm_file.write(str(svm_accuracy) + ",")
 
 ##################################################################################################
 
@@ -182,8 +180,8 @@ def single_fold(s):
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.k)
     output_directory = get_full_path((
-                                     'Desktop/Privileged_Data/PRACTICELUFe-SVMdelta-10x10-{}-ALLCV-3to3-featsscaled-step{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances/').format(
-        s.dataset, s.stepsize, s.percentageofinstances, s.dataset, s.datasetnum, s.topk, s.percentageofinstances))
+                                     'Desktop/Privileged_Data/LUFe-{}-{}-{}-{}percentinstances/{}{}/top{}chosen-{}percentinstances').format(
+        s.dataset, s.lupimethod, s.featsel, s.percentageofinstances, s.dataset, s.datasetnum, s.topk, s.percentageofinstances))
 
     make_directory(output_directory)
     param_estimation_file = open(os.path.join(output_directory, 'param_selection.csv'), "a")
@@ -195,16 +193,41 @@ def single_fold(s):
 
 
     # RFE returns which feature are normal, and which are priv
-    if s.featsel == 'RFE':
-        normal_train, normal_test, priv_train, priv_test = do_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder)
-        do_baseline(s, all_train, labels_train, all_test, labels_test, cross_val_folder)
-        do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
-        do_unselected_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder)
 
-    if s.featsel == 'MI':
-        do_mutinfo(all_train, labels_train)
+    do_baseline(s, all_train, labels_train, all_test, labels_test, cross_val_folder)
 
+    if s.lupimethod == 'svmplus':
 
+        if s.featsel == 'RFE':
+            normal_train, normal_test, priv_train, priv_test = do_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder)
+
+            do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder, 'lufe')
+            do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, cross_val_folder, 'reversedlufe')
+            do_unselected_svm(s, priv_train, priv_test, labels_train, labels_test, cross_val_folder)
+
+        if s.featsel == 'MI':
+            normal_train, normal_test, priv_train, priv_test = do_mutinfo(all_train, labels_train)
+
+            do_svm_for_mutinfo(s, normal_train, labels_train, normal_test, labels_test, cross_val_folder)
+            do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder, 'lufe')
+            do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, cross_val_folder, 'reversedlufe')
+            do_unselected_svm(s, priv_train, priv_test, labels_train, labels_test, cross_val_folder)
+
+    if s.lupimethod == 'dp':
+        if s.featsel == 'RFE':
+            normal_train, normal_test, priv_train, priv_test = do_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder)
+
+            do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder, 'lufe')
+            do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, cross_val_folder, 'reversedlufe')
+            do_unselected_svm(s, priv_train, priv_test, labels_train, labels_test, cross_val_folder)
+
+        if s.featsel == 'MI':
+            normal_train, normal_test, priv_train, priv_test = do_mutinfo(all_train, labels_train)
+
+            do_svm_for_mutinfo(s, normal_train, labels_train, normal_test, labels_test, cross_val_folder)
+            do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder, 'lufe')
+            do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, cross_val_folder, 'reversedlufe')
+            do_unselected_svm(s, priv_train, priv_test, labels_train, labels_test, cross_val_folder)
 
 ##################################################################################################
 
@@ -250,3 +273,4 @@ class Experiment_Setting:
 #             percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', lupimethod='dp')
 # single_fold(setting)
 
+# data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
