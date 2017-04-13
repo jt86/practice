@@ -259,7 +259,8 @@ class Experiment_Setting:
         self.dataset = dataset
         self.datasetnum = datasetnum
         self.kernel = kernel
-        self.cvalues = np.logspace(*cvalues)
+        cvalues = [int(item)for item in cvalues.split(',')]
+        self.cvalues = (np.logspace(*cvalues))
         self.skfseed = skfseed
         self.percent_of_priv = percent_of_priv
         self.percentageofinstances = percentageofinstances
@@ -267,10 +268,11 @@ class Experiment_Setting:
         self.lupimethod =lupimethod
         self.stepsize=0.1
         self.featsel = featsel
+        print (cvalues)
 
-
-# setting = Experiment_Setting(k=3, topk=300, dataset='tech', datasetnum=245, kernel='linear', cvalues=[-3,3,1], skfseed=4,
-#             percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', lupimethod='dp')
+#
+# setting = Experiment_Setting(k=3, topk=300, dataset='tech', datasetnum=245, kernel='linear', cvalues='-3,3,1', skfseed=4,
+#             percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', lupimethod='dp', featsel='RFE')
 # single_fold(setting)
 
 # data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
