@@ -28,8 +28,8 @@ for lupimethod in ['dp','svmplus']:
     for featsel in ['MI','RFE']:
         for fold_num in range(10):
             for datasetnum in range (295): #5
-                # print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cvalues {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {} --lupimethod {} --featsel {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', cvalues, seed, percentofpriv, 100, take_top_t, lupimethod, featsel))
-                count+=1
+                print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cvalues {} --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {} --lupimethod {} --featsel {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', cvalues, seed, percentofpriv, 100, take_top_t, lupimethod, featsel))
+                # count+=1
 # print(count)
 
 
