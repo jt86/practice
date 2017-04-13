@@ -15,7 +15,7 @@ count=1
 
 # print('--k 4 --topk 300 --dataset tech --datasetnum 123 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 1 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 
-# cvalues = [int(item) for item in ('-3,3,7').split(',')]
+
 seed = 1
 dataset='tech'
 top_k = 300
