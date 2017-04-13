@@ -117,14 +117,18 @@ def do_mutinfo(s, all_train, labels_train, all_test):
     sorted_training = all_train[:, ordered_indices]
     sorted_testing = all_test[:, ordered_indices]
 
-    normal_features_training = sorted_training[:, :s.topk]  # take the first n_top_feats
-    normal_features_testing = sorted_testing[:, :s.topk]
-    privileged_features_training = sorted_training[:, s.topk:]
+    normal_train = sorted_training[:, :s.topk]  # take the first n_top_feats
+    normal_test = sorted_testing[:, :s.topk]
+    priv_train = sorted_training[:, s.topk:]
+    priv_test = sorted_testing[:, s.topk:]
+
+    np.save(get_full_path('Desktop/Privileged_Data/SavedIndices/top{}{}/{}{}-{}-{}'.
+                          format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.k)), ordered_indices[:s.topk])
+
+    return normal_train, normal_test, priv_train, priv_test
 
 
-
-def do_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder,best_rfe_param, best_n_mask):
-
+def do_svm(s, normal_train, normal_test, labels_train, labels_test, cross_val_folder,best_rfe_param, best_n_mask):
 
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.k)
     svc.fit(normal_train, labels_train)
