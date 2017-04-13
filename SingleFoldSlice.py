@@ -269,7 +269,7 @@ class Experiment_Setting:
         self.stepsize=0.1
         self.featsel = featsel
 
-#
+
 # setting = Experiment_Setting(k=3, topk=300, dataset='tech', datasetnum=245, kernel='linear', cvalues='-3,3,1', skfseed=4,
 #             percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', lupimethod='dp', featsel='RFE')
 # single_fold(setting)
