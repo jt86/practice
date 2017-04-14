@@ -260,7 +260,7 @@ class Experiment_Setting:
         self.dataset = dataset
         self.datasetnum = datasetnum
         self.kernel = kernel
-        cvalues = [int(item)for item in cvalues.split('-')]
+        cvalues = [int(item)for item in cvalues.split('/')]
         self.cvalues = (np.logspace(*cvalues))
         self.skfseed = skfseed
         self.percent_of_priv = percent_of_priv
