@@ -29,7 +29,7 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 from New import svm_problem, svm_u_problem
 from Models import SVMdp, SVMu, get_accuracy_score
-from sklearn.feature_selection import SelectPercentile, f_classif, chi2, mutual_info_classif
+from sklearn.feature_selection import SelectPercentile, f_classif, chi2#, mutual_info_classif
 
 # print (PYTHONPATH)
 
@@ -275,3 +275,17 @@ class Experiment_Setting:
 # single_fold(setting)
 
 # data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
+cvalues = '-3,3,1'
+seed = 1
+dataset='tech'
+top_k = 300
+take_top_t ='top'
+percentofpriv = 100
+
+for lupimethod in ['dp','svmplus']:
+    for featsel in ['RFE']:
+        for fold_num in range(10):
+            for datasetnum in range (295): #5
+                setting = Experiment_Setting(k=fold_num, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+                         cvalues=cvalues, percentofpriv=100, percentageofinstances=100, taketopt='top', lupimethod=lupimethod,
+                         featsel=featsel)
