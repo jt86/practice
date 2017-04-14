@@ -260,8 +260,8 @@ class Experiment_Setting:
         self.dataset = dataset
         self.datasetnum = datasetnum
         self.kernel = kernel
-        cvalues = [int(item)for item in cvalues.split('/')]
-        self.cvalues = (np.logspace(*cvalues))
+        self.cvalues = np.logspace(*[int(item)for item in cvalues.split('a')])
+        # self.cvalues = (np.logspace(*cvalues))
         self.skfseed = skfseed
         self.percent_of_priv = percent_of_priv
         self.percentageofinstances = percentageofinstances
@@ -276,7 +276,8 @@ class Experiment_Setting:
 # single_fold(setting)
 
 # data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
-# cvalues = '-3,3,7'
+# cvalues = '-3a3a7'
+# print([int(item)for item in cvalues.split('a')])
 # seed = 1
 # dataset='tech'
 # top_k = 300
