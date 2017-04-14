@@ -12,7 +12,7 @@ count=1
 
 # print('--k 4 --topk 300 --dataset tech --datasetnum 123 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 1 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 
-cvalues = '-3/3/7'
+cvalues = '-3a3a7'
 seed = 0
 dataset='tech'
 top_k = 300
