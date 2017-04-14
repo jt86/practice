@@ -275,20 +275,20 @@ class Experiment_Setting:
 #             percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', lupimethod='dp', featsel='RFE')
 # single_fold(setting)
 
-# data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
-# cvalues = '-3a3a7'
-# print([int(item)for item in cvalues.split('a')])
-# seed = 1
-# dataset='tech'
-# top_k = 300
-# take_top_t ='top'
-# percentofpriv = 100
-#
-# for lupimethod in ['dp','svmplus']:
-#     for featsel in ['MI']:
-#         for fold_num in range(10):
-#             for datasetnum in range (295): #5
-#                 setting = Experiment_Setting(k=fold_num, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-#                          cvalues=cvalues, skfseed=0, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,
-#                          featsel=featsel)
-#                 single_fold(setting)
+data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
+cvalues = '-3a3a7'
+print([int(item)for item in cvalues.split('a')])
+seed = 1
+dataset='tech'
+top_k = 300
+take_top_t ='top'
+percentofpriv = 100
+
+for fold_num in range(10):
+    for lupimethod in ['dp','svmplus']:
+        for featsel in ['MI']:
+            for datasetnum in range (295): #5
+                setting = Experiment_Setting(k=fold_num, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+                         cvalues=cvalues, skfseed=0, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,
+                         featsel=featsel)
+                single_fold(setting)

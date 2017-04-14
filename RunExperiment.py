@@ -23,7 +23,7 @@ if __name__ == '__main__':
     # parser.add_argument('--cmax', type=int, required = True, help='power of highest value for c (top of log range)')
     # parser.add_argument('--numberofcs', type=int, help = 'the number of values to investigate for c and c*')
 
-    parser.add_argument('--cvalues')
+    parser.add_argument('--cvalues', type=str)
 
     parser.add_argument('--kernel', type=str)#, choices = ('rbf','linear'))
 
