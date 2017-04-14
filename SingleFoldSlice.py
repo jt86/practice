@@ -177,6 +177,7 @@ def do_svm_for_mutinfo(s, normal_train, labels_train, normal_test, labels_test, 
 ##################################################################################################
 
 def single_fold(s):
+    print(s.cvalues)
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.k)
     output_directory = get_full_path((
@@ -222,7 +223,7 @@ def single_fold(s):
             do_unselected_svm(s, priv_train, priv_test, labels_train, labels_test, cross_val_folder)
 
         if s.featsel == 'MI':
-            normal_train, normal_test, priv_train, priv_test = do_mutinfo(all_train, labels_train)
+            normal_train, normal_test, priv_train, priv_test = do_mutinfo(s, all_train, labels_train, all_test)
 
             do_svm_for_mutinfo(s, normal_train, labels_train, normal_test, labels_test, cross_val_folder)
             do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder, 'lufe')
@@ -259,7 +260,7 @@ class Experiment_Setting:
         self.dataset = dataset
         self.datasetnum = datasetnum
         self.kernel = kernel
-        cvalues = [int(item)for item in cvalues.split(',')]
+        cvalues = [int(item)for item in cvalues.split('-')]
         self.cvalues = (np.logspace(*cvalues))
         self.skfseed = skfseed
         self.percent_of_priv = percent_of_priv
@@ -275,13 +276,13 @@ class Experiment_Setting:
 # single_fold(setting)
 
 # data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
-cvalues = '-3,3,1'
-seed = 1
-dataset='tech'
-top_k = 300
-take_top_t ='top'
-percentofpriv = 100
-
+# cvalues = '-3,3,7'
+# seed = 1
+# dataset='tech'
+# top_k = 300
+# take_top_t ='top'
+# percentofpriv = 100
+#
 # for lupimethod in ['dp','svmplus']:
 #     for featsel in ['MI']:
 #         for fold_num in range(10):
