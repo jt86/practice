@@ -282,10 +282,11 @@ top_k = 300
 take_top_t ='top'
 percentofpriv = 100
 
-for lupimethod in ['dp','svmplus']:
-    for featsel in ['RFE']:
-        for fold_num in range(10):
-            for datasetnum in range (295): #5
-                setting = Experiment_Setting(k=fold_num, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-                         cvalues=cvalues, percentofpriv=100, percentageofinstances=100, taketopt='top', lupimethod=lupimethod,
-                         featsel=featsel)
+# for lupimethod in ['dp','svmplus']:
+#     for featsel in ['MI']:
+#         for fold_num in range(10):
+#             for datasetnum in range (295): #5
+#                 setting = Experiment_Setting(k=fold_num, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+#                          cvalues=cvalues, skfseed=0, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,
+#                          featsel=featsel)
+#                 single_fold(setting)
