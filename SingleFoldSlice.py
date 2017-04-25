@@ -29,7 +29,8 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 from New import svm_problem, svm_u_problem
 from Models import SVMdp, SVMu, get_accuracy_score
-from sklearn.feature_selection import SelectPercentile, f_classif, chi2#, mutual_info_classif
+from sklearn.feature_selection import SelectPercentile, f_classif, chi2, mutual_info_classif
+from pprint import pprint
 
 # print (PYTHONPATH)
 
@@ -207,8 +208,7 @@ def single_fold(s):
             do_unselected_svm(s, priv_train, priv_test, labels_train, labels_test, cross_val_folder)
 
         if s.featsel == 'MI':
-            normal_train, normal_test, priv_train, priv_test = do_mutinfo(all_train, labels_train)
-
+            normal_train, normal_test, priv_train, priv_test = do_mutinfo(s, all_train, labels_train, all_test)
             do_svm_for_mutinfo(s, normal_train, labels_train, normal_test, labels_test, cross_val_folder)
             do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder, 'lufe')
             do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, cross_val_folder, 'reversedlufe')
@@ -269,7 +269,8 @@ class Experiment_Setting:
         self.lupimethod =lupimethod
         self.stepsize=0.1
         self.featsel = featsel
-
+    def print_all_settings(self):
+        print(self.k,self.top)
 
 # setting = Experiment_Setting(k=3, topk=300, dataset='tech', datasetnum=245, kernel='linear', cvalues='-3,3,1', skfseed=4,
 #             percent_of_priv=100, percentageofinstances=100, take_top_t='bottom', lupimethod='dp', featsel='RFE')
@@ -278,17 +279,20 @@ class Experiment_Setting:
 # data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
 # # cvalues = '-3a3a7'
 # # print([int(item)for item in cvalues.split('a')])
-# seed = 1
-# dataset='tech'
-# top_k = 300
-# take_top_t ='top'
-# percentofpriv = 100
-#
-# for fold_num in range(10):
-#     for lupimethod in ['dp','svmplus']:
-#         for featsel in ['MI']:
-#             for datasetnum in range (295): #5
-#                 setting = Experiment_Setting(k=fold_num, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-#                          cmin=-3,cmax=3,numberofcs=7, skfseed=0, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,
-#                          featsel=featsel)
-#                 single_fold(setting)
+seed = 1
+dataset='tech'
+top_k = 300
+take_top_t ='top'
+percentofpriv = 100
+
+
+
+for fold_num in range(10):
+    for lupimethod in ['dp','svmplus']:
+        for featsel in ['RFE']:
+            for datasetnum in range (259,295): #5
+                setting = Experiment_Setting(k=fold_num, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+                         cmin=-3,cmax=3,numberofcs=7, skfseed=0, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,
+                         featsel=featsel)
+                break
+                # single_fold(setting)

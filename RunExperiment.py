@@ -4,6 +4,7 @@ from SingleFoldSlice import single_fold, Experiment_Setting
 # from GetMI import single_fold# from SingleFold_dSVM_normalised import single_fold
 # from SingleFoldUnivariate import single_fold
 # from SingleFoldSlice import save_instance_and_feature_indices_for_R, save_dataset_for_R
+from pprint import pprint
 
 if __name__ == '__main__':
 
@@ -58,6 +59,7 @@ if __name__ == '__main__':
                 kernel=args.kernel, cmin = args.cmin, cmax= args.cmax, numberofcs=args.numberofcs, skfseed=args.skfseed,
                 percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances,
                 take_top_t=args.taketopt,lupimethod=args.lupimethod, featsel=args.featsel)
+    pprint(vars(s))
     single_fold(s)
 
     # save_instance_and_feature_indices_for_R(k=args.k, dataset=args.dataset, topk=args.topk, datasetnum =args.datasetnum,
