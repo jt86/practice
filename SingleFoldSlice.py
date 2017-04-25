@@ -29,7 +29,7 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 from New import svm_problem, svm_u_problem
 from Models import SVMdp, SVMu, get_accuracy_score
-from sklearn.feature_selection import SelectPercentile, f_classif, chi2, mutual_info_classif
+from sklearn.feature_selection import SelectPercentile, f_classif, chi2#, mutual_info_classif
 from pprint import pprint
 
 # print (PYTHONPATH)
