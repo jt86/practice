@@ -10,37 +10,25 @@ from Get_Full_Path import get_full_path
 from scipy import sparse as sp
 from sklearn.cross_validation import StratifiedKFold
 from sklearn import preprocessing
-from sklearn import preprocessing
 # from GetFeatSelectionData import get_arcene_data,get_madelon_data,get_gisette_data,get_dexter_data,get_dorothea_data
 # import numpy.linalg.norm
 import sys
 np.set_printoptions(linewidth=132)
 import sklearn
+import os.path
+from os import mkdir
 print('The scikit-learn version is {}.'.format(sklearn.__version__))
 #
 def load_dataset_from_name(dataset,datasetnum):
     if dataset=='tech':
-         class0_data,class1_data=get_techtc_data(datasetnum)
-#     if dataset=='awa':
-#         class0_data,class1_data=get_awa_data(datasetnum)
-#     if dataset=='arcene':
-#         class0_data, class1_data = get_arcene_data()
-#     if dataset=='madelon':
-#         class0_data, class1_data = get_madelon_data()
-#     if dataset=='gisette':
-#         class0_data, class1_data = get_gisette_data()
-#     if dataset=='dexter':
-#         class0_data, class1_data = get_dexter_data()
-#     if dataset=='dorothea':
-#         class0_data, class1_data = get_dorothea_data()
-#
+         class0_data = np.load(get_full_path("Desktop/Privileged_Data/SavedDatasets/{}/{}positive.npy".format(dataset,datasetnum)))
+         class1_data = np.load(get_full_path("Desktop/Privileged_Data/SavedDatasets/{}/{}negative.npy".format(dataset,datasetnum)))
     return class0_data,class1_data
 
 
+def get_train_and_test_this_fold(s):	#N,test_N per class
 
-def get_train_and_test_this_fold(setting):	#N,test_N per class
-
-    class0_data, class1_data = load_dataset_from_name(setting.dataset,setting.datasetnum)
+    class0_data, class1_data = load_dataset_from_name(s.dataset, s.datasetnum)
 
     class0_labels = [-1]*class0_data.shape[0]
     class1_labels = [1]* class1_data.shape[0]
@@ -50,20 +38,37 @@ def get_train_and_test_this_fold(setting):	#N,test_N per class
     all_data = np.vstack([class0_data,class1_data])
     # skf = StratifiedKFold(n_splits=10, shuffle=True,random_state=skf_seed)
     # splits = skf.split(X=all_data,y=all_labels)
-    skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True, random_state=setting.skfseed)
+    skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True, random_state=s.skfseed)
 
-    # for fold_num, (train_index, test_index) in enumerate(splits):
-    for fold_num, (train_index, test_index) in enumerate(skf):
-        print(fold_num,train_index,test_index)
-        if fold_num==setting.k:
-            train_data, test_data = all_data[train_index],all_data[test_index]
-            train_labels, test_labels = all_labels[train_index], all_labels[test_index]
-            train_indices,test_indices=train_index,test_index
-            break
+    # for foldnum, (train_index, test_index) in enumerate(splits):
+    # for foldnum, (train_index, test_index) in enumerate(skf):
+    #     print(foldnum,train_index,test_index)
+    #     if foldnum==setting.foldnum:
+    #         train_data, test_data = all_data[train_index],all_data[test_index]
+    #         train_labels, test_labels = all_labels[train_index], all_labels[test_index]
+    #         train_indices,test_indices=train_index,test_index
+    #         break
 
-    train_data = preprocessing.scale(train_data)
-    test_data = preprocessing.scale(test_data)
+    folder = get_full_path('Desktop/Privileged_Data/SavedTrainTestIndices/{}{}'.format(s.dataset, s.datasetnum))
+    train_index = np.load(os.path.join(folder,'{}-{}-train.npy'.format(s.skfseed,s.foldnum)))
+    test_index = np.load(os.path.join(folder,'{}-{}-test.npy'.format(s.skfseed, s.foldnum)))
 
+    train_data, test_data = all_data[train_index], all_data[test_index]
+    train_labels, test_labels = all_labels[train_index], all_labels[test_index]
+
+    print('train shape',train_data.shape,'test shape',test_data.shape)
+
+
+
+    means = (np.mean(train_data, axis=0))
+    print('means',means.shape)
+
+
+    # print('variance',np.var(train2, axis =1))
+
+    scaler = preprocessing.StandardScaler(with_std=True).fit(train_data)
+    train_data = scaler.transform(train_data)
+    test_data = scaler.transform(test_data)
 
     # print ('train',train_indices.shape, 'test',test_indices.shape)
     # print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
@@ -85,6 +90,11 @@ def get_awa_data(dataset_index):
     pos_instances,neg_instances = data[labels==1.], data[labels==-1.]
     print (pos_instances.shape, neg_instances.shape)
     return(pos_instances,neg_instances)
+
+
+
+######## BELOW CODE WAS USED TO SAVE DATA TO NUMPY ARRAYS FOR POS AND NEG
+
 
 def get_techtc_data(dataset_index):
     max_num_of_feats,instances_count =0,0
@@ -122,7 +132,6 @@ def get_techtc_data(dataset_index):
     return(positive_instances,negative_instances)
 
 
-
 def get_tech_address(dataset_index):
     with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_295.txt"), "r") as infile:
     # with open(get_full_path("Desktop/Privileged_Data/techtc300_preprocessed/techtc_files_49.txt"), "r") as infile:
@@ -155,3 +164,29 @@ def get_longword_indices(dataset_index):
 
 # get_train_and_test_this_fold('tech',0,1)
 
+
+# Call the following once, to save pos and negative instances for each of 295 datasets
+
+# for datasetnum in range(295):
+#     pos_instances, neg_instances = get_techtc_data(datasetnum)
+#     np.save(get_full_path("Desktop/Privileged_Data/SavedDatasets/tech/{}positive".format(datasetnum)), pos_instances)
+#     np.save(get_full_path("Desktop/Privileged_Data/SavedDatasets/tech/{}negative".format(datasetnum)), neg_instances)
+
+
+
+# Call the following once, to save pos and negative instances for each of 295 datasets
+
+def save_train_test_indices(dataset,datasetnum):
+    folder = get_full_path('Desktop/Privileged_Data/SavedTrainTestIndices/{}{}'.format(dataset,datasetnum))
+    print(folder)
+    mkdir(folder)
+    class0_data, class1_data = load_dataset_from_name(dataset,datasetnum)
+    all_labels = np.r_[[-1]*class0_data.shape[0], [1]* class1_data.shape[0]]
+    for skfseed in range(10):
+        skf = StratifiedKFold(all_labels, n_folds=10, shuffle=True, random_state=skfseed)
+        for foldnum, (train_index, test_index) in enumerate(skf):
+            np.save(os.path.join(folder,'{}-{}-train'.format(skfseed,foldnum)),train_index)
+            np.save(os.path.join(folder,'{}-{}-test'.format(skfseed, foldnum)),test_index)
+
+# for datasetnum in range(295):
+#     save_train_test_indices('tech',datasetnum)

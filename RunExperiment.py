@@ -44,6 +44,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--lupimethod', type=str, required=False, help='which lupi method to use')
 
+    parser.add_argument('--classifier', type=str, required=False, help = 'whether its featselection, baseline, svm+ etc')
+
     # parser.add_argument('--dSVMC',type=str,required=True,help='fixed C parameter for the SVM used to get d-values')
 
     args = parser.parse_args()
@@ -55,10 +57,10 @@ if __name__ == '__main__':
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
 
 
-    s = Experiment_Setting(k=args.k,  topk=args.topk, dataset=args.dataset,datasetnum=args.datasetnum,
-                kernel=args.kernel, cmin = args.cmin, cmax= args.cmax, numberofcs=args.numberofcs, skfseed=args.skfseed,
-                percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances,
-                take_top_t=args.taketopt,lupimethod=args.lupimethod, featsel=args.featsel)
+    s = Experiment_Setting(fold_num=args.k, topk=args.topk, dataset=args.dataset, datasetnum=args.datasetnum,
+                           kernel=args.kernel, cmin = args.cmin, cmax= args.cmax, numberofcs=args.numberofcs, skfseed=args.skfseed,
+                           percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances,
+                           take_top_t=args.taketopt, lupimethod=args.lupimethod, featsel=args.featsel, classifier=args.classifier)
     pprint(vars(s))
     single_fold(s)
 

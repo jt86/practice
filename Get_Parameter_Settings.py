@@ -21,9 +21,10 @@ percentofpriv = 100
 
 for lupimethod in ['dp','svmplus']:
     for featsel in ['RFE']:
-        for fold_num in range(10):
+        for foldnum in range(10):
             for datasetnum in range (295): #5
-                print('--k {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} --taketopt {} --lupimethod {} --featsel {}'.format(fold_num, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel))
+                print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+                      '--taketopt {} --lupimethod {} --featsel {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel))
 #                 count+=1
 # print(count)
 
