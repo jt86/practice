@@ -246,9 +246,9 @@ class Experiment_Setting:
     def print_all_settings(self):
         print(self.k,self.top)
 
-setting = Experiment_Setting(foldnum=3, topk=300, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=4,
-                             percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='dp', featsel='RFE', classifier='featselector')
-single_fold(setting)
+# setting = Experiment_Setting(foldnum=3, topk=300, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=4,
+#                              percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='dp', featsel='RFE', classifier='featselector')
+# single_fold(setting)
 
 # data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
 # # cvalues = '-3a3a7'
