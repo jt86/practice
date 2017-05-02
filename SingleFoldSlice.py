@@ -208,7 +208,7 @@ def single_fold(s):
     if s.classifier == 'baseline':
         do_svm(s, all_train, labels_train, all_test, labels_test, cross_val_folder)
 
-    if s.classifier == 'featselector':
+    elif s.classifier == 'featselector':
         if s.featsel == 'RFE':
             do_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder)
         if s.featsel == 'MI':
