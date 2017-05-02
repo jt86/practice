@@ -214,13 +214,14 @@ def single_fold(s):
         if s.featsel == 'MI':
             do_mutinfo(s, all_train, labels_train, all_test,labels_test, cross_val_folder)
 
-    normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
-    if s.classifier == 'lufe':
-        do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
-    if s.classifier == 'lufereverse':
-        do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, cross_val_folder)
-    if s.classifier == 'svmreverse':
-        do_svm(s, priv_train, labels_train, priv_test, labels_test, cross_val_folder)
+    else:
+        normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
+        if s.classifier == 'lufe':
+            do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
+        if s.classifier == 'lufereverse':
+            do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, cross_val_folder)
+        if s.classifier == 'svmreverse':
+            do_svm(s, priv_train, labels_train, priv_test, labels_test, cross_val_folder)
 
 ##################################################################################################
 
