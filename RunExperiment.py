@@ -57,7 +57,7 @@ if __name__ == '__main__':
     #             kernel=args.kernel, cmin=args.cmin,cmax=args.cmax,number_of_cs=args.numberofcs)
 
 
-    s = Experiment_Setting(foldnum=args.k, topk=args.topk, dataset=args.dataset, datasetnum=args.datasetnum,
+    s = Experiment_Setting(foldnum=args.foldnum, topk=args.topk, dataset=args.dataset, datasetnum=args.datasetnum,
                            kernel=args.kernel, cmin = args.cmin, cmax= args.cmax, numberofcs=args.numberofcs, skfseed=args.skfseed,
                            percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances,
                            take_top_t=args.taketopt, lupimethod=args.lupimethod, featsel=args.featsel, classifier=args.classifier)
