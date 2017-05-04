@@ -22,8 +22,6 @@ def get_best_params_dp2(setting, normal_train, labels_train, priv_train, cross_v
     c_values = setting.cvalues; gamma_values= setting.cvalues
     delta = c_values[:-1]
     print(c_values)
-    # skf = cross_validation.StratifiedKFold(n_folds)
-    # cv = skf.split(training_data, training_labels)
     cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=setting.foldnum)
     cv_scores = np.zeros((len(c_values),len(gamma_values)))
     print ('cv scores shape',cv_scores.shape)
@@ -84,8 +82,6 @@ def get_best_params_dp(setting, normal_train, labels_train, priv_train, cross_va
 
 def get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_folder2):
     n_folds=5
-    # skf = cross_validation.StratifiedKFold(n_folds)
-    # cv = skf.split(training_data, training_labels)
     cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=s.foldnum)
     cv_scores = np.zeros((len(s.cvalues),len(s.cvalues)))	#join cross validation on X, X*
     print ('cv scores shape',cv_scores.shape)
@@ -108,8 +104,6 @@ def get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_fold
     best_Cstar, best_C = s.cvalues[index_of_best[0]],s.cvalues[index_of_best[1]]
     with open(os.path.join(cross_val_folder2, 'Cstar-crossvalid-{}-{}.txt'.format(s.datasetnum, s.topk)), 'a') as cross_validation_doc:
         cross_validation_doc.write("\n{} => bestC={},bestC*={}".format(cv_scores,best_C,best_Cstar))
-    print('c* values:',s.cvalues)
-    print('c values:',s.cvalues)
     print('cross valid scores:\n',cv_scores,'=> best C*=',best_Cstar, 'bestC=',best_C)
     return best_C, best_Cstar
 
@@ -135,60 +129,56 @@ def get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_fold
 #     print('cross valid scores:',cv_scores,'=> best C*=',best_Cstar)
 #     return best_Cstar
 
-def get_best_C(s, all_train, labels_train, cross_val_folder):
-    # skf = cross_validation.StratifiedKFold(5)
-    # cv = skf.split(training_data,training_labels)
-    cv =StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=s.foldnum)
-    cv_scores = np.zeros(len(s.cvalues))
+# def get_best_C(s, all_train, labels_train, cross_val_folder):
+#     cv =StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=s.foldnum)
+#     cv_scores = np.zeros(len(s.cvalues))
+#     for i,(train, test) in enumerate(cv):
+#         for C_index, C in enumerate(s.cvalues):
+#             # print('c index',C_index,'c',C)
+#             svc = SVC(C=C, kernel="linear", random_state=s.foldnum)
+#             svc.fit(all_train[train], labels_train[train])
+#             cv_scores[C_index] += svc.score(all_train[test], labels_train[test])
+#             sys.stdout.flush()
+#     cv_scores = cv_scores/5.
+#     best_positions = (np.argwhere(cv_scores.max() == cv_scores))
+#     index_of_best=best_positions[0]
+#     # index_of_best = best_positions[int(len(best_positions)/2)]
+#     best_C = s.cvalues[index_of_best][0]
+#     with open(os.path.join(cross_val_folder,'C_fullset-crossvalid-{}-{}.txt'.format(s.datasetnum,s.topk)),'a') as cross_validation_doc:
+#         cross_validation_doc.write("\n{} {}".format(cv_scores,best_C))
+#
+#     return best_C
+#
+#     # best_rfe_param = get_best_RFE_C(all_training, labels_train, s.cvalues, s.topk, stepsize)
+
+
+def get_best_params(s, all_train, labels_train,folder, setting):
+    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=s.foldnum)
+    scores = numpy.zeros(len(s.cvalues))
     for i,(train, test) in enumerate(cv):
         for C_index, C in enumerate(s.cvalues):
-            # print('c index',C_index,'c',C)
-            svc = SVC(C=C, kernel="linear", random_state=s.foldnum)
-            svc.fit(all_train[train], labels_train[train])
-            cv_scores[C_index] += svc.score(all_train[test], labels_train[test])
-            sys.stdout.flush()
-    cv_scores = cv_scores/5.
-    best_positions = (np.argwhere(cv_scores.max() == cv_scores))
-    index_of_best=best_positions[0]
-    # index_of_best = best_positions[int(len(best_positions)/2)]
-    best_C = s.cvalues[index_of_best][0]
-    with open(os.path.join(cross_val_folder,'C_fullset-crossvalid-{}-{}.txt'.format(s.datasetnum,s.topk)),'a') as cross_validation_doc:
-        cross_validation_doc.write("\n{} {}".format(cv_scores,best_C))
-    print('cross valid scores (all features):',cv_scores,'=> best C=',best_C)
+            if setting == 'rfe':
+                svc = SVC(C=C, kernel="linear", random_state=s.foldnum)
+                rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=s.stepsize)
+                rfe.fit(all_train[train], labels_train[train])
+                scores[C_index] += rfe.score(all_train[test], labels_train[test])
+                sys.stdout.flush()
+            if setting == 'svm':
+                svc = SVC(C=C, kernel="linear", random_state=s.foldnum)
+                svc.fit(all_train[train], labels_train[train])
+                scores[C_index] += svc.score(all_train[test], labels_train[test])
+                sys.stdout.flush()
+    scores = scores/cv.n_folds
+
+    C = get_best_param(s.cvalues, scores)
+    with open(os.path.join(folder, 'crossval-{}.txt'.format(s.skfseed)),'a') as cross_val_doc:
+        cross_val_doc.write("\n {}  {} \n {}".format(s.foldnum,C,scores))
+    return C
+
+def get_best_param(cvalues,scores):
+    best_positions = (np.argwhere(scores.max() == scores))
+    index_of_best = best_positions[0] # =best_positions[int(len(best_positions)/2)]
+    best_C = cvalues[index_of_best]
+    print('cross valid scores (all features):', scores, '=> best C=', best_C)
+
     return best_C
-
-    # best_rfe_param = get_best_RFE_C(all_training, labels_train, s.cvalues, s.topk, stepsize)
-
-
-def get_best_RFE_C(setting, all_train, labels_train):
-
-    starttime = time.clock()
-    # print ('time', starttime)
-    # skf = cross_validation.StratifiedKFold(5)
-    # cv = skf.split(training_data, training_labels)
-    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=setting.foldnum)
-    cv_scores = numpy.zeros(len(setting.cvalues))
-
-    for i,(train, test) in enumerate(cv):
-        # print('iter',i)
-        for C_index, C in enumerate(setting.cvalues):
-            # print('c index',C_index,'c',C)
-            svc = SVC(C=C, kernel="linear", random_state=1)
-            rfe = RFE(estimator=svc, n_features_to_select=setting.topk, step=setting.stepsize)
-            rfe.fit(all_train[train], labels_train[train])
-            cv_scores[C_index] += rfe.score(all_train[test], labels_train[test])
-            sys.stdout.flush()
-        # print 'fold',i,cv_scores
-
-    cv_scores = cv_scores/5.
-    best_positions = (np.argwhere(cv_scores.max() == cv_scores))
-    index_of_best=best_positions[0]
-    # index_of_best = best_positions[int(len(best_positions)/2)]
-    best_C = setting.cvalues[index_of_best]
-    # with open(os.path.join(cross_validation_folder,'C_fullset-crossvalid-{}-{}.txt'.format(datasetnum,topk)),'a') as cross_validation_doc:
-    #     cross_validation_doc.write("\n{} {}".format(cv_scores,best_C))
-    print('cross valid scores (rfe):',cv_scores,'=> best C=',best_C)
-    print ('-------\ntime',time.clock()-starttime,'\n-------')
-    # sys.exit()
-    return best_C
-

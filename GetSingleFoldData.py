@@ -29,6 +29,8 @@ def load_dataset_from_name(dataset,datasetnum):
 def get_train_and_test_this_fold(s):	#N,test_N per class
 
     class0_data, class1_data = load_dataset_from_name(s.dataset, s.datasetnum)
+    class0_data=class0_data[:,:100]
+    class1_data = class1_data[:,:100]
 
     class0_labels = [-1]*class0_data.shape[0]
     class1_labels = [1]* class1_data.shape[0]
