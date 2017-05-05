@@ -247,8 +247,9 @@ class Experiment_Setting:
         self.classifier = classifier
 
         if self.classifier == 'baseline':
-            self.lupimethod='none'
-            self.featsel='none'
+            self.lupimethod='nolufe'
+            self.featsel='nofeatsel'
+            self.topk='all'
 
 
     def print_all_settings(self):
