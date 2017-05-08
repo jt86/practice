@@ -19,24 +19,24 @@ top_k = 300
 take_top_t ='top'
 percentofpriv = 100
 
-# classifier = 'baseline'
-# lupimethod = 'nolufe'
-# featsel = 'nofeatsel'
-# for foldnum in range(10):
-#     for datasetnum in range (295): #5
-#         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
-#               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
-#         count+=1
-#
-# classifier = 'featselector'
-# lupimethod = 'nolufe'
-# featsel = 'RFE'
-# for foldnum in range(10):
-#     for datasetnum in range (295): #5
-#         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
-#               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
-# #         count+=1
-# # print(count)
+classifier = 'baseline'
+lupimethod = 'nolufe'
+featsel = 'nofeatsel'
+for foldnum in range(10):
+    for datasetnum in range (295): #5
+        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+              '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+        # count+=1
+
+classifier = 'featselector'
+lupimethod = 'nolufe'
+featsel = 'RFE'
+for foldnum in range(10):
+    for datasetnum in range (295): #5
+        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+              '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+        # count+=1
+# print(count)
 
 classifier = 'lufe'
 lupimethod = 'svmplus'
@@ -50,7 +50,8 @@ for foldnum in range(10):
 # print (count)
 
 
-
+    # setting = Experiment_Setting(foldnum=i, topk=30, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=4,
+    #                              percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='MI', classifier='baseline')
 
 # (k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, skfseed, percent_of_priv,
 #                 percentageofinstances, take_top_t, lupimethod=None)

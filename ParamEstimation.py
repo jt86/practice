@@ -177,7 +177,7 @@ def get_best_params(s, all_train, labels_train,folder, setting):
 
 def get_best_param(cvalues,scores):
     best_positions = (np.argwhere(scores.max() == scores))
-    index_of_best = best_positions[0] # =best_positions[int(len(best_positions)/2)]
+    index_of_best  =best_positions[(len(best_positions)//2)] # = best_positions[0]
     best_C = cvalues[index_of_best]
     print('cross valid scores (all features):', scores, '=> best C=', best_C)
 

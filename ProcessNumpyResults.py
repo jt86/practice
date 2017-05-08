@@ -40,8 +40,10 @@ def get_scores(setting):
         featsel = '-{}'.format(setting.featsel)
     else:
         featsel=''
-    return np.load(get_full_path('Desktop/SavedNPArrayResults/{}/{}-{}-{}-{}-{}{}.npy'.format(dataset,setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,setting.percent_of_priv,featsel)))
+    return np.load(get_full_path('Desktop/SavedNPArrayResults/{}/{}-{}-{}-{}-{}.npy'.format(dataset,setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,setting.percent_of_priv)))#,featsel)))
 
+all_baseline = Setting(295,'baseline',300,'cross-val',100, '')
+print (get_errors(all_baseline).shape)
 
 def plot_bars(setting_one,setting_two):
     name_one, name_two = setting_one.name, setting_two.name
@@ -117,9 +119,9 @@ def compare_two_settings_ind_folds(setting_one, setting_two):
 
 
 #
-lufe_baseline = Setting(295,'lupi',300,'cross-val',100, '')
 
-print(get_scores(lufe_baseline).shape)
+
+# print(get_scores(lufe_baseline).shape)
 #
 # svm_baseline = Setting(295,'svm',300,'cross-val',100, '')
 # dsvm_crossval = Setting(295,'dsvm',300,'cross-val',100, '')
@@ -145,8 +147,8 @@ print(get_scores(lufe_baseline).shape)
 mutinfo_lupi_100 = Setting(295, 'lupi', 300, 'cross-val', 100, 'mutinfo')
 mutinfo_svm = Setting(295,'svm',300,'cross-val',100,'mutinfo')
 
-
-
+all_baseline = Setting(295,'baseline',300,'cross-val',100, 'RFE')
+get_errors(all_baseline)
 
 ##########  COMPARING FIXED C WITH CROSS-VALIDATED ############
 

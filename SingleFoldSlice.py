@@ -100,7 +100,7 @@ def svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test
     save_scores(s, accuracy_lupi, cross_val_folder)
 
 def do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
-    priv_train = get_priv_subset(priv_train, s.take_top_t, s.percent_of_priv)
+    # priv_train = get_priv_subset(priv_train, s.take_top_t, s.percent_of_priv)
     if s.lupimethod == 'dp':
         delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
     if s.lupimethod == 'svmplus':
@@ -169,8 +169,6 @@ def do_mutinfo(s, all_train, labels_train, all_test,labels_test,cross_val_folder
     do_svm(s, normal_train, labels_train, normal_test, labels_test, cross_val_folder)
 
 
-
-
 def do_svm(s, train_data, labels_train, test_data, labels_test, cross_val_folder):
     best_C = get_best_params(s, train_data, labels_train, cross_val_folder, 'svm')
     clf = svm.SVC(C=best_C, kernel=s.kernel, random_state=s.foldnum)
@@ -198,30 +196,24 @@ def single_fold(s):
                                      'Desktop/Privileged_Data/MayResults/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
         s.classifier,s.lupimethod, s.featsel, s.topk, s.take_top_t,s.percent_of_priv,s.dataset, s.datasetnum))
     make_directory(output_directory)
-    # cross_val_folder = os.path.join(output_directory, 'cross-validation{}'.format(s.skfseed))
-    # make_directory(cross_val_folder)
-    cross_val_folder = output_directory
 
     all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
-
     if s.classifier == 'baseline':
-        do_svm(s, all_train, labels_train, all_test, labels_test, cross_val_folder)
-
+        do_svm(s, all_train, labels_train, all_test, labels_test, output_directory)
     elif s.classifier == 'featselector':
         if s.featsel == 'RFE':
-            do_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder)
+            do_rfe(s,all_train,all_test,labels_train,labels_test,output_directory)
         if s.featsel == 'MI':
-            do_mutinfo(s, all_train, labels_train, all_test,labels_test, cross_val_folder)
-
+            do_mutinfo(s, all_train, labels_train, all_test,labels_test, output_directory)
     else:
         normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
         if s.classifier == 'lufe':
             print('doing lufe')
-            do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
+            do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
         if s.classifier == 'lufereverse':
-            do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, cross_val_folder)
+            do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, output_directory)
         if s.classifier == 'svmreverse':
-            do_svm(s, priv_train, labels_train, priv_test, labels_test, cross_val_folder)
+            do_svm(s, priv_train, labels_train, priv_test, labels_test, output_directory)
 
 ##################################################################################################
 
@@ -250,16 +242,17 @@ class Experiment_Setting:
             self.lupimethod='nolufe'
             self.featsel='nofeatsel'
             self.topk='all'
-
+        if self.classifier == 'featselector':
+            self.lupimethod='nolufe'
 
     def print_all_settings(self):
         pprint(vars(self))
         # print(self.k,self.top)
 
-#
+
 # for i in range(10):
-#     setting = Experiment_Setting(foldnum=i, topk=30, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=4,
-#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='MI', classifier='baseline')
+#     setting = Experiment_Setting(foldnum=i, topk='all', dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=0,
+#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='none', featsel='nofeatsel', classifier='baseline')
 #     setting.print_all_settings()
 #     single_fold(setting)
 
