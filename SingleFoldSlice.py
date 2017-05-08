@@ -121,18 +121,25 @@ def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     # print(np.count_nonzero(rfe.ranking_ == 1))
     # print(np.argsort(rfe.ranking_))
     # print(rfe.ranking_[np.argsort(rfe.ranking_)])
-    do_svm_for_rfe(s, all_train, all_test, labels_train, labels_test, cross_val_folder, best_rfe_param)
+    support = np.where(rfe.support_ == True)
+    ranking = np.where(rfe.ranking_ == 1)
+    print(len(support),len(ranking))
+    print('support',support)
+    print ('ranking',ranking)
+    print ('are they equal?',np.array_equal(support,ranking))
+    do_svm_for_rfe(s, all_train, all_test, labels_train, labels_test, cross_val_folder, best_rfe_param,support)
 
 
-def do_svm_for_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder, best_rfe_param):
-    normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,all_train,all_test)
+def do_svm_for_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder, best_rfe_param,support):
+    normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,all_train,all_test,support)
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.foldnum)
     svc.fit(normal_train, labels_train)
     rfe_accuracy = svc.score(normal_test, labels_test)
     save_scores(s, rfe_accuracy, cross_val_folder)
 
+
 # def get_norm_priv(s,all_train,all_test):
-#     if s.featsel == 'RFE':
+#     if s.featsel == 'rfe':
 #         best_n_mask = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}.npy'.
 #                               format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
 #         normal_train = all_train[:, best_n_mask].copy()
@@ -145,9 +152,10 @@ def do_svm_for_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folde
 #         return normal_train, normal_test, priv_train, priv_test
 
 
-def get_norm_priv(s,all_train,all_test):
+def get_norm_priv(s,all_train,all_test,support):
     ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}.npy'.
                           format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
+    assert(np.array_equal(support[0], np.sort(ordered_indices[:s.topk])))
     sorted_training = all_train[:, ordered_indices]
     sorted_testing = all_test[:, ordered_indices]
 
@@ -155,7 +163,7 @@ def get_norm_priv(s,all_train,all_test):
     normal_test = sorted_testing[:, :s.topk]
     priv_train = sorted_training[:, s.topk:]
     priv_test = sorted_testing[:, s.topk:]
-    print(normal_train.shape)
+    print('nor tr',normal_train.shape,'nor te',normal_test.shape,'pri tr',priv_train.shape,'pri te',priv_test.shape)
     return normal_train, normal_test, priv_train, priv_test
 
 def do_mutinfo(s, all_train, labels_train, all_test,labels_test,cross_val_folder):
@@ -178,11 +186,6 @@ def do_svm(s, train_data, labels_train, test_data, labels_test, cross_val_folder
     score = accuracy_score(labels_test, predictions)
     save_scores(s, score, cross_val_folder)
 
-def load_saved(s):
-    best_n_mask = np.load(get_full_path('Desktop/Privileged_Data/SavedIndices/top{}{}/{}{}-{}-{}'.
-                                        format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
-    return best_n_mask
-
 
 
 
@@ -193,7 +196,7 @@ def single_fold(s):
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
     output_directory = get_full_path((
-                                     'Desktop/Privileged_Data/MayResults/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
+                                     'Desktop/Privileged_Data/OldNormalisation/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
         s.classifier,s.lupimethod, s.featsel, s.topk, s.take_top_t,s.percent_of_priv,s.dataset, s.datasetnum))
     make_directory(output_directory)
 
@@ -201,14 +204,14 @@ def single_fold(s):
     if s.classifier == 'baseline':
         do_svm(s, all_train, labels_train, all_test, labels_test, output_directory)
     elif s.classifier == 'featselector':
-        if s.featsel == 'RFE':
+        if s.featsel == 'rfe':
+            print('doing rfe')
             do_rfe(s,all_train,all_test,labels_train,labels_test,output_directory)
-        if s.featsel == 'MI':
+        if s.featsel == 'mi':
             do_mutinfo(s, all_train, labels_train, all_test,labels_test, output_directory)
     else:
         normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
         if s.classifier == 'lufe':
-            print('doing lufe')
             do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
         if s.classifier == 'lufereverse':
             do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, output_directory)
@@ -251,8 +254,8 @@ class Experiment_Setting:
 
 
 # for i in range(10):
-#     setting = Experiment_Setting(foldnum=i, topk='all', dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=0,
-#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='none', featsel='nofeatsel', classifier='baseline')
+#     setting = Experiment_Setting(foldnum=i, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=0,
+#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='none', featsel='rfe', classifier='featselector')
 #     setting.print_all_settings()
 #     single_fold(setting)
 
@@ -261,15 +264,19 @@ class Experiment_Setting:
 # # print([int(item)for item in cvalues.split('a')])
 seed = 1
 dataset='tech'
-top_k = 300
+top_k = 30
 take_top_t ='top'
 percentofpriv = 100
+
+# setting = Experiment_Setting(foldnum=0, topk=30, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=0,
+#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='none', featsel='rfe', classifier='featselector')
+# single_fold(setting)
 
 
 #
 # for foldnum in range(10):
 #     for lupimethod in ['dp','svmplus']:
-#         for featsel in ['RFE']:
+#         for featsel in ['rfe']:
 #             for datasetnum in range (259,295): #5
 #                 setting = Experiment_Setting(k=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
 #                          cmin=-3,cmax=3,numberofcs=7, skfseed=0, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,

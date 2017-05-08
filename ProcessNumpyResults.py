@@ -124,6 +124,7 @@ def compare_two_settings_ind_folds(setting_one, setting_two):
 # print(get_scores(lufe_baseline).shape)
 #
 # svm_baseline = Setting(295,'svm',300,'cross-val',100, '')
+# lufe_baselin = Setting(295,'')
 # dsvm_crossval = Setting(295,'dsvm',300,'cross-val',100, '')
 # dsvm_top10 =  Setting(295,'dsvm',300,'cross-val',10, '')
 # dsvm_top50 = Setting(295,'dsvm',300,'cross-val',50, '')
@@ -149,6 +150,11 @@ mutinfo_svm = Setting(295,'svm',300,'cross-val',100,'mutinfo')
 
 all_baseline = Setting(295,'baseline',300,'cross-val',100, 'RFE')
 get_errors(all_baseline)
+
+
+lufe_baseline = Setting(295,'lupi',300,'cross-val',100, 'RFE')
+svm_baseline = Setting(295,'svm',300,'cross-val',100, 'RFE')
+all_baseline = Setting(295,'baseline',300,'cross-val',100, 'RFE')
 
 ##########  COMPARING FIXED C WITH CROSS-VALIDATED ############
 

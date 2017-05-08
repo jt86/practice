@@ -45,7 +45,7 @@ lufe_scores = get_setting_scores(0,lufe)
 # plt.bar(range(295),compare_two_settings(baseline,rfe))
 # plt.show()
 
-# from ProcessNumpyResults import get_errors, all_baseline
-# print (get_errors(all_baseline).shape)
-# print (np.mean(get_errors(all_baseline)))
+from ProcessNumpyResults import get_errors, all_baseline, lufe_baseline, svm_baseline
+print (get_errors(all_baseline).shape)
+print (100-np.mean(get_errors(all_baseline)),(100-np.mean(get_errors(lufe_baseline))),100-np.mean(get_errors(svm_baseline)))
 

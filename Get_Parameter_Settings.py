@@ -30,7 +30,7 @@ for foldnum in range(10):
 
 classifier = 'featselector'
 lupimethod = 'nolufe'
-featsel = 'RFE'
+featsel = 'rfe'
 for foldnum in range(10):
     for datasetnum in range (295): #5
         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
@@ -40,7 +40,7 @@ for foldnum in range(10):
 
 classifier = 'lufe'
 lupimethod = 'svmplus'
-featsel = 'RFE'
+featsel = 'rfe'
 for foldnum in range(10):
     for datasetnum in range (295): #5
         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
@@ -51,7 +51,7 @@ for foldnum in range(10):
 
 
     # setting = Experiment_Setting(foldnum=i, topk=30, dataset='tech', datasetnum=245, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=4,
-    #                              percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='MI', classifier='baseline')
+    #                              percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='mi', classifier='baseline')
 
 # (k, topk, dataset, datasetnum, kernel, cmin, cmax, number_of_cs, skfseed, percent_of_priv,
 #                 percentageofinstances, take_top_t, lupimethod=None)
