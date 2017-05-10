@@ -18,7 +18,9 @@ def get_setting_scores(skfseed,setting, folder):
             dataset_scores = []
             for item in result_file.readlines():
                 dataset_scores.append(float(item.split(',')[1].strip('\n')))
-        all_scores.append(dataset_scores)
+        all_scores.append(np.array(dataset_scores))
+    all_scores= (np.array(all_scores))
+    print(type(all_scores[0]),all_scores.shape)
     print ('setting = {}, seed ={}, scores = {}'.format(setting,skfseed,np.mean(all_scores)))
     return np.array(all_scores)
 
@@ -32,14 +34,19 @@ def compare_two_settings(one,two):
     print((1-(np.mean(scores_one)))*100,(1-(np.mean(scores_two)))*100)
 
 
+baseline = 'baseline-none-none-300selected-top100priv'
+get_setting_scores(0,baseline, may_folder)
+
 baseline = 'baseline-nolufe-nofeatsel-allselected-top100priv'
-# baseline_scores = get_setting_scores(seed,baseline, may_folder)
+get_setting_scores(1,baseline, may_folder)
 
 rfe = 'featselector-nolufe-RFE-300selected-top100priv'
-get_setting_scores(seed,rfe, may_folder)
+get_setting_scores(0,rfe, may_folder)
+get_setting_scores(1,rfe, may_folder)
 
 lufe = 'lufe-svmplus-RFE-300selected-top100priv'
-lufe_scores = get_setting_scores(seed,lufe, may_folder)
+lufe_scores = get_setting_scores(0,lufe, may_folder)
+lufe_scores = get_setting_scores(1,lufe, may_folder)
 
 print('\n ----old normalisation')
 
