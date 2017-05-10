@@ -152,10 +152,10 @@ def do_svm_for_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folde
 #         return normal_train, normal_test, priv_train, priv_test
 
 
-def get_norm_priv(s,all_train,all_test,support):
+def get_norm_priv(s,all_train,all_test):
     ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}.npy'.
                           format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
-    assert(np.array_equal(support[0], np.sort(ordered_indices[:s.topk])))
+    # assert(np.array_equal(support[0], np.sort(ordered_indices[:s.topk])))
     sorted_training = all_train[:, ordered_indices]
     sorted_testing = all_test[:, ordered_indices]
 
