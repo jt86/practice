@@ -11,6 +11,7 @@ may_folder = get_full_path('Desktop/Privileged_Data/MayResults')
 # mid_folder = get_full_path('Desktop/Privileged_Data/TestingCodeResultsMIDPARAM')
 
 def get_setting_scores(skfseed,setting, folder):
+    print(setting)
     classifier = setting.split('-')[0]
     all_scores = []
     for datasetnum in range(295):
@@ -20,42 +21,44 @@ def get_setting_scores(skfseed,setting, folder):
                 dataset_scores.append(float(item.split(',')[1].strip('\n')))
         all_scores.append(np.array(dataset_scores))
     all_scores= (np.array(all_scores))
-    print(type(all_scores[0]),all_scores.shape)
-    print ('setting = {}, seed ={}, scores = {}'.format(setting,skfseed,np.mean(all_scores)))
+    mean_score = np.mean(all_scores)
+    for index,item in enumerate(all_scores):
+        if len(item) !=10: print (index)
+    print('setting = {}, seed ={}, scores = {}'.format(setting, skfseed, np.mean(all_scores)))
     return np.array(all_scores)
 
 
 def compare_two_settings(one,two):
-    scores_one = np.mean(get_setting_scores(0,one),axis=1)
-    scores_two = np.mean(get_setting_scores(0, two),axis=1)
+    scores_one = np.mean(get_setting_scores(1,one, old_norm_folder),axis=1)
+    scores_two = np.mean(get_setting_scores(1, two,old_norm_folder),axis=1)
     differences = scores_one-scores_two
-    print(len(np.where(differences==0)[0]),len(np.where(differences>0)[0]),len(np.where(differences<0)[0]))
+    print(''.format(len(np.where(differences==0)[0]),len(np.where(differences>0)[0]),len(np.where(differences<0)[0])))
     print(np.mean(differences))
     print((1-(np.mean(scores_one)))*100,(1-(np.mean(scores_two)))*100)
 
 
 baseline = 'baseline-none-none-300selected-top100priv'
-get_setting_scores(0,baseline, may_folder)
+# get_setting_scores(0,baseline, may_folder)
 
 baseline = 'baseline-nolufe-nofeatsel-allselected-top100priv'
-get_setting_scores(1,baseline, may_folder)
+# get_setting_scores(1,baseline, may_folder)
 
 rfe = 'featselector-nolufe-RFE-300selected-top100priv'
-get_setting_scores(0,rfe, may_folder)
-get_setting_scores(1,rfe, may_folder)
+# get_setting_scores(0,rfe, may_folder)
+# get_setting_scores(1,rfe, may_folder)
 
 lufe = 'lufe-svmplus-RFE-300selected-top100priv'
-lufe_scores = get_setting_scores(0,lufe, may_folder)
-lufe_scores = get_setting_scores(1,lufe, may_folder)
+# get_setting_scores(0,lufe, may_folder)
+# get_setting_scores(1,lufe, may_folder)
 
 print('\n ----old normalisation')
 
-old_norm_folder = get_full_path('Desktop/Privileged_Data/MayResults')
-baseline_scores_old_norm = get_setting_scores(1,baseline,old_norm_folder)
-rfe_scores_old_norm = get_setting_scores(1,rfe,old_norm_folder)
-# lufe_scores_old_norm = get_setting_scores(1,lufe,old_norm_folder)
+old_norm_folder = get_full_path('Desktop/Privileged_Data/OldNormalisation')
+baseline_scores = get_setting_scores(1,baseline,old_norm_folder)
+rfe_scores = get_setting_scores(1,rfe,old_norm_folder)
+lufe_scores = get_setting_scores(1,lufe,old_norm_folder)
 
-# compare_two_settings(baseline,lufe)
+compare_two_settings(baseline,lufe)
 #
 # plt.bar(range(295),compare_two_settings(baseline,rfe))
 # plt.show()

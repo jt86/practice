@@ -14,7 +14,7 @@ import os
 import numpy as np
 from sklearn.metrics import accuracy_score
 from SVMplus import svmplusQP, svmplusQP_Predict
-from ParamEstimation import get_best_params, get_best_CandCstar, get_best_params_dp#, get_best_params_dp2
+from ParamEstimation import get_best_params, get_best_CandCstar, get_best_params_dp2
 from sklearn import svm
 from Get_Full_Path import get_full_path
 from sklearn.feature_selection import RFE
@@ -83,7 +83,7 @@ def save_scores(s, score, cross_val_folder):
 ############## LUFe FUNCTIONS
 
 def delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
-    C, gamma, delta = get_best_params_dp(s, normal_train, labels_train, priv_train, cross_val_folder)
+    C, gamma, delta = get_best_params_dp2(s, normal_train, labels_train, priv_train, cross_val_folder)
     problem = svm_problem(normal_train, priv_train, labels_train, C=C,
                           gamma=gamma, delta=delta)
     s2 = SVMdp()
@@ -193,10 +193,11 @@ def do_svm(s, train_data, labels_train, test_data, labels_test, cross_val_folder
 
 def single_fold(s):
     print(s.cvalues)
+    pprint(vars(s))
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
     output_directory = get_full_path((
-                                     'Desktop/Privileged_Data/OldNormalisation/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
+                                     'Desktop/Privileged_Data/MayResults/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
         s.classifier,s.lupimethod, s.featsel, s.topk, s.take_top_t,s.percent_of_priv,s.dataset, s.datasetnum))
     make_directory(output_directory)
 
@@ -225,6 +226,11 @@ def single_fold(s):
 class Experiment_Setting:
     def __init__(self, foldnum, topk, dataset, datasetnum, kernel, cmin, cmax, numberofcs, skfseed,
                  percent_of_priv, percentageofinstances, take_top_t, lupimethod, featsel, classifier):
+
+        assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse']
+        assert lupimethod in ['nolufe','svmplus','dp'], 'lupi method must be nolufe, svmplus or dp'
+        assert featsel in ['notfeatsel','rfe','mi','anova'], 'feat selection method must be nofeatsel, rfe, mi or anova'
+
         self.foldnum = foldnum
         self.topk = topk
         self.dataset = dataset
@@ -240,6 +246,8 @@ class Experiment_Setting:
         self.stepsize=0.1
         self.featsel = featsel
         self.classifier = classifier
+
+
 
         if self.classifier == 'baseline':
             self.lupimethod='nolufe'
@@ -262,14 +270,14 @@ class Experiment_Setting:
 # data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
 # # cvalues = '-3a3a7'
 # # print([int(item)for item in cvalues.split('a')])
-seed = 1
-dataset='tech'
-top_k = 30
-take_top_t ='top'
-percentofpriv = 100
-
-# setting = Experiment_Setting(foldnum=0, topk=30, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=0,
-#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='none', featsel='rfe', classifier='featselector')
+# seed = 1
+# dataset='tech'
+# top_k = 30
+# take_top_t ='top'
+# percentofpriv = 100
+#
+# setting = Experiment_Setting(foldnum=7, topk=300, dataset='tech', datasetnum=209, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
+#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='rfe', classifier='lufe')
 # single_fold(setting)
 
 

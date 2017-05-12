@@ -61,7 +61,6 @@ if __name__ == '__main__':
                            kernel=args.kernel, cmin = args.cmin, cmax= args.cmax, numberofcs=args.numberofcs, skfseed=args.skfseed,
                            percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances,
                            take_top_t=args.taketopt, lupimethod=args.lupimethod, featsel=args.featsel, classifier=args.classifier)
-    pprint(vars(s))
     single_fold(s)
 
 

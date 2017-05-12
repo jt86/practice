@@ -68,11 +68,11 @@ def get_train_and_test_this_fold(s):	#N,test_N per class
 
     # print('variance',np.var(train2, axis =1))
 
-    train_data = preprocessing.scale(train_data)
-    test_data = preprocessing.scale(test_data)
-    # scaler = preprocessing.StandardScaler(with_std=True).fit(train_data)
-    # train_data = scaler.transform(train_data)
-    # test_data = scaler.transform(test_data)
+    # train_data = preprocessing.scale(train_data)
+    # test_data = preprocessing.scale(test_data)
+    scaler = preprocessing.StandardScaler(with_std=True).fit(train_data)
+    train_data = scaler.transform(train_data)
+    test_data = scaler.transform(test_data)
 
     # print ('train',train_indices.shape, 'test',test_indices.shape)
     # print ('train data shape', train_data.shape, 'test data shape', test_data.shape)
