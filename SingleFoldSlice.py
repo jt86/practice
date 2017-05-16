@@ -229,7 +229,7 @@ class Experiment_Setting:
 
         assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse']
         assert lupimethod in ['nolufe','svmplus','dp'], 'lupi method must be nolufe, svmplus or dp'
-        assert featsel in ['notfeatsel','rfe','mi','anova'], 'feat selection method must be nofeatsel, rfe, mi or anova'
+        assert featsel in ['nofeatsel','rfe','mi','anova'], 'feat selection method must be nofeatsel, rfe, mi or anova'
 
         self.foldnum = foldnum
         self.topk = topk
