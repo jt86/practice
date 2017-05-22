@@ -12,32 +12,46 @@ count=1
 
 # print('--k 4 --topk 300 --dataset tech --datasetnum 123 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 1 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 
-cvalues = '-3a3a7'
+
 seed = 1
 dataset='tech'
 top_k = 300
 take_top_t ='top'
 percentofpriv = 100
 
-classifier = 'baseline'
-lupimethod = 'nolufe'
-featsel = 'nofeatsel'
+featsel = 'mi'
+
+classifier = 'lufe'
+lupimethod = 'svmplus'
 for foldnum in range(10):
     for datasetnum in range (295): #5
         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
         count+=1
 
-featsel = 'rfe'
-
-classifier = 'featselector'
-lupimethod = 'nolufe'
+classifier = 'lufereverse'
+lupimethod = 'svmplus'
 for foldnum in range(10):
     for datasetnum in range (295): #5
         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
         count+=1
 
+classifier = 'lufe'
+lupimethod = 'dp'
+for foldnum in range(10):
+    for datasetnum in range (295): #5
+        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+              '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+        count+=1
+
+classifier = 'lufereverse'
+lupimethod = 'dp'
+for foldnum in range(10):
+    for datasetnum in range (295): #5
+        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+              '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+        count+=1
 
 classifier = 'svmreverse'
 lupimethod = 'nolufe'
@@ -46,43 +60,75 @@ for foldnum in range(10):
         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
         count+=1
+print(count)
+featsel = 'rfe'
 
 
-
-
-classifier = 'lufe'
-lupimethod = 'svmplus'
-for foldnum in range(10):
-    for datasetnum in range (295): #5
-        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
-              '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
-
-        count+=1
-
-classifier = 'lufereverse'
-lupimethod = 'svmplus'
-for foldnum in range(10):
-    for datasetnum in range (295): #5
-        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
-              '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
-        count += 1
-
-classifier = 'lufe'
-lupimethod = 'dp'
-for foldnum in range(10):
-    for datasetnum in range (295): #5
-        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
-              '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
-        count += 1
-
-
-classifier = 'lufereverse'
-lupimethod = 'dp'
-for foldnum in range(10):
-    for datasetnum in range (295): #5
-        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
-              '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
-        count += 1
+#
+# classifier = 'baseline'
+# lupimethod = 'nolufe'
+# featsel = 'nofeatsel'
+# for foldnum in range(10):
+#     for datasetnum in range (295): #5
+#         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+#               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+#         count+=1
+#
+# featsel = 'rfe'
+#
+# classifier = 'featselector'
+# lupimethod = 'nolufe'
+# for foldnum in range(10):
+#     for datasetnum in range (295): #5
+#         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+#               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+#         count+=1
+#
+#
+# classifier = 'svmreverse'
+# lupimethod = 'nolufe'
+# for foldnum in range(10):
+#     for datasetnum in range (295): #5
+#         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+#               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+#         count+=1
+#
+#
+#
+#
+# classifier = 'lufe'
+# lupimethod = 'svmplus'
+# for foldnum in range(10):
+#     for datasetnum in range (295): #5
+#         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+#               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+#
+#         count+=1
+#
+# classifier = 'lufereverse'
+# lupimethod = 'svmplus'
+# for foldnum in range(10):
+#     for datasetnum in range (295): #5
+#         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+#               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+#         count += 1
+#
+# classifier = 'lufe'
+# lupimethod = 'dp'
+# for foldnum in range(10):
+#     for datasetnum in range (295): #5
+#         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+#               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+#         count += 1
+#
+#
+# classifier = 'lufereverse'
+# lupimethod = 'dp'
+# for foldnum in range(10):
+#     for datasetnum in range (295): #5
+#         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+#               '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset, datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod, featsel, classifier))
+#         count += 1
 
 
 

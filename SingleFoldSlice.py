@@ -32,8 +32,8 @@ from Models import SVMdp, SVMu, get_accuracy_score
 from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 import socket
 
-# if 'apollo' not in socket.gethostname() or 'node' not in socket.gethostname():
-#     from sklearn.feature_selection import mutual_info_classif
+
+from sklearn.feature_selection import mutual_info_classif
 from pprint import pprint
 # print (PYTHONPATH)
 
@@ -260,12 +260,13 @@ class Experiment_Setting:
         pprint(vars(self))
         # print(self.k,self.top)
 
-
-# for i in range(10):
-#     setting = Experiment_Setting(foldnum=i, topk=300, dataset='tech', datasetnum=0, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=0,
-#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='none', featsel='rfe', classifier='featselector')
-#     setting.print_all_settings()
-#     single_fold(setting)
+#
+# for datasetnum in range(280,295):
+#     for i in range(10):
+#         setting = Experiment_Setting(foldnum=i, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=0,
+#                                      percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='nolufe', featsel='mi', classifier='featselector')
+#         setting.print_all_settings()
+#         single_fold(setting)
 
 # data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
 # # cvalues = '-3a3a7'
