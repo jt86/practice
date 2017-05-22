@@ -33,7 +33,7 @@ from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 import socket
 
 
-from sklearn.feature_selection import mutual_info_classif
+# from sklearn.feature_selection import mutual_info_classif
 from pprint import pprint
 # print (PYTHONPATH)
 
