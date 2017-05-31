@@ -33,7 +33,7 @@ from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 import socket
 
 
-# from sklearn.feature_selection import mutual_info_classif
+from sklearn.feature_selection import mutual_info_classif
 from pprint import pprint
 # print (PYTHONPATH)
 
@@ -127,11 +127,11 @@ def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     print('support',support)
     print ('ranking',ranking)
     print ('are they equal?',np.array_equal(support,ranking))
-    do_svm_for_rfe(s, all_train, all_test, labels_train, labels_test, cross_val_folder, best_rfe_param,support)
+    do_svm_for_rfe(s, all_train, all_test, labels_train, labels_test, cross_val_folder, best_rfe_param)
 
 
-def do_svm_for_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder, best_rfe_param,support):
-    normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,all_train,all_test,support)
+def do_svm_for_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder, best_rfe_param):
+    normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,all_train,all_test)
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.foldnum)
     svc.fit(normal_train, labels_train)
     rfe_accuracy = svc.score(normal_test, labels_test)
@@ -260,13 +260,13 @@ class Experiment_Setting:
         pprint(vars(self))
         # print(self.k,self.top)
 
-#
-# for datasetnum in range(280,295):
-#     for i in range(10):
-#         setting = Experiment_Setting(foldnum=i, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=0,
-#                                      percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='nolufe', featsel='mi', classifier='featselector')
-#         setting.print_all_settings()
-#         single_fold(setting)
+
+for datasetnum in range(40):
+    for i in range(10):
+        setting = Experiment_Setting(foldnum=i, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
+                                     percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='nolufe', featsel='mi', classifier='featselector')
+        setting.print_all_settings()
+        single_fold(setting)
 
 # data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
 # # cvalues = '-3a3a7'
