@@ -33,7 +33,7 @@ from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 import socket
 
 
-from sklearn.feature_selection import mutual_info_classif
+# from sklearn.feature_selection import mutual_info_classif
 from pprint import pprint
 # print (PYTHONPATH)
 
@@ -115,7 +115,7 @@ def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=s.stepsize)
     rfe.fit(all_train, labels_train)
     make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
-    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}'.
+    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/NEWtop{}{}/{}{}-{}-{}'.
                           format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), (np.argsort(rfe.ranking_)))
     # print ('rfe ranking',rfe.ranking_)
     # print(np.count_nonzero(rfe.ranking_ == 1))
@@ -197,7 +197,7 @@ def single_fold(s):
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
     output_directory = get_full_path((
-                                     'Desktop/Privileged_Data/MayResults/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
+                                     'Desktop/Privileged_Data/PracticeResults/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
         s.classifier,s.lupimethod, s.featsel, s.topk, s.take_top_t,s.percent_of_priv,s.dataset, s.datasetnum))
     make_directory(output_directory)
 
@@ -260,13 +260,13 @@ class Experiment_Setting:
         pprint(vars(self))
         # print(self.k,self.top)
 
-
-for datasetnum in range(40):
-    for i in range(10):
-        setting = Experiment_Setting(foldnum=i, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
-                                     percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='nolufe', featsel='mi', classifier='featselector')
-        setting.print_all_settings()
-        single_fold(setting)
+#
+# for datasetnum in range(40):
+#     for i in range(10):
+#         setting = Experiment_Setting(foldnum=i, topk=10, dataset='tech', datasetnum=datasetnum, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
+#                                      percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='dp', featsel='mi', classifier='lufe')
+#         setting.print_all_settings()
+#         single_fold(setting)
 
 # data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
 # # cvalues = '-3a3a7'

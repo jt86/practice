@@ -15,12 +15,12 @@ import time
 from New import svm_problem,svm_u_problem
 from Models import SVMdp, SVMu, get_accuracy_score
 from sklearn.cross_validation import StratifiedKFold
-
+from pprint import pprint
 
 def get_best_params_dp2(setting, normal_train, labels_train, priv_train, cross_val_folder):
     n_folds=5
     c_values = setting.cvalues; gamma_values= setting.cvalues
-    delta = c_values[:-1]
+    delta = c_values[-1]
     print(c_values)
     cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=setting.foldnum)
     cv_scores = np.zeros((len(c_values),len(gamma_values)))
@@ -28,8 +28,11 @@ def get_best_params_dp2(setting, normal_train, labels_train, priv_train, cross_v
     for i,(train, test) in enumerate(cv):
         for C_index, C in enumerate(c_values):
             for gamma_index, gamma in enumerate(gamma_values):
-                problem = svm_problem(normal_train[train], priv_train[train], labels_train[train].copy(), C=C, gamma=gamma, delta=delta)
+                print(normal_train[train].shape, priv_train[train].shape)
+                print(C,gamma,delta)
+                problem = svm_problem(X=normal_train[train], Xstar=priv_train[train], Y=labels_train[train].copy(), C=C, gamma=gamma, delta=delta)
                 dp_classifier = SVMdp()
+                # pprint(vars(problem))
                 c2 = dp_classifier.train(prob=problem)
                 ACC = (get_accuracy_score(c2, normal_train[test], labels_train[test]))
                 cv_scores[C_index,gamma_index] += ACC
