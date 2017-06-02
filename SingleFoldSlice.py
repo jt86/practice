@@ -109,13 +109,15 @@ def do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test,
 ############## FUNCTIONS TO GET SUBSETS OF FEATURES AND SUBSETS OF INSTANCES
 
 
+
+
 def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     best_rfe_param = get_best_params(s, all_train, labels_train, cross_val_folder, 'rfe')
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.foldnum)
     rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=s.stepsize)
     rfe.fit(all_train, labels_train)
-    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/NEWtop{}{}/'.format(s.topk, s.featsel)))
-    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/NEWtop{}{}/{}{}-{}-{}'.
+    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
+    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}'.
                           format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), (np.argsort(rfe.ranking_)))
     # print ('rfe ranking',rfe.ranking_)
     # print(np.count_nonzero(rfe.ranking_ == 1))
@@ -177,6 +179,48 @@ def do_mutinfo(s, all_train, labels_train, all_test,labels_test,cross_val_folder
     do_svm(s, normal_train, labels_train, normal_test, labels_test, cross_val_folder)
 
 
+def do_anova(s, all_train, all_test, labels_train, labels_test, output_directory):
+    # get array of scores in the same order as original features
+    selector = SelectPercentile(f_classif, percentile=100)
+    selector.fit(all_train, labels_train)
+    scores = selector.scores_
+    # sort the scores (small to big)
+    sorted_indices_small_to_big = np.argsort(scores)
+    sorted_scores = scores[sorted_indices_small_to_big]
+    # nan indices are at the end. Reverse the score array (big to small) but leave these at the end
+    nan_indices = np.argwhere(np.isnan(scores)).flatten()
+    non_nan_indices = sorted_indices_small_to_big[:-len(nan_indices)]
+    sorted_indices_big_to_small = non_nan_indices[::-1]
+    ordered_indices = np.array(np.hstack([sorted_indices_big_to_small, nan_indices]))  # indices of biggest
+
+    print(scores[ordered_indices])
+    print('ordered feats', ordered_indices.shape)
+    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
+
+    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}'.
+                          format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), ordered_indices)
+    normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
+    do_svm(s, normal_train, labels_train, normal_test, labels_test, output_directory)
+
+
+def do_chi2(s, all_train, all_test, labels_train, labels_test, output_directory):
+        # add values so that all features of training data are non-zero
+        all_training=all_train-np.min(all_train)
+        # get array of scores in the same order as original features
+        selector = SelectPercentile(chi2, percentile=100)
+        selector.fit(all_training, labels_train)
+        scores = selector.scores_
+        # sort the scores (small to big)
+        ordered_indices = np.argsort(scores)[::-1]
+        print(scores[ordered_indices])
+        print(ordered_indices)
+
+        make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
+        np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}'.
+                              format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)),ordered_indices)
+        normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
+        do_svm(s, normal_train, labels_train, normal_test, labels_test, output_directory)
+
 def do_svm(s, train_data, labels_train, test_data, labels_test, cross_val_folder):
     best_C = get_best_params(s, train_data, labels_train, cross_val_folder, 'svm')
     clf = svm.SVC(C=best_C, kernel=s.kernel, random_state=s.foldnum)
@@ -210,6 +254,10 @@ def single_fold(s):
             do_rfe(s,all_train,all_test,labels_train,labels_test,output_directory)
         if s.featsel == 'mi':
             do_mutinfo(s, all_train, labels_train, all_test,labels_test, output_directory)
+        if s.featsel == 'anova':
+            do_anova(s, all_train, all_test, labels_train, labels_test, output_directory)
+        if s.featsel == 'chi2':
+            do_chi2(s, all_train, all_test, labels_train, labels_test, output_directory)
     else:
         normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
         if s.classifier == 'lufe':
@@ -229,7 +277,7 @@ class Experiment_Setting:
 
         assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse']
         assert lupimethod in ['nolufe','svmplus','dp'], 'lupi method must be nolufe, svmplus or dp'
-        assert featsel in ['nofeatsel','rfe','mi','anova'], 'feat selection method must be nofeatsel, rfe, mi or anova'
+        assert featsel in ['nofeatsel','rfe','mi','anova','chi2'], 'feat selection method not valid'
 
         self.foldnum = foldnum
         self.topk = topk
@@ -278,7 +326,7 @@ class Experiment_Setting:
 # percentofpriv = 100
 #
 # setting = Experiment_Setting(foldnum=7, topk=300, dataset='tech', datasetnum=209, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
-#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='rfe', classifier='lufe')
+#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='chi2', classifier='lufe')
 # single_fold(setting)
 
 
