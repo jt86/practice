@@ -114,7 +114,7 @@ def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.foldnum)
     rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=s.stepsize)
     rfe.fit(all_train, labels_train)
-    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
+    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/NEWtop{}{}/'.format(s.topk, s.featsel)))
     np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/NEWtop{}{}/{}{}-{}-{}'.
                           format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), (np.argsort(rfe.ranking_)))
     # print ('rfe ranking',rfe.ranking_)
@@ -197,7 +197,7 @@ def single_fold(s):
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
     output_directory = get_full_path((
-                                     'Desktop/Privileged_Data/PracticeResults/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
+                                     'Desktop/Privileged_Data/MayResults/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
         s.classifier,s.lupimethod, s.featsel, s.topk, s.take_top_t,s.percent_of_priv,s.dataset, s.datasetnum))
     make_directory(output_directory)
 
