@@ -548,7 +548,7 @@ class CLinearKernel(CVectorKernel):
     def CreateCacheKernel(self, x):
         assert len(x.shape) == 2, 'Argument 1 has wrong shape'
         n = x.shape[0]
-        nb = n / self._blocksize
+        nb = n // self._blocksize
 
         # create the cache space
         if id(x) in self._cacheKernel:
@@ -582,7 +582,7 @@ class CLinearKernel(CVectorKernel):
                'Argument 1 has not been cached'
 
         n = x.shape[0]
-        nb = n / self._blocksize
+        nb = n // self._blocksize
         tmpCacheKernel = self._cacheKernel[id(x)]
 
         # set parameters.
@@ -618,7 +618,7 @@ class CLinearKernel(CVectorKernel):
                'Argument 1 has not been cached'
 
         n = x1.shape[0]
-        nb = n / self._blocksize
+        nb = n // self._blocksize
         tmpCacheKernel = self._cacheKernel[id(x1)]
 
         # blocking
@@ -653,7 +653,7 @@ class CLinearKernel(CVectorKernel):
                'Argument 1 has not been cached'
 
         n = x1.shape[0]
-        nb = n / self._blocksize
+        nb = n // self._blocksize
         tmpCacheKernel = self._cacheKernel[id(x1)]
 
         # set parameters.

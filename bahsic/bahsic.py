@@ -32,6 +32,7 @@
 __version__ = '$Revision: $' 
 # $Source$
 
+from Get_Full_Path import get_full_path
 import numpy
 from scipy import optimize
 
@@ -196,32 +197,63 @@ import numpy as np
 # y = np.hstack((training_labels,testing_labels))
 # y = np.reshape(y,[y.shape[0],1])
 # print(y.shape)
+#
+# x  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_priv.npy')
+# y  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_labels.npy')
+# y = np.reshape(y,[y.shape[0],1])
 
-x  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_priv.npy')
-y  = np.load('../SVMdelta/Data/Dataset219/tech219-0-0-train_labels.npy')
-y = np.reshape(y,[y.shape[0],1])
-
-print(x.shape)
+# print(x.shape)
 # import sys
 # sys.exit()
 cbahsic= CBAHSIC()
 
-output1 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=100, flg4=0.5)))
-print(output1)
-print(len(output1))
+## BAHSIC with optimization over the kernel parameters.
+# @param x The data.
+# @param y The labels.
+# @param kernelx The kernel on the data.
+# @param kernely The kernel on the labels.
+# @param flg3 The number of desired features.
+# @param flg4 The proportion of features eleminated in each iteration.
+#
 
-output2 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=50, flg4=0.5)))
-print(output2)
-print(len(output2))
+# output1 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=100, flg4=0.5)))
+# print(output1)
+# print(len(output1))
+# np.save(get_full_path('Desktop/output1'),output1)
+# +
+# output2 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=50, flg4=0.5)))
+# print(output2)
+# print(len(output2))
+# np.save(get_full_path('Desktop/output2'),output2)
+#
+# output3 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=10, flg4=0.5)))
+# print(output3)
+# print(len(output3))
+# np.save(get_full_path('Desktop/output3'),output3)
 
-output3 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=10, flg4=0.5)))
-print(output3)
-print(len(output3))
 
+output1 = np.load(get_full_path('Desktop/output1.npy'))
+output2 = np.load(get_full_path('Desktop/output2.npy'))
+output3 = np.load(get_full_path('Desktop/output3.npy'))
 i=0
 for count,(item1,item2,item3) in enumerate(zip(output1,output2,output3)):
-    print (count, item1,item2,item3,'{}'.format('<----------' if item1 !=item2 or item2 !=item3 or item1 != item3 else ))
-    if item1 !=item2 or item2 !=item3 or item1 != item3:
-        print('    no match!     ')
-        i+=1
+    if len(set([item1, item2, item3]))!=1: #check all different
+        print([item1, item2, item3], set([item1, item2, item3]), count)
+    # print (count, item1,item2,item3,('{}'.format('<----------')) if item1 !=item3)
+                                                                    #or item2 !=item3 or item1 != item3
+
+
 print(i)
+
+
+# from sklearn.svm import SVC
+#
+# first_100 = output1[:1000]
+# last_100 = output1[-1000:]
+# svm = SVC()
+# svm.fit(X=x[:150,first_100],y=y[:150])
+# print(svm.score(x[150:,first_100],y[150:]))
+#
+# svm = SVC()
+# svm.fit(X=x[:150,last_100],y=y[:150])
+# print(svm.score(x[150:,last_100],y[150:]))

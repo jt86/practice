@@ -31,6 +31,9 @@ from New import svm_problem, svm_u_problem
 from Models import SVMdp, SVMu, get_accuracy_score
 from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 import socket
+sys.path.append('bahsic')
+print(sys.path)
+from bahsic import CBAHSIC,vector
 
 
 # from sklearn.feature_selection import mutual_info_classif
@@ -171,12 +174,8 @@ def get_norm_priv(s,all_train,all_test):
 def do_mutinfo(s, all_train, labels_train, all_test,labels_test,cross_val_folder):
     scores = mutual_info_classif(all_train, labels_train)
     ordered_indices = np.array(np.argsort(scores)[::-1])  # ordered feats is np array of indices from biggest to smallest
-    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
-    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}'.
-                          format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), ordered_indices)
 
-    normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,all_train,all_test)
-    do_svm(s, normal_train, labels_train, normal_test, labels_test, cross_val_folder)
+    save_indices_do_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder, ordered_indices)
 
 
 def do_anova(s, all_train, all_test, labels_train, labels_test, output_directory):
@@ -195,33 +194,45 @@ def do_anova(s, all_train, all_test, labels_train, labels_test, output_directory
 
     print(scores[ordered_indices])
     print('ordered feats', ordered_indices.shape)
-    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
 
+    save_indices_do_svm(s, all_train, all_test, labels_train, labels_test, output_directory, ordered_indices)
+
+
+def save_indices_do_svm(s, all_train, all_test, labels_train, labels_test, output_directory, ordered_indices):
+    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
     np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}'.
                           format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), ordered_indices)
     normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
     do_svm(s, normal_train, labels_train, normal_test, labels_test, output_directory)
 
-
 def do_chi2(s, all_train, all_test, labels_train, labels_test, output_directory):
-        # add values so that all features of training data are non-zero
-        all_training=all_train-np.min(all_train)
-        # get array of scores in the same order as original features
-        selector = SelectPercentile(chi2, percentile=100)
-        selector.fit(all_training, labels_train)
-        scores = selector.scores_
-        # sort the scores (small to big)
-        ordered_indices = np.argsort(scores)[::-1]
-        print(scores[ordered_indices])
-        print(ordered_indices)
+    # add values so that all features of training data are non-zero
+    all_training=all_train-np.min(all_train)
+    # get array of scores in the same order as original features
+    selector = SelectPercentile(chi2, percentile=100)
+    selector.fit(all_training, labels_train)
+    scores = selector.scores_
+    # sort the scores (small to big)
+    ordered_indices = np.argsort(scores)[::-1]
+    print(scores[ordered_indices])
+    print(ordered_indices)
 
-        make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
-        np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}'.
-                              format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)),ordered_indices)
-        normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
-        do_svm(s, normal_train, labels_train, normal_test, labels_test, output_directory)
+    save_indices_do_svm(s, all_train, all_test, labels_train, labels_test, output_directory, ordered_indices)
+
+
+def do_bahsic(s, all_train, all_test, labels_train, labels_test, output_directory):
+    cbahsic = CBAHSIC()
+    # output2 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=50, flg4=0.5)))
+    labels_train=(labels_train.reshape(len(labels_train),1))
+    ordered_indices = cbahsic.BAHSICOpt(x=all_train, y=labels_train, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=s.topk, flg4=s.stepsize)
+    print(ordered_indices)
+    ordered_indices=ordered_indices[::-1]
+    print(ordered_indices)
+    labels_train = np.ndarray.flatten(labels_train)
+    save_indices_do_svm(s, all_train, all_test, labels_train, labels_test, output_directory, ordered_indices)
 
 def do_svm(s, train_data, labels_train, test_data, labels_test, cross_val_folder):
+    print ('train',train_data.shape,'labels',labels_train.shape,'test',test_data.shape,'labels',labels_test.shape)
     best_C = get_best_params(s, train_data, labels_train, cross_val_folder, 'svm')
     clf = svm.SVC(C=best_C, kernel=s.kernel, random_state=s.foldnum)
     print('labels data', labels_train.shape)
@@ -241,7 +252,7 @@ def single_fold(s):
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
     output_directory = get_full_path((
-                                     'Desktop/Privileged_Data/MayResults/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
+                                     'Desktop/Privileged_Data/PracticeResults/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
         s.classifier,s.lupimethod, s.featsel, s.topk, s.take_top_t,s.percent_of_priv,s.dataset, s.datasetnum))
     make_directory(output_directory)
 
@@ -258,6 +269,8 @@ def single_fold(s):
             do_anova(s, all_train, all_test, labels_train, labels_test, output_directory)
         if s.featsel == 'chi2':
             do_chi2(s, all_train, all_test, labels_train, labels_test, output_directory)
+        if s.featsel == 'bahsic':
+            do_bahsic(s, all_train, all_test, labels_train, labels_test, output_directory)
     else:
         normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
         if s.classifier == 'lufe':
@@ -277,7 +290,7 @@ class Experiment_Setting:
 
         assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse']
         assert lupimethod in ['nolufe','svmplus','dp'], 'lupi method must be nolufe, svmplus or dp'
-        assert featsel in ['nofeatsel','rfe','mi','anova','chi2'], 'feat selection method not valid'
+        assert featsel in ['nofeatsel','rfe','mi','anova','chi2','bahsic'], 'feat selection method not valid'
 
         self.foldnum = foldnum
         self.topk = topk
@@ -325,9 +338,11 @@ class Experiment_Setting:
 # take_top_t ='top'
 # percentofpriv = 100
 #
-# setting = Experiment_Setting(foldnum=7, topk=300, dataset='tech', datasetnum=209, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
-#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='chi2', classifier='lufe')
-# single_fold(setting)
+
+# for featsel in ['bahsic','anova','chi2','rfe']:
+setting = Experiment_Setting(foldnum=7, topk=300, dataset='tech', datasetnum=209, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
+                                 percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='bahsic', classifier='lufe')
+single_fold(setting)
 
 
 #
