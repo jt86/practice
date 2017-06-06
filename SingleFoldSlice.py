@@ -340,9 +340,9 @@ class Experiment_Setting:
 #
 
 # for featsel in ['bahsic','anova','chi2','rfe']:
-setting = Experiment_Setting(foldnum=7, topk=300, dataset='tech', datasetnum=209, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
-                                 percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='bahsic', classifier='lufe')
-single_fold(setting)
+# setting = Experiment_Setting(foldnum=7, topk=300, dataset='tech', datasetnum=209, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
+#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='bahsic', classifier='lufe')
+# single_fold(setting)
 
 
 #
