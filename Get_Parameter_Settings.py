@@ -28,7 +28,7 @@ for foldnum in range(10):
 
 classifier = 'featselector'
 lupimethod = 'nolufe'
-for featsel in ['rfe','anova', 'chi2', 'mi']:
+for featsel in ['rfe','anova', 'chi2']:
     for foldnum in range(10):
         for datasetnum in range(295):  # 5
             print(
