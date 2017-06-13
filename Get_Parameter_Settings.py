@@ -16,33 +16,51 @@ count=1
 seed = 1
 dataset='tech'
 top_k = 300
-take_top_t ='top'
-percentofpriv = 100
 
+classifier = 'baseline'
+lupimethod = 'nolufe'
+featsel = 'nofeatsel'
+for foldnum in range(10):
+    for datasetnum in range (295): #5
+        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {}'
+              .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
+        count+=1
 
-featsel = 'bahsic'
-for classifier in ['featselector', 'svmreverse']:
-    lupimethod = 'nolufe'
+classifier = 'featselector'
+lupimethod = 'nolufe'
+for featsel in ['rfe','anova', 'chi2', 'mi']:
     for foldnum in range(10):
         for datasetnum in range(295):  # 5
             print(
-                '--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
-                '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset,datasetnum, 'linear', seed,percentofpriv, 100, take_top_t,lupimethod, featsel,classifier))
+                '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {}'
+                .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
             count += 1
-
-
-for classifier in ['lufe', 'lufereverse']:
-    for lupimethod in ['svmplus', 'dp']:
-        for foldnum in range(10):
-            for datasetnum in range(295):  # 5
-                print(
-                    '--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
-                    '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset,datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod,featsel, classifier))
-                count += 1
-
 print(count)
 
 
+        # featsel = 'bahsic'
+# for classifier in ['featselector', 'svmreverse']:
+#     lupimethod = 'nolufe'
+#     for foldnum in range(10):
+#         for datasetnum in range(295):  # 5
+#             print(
+#                 '--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+#                 '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset,datasetnum, 'linear', seed,percentofpriv, 100, take_top_t,lupimethod, featsel,classifier))
+#             count += 1
+#
+#
+# for classifier in ['lufe', 'lufereverse']:
+#     for lupimethod in ['svmplus', 'dp']:
+#         for foldnum in range(10):
+#             for datasetnum in range(295):  # 5
+#                 print(
+#                     '--foldnum {} --topk {} --dataset {} --datasetnum {} --kernel {} --cmin -3 --cmax 3 --numberofcs 7 --skfseed {} --percentofpriv {} --percentageofinstances {} '
+#                     '--taketopt {} --lupimethod {} --featsel {} --classifier {}'.format(foldnum, top_k, dataset,datasetnum, 'linear', seed, percentofpriv, 100, take_top_t, lupimethod,featsel, classifier))
+#                 count += 1
+#
+# print(count)
+
+
 
 
 #
@@ -92,7 +110,7 @@ print(count)
 
 
 
-        # featsel = 'rfe'
+# featsel = 'rfe'
 # classifier = 'featselector'
 # lupimethod = 'nolufe'
 # for foldnum in range(10):
@@ -150,7 +168,7 @@ print(count)
 # featsel = 'rfe'
 
 
-#
+
 # classifier = 'baseline'
 # lupimethod = 'nolufe'
 # featsel = 'nofeatsel'

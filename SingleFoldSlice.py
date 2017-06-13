@@ -46,7 +46,7 @@ from pprint import pprint
 def get_priv_subset(feature_set,take_top_t,percent_of_priv):
     num_of_priv_feats = percent_of_priv * feature_set.shape[1] // 100
     assert take_top_t in ['top','bottom']
-    if take_top_t == 'top':
+    if take_top_t == ' top':
         priv_train = feature_set[:, :num_of_priv_feats]
     if take_top_t == 'bottom':
         priv_train = feature_set[:, -num_of_priv_feats:]
@@ -141,6 +141,16 @@ def do_svm_for_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folde
     svc.fit(normal_train, labels_train)
     rfe_accuracy = svc.score(normal_test, labels_test)
     save_scores(s, rfe_accuracy, cross_val_folder)
+
+
+def get_dsvm(s, priv_train, labels_train, folder, method):
+
+    c = get_best_params(s, priv_train, labels_train, folder, method)
+    svc = SVC(C=c, kernel=s.kernel, random_state=s.foldnum)
+    svc.fit(priv_train, labels_train)
+    d_i = np.array([1 - (labels_train[i] * svc.decision_function(priv_train)[i]) for i in range(len(labels_train))])
+    print(d_i.shape)
+    d_i = np.reshape(d_i, (d_i.shape[0], 1))
 
 
 # def get_norm_priv(s,all_train,all_test):
@@ -251,9 +261,8 @@ def single_fold(s):
     pprint(vars(s))
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
-    output_directory = get_full_path((
-                                     'Desktop/Privileged_Data/PracticeResults/{}-{}-{}-{}selected-{}{}priv/{}{}/').format(
-        s.classifier,s.lupimethod, s.featsel, s.topk, s.take_top_t,s.percent_of_priv,s.dataset, s.datasetnum))
+    output_directory = get_full_path(('Desktop/Privileged_Data/JuneResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+
     make_directory(output_directory)
 
     all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
@@ -285,8 +294,8 @@ def single_fold(s):
 
 
 class Experiment_Setting:
-    def __init__(self, foldnum, topk, dataset, datasetnum, kernel, cmin, cmax, numberofcs, skfseed,
-                 percent_of_priv, percentageofinstances, take_top_t, lupimethod, featsel, classifier):
+    def __init__(self, foldnum, topk, dataset, datasetnum, lupimethod, featsel, skfseed, classifier,kernel='linear',
+                 cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances=100, take_top_t='top'):
 
         assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse']
         assert lupimethod in ['nolufe','svmplus','dp'], 'lupi method must be nolufe, svmplus or dp'
@@ -308,14 +317,16 @@ class Experiment_Setting:
         self.featsel = featsel
         self.classifier = classifier
 
-
-
         if self.classifier == 'baseline':
             self.lupimethod='nolufe'
             self.featsel='nofeatsel'
             self.topk='all'
         if self.classifier == 'featselector':
             self.lupimethod='nolufe'
+
+        self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
+                                                          self.take_top_t, self.percent_of_priv)
+
 
     def print_all_settings(self):
         pprint(vars(self))
