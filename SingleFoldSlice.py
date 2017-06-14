@@ -334,10 +334,10 @@ class Experiment_Setting:
 
 
 
-for datasetnum in range(280,295):
-    for foldnum in range(10):
-        setting = Experiment_Setting(foldnum, 300, 'tech', datasetnum, 'nolufe', 'mi', 1, 'featselector')
-        single_fold(setting)
+# for datasetnum in range(280,295):
+#     for foldnum in range(10):
+#         setting = Experiment_Setting(foldnum, 300, 'tech', datasetnum, 'nolufe', 'mi', 1, 'featselector')
+#         single_fold(setting)
 
 #
 # for datasetnum in range(40):
