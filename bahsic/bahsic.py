@@ -231,19 +231,19 @@ cbahsic= CBAHSIC()
 # print(len(output3))
 # np.save(get_full_path('Desktop/output3'),output3)
 
-
-output1 = np.load(get_full_path('Desktop/output1.npy'))
-output2 = np.load(get_full_path('Desktop/output2.npy'))
-output3 = np.load(get_full_path('Desktop/output3.npy'))
-i=0
-for count,(item1,item2,item3) in enumerate(zip(output1,output2,output3)):
-    if len(set([item1, item2, item3]))!=1: #check all different
-        print([item1, item2, item3], set([item1, item2, item3]), count)
-    # print (count, item1,item2,item3,('{}'.format('<----------')) if item1 !=item3)
-                                                                    #or item2 !=item3 or item1 != item3
-
-
-print(i)
+#
+# output1 = np.load(get_full_path('Desktop/output1.npy'))
+# output2 = np.load(get_full_path('Desktop/output2.npy'))
+# output3 = np.load(get_full_path('Desktop/output3.npy'))
+# i=0
+# for count,(item1,item2,item3) in enumerate(zip(output1,output2,output3)):
+#     if len(set([item1, item2, item3]))!=1: #check all different
+#         print([item1, item2, item3], set([item1, item2, item3]), count)
+#     # print (count, item1,item2,item3,('{}'.format('<----------')) if item1 !=item3)
+#                                                                     #or item2 !=item3 or item1 != item3
+#
+#
+# print(i)
 
 
 # from sklearn.svm import SVC
