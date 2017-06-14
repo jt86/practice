@@ -22,7 +22,7 @@ lupimethod = 'nolufe'
 featsel = 'nofeatsel'
 for foldnum in range(10):
     for datasetnum in range (295): #5
-        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {}  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
+        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
               .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
         count+=1
 
@@ -32,7 +32,7 @@ for featsel in ['rfe','anova', 'chi2']:
     for foldnum in range(10):
         for datasetnum in range(295):  # 5
             print(
-                '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {}  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
+                '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
                 .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
             count += 1
 print(count)
