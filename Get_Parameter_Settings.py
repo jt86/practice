@@ -60,8 +60,6 @@ for featsel in ['rfe','anova', 'chi2','mi']:
                 .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
             count += 1
 
-
-
 classifier = 'featselector'
 lupimethod = 'nolufe'
 featsel = 'bahsic'
