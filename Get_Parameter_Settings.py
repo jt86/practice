@@ -34,7 +34,7 @@ classifier = 'lufe'
 foldnum=0
 datasetnum=0
 for featsel in ['rfe','anova', 'chi2','mi']:
-    for lupimethod in ['svmpplus']:
+    for lupimethod in ['svmplus']:
         print(
             '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
             .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
