@@ -8,7 +8,7 @@ def collate_single_dataset(s):
     # print(s.name)
     results=np.zeros(10)
     output_directory = get_full_path((
-        'Desktop/Privileged_Data/MayResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+        'Desktop/Privileged_Data/JuneResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
 
     assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
     with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
@@ -46,18 +46,18 @@ setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum
     # print(setting.name)
 collate_all_datasets(setting, num_datasets=295)
 
-for featsel in ['rfe','mi','anova','chi2']:
-    print('\n')
-    setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                                  take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
-    # print(setting.name)
-    collate_all_datasets(setting, num_datasets=295)
-    for lupimethod in ['svmplus','dp']:
-        setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                                     take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufe')
-        collate_all_datasets(setting, num_datasets=295)
-
-
+# for featsel in ['rfe','mi','anova','chi2']:
+#     print('\n')
+#     setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+#                                   take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
+#     # print(setting.name)
+#     collate_all_datasets(setting, num_datasets=295)
+#     for lupimethod in ['svmplus','dp']:
+#         setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+#                                      take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufe')
+#         collate_all_datasets(setting, num_datasets=295)
+#
+#
 
 
 # setting2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', kernel='linear', skfseed=1,
