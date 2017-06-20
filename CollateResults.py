@@ -43,8 +43,15 @@ def compare_two_settings(s1,s2):
 
 setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                   take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
-    # print(setting.name)
-collate_all_datasets(setting, num_datasets=295)
+
+collate_all_datasets(setting)
+
+for featsel in ['rfe','anova','chi2']:
+    setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                                 take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
+    collate_all_datasets(setting)
+
+
 
 # for featsel in ['rfe','mi','anova','chi2']:
 #     print('\n')
