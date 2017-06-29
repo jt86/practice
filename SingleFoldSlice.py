@@ -36,7 +36,7 @@ print(sys.path)
 from bahsic import CBAHSIC,vector
 
 
-# from sklearn.feature_selection import mutual_info_classif
+from sklearn.feature_selection import mutual_info_classif
 from pprint import pprint
 # print (PYTHONPATH)
 
@@ -336,7 +336,7 @@ class Experiment_Setting:
 
 # for datasetnum in range(280,295):
 #     for foldnum in range(10):
-#         setting = Experiment_Setting(foldnum, 300, 'tech', datasetnum, 'nolufe', 'mi', 1, 'featselector')
+#         setting = Experiment_Setting(foldnum, 300, 'tech', datasetnum, 'nolufe', 'bahsic', 1, 'featselector')
 #         single_fold(setting)
 
 #
