@@ -108,6 +108,8 @@ def do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test,
         delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
     if s.lupimethod == 'svmplus':
         svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
+    if s.lupimethod == 'dsvm':
+        do_dsvm(s, normal_train, labels_train,  priv_train, normal_test, labels_test, cross_val_folder)
 
 ############## FUNCTIONS TO GET SUBSETS OF FEATURES AND SUBSETS OF INSTANCES
 
@@ -143,14 +145,16 @@ def do_svm_for_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folde
     save_scores(s, rfe_accuracy, cross_val_folder)
 
 
-def get_dsvm(s, priv_train, labels_train, folder, method):
-
-    c = get_best_params(s, priv_train, labels_train, folder, method)
+def do_dsvm(s, normal_train, labels_train,  priv_train, normal_test, labels_test, folder):
+    make_directory(os.path.join(folder,'dvalues'))
+    c = get_best_params(s, priv_train, labels_train, folder, 'svm')
     svc = SVC(C=c, kernel=s.kernel, random_state=s.foldnum)
     svc.fit(priv_train, labels_train)
     d_i = np.array([1 - (labels_train[i] * svc.decision_function(priv_train)[i]) for i in range(len(labels_train))])
     print(d_i.shape)
     d_i = np.reshape(d_i, (d_i.shape[0], 1))
+    np.save(os.path.join(folder,'dvalues/{}{}-{}-{}'.format(s.dataset, s.datasetnum, s.skfseed, s.foldnum)),d_i)
+    svm_plus(s, normal_train, labels_train, d_i, normal_test, labels_test, folder)
 
 
 # def get_norm_priv(s,all_train,all_test):
@@ -298,7 +302,7 @@ class Experiment_Setting:
                  cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances=100, take_top_t='top'):
 
         assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse']
-        assert lupimethod in ['nolufe','svmplus','dp'], 'lupi method must be nolufe, svmplus or dp'
+        assert lupimethod in ['nolufe','svmplus','dp','dsvm'], 'lupi method must be nolufe, svmplus or dp'
         assert featsel in ['nofeatsel','rfe','mi','anova','chi2','bahsic'], 'feat selection method not valid'
 
         self.foldnum = foldnum
@@ -321,7 +325,7 @@ class Experiment_Setting:
             self.lupimethod='nolufe'
             self.featsel='nofeatsel'
             self.topk='all'
-        if self.classifier == 'featselector':
+        if self.classifier == 'featsel fector':
             self.lupimethod='nolufe'
 
         self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
@@ -357,10 +361,6 @@ class Experiment_Setting:
 # percentofpriv = 100
 #
 
-# for featsel in ['bahsic','anova','chi2','rfe']:
-# setting = Experiment_Setting(foldnum=7, topk=300, dataset='tech', datasetnum=209, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
-#                                  percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus', featsel='bahsic', classifier='lufe')
-# single_fold(setting)
 
 
 #

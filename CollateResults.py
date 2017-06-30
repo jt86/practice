@@ -46,7 +46,7 @@ def compare_two_settings(s1,s2):
 
 # collate_all_datasets(setting)
 
-for featsel in ['rfe','anova','chi2']:
+for featsel in ['rfe','anova','chi2','mi']:
     setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                  take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
     collate_all_datasets(setting)
