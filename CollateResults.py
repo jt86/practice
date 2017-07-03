@@ -41,17 +41,16 @@ def compare_two_settings(s1,s2):
 
 
 
-# setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                                   take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
+setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                                  take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
+collate_all_datasets(setting)
 
-# collate_all_datasets(setting)
-
-for featsel in ['rfe','anova','chi2','mi']:
+for featsel in ['rfe','anova','chi2','mi','bahsic']:
     setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                  take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
     collate_all_datasets(setting)
 
-for lufe in ['dp', 'svmplus']:
+for lufe in ['dp', 'svmplus','dsvm']:
     print('\n')
     for featsel in ['rfe','anova','chi2','mi']:
         setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
@@ -59,24 +58,9 @@ for lufe in ['dp', 'svmplus']:
         collate_all_datasets(setting)
 
 
-
-
-
-# for featsel in ['rfe','mi','anova','chi2']:
-#     print('\n')
-#     setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                                   take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
-#     # print(setting.name)
-#     collate_all_datasets(setting, num_datasets=295)
-#     for lupimethod in ['svmplus','dp']:
-#         setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                                      take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufe')
-#         collate_all_datasets(setting, num_datasets=295)
+# setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+#                              take_top_t='top', lupimethod='nolufe', featsel='bahsic', classifier='featselector')
+# collate_all_datasets(setting)
 #
 #
-
-
-# setting2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', kernel='linear', skfseed=1,
-#                               take_top_t='top', lupimethod='nolufe', featsel='rfe', classifier='featselector')
-# compare_two_settings(setting1,setting2)
 

@@ -42,11 +42,12 @@ from pprint import pprint
 
 
 ############## HELPER FUNCTIONS
-
+#get_priv_subset(priv_train, s.take_top_t, s.percent_of_priv)
 def get_priv_subset(feature_set,take_top_t,percent_of_priv):
+    print('taking privileged subset')
     num_of_priv_feats = percent_of_priv * feature_set.shape[1] // 100
     assert take_top_t in ['top','bottom']
-    if take_top_t == ' top':
+    if take_top_t == 'top':
         priv_train = feature_set[:, :num_of_priv_feats]
     if take_top_t == 'bottom':
         priv_train = feature_set[:, -num_of_priv_feats:]
@@ -103,7 +104,7 @@ def svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test
     save_scores(s, accuracy_lupi, cross_val_folder)
 
 def do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
-    # priv_train = get_priv_subset(priv_train, s.take_top_t, s.percent_of_priv)
+    priv_train = get_priv_subset(priv_train, s.take_top_t, s.percent_of_priv)
     if s.lupimethod == 'dp':
         delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
     if s.lupimethod == 'svmplus':
@@ -373,3 +374,9 @@ class Experiment_Setting:
 #                          featsel=featsel)
 #                 break
 #                 # single_fold(setting)
+
+# TEST
+# setting = Experiment_Setting(foldnum=1, topk=300, dataset='tech', datasetnum=1, kernel='linear',
+#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=50, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
+#          featsel='mi',classifier='lufe')
+# single_fold(setting)
