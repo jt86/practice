@@ -40,7 +40,7 @@ for percentofpriv in [10,25,50]:
                 '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
                 .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
             count+=1
-print(count)
+# print(count)
 
 
         #
