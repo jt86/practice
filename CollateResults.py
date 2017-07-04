@@ -21,7 +21,7 @@ def collate_all_datasets(s,num_datasets=295):
     for datasetnum in range(num_datasets):
         s.datasetnum=datasetnum
         all_results.append(collate_single_dataset(s))
-    print(s.name,1-np.mean(all_results))
+    # print(s.name,1-np.mean(all_results))
     return (np.array(all_results))
 
 
@@ -39,23 +39,11 @@ def compare_two_lists(setting_one, setting_two, name_one, name_two):
 def compare_two_settings(s1,s2):
     compare_two_lists(collate_all_datasets(s1),collate_all_datasets(s2),s1.name,s2.name)
 
-
-
 setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                   take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
 collate_all_datasets(setting)
 
-for featsel in ['rfe','anova','chi2','mi','bahsic']:
-    setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                                 take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
-    collate_all_datasets(setting)
 
-for lufe in ['dp', 'svmplus','dsvm']:
-    print('\n')
-    for featsel in ['rfe','anova','chi2','mi']:
-        setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                                     take_top_t='top', lupimethod=lufe, featsel=featsel, classifier='lufe')
-        collate_all_datasets(setting)
 
 
 # setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,

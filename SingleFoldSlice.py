@@ -33,7 +33,7 @@ from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 import socket
 sys.path.append('bahsic')
 print(sys.path)
-from bahsic import CBAHSIC,vector
+# from bahsic import CBAHSIC,vector
 
 
 # from sklearn.feature_selection import mutual_info_classif
