@@ -380,3 +380,4 @@ class Experiment_Setting:
 #          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=50, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
 #          featsel='mi',classifier='lufe')
 # single_fold(setting)
+

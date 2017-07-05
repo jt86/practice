@@ -19,28 +19,28 @@ top_k = 300
 
 
 
-
-classifier = 'lufe'
-featsel = 'bahsic'
-for lupimethod in ['svmplus','dp','dsvm']:
-    for foldnum in range(10):
-        for datasetnum in range(295):  # 5
-            print(
-                '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
-                .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
-            count+=1
+#
+# classifier = 'lufe'
+# featsel = 'bahsic'
+# for lupimethod in ['svmplus','dp','dsvm']:
+#     for foldnum in range(10):
+#         for datasetnum in range(295):  # 5
+#             print(
+#                 '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
+#                 .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
+#             count+=1
 
 classifier = 'lufe'
 featsel = 'rfe'
 lupimethod = 'svmplus'
-for percentofpriv in [10,25,50]:
+for percentofpriv in [10,25,50,75]:
     for foldnum in range(10):
         for datasetnum in range(295):  # 5
             print(
-                '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
-                .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
+                '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv {} --percentageofinstances 100 --taketopt top'
+                .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier,percentofpriv))
             count+=1
-# print(count)
+print(count)
 
 
         #
