@@ -37,10 +37,10 @@ for percentofpriv in [10,25,50,75]:
     for foldnum in range(10):
         for datasetnum in range(295):  # 5
             print(
-                '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv {} --percentageofinstances 100 --taketopt top'
+                '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv {} --percentageofinstances 100 --taketopt bottom'
                 .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier,percentofpriv))
             count+=1
-print(count)
+# print(count)
 
 
         #
