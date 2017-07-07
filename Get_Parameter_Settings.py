@@ -32,27 +32,42 @@ top_k = 300
 
 classifier = 'lufereverse'
 for featsel in ['rfe','bahsic','anova','chi2','mi']:
-    for lupimethod in ['svmplus','dp','dsvm']:
+    for lupimethod in ['svmplus','dsvm','dp']:
         for foldnum in range(10):
             for datasetnum in range(295):  # 5
-                print(
-                    '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt bottom'
+                print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt bottom'
                     .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
                 count+=1
-    print(count)
+# print(count)
 
-classifier = 'lufe'
-for featsel in ['bahsic', 'anova', 'chi2', 'mi']:
-    for percentofpriv in [10,25,50,75]:
-        for lupimethod in ['svmplus']:
-            for foldnum in range(10):
-                for datasetnum in range(295):  # 5
-                    print(
-                        '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv {} --percentageofinstances 100 --taketopt bottom'
-                            .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier, percentofpriv))
-                    count += 1
-    print(count)
 
+
+classifier = 'svmreverse'
+for featsel in ['rfe','bahsic','anova','chi2','mi']:
+    for foldnum in range(10):
+        for datasetnum in range(295):  # 5
+            print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt bottom'
+                .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
+            count+=1
+# print(count)
+
+
+
+
+# SUBSET OF PRIV JOBS: TO BE RUN MON 10th JULY....
+
+# classifier = 'lufe'
+# for featsel in ['bahsic']:#,'mi']:#'anova', 'chi2', 'mi']:
+#     for percentofpriv in [10,25,50,75]:
+#         for lupimethod in ['svmplus']:
+#             for foldnum in range(10):
+#                 for datasetnum in range(295):  # 5
+#                     print(
+#                         '--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv {} --percentageofinstances 100 --taketopt bottom'
+#                             .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier, percentofpriv))
+#                     count+=1
+# print(count)
+#######################################
         #
 # classifier = 'featselector'
 # lupimethod = 'nolufe'
