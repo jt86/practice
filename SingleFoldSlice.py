@@ -42,7 +42,7 @@ from pprint import pprint
 
 
 ############## HELPER FUNCTIONS
-
+#get_priv_subset(priv_train, s.take_top_t, s.percent_of_priv)
 def get_priv_subset(feature_set,take_top_t,percent_of_priv):
     print('taking privileged subset')
     num_of_priv_feats = percent_of_priv * feature_set.shape[1] // 100
@@ -326,7 +326,7 @@ class Experiment_Setting:
             self.lupimethod='nolufe'
             self.featsel='nofeatsel'
             self.topk='all'
-        if self.classifier == 'featsel fector':
+        if self.classifier == 'featsel' or 'svmreverse':
             self.lupimethod='nolufe'
 
         self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
@@ -377,10 +377,6 @@ class Experiment_Setting:
 
 # TEST
 # setting = Experiment_Setting(foldnum=1, topk=300, dataset='tech', datasetnum=1, kernel='linear',
-#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=50, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
-#          featsel='mi',classifier='lufe')
+#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=50, percentageofinstances=100, take_top_t='top', lupimethod='nolufe',
+#          featsel='mi',classifier='svmreverse')
 # single_fold(setting)
-
-# setting = Experiment_Setting(foldnum=0, topk=300, dataset='tech', datasetnum=240, kernel='linear',cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=75, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',featsel='rfe',classifier='lufe')
-# single_fold(setting)
-

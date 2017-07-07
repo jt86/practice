@@ -29,10 +29,11 @@ def collate_all_datasets(s,num_datasets=295):
     # print(s.name,1-np.mean(all_results))
     return (np.array(all_results))
 
-for percentofpriv in [10,25,50,75]:
-    setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                                      take_top_t='top', lupimethod='svmplus', featsel='rfe', classifier='lufe',percent_of_priv=percentofpriv)
-collate_all_datasets(setting)
+for top in ['top','bottom']:
+    for percentofpriv in [10,25,50,75]:
+        setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                                          take_top_t=top, lupimethod='svmplus', featsel='rfe', classifier='lufe',percent_of_priv=percentofpriv)
+        print(top,percentofpriv,np.mean(collate_all_datasets(setting)))
 
 
 
@@ -45,7 +46,7 @@ def compare_two_settings(s1, s2):
         improvements_list[count]= (score_one - score_two) # this value is positive if score one is better
     print(s1.name,np.mean(collate_all_datasets(s1)),s2.name,np.mean(collate_all_datasets(s2)))
     print('{} : ({}%) better {}; {} better: {}; equal: {}; mean improvement={}%'.format(s1.name,len(np.where(improvements_list > 0)[0]),
-          s2.name,len(np.where(improvements_list < 0)[0]),len(np.where(improvements_list==0)[0]),np.mean(improvements_list)*100))
+          s2.name,len(np.where(improvements_list < 0)[0]),len(np.where(improvements_list==0)[0]),np.mean(improvements_list)*10000))
     return(improvements_list)
 
 
