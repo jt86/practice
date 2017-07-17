@@ -17,12 +17,25 @@ np.set_printoptions(linewidth=132)
 import sklearn
 import os.path
 from os import mkdir
+from GetFeatSelectionData import get_arcene_data, get_madelon_data, get_gisette_data, get_dexter_data, get_dorothea_data
+
 print('The scikit-learn version is {}.'.format(sklearn.__version__))
 #
 def load_dataset_from_name(dataset,datasetnum):
     if dataset=='tech':
          class0_data = np.load(get_full_path("Desktop/Privileged_Data/SavedDatasets/{}/{}positive.npy".format(dataset,datasetnum)))
          class1_data = np.load(get_full_path("Desktop/Privileged_Data/SavedDatasets/{}/{}negative.npy".format(dataset,datasetnum)))
+
+    if dataset == 'arcene':
+        class0_data, class1_data = get_arcene_data()
+    if dataset == 'madelon':
+        class0_data, class1_data = get_madelon_data()
+    if dataset == 'gisette':
+        class0_data, class1_data = get_gisette_data()
+    if dataset == 'dexter':
+        class0_data, class1_data = get_dexter_data()
+    if dataset == 'dorothea':
+        class0_data, class1_data = get_dorothea_data()
     return class0_data,class1_data
 
 
@@ -194,3 +207,6 @@ def save_train_test_indices(dataset,datasetnum):
 
 # for datasetnum in range(295):
 #     save_train_test_indices('tech',datasetnum)
+
+# for dataset in ['arcene','madelon','gisette','dexter','dorothea']:
+#     save_train_test_indices(dataset, 0)

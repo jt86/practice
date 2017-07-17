@@ -36,7 +36,7 @@ print(sys.path)
 # from bahsic import CBAHSIC,vector
 
 
-# from sklearn.feature_selection import mutual_info_classif
+from sklearn.feature_selection import mutual_info_classif
 from pprint import pprint
 # print (PYTHONPATH)
 
@@ -95,6 +95,18 @@ def delta_plus(s, normal_train, labels_train, priv_train, normal_test, labels_te
     dp_score = get_accuracy_score(dp_classifier, normal_test, labels_test)
     save_scores(s,dp_score,cross_val_folder)
 
+def svm_u(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
+    C, gamma, delta = get_best_params_dp2(s, normal_train, labels_train, priv_train, cross_val_folder)
+
+    problem = svm_u_problem(X=normal_train, Xstar=priv_train,XstarStar=priv_train, Y=labels_train, C=C,
+                          gamma=gamma, delta=delta)
+    # def __init__(self, X, Xstar, XstarStar, Y, C=1.0, gamma=1.0, sigma=1, delta=1.0, xkernel=Linear(),
+    #              xSkernel=Linear(), xSSkernel=Linear()):
+    s2 = SVMdp()
+    dp_classifier = s2.train(prob=problem)
+    dp_score = get_accuracy_score(dp_classifier, normal_test, labels_test)
+    save_scores(s,dp_score,cross_val_folder)
+
 
 def svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
     c_svm_plus, c_star_svm_plus = get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_folder)
@@ -110,6 +122,8 @@ def do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test,
     if s.lupimethod == 'svmplus':
         svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
     if s.lupimethod == 'dsvm':
+        do_dsvm(s, normal_train, labels_train,  priv_train, normal_test, labels_test, cross_val_folder)
+    if s.lupimethod == 'svm_u':
         do_dsvm(s, normal_train, labels_train,  priv_train, normal_test, labels_test, cross_val_folder)
 
 ############## FUNCTIONS TO GET SUBSETS OF FEATURES AND SUBSETS OF INSTANCES
@@ -266,7 +280,7 @@ def single_fold(s):
     pprint(vars(s))
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
-    output_directory = get_full_path(('Desktop/Privileged_Data/JuneResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+    output_directory = get_full_path(('Desktop/Privileged_Data/JulyResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
 
     make_directory(output_directory)
 
@@ -376,7 +390,7 @@ class Experiment_Setting:
 #                 # single_fold(setting)
 
 # TEST
-# setting = Experiment_Setting(foldnum=1, topk=300, dataset='tech', datasetnum=1, kernel='linear',
-#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=50, percentageofinstances=100, take_top_t='top', lupimethod='nolufe',
-#          featsel='mi',classifier='svmreverse')
+# setting = Experiment_Setting(foldnum=1, topk=300, dataset='arcene', datasetnum=0, kernel='linear',
+#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='nolufe',
+#          featsel='mi',classifier='featselector')
 # single_fold(setting)
