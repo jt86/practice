@@ -36,7 +36,7 @@ print(sys.path)
 # from bahsic import CBAHSIC,vector
 
 
-from sklearn.feature_selection import mutual_info_classif
+# from sklearn.feature_selection import mutual_info_classif
 from pprint import pprint
 # print (PYTHONPATH)
 
