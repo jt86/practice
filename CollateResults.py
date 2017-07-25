@@ -66,8 +66,8 @@ setting = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetn
 
 
 setting2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                                  take_top_t='top', lupimethod='svmplus', featsel='rfe', classifier='lufe')
-# print(np.mean(collate_all_datasets(setting)))
+                                  take_top_t='top', lupimethod='nolufe', featsel='anova', classifier='featselector')
+print(np.mean(collate_all_datasets(setting)))
 #
 #
 # compare_two_settings(setting,setting2)
@@ -93,7 +93,8 @@ def plot_bars(s1, s2):
 
     print (sames)
     print(differents)
-    plt.title(sames)
+    plt.title('\n hello \n hello')
+    plt.title(''.join(([str(item)+'\n' for item in differentsv.items()])))
     # plt.xlabel('dataset index')
     # # plt.ylim(-10,15)
     # plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}_VS_{}'.format(s1.name,s2.name)))

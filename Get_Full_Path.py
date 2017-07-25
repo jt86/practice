@@ -11,6 +11,10 @@ def get_full_path(relative_path):
     if 'apollo' in h or 'node' in h:
         print('apollo in hostname')
         prefix = '/lustre/scratch/inf/jt306'
+    elif 'Joes-iMac' in h:
+        prefix = '/Users/joe/'
     else:
         prefix = '/Volumes/LocalDataHD/j/jt/jt306'
     return os.path.join(prefix, relative_path)
+
+print (socket.gethostname())
