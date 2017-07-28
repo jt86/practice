@@ -4,6 +4,10 @@ import os
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+import pylab
+from sklearn.metrics import mutual_info_score
+from SingleFoldSlice import get_train_and_test_this_fold, get_norm_priv
+
 def collate_single_dataset(s):
     # print(s.name)
     results=np.zeros(10)
@@ -37,15 +41,6 @@ def collate_all_datasets(s,num_datasets=295):
 #         print(top,percentofpriv,np.mean(collate_all_datasets(setting)))
 
 
-#
-# for featsel in ['rfe','bahsic','anova','chi2','mi']:
-#     for lupimethod in ['svmplus','dsvm','dp']:
-#         s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                                      take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufereverse')
-#         s2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                                      take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufe')
-#         print(s.name,np.mean(collate_all_datasets(s)),np.mean(collate_all_datasets(s2)),np.mean(collate_all_datasets(s2))-np.mean(collate_all_datasets(s)))
-#
 
 
 def compare_two_settings(s1, s2):
@@ -53,7 +48,7 @@ def compare_two_settings(s1, s2):
     setting_one = np.mean(collate_all_datasets(s1), axis=1)
     setting_two = np.mean(collate_all_datasets(s2), axis=1)
     for count,(score_one, score_two) in enumerate(zip(setting_one, setting_two)):
-        improvements_list[count]= (score_one - score_two) # this value is positive if score one is better
+        improvements_list[count]= (score_two-score_one) # this value is positive if score two is better
     print(s1.name,np.mean(collate_all_datasets(s1)),s2.name,np.mean(collate_all_datasets(s2)))
     print('{} : better {}; {} better: {}; equal: {}; mean improvement={}%'.format(s1.name,len(np.where(improvements_list > 0)[0]),
           s2.name,len(np.where(improvements_list < 0)[0]),len(np.where(improvements_list==0)[0]),np.mean(improvements_list*100)))
@@ -61,60 +56,115 @@ def compare_two_settings(s1, s2):
 
 
 
-setting = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1,
-                                  take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
+
+#
+# def get_graph_labels(s1,s2):
+#     if s1.classifier== 'baseline' and s2.classifier== 'featselector':
+#         long1,short1 = 'ALL features baseline SVM', 'ALL-SVM'
+#         long2, short2 = '{} feature selection SVM'.format(s2.featsel.upper()), s2.featsel.upper()
+#
+#     if s1.classifier== 'baseline' and s2.classifier== 'lufe':
+#         long1,short1 = 'ALL features baseline SVM', 'ALL-SVM'
+#         long2, short2 = '{} feature selection SVM'.format(s2.featsel.upper()), 'LUFe-{}'.format(s2.featsel.upper())
+#
+#     if s1.classifier== 'featselector' and s2.classifier== 'lufe':
+#         long1,short1 = 'Standard {}-SVM'.format(s2.featsel.upper()), '{}-SVM'.format(s2.featsel.upper())
+#         long2, short2 = 'LUFe {}-{}'.format(s2.featsel.upper(),s2.lupimethod.upper()), '{}-SVM+'.format(s2.featsel.upper())
+#     return long1,short1,long2, short2
+
+def get_graph_labels(s):
+    if s.classifier== 'baseline':
+        long,short = 'ALL features baseline SVM', 'ALL-SVM'
+    if s.classifier== 'lufe':
+        long, short = '{} feature selection SVM'.format(s.featsel.upper()), 'LUFe-{}'.format(s.featsel.upper())
+    if s.classifier== 'featselector':
+        long,short = 'Standard {}-SVM'.format(s.featsel.upper()), '{}-SVM'.format(s.featsel.upper())
+    if s.classifier == 'lufereverse':
+        long,short = 'Reversed LUFe'
+    return long,short
 
 
-setting2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                                  take_top_t='top', lupimethod='svmplus', featsel='rfe', classifier='lufe')
-# print(np.mean(collate_all_datasets(setting)))
-#
-#
-# compare_two_settings(setting,setting2)
 
 
 def plot_bars(s1, s2):
     improvements_list = compare_two_settings(s1, s2)
+    improvements_list.sort()
+    long1, short1 = get_graph_labels(s1)
+    long2, short2 = get_graph_labels(s2)
     plt.bar(range(len(improvements_list)),improvements_list, color='black')
-    # plt.title('{} vs {} \n Improvement by {} = {}%, {} of {} cases'.format(s1.name, s2.name, s2.name, round(np.mean(improvements_list),2),len(np.where(improvements_list > 0)[0]),len(improvements_list)))
-    # plt.ylabel('<---{} better  (%)   {} better--->'.format(s1.name,s2.name))
-    # for variable in vars(s1):
-    #     print (s1.variable)
-    sames,differents={},{}
-    for item1,item2 in zip((s1.__dict__.items()),(s2.__dict__.items())):
-        # print(item1)
-        try:
-            if item1[1]==item2[1]:
-                sames[item1[0]]=item1[1]
-            else:
-                differents[item1[0]]=(item1[1], item2[1])
-        except ValueError:
-            None
 
-    print (sames)
-    print(differents)
-    plt.title(sames)
-    # plt.xlabel('dataset index')
-    # # plt.ylim(-10,15)
-    # plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}_VS_{}'.format(s1.name,s2.name)))
+    # plt.title('{} VS {}\n Improvement by {} = {}%, {} of {} cases'.format(short1,short2,short1,round(np.mean(improvements_list)*100,2),len(np.where(improvements_list >= 0)[0]),len(improvements_list)))
+    plt.title('{} VS {}\n Improvement by {} = {}%, {} of {} cases'.format(long1,long2,short2,round(np.mean(improvements_list)*100,2),len(np.where(improvements_list >= 0)[0]),len(improvements_list)))
+    plt.ylabel('Difference in accuracy score (%)\n {} better <-----> {} better'.format(short1,short2))
+    plt.xlabel('dataset index')
+    plt.ylim(-0.2,0.3)
+    plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}_VS_{}'.format(short1,short2)))
     plt.show()
     #
 
-plot_bars(setting,setting2)
-#
-# print('\n')
-# # Add results for lufe settings to dataframe
-# for lufe in ['dp', 'svmplus','dsvm']:
-#     for featsel in ['rfe','anova','chi2','mi','bahsic']:
-#         s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                                      take_top_t='top', lupimethod=lufe, featsel=featsel, classifier='lufe')
-#         print(s.name, np.mean(collate_all_datasets(s)))
+# s1 = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1,
+#                                   take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
+
+
+def get_lufe_improvements_per_fold(featselector, lufe):
+    lufe_improvements = collate_all_datasets(lufe)-collate_all_datasets(featselector)
+    # print(featselector.featsel,'better',len(np.where(lufe_improvements > 0)[0]), 'same',(len(np.where(lufe_improvements==0)[0])),'worse',(len(np.where(lufe_improvements<0)[0])))
+    return lufe_improvements
+
+def compare_performance_with_improvement(setting, setting_one, setting_two, ind_folds=False):
+    if type(setting)==Experiment_Setting:
+        print('is a setting')
+        x_axis = collate_all_datasets(setting)
+    lufe_improvements = get_lufe_improvements_per_fold(setting_one, setting_two)
+    if ind_folds==False:
+        x_axis=np.mean(x_axis,axis=1)
+        lufe_improvements = np.mean(lufe_improvements, axis=1)
+
+    plt.scatter(x_axis,lufe_improvements)
+    z = np.polyfit(x_axis.flatten(), lufe_improvements.flatten(), 1)
+    p = np.poly1d(z)
+    plt.plot(x_axis, p(x_axis),'r')
+    long,short1 = get_graph_labels(setting_one)
+    long, short2 = get_graph_labels(setting_one)
+    plt.xlabel('Accuracy by {} classifier'.format(setting.name.split('-')[0]))
+    plt.ylabel('Improvement by {} over {}'.format(short2,short1))#(setting_two.name.split('-')[0],setting_one.name.split('-')[0]))
+    print ('y=%.3fx+(%.3f)'%(z[0],z[1]))
+    # plt.save(get_full_path())
+    plt.show()
+    # print(x_axis)
 
 
 #
-# setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                              take_top_t='top', lupimethod='nolufe', featsel='bahsic', classifier='featselector')
-# collate_all_datasets(setting)
+# for featsel in ['rfe','bahsic','anova']:#,'chi2','mi']:
+#     print(featsel)
+#     lufereverse = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel, classifier='lufereverse')
+#     svmreverse = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='nolufe', featsel=featsel, classifier='svmreverse')
+#     svm = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='nolufe', featsel=featsel, classifier='featselector')
+#     lufe = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel,classifier='lufe')
+#     baseline = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel,classifier='lufe')
+    # compare_performance_with_improvement(svmreverse, svm, lufe)
 
-#
 
+
+def get_mi_score(labels_train,data):
+    print(data.shape)
+    all_scores=np.zeros(data.shape[1])
+    for count,item in enumerate(np.hsplit(data, data.shape[1])):
+        item=item.flatten()
+        all_scores[count]=mutual_info_score(labels_train,item)
+    return(all_scores)
+
+
+for datasetnum in range(295):
+    for fold in range(10):
+        s = Experiment_Setting(foldnum=fold, datasetnum=datasetnum, lupimethod='nolufe', featsel='mi', classifier='featselector')
+        all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
+        normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
+
+        np.save(get_full_path('Desktop/Privileged_Data/MIScores/selected/{}/tech{}-1-{}'.format(s.featsel,s.datasetnum,s.foldnum)),get_mi_score(labels_train,normal_train))
+        np.save(get_full_path('Desktop/Privileged_Data/MIScores/unselected/{}/tech{}-1-{}'.format(s.featsel,s.datasetnum,s.foldnum)),get_mi_score(labels_train,priv_train))
+        print(get_mi_score(labels_train, priv_train))
+
+
+# print(np.shape(np.load(get_full_path('Desktop/Privileged_Data/MIScores/selected/rfe/tech0-1-0.npy'))))
+# print(np.shape(np.load(get_full_path('Desktop/Privileged_Data/MIScores/unselected/rfe/tech0-1-0.npy'))))

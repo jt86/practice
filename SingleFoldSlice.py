@@ -313,7 +313,7 @@ def single_fold(s):
 
 
 class Experiment_Setting:
-    def __init__(self, foldnum, topk, dataset, datasetnum, lupimethod, featsel, skfseed, classifier,kernel='linear',
+    def __init__(self, classifier, datasetnum, lupimethod, featsel, foldnum='all', topk=300, dataset='tech', skfseed=1, kernel='linear',
                  cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances=100, take_top_t='top'):
 
         assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse']

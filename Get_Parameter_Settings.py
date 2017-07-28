@@ -19,6 +19,7 @@ top_k = 300
 
 
 
+
 #
 # classifier = 'lufe'
 # featsel = 'bahsic'
@@ -47,7 +48,7 @@ for featsel in ['rfe','bahsic','anova','chi2','mi']:
             print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
                 .format(foldnum, top_k, dataset, datasetnum, seed, 'nolufe', featsel, classifier))
             count+=1
-
+print(count)
 # classifier = 'lufe'
 # for featsel in ['rfe','bahsic','anova','chi2','mi']:
 #     for foldnum in range(10):
@@ -56,33 +57,34 @@ for featsel in ['rfe','bahsic','anova','chi2','mi']:
 #                 .format(foldnum, top_k, dataset, datasetnum, seed, 'nolufe', featsel, classifier))
 #             count+=1
 
+
 ################# FEATSEL CHALLENGE DATASETS
 
-datasetnum=0
-classifier = 'baseline'
-for foldnum in range(10):
-    for dataset in ['arcene','madelon','gisette','dexter','dorothea']:  # 5
-        print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
-            .format(foldnum, top_k, dataset, datasetnum, seed,'nolufe', 'nofeatsel', classifier))
-        count+=1
-
-
-classifier = 'featselector'
-for featsel in ['rfe','bahsic','anova','chi2','mi']:
-    for foldnum in range(10):
-        for dataset in ['arcene','madelon','gisette','dexter','dorothea']:  # 5
-            print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
-                .format(foldnum, top_k, dataset, datasetnum, seed, 'nolufe', featsel, classifier))
-            count+=1
-
-
-classifier = 'lufe'
-for featsel in ['rfe','bahsic','anova','chi2','mi']:
-    for lupimethod in  ['svmplus','dp']:
-        for foldnum in range(10):
-            print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
-                .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
-            count+=1
+# datasetnum=0
+# classifier = 'baseline'
+# for foldnum in range(10):
+#     for dataset in ['arcene','madelon','gisette','dexter','dorothea']:  # 5
+#         print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
+#             .format(foldnum, top_k, dataset, datasetnum, seed,'nolufe', 'nofeatsel', classifier))
+#         count+=1
+#
+#
+# classifier = 'featselector'
+# for featsel in ['rfe','bahsic','anova','chi2','mi']:
+#     for foldnum in range(10):
+#         for dataset in ['arcene','madelon','gisette','dexter','dorothea']:  # 5
+#             print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
+#                 .format(foldnum, top_k, dataset, datasetnum, seed, 'nolufe', featsel, classifier))
+#             count+=1
+#
+#
+# classifier = 'lufe'
+# for featsel in ['rfe','bahsic','anova','chi2','mi']:
+#     for lupimethod in  ['svmplus','dp']:
+#         for foldnum in range(10):
+#             print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
+#                 .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
+#             count+=1
 
 print(count)
 
