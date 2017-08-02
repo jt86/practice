@@ -72,15 +72,20 @@ def compare_two_settings(s1, s2):
 #         long2, short2 = 'LUFe {}-{}'.format(s2.featsel.upper(),s2.lupimethod.upper()), '{}-SVM+'.format(s2.featsel.upper())
 #     return long1,short1,long2, short2
 
+print(r'$\delta$')
+
 def get_graph_labels(s):
+    dict_of_settings ={'svmplus':'SVM+', 'dp':r'SVM$\delta$+'}
     if s.classifier== 'baseline':
         long,short = 'ALL features baseline SVM', 'ALL-SVM'
     if s.classifier== 'lufe':
-        long, short = '{} feature selection SVM'.format(s.featsel.upper()), 'LUFe-{}'.format(s.featsel.upper())
+        long, short = '{} feature selection SVM'.format(s.featsel.upper()), 'LUFe-{}-{}'.format(s.featsel.upper(),dict_of_settings[s.lupimethod])
     if s.classifier== 'featselector':
         long,short = 'Standard {}-SVM'.format(s.featsel.upper()), '{}-SVM'.format(s.featsel.upper())
     if s.classifier == 'lufereverse':
-        long,short = 'Reversed LUFe'
+        long,short = 'Reversed LUFe','{}-LUFe-Reverse'.format(s.featsel.upper())
+    if s.classifier == 'svmreverse':
+        long, short = 'SVM trained on {} unselected features'.format(s.featsel.upper()), 'LUFe-{}'.format(s.featsel.upper())
     return long,short
 
 
@@ -111,38 +116,44 @@ def get_lufe_improvements_per_fold(featselector, lufe):
     # print(featselector.featsel,'better',len(np.where(lufe_improvements > 0)[0]), 'same',(len(np.where(lufe_improvements==0)[0])),'worse',(len(np.where(lufe_improvements<0)[0])))
     return lufe_improvements
 
-def compare_performance_with_improvement(setting, setting_one, setting_two, ind_folds=False):
-    if type(setting)==Experiment_Setting:
-        print('is a setting')
-        x_axis = collate_all_datasets(setting)
+def compare_performance_with_improvement(values_for_xaxis, setting_one, setting_two, ind_folds=False):
+    if type(values_for_xaxis)==Experiment_Setting:
+        values_for_xaxis = collate_all_datasets(values_for_xaxis)
+    else:
+        values_for_xaxis = np.mean
     lufe_improvements = get_lufe_improvements_per_fold(setting_one, setting_two)
     if ind_folds==False:
-        x_axis=np.mean(x_axis,axis=1)
+        values_for_xaxis=np.mean(values_for_xaxis, axis=1)
         lufe_improvements = np.mean(lufe_improvements, axis=1)
 
-    plt.scatter(x_axis,lufe_improvements)
-    z = np.polyfit(x_axis.flatten(), lufe_improvements.flatten(), 1)
+    plt.scatter(values_for_xaxis, lufe_improvements)
+    z = np.polyfit(values_for_xaxis.flatten(), lufe_improvements.flatten(), 1)
     p = np.poly1d(z)
-    plt.plot(x_axis, p(x_axis),'r')
+    plt.plot(values_for_xaxis, p(values_for_xaxis), 'r')
     long,short1 = get_graph_labels(setting_one)
-    long, short2 = get_graph_labels(setting_one)
-    plt.xlabel('Accuracy by {} classifier'.format(setting.name.split('-')[0]))
+    long, short2 = get_graph_labels(setting_two)
+    plt.xlabel('Accuracy of {}'.format(get_graph_labels(values_for_xaxis)[0]))
     plt.ylabel('Improvement by {} over {}'.format(short2,short1))#(setting_two.name.split('-')[0],setting_one.name.split('-')[0]))
+    plt.title('Effect of {} unselected features'.format(setting_one.featsel.upper()))
     print ('y=%.3fx+(%.3f)'%(z[0],z[1]))
-    # plt.save(get_full_path())
+    plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/Investigation/delta_plus_VS_SVMplus-{}'.format(setting_one.featsel)))
     plt.show()
     # print(x_axis)
 
 
-#
-# for featsel in ['rfe','bahsic','anova']:#,'chi2','mi']:
-#     print(featsel)
-#     lufereverse = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel, classifier='lufereverse')
-#     svmreverse = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='nolufe', featsel=featsel, classifier='svmreverse')
-#     svm = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='nolufe', featsel=featsel, classifier='featselector')
-#     lufe = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel,classifier='lufe')
-#     baseline = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel,classifier='lufe')
-    # compare_performance_with_improvement(svmreverse, svm, lufe)
+
+for featsel in ['rfe','bahsic','anova','chi2','mi']:
+    print(featsel)
+    lufereverse = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel, classifier='lufereverse')
+    svmreverse = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='nolufe', featsel=featsel, classifier='svmreverse')
+    svm = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='nolufe', featsel=featsel, classifier='featselector')
+    lufe = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel,classifier='lufe')
+    svmplus = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel, classifier='lufe')
+    deltaplus = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='dp', featsel=featsel, classifier='lufe')
+    baseline = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel,classifier='lufe')
+    # compare_performance_with_improvement(svmreverse, deltaplus, svmplus)
+
+    np.load(get_full_path('Desktop/Privileged_Data/MIScores/selected/{}/tech{}-1-{}'.format(s.featsel, s.datasetnum, s.foldnum)),get_mi_score(labels_train, normal_train))
 
 
 
@@ -154,16 +165,16 @@ def get_mi_score(labels_train,data):
         all_scores[count]=mutual_info_score(labels_train,item)
     return(all_scores)
 
-
-for datasetnum in range(295):
-    for fold in range(10):
-        s = Experiment_Setting(foldnum=fold, datasetnum=datasetnum, lupimethod='nolufe', featsel='mi', classifier='featselector')
-        all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
-        normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
-
-        np.save(get_full_path('Desktop/Privileged_Data/MIScores/selected/{}/tech{}-1-{}'.format(s.featsel,s.datasetnum,s.foldnum)),get_mi_score(labels_train,normal_train))
-        np.save(get_full_path('Desktop/Privileged_Data/MIScores/unselected/{}/tech{}-1-{}'.format(s.featsel,s.datasetnum,s.foldnum)),get_mi_score(labels_train,priv_train))
-        print(get_mi_score(labels_train, priv_train))
+#
+# for datasetnum in range(295):
+#     for fold in range(10):
+#         s = Experiment_Setting(foldnum=fold, datasetnum=datasetnum, lupimethod='nolufe', featsel='mi', classifier='featselector')
+#         all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
+#         normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
+#
+#         np.save(get_full_path('Desktop/Privileged_Data/MIScores/selected/{}/tech{}-1-{}'.format(s.featsel,s.datasetnum,s.foldnum)),get_mi_score(labels_train,normal_train))
+#         np.save(get_full_path('Desktop/Privileged_Data/MIScores/unselected/{}/tech{}-1-{}'.format(s.featsel,s.datasetnum,s.foldnum)),get_mi_score(labels_train,priv_train))
+#         print(get_mi_score(labels_train, priv_train))
 
 
 # print(np.shape(np.load(get_full_path('Desktop/Privileged_Data/MIScores/selected/rfe/tech0-1-0.npy'))))

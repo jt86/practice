@@ -136,9 +136,10 @@ def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.foldnum)
     rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=s.stepsize)
     rfe.fit(all_train, labels_train)
-    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
-    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}'.
-                          format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), (np.argsort(rfe.ranking_)))
+    stepsize = str(s.stepsize).replace('.', '-')
+    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}/'.format(s.topk, s.featsel,stepsize)))
+    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}/{}{}-{}-{}'.
+                          format(s.topk, s.featsel,stepsize, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), (np.argsort(rfe.ranking_)))
     # print ('rfe ranking',rfe.ranking_)
     # print(np.count_nonzero(rfe.ranking_ == 1))
     # print(np.argsort(rfe.ranking_))
@@ -187,8 +188,9 @@ def do_dsvm(s, normal_train, labels_train,  priv_train, normal_test, labels_test
 
 
 def get_norm_priv(s,all_train,all_test):
-    ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}.npy'.
-                          format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
+    stepsize =str(s.stepsize).replace('.','-')
+    ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}/{}{}-{}-{}.npy'.
+                          format(s.topk, s.featsel, stepsize,s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
     # assert(np.array_equal(support[0], np.sort(ordered_indices[:s.topk])))
     sorted_training = all_train[:, ordered_indices]
     sorted_testing = all_test[:, ordered_indices]
@@ -280,11 +282,13 @@ def single_fold(s):
     pprint(vars(s))
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
-    output_directory = get_full_path(('Desktop/Privileged_Data/JulyResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+    output_directory = get_full_path(('Desktop/Privileged_Data/JulyResults-step{}/{}/{}{}/').format(s.stepsize,s.name,s.dataset, s.datasetnum))
 
     make_directory(output_directory)
 
     all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
+    # all_train=all_train[:,:500]
+    # all_test=all_test[:,:500]
     if s.classifier == 'baseline':
         do_svm(s, all_train, labels_train, all_test, labels_test, output_directory)
     elif s.classifier == 'featselector':
@@ -351,6 +355,14 @@ class Experiment_Setting:
         pprint(vars(self))
         # print(self.k,self.top)
 
+#
+#
+# classifier = 'featselector'
+# for featsel in ['mi']:
+#     for foldnum in range(8,10):
+#         for dataset in ['arcene','madelon','gisette','dexter','dorothea']:
+#             setting = Experiment_Setting(classifier,0,'nolufe', featsel, foldnum=foldnum,dataset=dataset)
+#             single_fold(setting)
 
 
 # for datasetnum in range(280,295):
@@ -390,7 +402,7 @@ class Experiment_Setting:
 #                 # single_fold(setting)
 
 # TEST
-# setting = Experiment_Setting(foldnum=1, topk=300, dataset='arcene', datasetnum=0, kernel='linear',
+# setting = Experiment_Setting(foldnum=1, topk=300, dataset='tech', datasetnum=0, kernel='linear',
 #          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='nolufe',
-#          featsel='mi',classifier='featselector')
+#          featsel='rfe',classifier='featselector')
 # single_fold(setting)
