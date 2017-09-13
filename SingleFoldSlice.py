@@ -32,7 +32,7 @@ from Models import SVMdp, SVMu, get_accuracy_score
 from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 import socket
 sys.path.append('bahsic')
-print(sys.path)
+# print(sys.path)
 # from bahsic import CBAHSIC,vector
 
 
