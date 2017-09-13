@@ -46,6 +46,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--classifier', type=str, required=False, help = 'whether its featselection, baseline, svm+ etc')
 
+    parser.add_argument('--stepsize', type=int, required=False, help='stepsize for RFE')
+
     # parser.add_argument('--dSVMC',type=str,required=True,help='fixed C parameter for the SVM used to get d-values')
 
     args = parser.parse_args()
