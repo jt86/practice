@@ -347,7 +347,7 @@ class Experiment_Setting:
         # if self.classifier == 'featsel' or 'svmreverse':
         #     self.lupimethod='nolufe'
 
-        self.name = '{}-{}-{}-{}selected-{}{}priv-{}-{}'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
+        self.name = '{}-{}-{}-{}selected-{}{}priv-{}'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv, self.stepsize)
 
 
