@@ -401,7 +401,10 @@ class Experiment_Setting:
 #                 # single_fold(setting)
 
 # TEST
-# setting = Experiment_Setting(foldnum=1, topk=300, dataset='tech', datasetnum=0, kernel='linear',
+# setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=0, kernel='linear',
 #          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='nolufe',
-#          featsel='rfe',classifier='featselector')
+#          featsel='rfe',classifier='featselector',stepsize=0.0001)
 # single_fold(setting)
+
+
+
