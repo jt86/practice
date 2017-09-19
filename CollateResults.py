@@ -14,7 +14,7 @@ def collate_single_dataset(s):
     output_directory = get_full_path((
         'Desktop/Privileged_Data/JuneResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
     # print(output_directory)
-    assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
+    assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed))),'{} does not exist'.format(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
     with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
         for item in csv.reader(cv_lupi_file):
             results[item[0]]=item[1]
@@ -153,7 +153,7 @@ for featsel in ['rfe','bahsic','anova','chi2','mi']:
     baseline = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel,classifier='lufe')
     # compare_performance_with_improvement(svmreverse, deltaplus, svmplus)
 
-    np.load(get_full_path('Desktop/Privileged_Data/MIScores/selected/{}/tech{}-1-{}'.format(s.featsel, s.datasetnum, s.foldnum)),get_mi_score(labels_train, normal_train))
+    # np.load(get_full_path('Desktop/Privileged_Data/MIScores/selected/{}/tech{}-1-{}'.format(s.featsel, s.datasetnum, s.foldnum)),get_mi_score(labels_train, normal_train))
 
 
 

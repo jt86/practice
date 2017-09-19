@@ -317,7 +317,7 @@ def single_fold(s):
 
 
 class Experiment_Setting:
-    def __init__(self, classifier, datasetnum, lupimethod, featsel, stepsize=0.1, foldnum='all', topk=300, dataset='tech', skfseed=1, kernel='linear',
+    def __init__(self, classifier, datasetnum, lupimethod, featsel, stepsize, foldnum='all', topk=300, dataset='tech', skfseed=1, kernel='linear',
                  cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances=100, take_top_t='top'):
 
         assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse']
@@ -347,7 +347,7 @@ class Experiment_Setting:
         # if self.classifier == 'featsel' or 'svmreverse':
         #     self.lupimethod='nolufe'
 
-        self.name = '{}-{}-{}-{}selected-{}{}priv-{}'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
+        self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv, self.stepsize)
 
 
