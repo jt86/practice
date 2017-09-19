@@ -282,7 +282,7 @@ def single_fold(s):
     pprint(vars(s))
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
-    output_directory = get_full_path(('Desktop/Privileged_Data/JulyResults-step{}/{}/{}{}/').format(s.stepsize,s.name,s.dataset, s.datasetnum))
+    output_directory = get_full_path(('Desktop/Privileged_Data/SeptResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
 
     make_directory(output_directory)
 
@@ -347,7 +347,7 @@ class Experiment_Setting:
         # if self.classifier == 'featsel' or 'svmreverse':
         #     self.lupimethod='nolufe'
 
-        self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
+        self.name = '{}-{}-{}-{}selected-{}{}priv-{}'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv, self.stepsize)
 
 
