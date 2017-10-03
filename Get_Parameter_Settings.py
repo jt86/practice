@@ -78,8 +78,6 @@ print('--foldnum 0 --topk 300 --dataset tech --datasetnum 290 --skfseed 1 --lupi
 print('--foldnum 0 --topk 300 --dataset tech --datasetnum 291 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 print('--foldnum 0 --topk 300 --dataset tech --datasetnum 294 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 
-
-
 #
 # classifier = 'lufe'
 # featsel = 'bahsic'
