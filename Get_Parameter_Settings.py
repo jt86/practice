@@ -17,17 +17,66 @@ seed = 1
 dataset='tech'
 top_k = 300
 
-
-classifier = 'featselector'
-for featsel in ['rfe']:#
-    for stepsize in [0.01,0.001,0.0001]:
-        for foldnum in range(10):
-            for datasetnum in range(295):  # 5
-                print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --stepsize {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
-                    .format(foldnum, top_k, dataset, datasetnum, seed, 'nolufe', featsel, classifier, stepsize))
-                count+=1
-print(count)
-
+#
+# classifier = 'featselector'
+# for featsel in ['rfe']:#
+#     for stepsize in [0.01,0.001,0.0001]:
+#         for foldnum in range(10):
+#             for datasetnum in range(295):  # 5
+#                 print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --stepsize {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
+#                     .format(foldnum, top_k, dataset, datasetnum, seed, 'nolufe', featsel, classifier, stepsize))
+#                 count+=1
+# print(count)
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 1 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 2 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 13 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 16 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 21 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 27 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 35 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 38 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 8 --topk 300 --dataset tech --datasetnum 53 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 54 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 55 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 9 --topk 300 --dataset tech --datasetnum 66 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 9 --topk 300 --dataset tech --datasetnum 73 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 7 --topk 300 --dataset tech --datasetnum 74 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 6 --topk 300 --dataset tech --datasetnum 81 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 9 --topk 300 --dataset tech --datasetnum 84 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 7 --topk 300 --dataset tech --datasetnum 100 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 9 --topk 300 --dataset tech --datasetnum 101 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 7 --topk 300 --dataset tech --datasetnum 152 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 5 --topk 300 --dataset tech --datasetnum 160 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 8 --topk 300 --dataset tech --datasetnum 162 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 163 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 9 --topk 300 --dataset tech --datasetnum 165 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 8 --topk 300 --dataset tech --datasetnum 166 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 9 --topk 300 --dataset tech --datasetnum 178 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 6 --topk 300 --dataset tech --datasetnum 184 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 9 --topk 300 --dataset tech --datasetnum 187 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 7 --topk 300 --dataset tech --datasetnum 191 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 9 --topk 300 --dataset tech --datasetnum 205 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 219 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 4 --topk 300 --dataset tech --datasetnum 221 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 1 --topk 300 --dataset tech --datasetnum 236 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 260 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 6 --topk 300 --dataset tech --datasetnum 261 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 262 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 9 --topk 300 --dataset tech --datasetnum 268 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 269 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 6 --topk 300 --dataset tech --datasetnum 270 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 271 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 7 --topk 300 --dataset tech --datasetnum 274 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 276 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 7 --topk 300 --dataset tech --datasetnum 277 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 8 --topk 300 --dataset tech --datasetnum 278 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 279 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 280 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 284 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 289 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 290 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 291 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 0 --topk 300 --dataset tech --datasetnum 294 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 
 
 
