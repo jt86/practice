@@ -18,7 +18,7 @@ def collate_single_dataset(s):
     with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
         for item in csv.reader(cv_lupi_file):
             results[item[0]]=item[1]
-    # assert 0 not in results
+    assert 0 not in results
     if 0 in results:
         # print ("setting = Experiment_Setting(foldnum={}, topk=300, dataset='tech', datasetnum={}, kernel='linear',cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv={}, percentageofinstances=100, take_top_t='top', lupimethod='{}',featsel='{}',classifier='{}')".format(np.where(results==0)[0][0],s.datasetnum,s.percent_of_priv,s.lupimethod,s.featsel,s.classifier))
         print("print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --stepsize {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')"
@@ -55,14 +55,16 @@ def compare_two_settings(s1, s2):
           s2.name,len(np.where(improvements_list < 0)[0]),len(np.where(improvements_list==0)[0]),np.mean(improvements_list*100)))
     return(improvements_list)
 
-
-for stepsize in [0.01,0.001]:
-    s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                         take_top_t='top', lupimethod='nolufe', featsel='rfe', classifier='featselector',
-                  stepsize=stepsize)
-    scores = collate_all_datasets(s)
-
 #
+# for stepsize in [0.1,0.01,0.001]:
+#     s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+#                          take_top_t='top', lupimethod='nolufe', featsel='rfe', classifier='featselector',
+#                   stepsize=stepsize)
+#     scores = collate_all_datasets(s)
+#     print(np.mean(scores))
+#
+
+
 # def get_graph_labels(s1,s2):
 #     if s1.classifier== 'baseline' and s2.classifier== 'featselector':
 #         long1,short1 = 'ALL features baseline SVM', 'ALL-SVM'
