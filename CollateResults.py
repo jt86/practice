@@ -55,15 +55,22 @@ def compare_two_settings(s1, s2):
           s2.name,len(np.where(improvements_list < 0)[0]),len(np.where(improvements_list==0)[0]),np.mean(improvements_list*100)))
     return(improvements_list)
 
-#
-# for stepsize in [0.1,0.01,0.001]:
-#     s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                          take_top_t='top', lupimethod='nolufe', featsel='rfe', classifier='featselector',
-#                   stepsize=stepsize)
-#     scores = collate_all_datasets(s)
-#     print(np.mean(scores))
-#
+for lupimethod in ['svmplus','dp','dsvm']:
+    print('\n'+lupimethod)
+    for featsel in ['rfe','anova','chi2','bahsic','mi']:
+        s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                             take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufereverse',
+                      stepsize=0.1)
+        scores = collate_all_datasets(s)
+        print(np.mean(scores))
 
+
+for featsel in ['rfe', 'anova', 'chi2', 'bahsic', 'mi']:
+    s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                           take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='svmreverse',
+                           stepsize=0.1)
+    scores = collate_all_datasets(s)
+    print(np.mean(scores))
 
 # def get_graph_labels(s1,s2):
 #     if s1.classifier== 'baseline' and s2.classifier== 'featselector':

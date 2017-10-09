@@ -188,9 +188,20 @@ def do_dsvm(s, normal_train, labels_train,  priv_train, normal_test, labels_test
 
 
 def get_norm_priv(s,all_train,all_test):
-    stepsize =str(s.stepsize).replace('.','-')
-    ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}/{}{}-{}-{}.npy'.
-                          format(s.topk, s.featsel, stepsize,s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
+    '''
+    :param s: experiment setting
+    :param all_train:
+    :param all_test:
+    :return: 4 np arrays: the dataset split into training/testing and normal/privileged
+    '''
+    if s.featsel=='rfe':
+        stepsize = str(s.stepsize).replace('.', '-')
+        ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}/{}{}-{}-{}.npy'.
+                              format(s.topk, s.featsel, stepsize,s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
+    else:
+        ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}.npy'.
+                              format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
+
     # assert(np.array_equal(support[0], np.sort(ordered_indices[:s.topk])))
     sorted_training = all_train[:, ordered_indices]
     sorted_testing = all_test[:, ordered_indices]
@@ -271,8 +282,6 @@ def do_svm(s, train_data, labels_train, test_data, labels_test, cross_val_folder
     predictions = clf.predict(test_data)
     score = accuracy_score(labels_test, predictions)
     save_scores(s, score, cross_val_folder)
-
-
 
 
 ##################################################################################################
@@ -407,8 +416,8 @@ class Experiment_Setting:
 
 # TEST
 # setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=0, kernel='linear',
-#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='nolufe',
-#          featsel='rfe',classifier='featselector',stepsize=0.0001)
+#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
+#          featsel='mi',classifier='lufereverse',stepsize=0.1)
 # single_fold(setting)
 
 
