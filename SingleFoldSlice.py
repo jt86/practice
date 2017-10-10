@@ -194,7 +194,7 @@ def get_norm_priv(s,all_train,all_test):
     :param all_test:
     :return: 4 np arrays: the dataset split into training/testing and normal/privileged
     '''
-    if s.featsel=='rfe':
+    if s.featsel=='rfe' and s.dataset=='tech':
         stepsize = str(s.stepsize).replace('.', '-')
         ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}/{}{}-{}-{}.npy'.
                               format(s.topk, s.featsel, stepsize,s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
