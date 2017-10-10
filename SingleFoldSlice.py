@@ -284,6 +284,7 @@ def do_svm(s, train_data, labels_train, test_data, labels_test, cross_val_folder
     save_scores(s, score, cross_val_folder)
 
 
+
 ##################################################################################################
 
 def single_fold(s):
@@ -291,7 +292,7 @@ def single_fold(s):
     pprint(vars(s))
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
-    output_directory = get_full_path(('Desktop/Privileged_Data/SeptResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+    output_directory = get_full_path(('Desktop/Privileged_Data/OctResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
 
     make_directory(output_directory)
 

@@ -12,7 +12,7 @@ def collate_single_dataset(s):
     # print(s.name)
     results=np.zeros(10)
     output_directory = get_full_path((
-        'Desktop/Privileged_Data/JuneResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+        'Desktop/Privileged_Data/JulyResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
     # print(output_directory)
     assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed))),'{} does not exist'.format(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
     with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
@@ -35,6 +35,33 @@ def collate_all_datasets(s,num_datasets=295):
     # print(s.name,1-np.mean(all_results))
     return (np.array(all_results))
 
+
+
+
+for dataset in ['arcene','dexter','dorothea','gisette','madelon']:
+    print('\n'+dataset)
+    s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
+                           take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline',
+                           stepsize=0.1)
+    scores = collate_all_datasets(s, num_datasets=1)
+    print(dataset, 'baseline',np.mean(scores),'\n')
+    for featsel in ['rfe','anova','chi2','mi']:
+        s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
+                             take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector',
+                      stepsize=0.1)
+        scores = collate_all_datasets(s,num_datasets=1)
+        print(dataset, featsel,np.mean(scores))
+print('\n')
+dataset = 'dorothea'
+for featsel in ['rfe', 'anova', 'chi2']:#, 'mi']:
+    for lupimethod in ['dp','svmplus']:
+        s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
+                               take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufe',
+                               stepsize=0.1)
+        scores = collate_all_datasets(s, num_datasets=1)
+        print(dataset, featsel, lupimethod,np.mean(scores))
+
+
 # for top in ['top','bottom']:
 #     for percentofpriv in [10,25,50,75]:
 #         setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
@@ -55,22 +82,22 @@ def compare_two_settings(s1, s2):
           s2.name,len(np.where(improvements_list < 0)[0]),len(np.where(improvements_list==0)[0]),np.mean(improvements_list*100)))
     return(improvements_list)
 
-for lupimethod in ['svmplus','dp','dsvm']:
-    print('\n'+lupimethod)
-    for featsel in ['rfe','anova','chi2','bahsic','mi']:
-        s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                             take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufereverse',
-                      stepsize=0.1)
-        scores = collate_all_datasets(s)
-        print(np.mean(scores))
-
-
-for featsel in ['rfe', 'anova', 'chi2', 'bahsic', 'mi']:
-    s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                           take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='svmreverse',
-                           stepsize=0.1)
-    scores = collate_all_datasets(s)
-    print(np.mean(scores))
+# for lupimethod in ['svmplus','dp','dsvm']:
+#     print('\n'+lupimethod)
+#     for featsel in ['rfe','anova','chi2','bahsic','mi']:
+#         s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+#                              take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufereverse',
+#                       stepsize=0.1)
+#         scores = collate_all_datasets(s)
+#         print(featsel, np.mean(scores))
+#
+# print('\n svm reverse')
+# for featsel in ['rfe', 'anova', 'chi2', 'bahsic', 'mi']:
+#     s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+#                            take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='svmreverse',
+#                            stepsize=0.1)
+#     scores = collate_all_datasets(s)
+#     print(featsel, np.mean(scores))
 
 # def get_graph_labels(s1,s2):
 #     if s1.classifier== 'baseline' and s2.classifier== 'featselector':
