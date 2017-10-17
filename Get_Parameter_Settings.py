@@ -17,28 +17,28 @@ seed = 1
 dataset='tech'
 top_k = 300
 datasetnum=0
-
-classifier = 'lufe'
-for lupimethod in  ['svmplus','dp']:
-    for featsel in ['rfe','anova','chi2']:
-        for dataset in ['arcene', 'madelon', 'gisette', 'dexter']:
-                for foldnum in range(10):
-                    print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
-                        .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
-                    count+=1
-print(count)
-R
-
 #
-#
-# classifier = 'svmreverse'
-# for featsel in ['mi']:#
-#     for foldnum in range(10):
-#         for datasetnum in range(295):  # 5
-#             print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --stepsize {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
-#                 .format(foldnum, top_k, dataset, datasetnum, seed, 'nolufe', featsel, classifier, 0.1))
-#             count+=1
+# classifier = 'lufe'
+# for lupimethod in  ['svmplus','dp']:
+#     for featsel in ['rfe','anova','chi2']:
+#         for dataset in ['arcene', 'madelon', 'gisette', 'dexter']:
+#                 for foldnum in range(10):
+#                     print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
+#                         .format(foldnum, top_k, dataset, datasetnum, seed, lupimethod, featsel, classifier))
+#                     count+=1
 # print(count)
+#
+
+#
+#
+classifier = 'luferandom'
+for featsel in ['rfe','anova','chi2','mi']:#
+    for foldnum in range(10):
+        for datasetnum in range(295):  # 5
+            print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --stepsize {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
+                .format(foldnum, top_k, dataset, datasetnum, seed, 'svmplus', featsel, classifier, 0.1))
+            count+=1
+print(count)
 
 
 # print('--foldnum 1 --topk 300 --dataset tech --datasetnum 1 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')

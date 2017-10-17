@@ -33,7 +33,7 @@ from sklearn.feature_selection import SelectPercentile, f_classif, chi2
 import socket
 sys.path.append('bahsic')
 # print(sys.path)
-# from bahsic import CBAHSIC,vector
+from bahsic import CBAHSIC,vector
 
 
 # from sklearn.feature_selection import mutual_info_classif
@@ -63,10 +63,8 @@ def make_directory(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-def get_random_array(num_instances, num_feats):
-    random_array = np.random.rand(num_instances, num_feats)
-    random_array = preprocessing.scale(random_array)
-    return random_array
+
+
 
 def take_subset(all_training, training_labels, percentageofinstances):
     orig_num_train_instances = all_training.shape[0]
@@ -125,6 +123,16 @@ def do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test,
         do_dsvm(s, normal_train, labels_train,  priv_train, normal_test, labels_test, cross_val_folder)
     if s.lupimethod == 'svm_u':
         do_dsvm(s, normal_train, labels_train,  priv_train, normal_test, labels_test, cross_val_folder)
+
+def do_luferandom(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
+    num_instances,num_feats = priv_train.shape
+    np.random.seed(s.foldnum)
+    random_array = np.random.rand(num_instances, num_feats)
+    print('random \n',random_array)
+    random_priv_train = preprocessing.scale(random_array)
+    do_lufe(s, normal_train, labels_train, random_priv_train, normal_test, labels_test, cross_val_folder)
+
+
 
 ############## FUNCTIONS TO GET SUBSETS OF FEATURES AND SUBSETS OF INSTANCES
 
@@ -321,6 +329,8 @@ def single_fold(s):
             do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, output_directory)
         if s.classifier == 'svmreverse':
             do_svm(s, priv_train, labels_train, priv_test, labels_test, output_directory)
+        if s.classifier == 'luferandom':
+            do_luferandom(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
 
 ##################################################################################################
 
@@ -330,7 +340,7 @@ class Experiment_Setting:
     def __init__(self, classifier, datasetnum, lupimethod, featsel, stepsize=0.1, foldnum='all', topk=300, dataset='tech', skfseed=1, kernel='linear',
                  cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances=100, take_top_t='top'):
 
-        assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse']
+        assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse','luferandom']
         assert lupimethod in ['nolufe','svmplus','dp','dsvm'], 'lupi method must be nolufe, svmplus or dp'
         assert featsel in ['nofeatsel','rfe','mi','anova','chi2','bahsic'], 'feat selection method not valid'
 
@@ -370,10 +380,10 @@ class Experiment_Setting:
         pprint(vars(self))
         # print(self.k,self.top)
 #
-#
+
 # classifier = 'featselector'
-# for featsel in ['mi']:
-#     for foldnum in range(8,10):
+# for featsel in ['bahsic']:
+#     for foldnum in range(2):
 #         for dataset in ['arcene','madelon','gisette','dexter','dorothea']:
 #             setting = Experiment_Setting(classifier,0,'nolufe', featsel, foldnum=foldnum,dataset=dataset)
 #             single_fold(setting)
@@ -418,7 +428,7 @@ class Experiment_Setting:
 # TEST
 # setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=0, kernel='linear',
 #          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
-#          featsel='mi',classifier='lufereverse',stepsize=0.1)
+#          featsel='mi',classifier='luferandom',stepsize=0.1)
 # single_fold(setting)
 
 
