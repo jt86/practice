@@ -132,7 +132,12 @@ def do_luferandom(s, normal_train, labels_train, priv_train, normal_test, labels
     random_priv_train = preprocessing.scale(random_array)
     do_lufe(s, normal_train, labels_train, random_priv_train, normal_test, labels_test, cross_val_folder)
 
-
+def do_lufeshuffle(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
+    np.random.seed(s.foldnum)
+    print('\n',priv_train)
+    np.random.shuffle(priv_train)
+    print('\n', priv_train)
+    do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
 
 ############## FUNCTIONS TO GET SUBSETS OF FEATURES AND SUBSETS OF INSTANCES
 
@@ -331,7 +336,8 @@ def single_fold(s):
             do_svm(s, priv_train, labels_train, priv_test, labels_test, output_directory)
         if s.classifier == 'luferandom':
             do_luferandom(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
-
+        if s.classifier == 'lufeshuffle':
+            do_lufeshuffle(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
 ##################################################################################################
 
 
@@ -340,7 +346,7 @@ class Experiment_Setting:
     def __init__(self, classifier, datasetnum, lupimethod, featsel, stepsize=0.1, foldnum='all', topk=300, dataset='tech', skfseed=1, kernel='linear',
                  cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances=100, take_top_t='top'):
 
-        assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse','luferandom']
+        assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse','luferandom','lufeshuffle']
         assert lupimethod in ['nolufe','svmplus','dp','dsvm'], 'lupi method must be nolufe, svmplus or dp'
         assert featsel in ['nofeatsel','rfe','mi','anova','chi2','bahsic'], 'feat selection method not valid'
 
@@ -428,7 +434,7 @@ class Experiment_Setting:
 # TEST
 # setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=0, kernel='linear',
 #          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
-#          featsel='mi',classifier='luferandom',stepsize=0.1)
+#          featsel='mi',classifier='lufeshuffle',stepsize=0.1)
 # single_fold(setting)
 
 

@@ -29,9 +29,8 @@ datasetnum=0
 # print(count)
 #
 
-#
-#
-classifier = 'luferandom'
+
+classifier = 'lufeshuffle'
 for featsel in ['rfe','anova','chi2','mi']:#
     for foldnum in range(10):
         for datasetnum in range(295):  # 5
