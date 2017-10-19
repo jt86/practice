@@ -12,13 +12,13 @@ def collate_single_dataset(s):
     # print(s.name)
     results=np.zeros(10)
     output_directory = get_full_path((
-        'Desktop/Privileged_Data/JulyResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+        'Desktop/Privileged_Data/AllResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
     # print(output_directory)
     assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed))),'{} does not exist'.format(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
     with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
         for item in csv.reader(cv_lupi_file):
             results[item[0]]=item[1]
-    assert 0 not in results
+    # assert 0 not in results
     if 0 in results:
         # print ("setting = Experiment_Setting(foldnum={}, topk=300, dataset='tech', datasetnum={}, kernel='linear',cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv={}, percentageofinstances=100, take_top_t='top', lupimethod='{}',featsel='{}',classifier='{}')".format(np.where(results==0)[0][0],s.datasetnum,s.percent_of_priv,s.lupimethod,s.featsel,s.classifier))
         print("print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --stepsize {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')"
@@ -35,31 +35,36 @@ def collate_all_datasets(s,num_datasets=295):
     # print(s.name,1-np.mean(all_results))
     return (np.array(all_results))
 
+# for featsel in ['rfe','mi','chi2','anova']:
+#     for datasetnum in range(295):
+#         setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+#                  cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
+#                  featsel=featsel,classifier='lufeshuffle',stepsize=0.1)
+#         collate_all_datasets(setting)
 
 
-
-for dataset in ['arcene','dexter','dorothea','gisette','madelon']:
-    print('\n'+dataset)
-    s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
-                           take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline',
-                           stepsize=0.1)
-    scores = collate_all_datasets(s, num_datasets=1)
-    print(dataset, 'baseline',np.mean(scores),'\n')
-    for featsel in ['rfe','anova','chi2','mi']:
-        s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
-                             take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector',
-                      stepsize=0.1)
-        scores = collate_all_datasets(s,num_datasets=1)
-        print(dataset, featsel,np.mean(scores))
-print('\n')
-dataset = 'dorothea'
-for featsel in ['rfe', 'anova', 'chi2']:#, 'mi']:
-    for lupimethod in ['dp','svmplus']:
-        s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
-                               take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufe',
-                               stepsize=0.1)
-        scores = collate_all_datasets(s, num_datasets=1)
-        print(dataset, featsel, lupimethod,np.mean(scores))
+# for dataset in ['arcene','dexter','dorothea','gisette','madelon']:
+#     print('\n'+dataset)
+#     s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
+#                            take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline',
+#                            stepsize=0.1)
+#     scores = collate_all_datasets(s, num_datasets=1)
+#     print(dataset, 'baseline',np.mean(scores),'\n')
+#     for featsel in ['rfe','anova','chi2','mi']:
+#         s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
+#                              take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector',
+#                       stepsize=0.1)
+#         scores = collate_all_datasets(s,num_datasets=1)
+#         print(dataset, featsel,np.mean(scores))
+# print('\n')
+# dataset = 'dorothea'
+# for featsel in ['rfe', 'anova', 'chi2']:#, 'mi']:
+#     for lupimethod in ['dp','svmplus']:
+#         s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
+#                                take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufe',
+#                                stepsize=0.1)
+#         scores = collate_all_datasets(s, num_datasets=1)
+#         print(dataset, featsel, lupimethod,np.mean(scores))
 
 
 # for top in ['top','bottom']:

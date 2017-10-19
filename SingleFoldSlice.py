@@ -66,15 +66,6 @@ def make_directory(directory):
 
 
 
-def take_subset(all_training, training_labels, percentageofinstances):
-    orig_num_train_instances = all_training.shape[0]
-    num_of_train_instances = orig_num_train_instances * percentageofinstances // 100
-    indices = np.random.choice(orig_num_train_instances, num_of_train_instances, replace=False)
-    all_training = all_training.copy()[indices, :]
-    training_labels = training_labels[indices]
-    print(all_training.shape)
-    print(training_labels.shape)
-    print(indices)
 
 def save_scores(s, score, cross_val_folder):
     print('{} score = {}'.format(s.classifier, score))
@@ -148,11 +139,12 @@ def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     best_rfe_param = get_best_params(s, all_train, labels_train, cross_val_folder, 'rfe')
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.foldnum)
     rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=s.stepsize)
+    print(all_train.shape,labels_train.shape)
     rfe.fit(all_train, labels_train)
     stepsize = str(s.stepsize).replace('.', '-')
-    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}/'.format(s.topk, s.featsel,stepsize)))
-    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}/{}{}-{}-{}'.
-                          format(s.topk, s.featsel,stepsize, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), (np.argsort(rfe.ranking_)))
+    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}-{}instances/'.format(s.topk, s.featsel,stepsize,s.percentageofinstances)))
+    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}-{}instances/{}{}-{}-{}'.
+                          format(s.topk, s.featsel,stepsize,s.percentageofinstances, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), (np.argsort(rfe.ranking_)))
     # print ('rfe ranking',rfe.ranking_)
     # print(np.count_nonzero(rfe.ranking_ == 1))
     # print(np.argsort(rfe.ranking_))
@@ -207,10 +199,20 @@ def get_norm_priv(s,all_train,all_test):
     :param all_test:
     :return: 4 np arrays: the dataset split into training/testing and normal/privileged
     '''
-    if s.featsel=='rfe' and s.dataset=='tech':
+    if s.featsel=='rfe' and s.dataset=='tech' and s.percentageofinstances==100:
         stepsize = str(s.stepsize).replace('.', '-')
         ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}/{}{}-{}-{}.npy'.
                               format(s.topk, s.featsel, stepsize,s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
+    elif s.featsel == 'rfe' and s.dataset == 'tech' and s.percentageofinstances!=100:
+        stepsize = str(s.stepsize).replace('.', '-')
+        ordered_indices = np.load(
+            get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}-{}instances/{}{}-{}-{}.npy'.
+                          format(s.topk, s.featsel, stepsize, s.percentageofinstances,s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
+    elif s.percentageofinstances != 100:
+        print('not 100')
+        ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-{}instances/{}{}-{}-{}.npy'.
+                                                format(s.topk, s.featsel, s.percentageofinstances, s.dataset, s.datasetnum, s.skfseed,
+                                                       s.foldnum)))
     else:
         ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}.npy'.
                               format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
@@ -254,9 +256,13 @@ def do_anova(s, all_train, all_test, labels_train, labels_test, output_directory
 
 
 def save_indices_do_svm(s, all_train, all_test, labels_train, labels_test, output_directory, ordered_indices):
-    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
-    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}'.
-                          format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), ordered_indices)
+    if s.percentageofinstances==100:
+        directory = (get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/'.format(s.topk, s.featsel)))
+    else:
+        directory = (get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-{}instances/'.format(s.topk, s.featsel, s.percentageofinstances)))
+    make_directory(directory)
+    np.save(directory+'/{}{}-{}-{}'.format(s.dataset, s.datasetnum, s.skfseed, s.foldnum), ordered_indices)
+
     normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
     do_svm(s, normal_train, labels_train, normal_test, labels_test, output_directory)
 
@@ -298,6 +304,18 @@ def do_svm(s, train_data, labels_train, test_data, labels_test, cross_val_folder
 
 
 
+def take_subset(s,all_train, labels_train, percentageofinstances):
+    print(all_train.shape)
+    orig_num_train_instances = all_train.shape[0]
+    num_of_train_instances = orig_num_train_instances * percentageofinstances // 100
+    np.random.seed(s.foldnum)
+    indices = np.random.choice(orig_num_train_instances, num_of_train_instances, replace=False)
+    all_train = all_train.copy()[indices, :]
+    labels_train = labels_train[indices]
+    print(all_train.shape)
+    print(labels_train.shape)
+    print(indices)
+    return all_train, labels_train
 ##################################################################################################
 
 def single_fold(s):
@@ -305,11 +323,14 @@ def single_fold(s):
     pprint(vars(s))
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
-    output_directory = get_full_path(('Desktop/Privileged_Data/OctResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+    output_directory = get_full_path(('Desktop/Privileged_Data/PracticeResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
 
     make_directory(output_directory)
 
     all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
+    all_train, labels_train = take_subset(s, all_train, labels_train, s.percentageofinstances)
+
+
     # all_train=all_train[:,:500]
     # all_test=all_test[:,:500]
     if s.classifier == 'baseline':
@@ -376,6 +397,9 @@ class Experiment_Setting:
         if stepsize==0.1:
             self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv)
+        if percentageofinstances != 100:
+            self.name = '{}-{}-{}-{}selected-{}{}priv-{}instances'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
+                                                          self.take_top_t, self.percent_of_priv, self.percentageofinstances)
         else:
             self.name = '{}-{}-{}-{}selected-{}{}priv-{}'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv, self.stepsize)
@@ -432,10 +456,14 @@ class Experiment_Setting:
 #                 # single_fold(setting)
 
 # TEST
-# setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=0, kernel='linear',
-#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
-#          featsel='mi',classifier='lufeshuffle',stepsize=0.1)
-# single_fold(setting)
 
+
+#
+# s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=0, kernel='linear',
+#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=10, take_top_t='top', lupimethod='svmplus',
+#          featsel='bahsic',classifier='featselector',stepsize=0.1)
+#
+# single_fold(s)
+#
 
 
