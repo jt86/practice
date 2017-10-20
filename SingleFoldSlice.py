@@ -142,7 +142,7 @@ def do_lufetrain(s, normal_train, labels_train, priv_train, cross_val_folder):
 def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     best_rfe_param = get_best_params(s, all_train, labels_train, cross_val_folder, 'rfe')
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.foldnum)
-    rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=s.stepsize)
+    rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=0.1)
     print(all_train.shape,labels_train.shape)
     rfe.fit(all_train, labels_train)
     stepsize = str(s.stepsize).replace('.', '-')
