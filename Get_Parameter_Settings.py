@@ -13,10 +13,22 @@ count=1
 # print('--k 4 --topk 300 --dataset tech --datasetnum 123 --kernel linear --cmin -3 --cmax 3 --numberofcs 7 --skfseed 1 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 
 
-seed = 1
-dataset='tech'
-top_k = 300
-datasetnum=0
+
+print('--foldnum 2 --topk 300 --dataset tech --datasetnum 3 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 2 --topk 300 --dataset tech --datasetnum 4 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 2 --topk 300 --dataset tech --datasetnum 7 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 2 --topk 300 --dataset tech --datasetnum 3 --skfseed 1 --lupimethod nolufe --featsel anova --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 2 --topk 300 --dataset tech --datasetnum 4 --skfseed 1 --lupimethod nolufe --featsel anova --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 2 --topk 300 --dataset tech --datasetnum 7 --skfseed 1 --lupimethod nolufe --featsel anova --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 2 --topk 300 --dataset tech --datasetnum 3 --skfseed 1 --lupimethod nolufe --featsel chi2 --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 2 --topk 300 --dataset tech --datasetnum 4 --skfseed 1 --lupimethod nolufe --featsel chi2 --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+print('--foldnum 2 --topk 300 --dataset tech --datasetnum 7 --skfseed 1 --lupimethod nolufe --featsel chi2 --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
+
+
+# seed = 1
+# dataset='tech'
+# top_k = 300
+# datasetnum=0
 #
 # classifier = 'lufe'
 # for lupimethod in  ['svmplus','dp']:
@@ -29,26 +41,26 @@ datasetnum=0
 # print(count)
 #
 
-
-classifier = 'featselector'
-for featsel in ['rfe','anova','chi2','bahsic']:#,'mi']:#
-    for datasetnum in range(10):
-        for foldnum in range(10):
-            for instances in [10,20,30,40,50,60,70,80,90]:
-                print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --stepsize {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances {} --taketopt top'
-                    .format(foldnum, top_k, dataset, datasetnum, seed, 'nolufe', featsel, classifier, 0.1, instances))
-                count+=1
-    print(count)
-
-classifier = 'lufe'
-for featsel in ['rfe','anova','chi2','bahsic']:#,'mi']:#
-    for datasetnum in range(10):
-        for foldnum in range(10):
-            for instances in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --stepsize {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances {} --taketopt top'
-                    .format(foldnum, top_k, dataset, datasetnum, seed, 'svmplus', featsel, classifier, 0.1, instances))
-                count+=1
-    print(count)
+#
+# classifier = 'featselector'
+# for featsel in ['rfe','anova','chi2','bahsic']:#,'mi']:#
+#     for datasetnum in range(10):
+#         for foldnum in range(10):
+#             for instances in [10,20,30,40,50,60,70,80,90]:
+#                 print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --stepsize {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances {} --taketopt top'
+#                     .format(foldnum, top_k, dataset, datasetnum, seed, 'nolufe', featsel, classifier, 0.1, instances))
+#                 count+=1
+#     print(count)
+#
+# classifier = 'lufe'
+# for featsel in ['rfe','anova','chi2','bahsic']:#,'mi']:#
+#     for datasetnum in range(10):
+#         for foldnum in range(10):
+#             for instances in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+#                 print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --stepsize {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances {} --taketopt top'
+#                     .format(foldnum, top_k, dataset, datasetnum, seed, 'svmplus', featsel, classifier, 0.1, instances))
+#                 count+=1
+#     print(count)
 
 # print('--foldnum 1 --topk 300 --dataset tech --datasetnum 1 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')
 # print('--foldnum 1 --topk 300 --dataset tech --datasetnum 2 --skfseed 1 --lupimethod nolufe --featsel rfe --classifier featselector --stepsize 0.001 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top')

@@ -12,7 +12,7 @@ def collate_single_dataset(s):
     # print(s.name)
     results=np.zeros(10)
     output_directory = get_full_path((
-        'Desktop/Privileged_Data/AllResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+        'Desktop/Privileged_Data/percentinstancesresults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
     # print(output_directory)
     assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed))),'{} does not exist'.format(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
     with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
@@ -35,13 +35,24 @@ def collate_all_datasets(s,num_datasets=295):
     # print(s.name,1-np.mean(all_results))
     return (np.array(all_results))
 
-# for featsel in ['rfe','mi','chi2','anova']:
-#     for datasetnum in range(295):
-#         setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-#                  cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
-#                  featsel=featsel,classifier='lufeshuffle',stepsize=0.1)
-#         collate_all_datasets(setting)
+classifier = 'featselector'
+lupimethod = 'nolufe'
+for featsel in ['rfe','anova','chi2']:#w,'bahsic']:#,'mi']:#
+    for instances in [10,20,30,40,50,60,70,80,90]:
+        setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', kernel='linear',
+                 cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=instances, take_top_t='top', lupimethod=lupimethod,
+                 featsel=featsel,classifier=classifier,stepsize=0.1)
+        collate_all_datasets(setting, num_datasets=10)
 
+classifier = 'lufe'
+lupimethod = 'svmplus'
+for featsel in ['rfe', 'anova', 'chi2']:  # w,'bahsic']:#,'mi']:#
+    for instances in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+        setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', kernel='linear',
+                                     cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100,
+                                     percentageofinstances=instances, take_top_t='top', lupimethod=lupimethod,
+                                     featsel=featsel, classifier=classifier, stepsize=0.1)
+        collate_all_datasets(setting, num_datasets=10)
 
 # for dataset in ['arcene','dexter','dorothea','gisette','madelon']:
 #     print('\n'+dataset)
