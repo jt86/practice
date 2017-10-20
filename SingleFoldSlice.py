@@ -136,9 +136,6 @@ def do_lufetrain(s, normal_train, labels_train, priv_train, cross_val_folder):
 
 ############## FUNCTIONS TO GET SUBSETS OF FEATURES AND SUBSETS OF INSTANCES
 
-
-
-
 def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     best_rfe_param = get_best_params(s, all_train, labels_train, cross_val_folder, 'rfe')
     svc = SVC(C=best_rfe_param, kernel=s.kernel, random_state=s.foldnum)
