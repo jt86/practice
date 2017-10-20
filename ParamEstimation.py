@@ -147,8 +147,8 @@ def get_best_params(s, all_train, labels_train, folder, method):
         for C_index, C in enumerate(s.cvalues):
             if method == 'rfe':
                 svc = SVC(C=C, kernel="linear", random_state=s.foldnum)
-                rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=s.stepsize)
-                rfe.fit(all_train[train], labels_train[train], step=0.1)
+                rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=0.1)
+                rfe.fit(all_train[train], labels_train[train])
                 scores[C_index] += rfe.score(all_train[test], labels_train[test])
                 sys.stdout.flush()
             if method == 'svm':
