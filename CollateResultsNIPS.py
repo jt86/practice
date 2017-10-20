@@ -12,7 +12,7 @@ def collate_single_dataset(s):
     # print(s.name)
     results=np.zeros(10)
     output_directory = get_full_path((
-        'Desktop/Privileged_Data/percentinstancesresults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+        'Desktop/Privileged_Data/JulyResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
     # print(output_directory)
     assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed))),'{} does not exist'.format(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
     with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
@@ -25,28 +25,65 @@ def collate_single_dataset(s):
         .format(np.where(results == 0)[0][0], 300, 'tech', s.datasetnum, 1,  s.lupimethod, s.featsel, s.classifier, s.stepsize, s.percentageofinstances))
     return results
 
+all_results = []
 
 
 
-classifier = 'featselector'
-lupimethod = 'nolufe'
-featsel='rfe'
-# for featsel in ['rfe','anova','chi2']:#w,'bahsic']:#,'mi']:#
 
-def collate_diff_percent_instances(datasetnum):
-    means_featsel, means_lufe = [],[]
-    for instances in [10,20,30,40,50,60,70,80,90]:
-        setting_featsel = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-                 cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=instances, take_top_t='top', lupimethod='nolufe',
+
+def get_all_results(dataset):
+    s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum=0, kernel='linear',
+             cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='nolufe',
+             featsel='nofeatsel',classifier='baseline',stepsize=0.1)
+    baseline_score= (np.mean(collate_single_dataset(s)))
+
+    for featsel in ['rfe', 'chi2', 'anova']:#, 'mi']:
+        s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum=0, kernel='linear',
+                 cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='nolufe',
                  featsel=featsel,classifier='featselector',stepsize=0.1)
-        means_featsel.append(np.mean(collate_single_dataset(setting_featsel)))
+        featsel_score = (np.mean(collate_single_dataset(s)))
+        print(featsel_score)
 
-        setting_lufe = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-                 cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=instances, take_top_t='top', lupimethod='svmplus',
+        s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum=0, kernel='linear',
+                 cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
                  featsel=featsel,classifier='lufe',stepsize=0.1)
-        means_lufe.append(np.mean(collate_single_dataset(setting_lufe)))
-    print(means_featsel)
-    print(means_lufe)
-collate_diff_percent_instances(5)
+        lufe_score = (np.mean(collate_single_dataset(s)))
+
+        print(s.dataset,'\t',s.featsel,'\t',baseline_score,'\t',featsel_score,'\t',lufe_score)
+
+for dataset in ['arcene', 'dexter', 'dorothea', 'madelon']:
+    print('\n ',dataset)
+    get_all_results(dataset)
 
 
+# classifier = 'baseline'
+# lupimethod = 'nolufe'
+# featsel = 'nofeatsel'
+# print ('-----{}, {}, {} ------'.format(classifier,lupimethod,featsel))
+# results=[]
+# for dataset in ['arcene','dexter','dorothea','madelon']:
+#     s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum=0, kernel='linear',
+#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,
+#          featsel=featsel,classifier=classifier,stepsize=0.1)
+#     print(dataset,np.mean(collate_single_dataset(s)))
+#     results.append(np.mean(collate_single_dataset(s)))
+#
+#
+# lupimethod = 'nolufe'
+# print ('-----{}, {}, {} ------'.format(classifier,lupimethod,featsel))
+# results=[]
+# for featsel in ['rfe','anova','chi2','mi']:#,'bahsic']:
+#     for dataset in ['arcene','dexter','dorothea','madelon']:
+#
+#         s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum=0, kernel='linear',
+#              cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,
+#              featsel=featsel,classifier='featselector',stepsize=0.1)
+#         print(dataset,np.mean(collate_single_dataset(s)))
+#         results.append(np.mean(collate_single_dataset(s)))
+#
+#         s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum=0, kernel='linear',
+#                                cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+#                                take_top_t='top', lupimethod='svmplus',
+#                                featsel=featsel, classifier='lufe', stepsize=0.1)
+#         print(dataset, np.mean(collate_single_dataset(s)))
+#         results.append(np.mean(collate_single_dataset(s)))

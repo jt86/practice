@@ -146,9 +146,9 @@ def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     print(all_train.shape,labels_train.shape)
     rfe.fit(all_train, labels_train)
     stepsize = str(s.stepsize).replace('.', '-')
-    make_directory(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}-{}instances/'.format(s.topk, s.featsel,stepsize,s.percentageofinstances)))
-    np.save(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}-{}instances/{}{}-{}-{}'.
-                          format(s.topk, s.featsel,stepsize,s.percentageofinstances, s.dataset, s.datasetnum, s.skfseed, s.foldnum)), (np.argsort(rfe.ranking_)))
+    directory = get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-{}instances/'.format(s.topk, s.featsel,s.percentageofinstances))
+    make_directory(directory)
+    np.save(get_full_path(directory+'/{}{}-{}-{}'.format(s.dataset, s.datasetnum, s.skfseed, s.foldnum)), (np.argsort(rfe.ranking_)))
     # print ('rfe ranking',rfe.ranking_)
     # print(np.count_nonzero(rfe.ranking_ == 1))
     # print(np.argsort(rfe.ranking_))
@@ -333,12 +333,18 @@ def single_fold(s):
     pprint(vars(s))
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
-    output_directory = get_full_path(('Desktop/Privileged_Data/PracticeResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+    output_directory = get_full_path(('Desktop/Privileged_Data/PracticeResults2/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
 
     make_directory(output_directory)
 
     all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
     all_train, labels_train = take_subset(s, all_train, labels_train, s.percentageofinstances)
+
+    if s.dataset != 'tech':
+        s.topk = (all_train.shape[1]*s.topk)//100
+    print('all train',all_train.shape[1])
+    print('topk',s.topk)
+    # sys.exit()
 
 
     # all_train=all_train[:,:500]
@@ -401,6 +407,7 @@ class Experiment_Setting:
         self.featsel = featsel
         self.classifier = classifier
 
+
         # if self.classifier == 'baseline':
         #     self.lupimethod='nolufe'
         #     self.featsel='nofeatsel'
@@ -411,15 +418,16 @@ class Experiment_Setting:
         if stepsize==0.1:
             self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv)
-        if percentageofinstances != 100:
+        elif percentageofinstances != 100:
             self.name = '{}-{}-{}-{}selected-{}{}priv-{}instances'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv, self.percentageofinstances)
         else:
             self.name = '{}-{}-{}-{}selected-{}{}priv-{}'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv, self.stepsize)
 
-
-
+        if self.dataset!='tech':
+            self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
+                                                              self.take_top_t, self.percent_of_priv)
     def print_all_settings(self):
         pprint(vars(self))
         # print(self.k,self.top)
@@ -471,13 +479,13 @@ class Experiment_Setting:
 
 # TEST
 
-
 #
-# s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=0, kernel='linear',
+#
+# s = Experiment_Setting(foldnum=9, topk=30, dataset='arcene', datasetnum=0, kernel='linear',
 #          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=10, take_top_t='top', lupimethod='svmplus',
-#          featsel='bahsic',classifier='featselector',stepsize=0.1)
+#          featsel='rfe',classifier='lufe',stepsize=0.1)
 #
 # single_fold(s)
-#
+
 
 

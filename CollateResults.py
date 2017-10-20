@@ -34,7 +34,7 @@ featsel='rfe'
 # for featsel in ['rfe','anova','chi2']:#w,'bahsic']:#,'mi']:#
 
 def collate_diff_percent_instances(datasetnum):
-    means_featsel, means_lufe = [],[]
+    means_featsel, means_lufe, mean_self_svm, mean_self_lufe = [],[],[],[]
     for instances in [10,20,30,40,50,60,70,80,90]:
         setting_featsel = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
                  cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=instances, take_top_t='top', lupimethod='nolufe',
@@ -45,19 +45,42 @@ def collate_diff_percent_instances(datasetnum):
                  cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=instances, take_top_t='top', lupimethod='svmplus',
                  featsel=featsel,classifier='lufe',stepsize=0.1)
         means_lufe.append(np.mean(collate_single_dataset(setting_lufe)))
+
+        setting_self_svm = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+                 cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=instances, take_top_t='top', lupimethod='nolufe',
+                 featsel=featsel,classifier='svmtrain',stepsize=0.1)
+        mean_self_svm.append(np.mean(collate_single_dataset(setting_self_svm)))
+
+        # setting_self_lufe = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+        #          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=instances, take_top_t='top', lupimethod='svmplus',
+        #          featsel=featsel,classifier='lufetrain',stepsize=0.1)
+        # means_lufe.append(np.mean(collate_single_dataset(setting_self_lufe)))
+
+
     print(means_featsel)
     print(means_lufe)
+    print(mean_self_svm)
+
+    plt.plot(range(10,100,10),[1-item for item in means_featsel], label='RFE-SVM on testing data')
+    plt.plot(range(10,100,10), [1-item for item in means_lufe], label='RFE-LUFe on testing data')
+    plt.plot(range(10,100,10), [1-item for item in mean_self_svm], label='RFE-SVM on training data')
+    plt.legend(loc='best')
+    plt.xlabel('percent of data')
+    plt.ylabel('error')
+    plt.savefig('learning curve')
+    plt.show()
+
 collate_diff_percent_instances(5)
 
 
-#
-# def collate_all_datasets(s,num_datasets=295):
-#     all_results = []
-#     for datasetnum in range(num_datasets):
-#         s.datasetnum=datasetnum
-#         all_results.append(collate_single_dataset(s))
-#     # print(s.name,1-np.mean(all_results))
-#     return (np.array(all_results))
+
+def collate_all_datasets(s,num_datasets=295):
+    all_results = []
+    for datasetnum in range(num_datasets):
+        s.datasetnum=datasetnum
+        all_results.append(collate_single_dataset(s))
+    # print(s.name,1-np.mean(all_results))
+    return (np.array(all_results))
 #
 # classifier = 'featselector'
 # lupimethod = 'nolufe'
@@ -78,20 +101,7 @@ collate_diff_percent_instances(5)
 #                                      featsel=featsel, classifier=classifier, stepsize=0.1)
 #         collate_all_datasets(setting, num_datasets=10)
 
-# for dataset in ['arcene','dexter','dorothea','gisette','madelon']:
-#     print('\n'+dataset)
-#     s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
-#                            take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline',
-#                            stepsize=0.1)
-#     scores = collate_all_datasets(s, num_datasets=1)
-#     print(dataset, 'baseline',np.mean(scores),'\n')
-#     for featsel in ['rfe','anova','chi2','mi']:
-#         s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
-#                              take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector',
-#                       stepsize=0.1)
-#         scores = collate_all_datasets(s,num_datasets=1)
-#         print(dataset, featsel,np.mean(scores))
-# print('\n')
+
 # dataset = 'dorothea'
 # for featsel in ['rfe', 'anova', 'chi2']:#, 'mi']:
 #     for lupimethod in ['dp','svmplus']:
