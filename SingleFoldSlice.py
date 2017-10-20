@@ -130,6 +130,10 @@ def do_lufeshuffle(s, normal_train, labels_train, priv_train, normal_test, label
     print('\n', priv_train)
     do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
 
+def do_lufetrain(s, normal_train, labels_train, priv_train, cross_val_folder):
+    if s.lupimethod == 'svmplus':
+        svm_plus(s, normal_train, labels_train, priv_train, normal_train, labels_train, cross_val_folder)
+
 ############## FUNCTIONS TO GET SUBSETS OF FEATURES AND SUBSETS OF INSTANCES
 
 
@@ -367,6 +371,8 @@ def single_fold(s):
             do_lufeshuffle(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
         if s.classifier == 'svmtrain':
             do_svm_on_train(s, all_train, all_test, labels_train, output_directory)
+        if s.classifier == 'lufetrain':
+            do_lufetrain(s, normal_train, labels_train, priv_train, output_directory)
 ##################################################################################################
 
 
