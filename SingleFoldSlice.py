@@ -302,6 +302,12 @@ def do_svm(s, train_data, labels_train, test_data, labels_test, cross_val_folder
     score = accuracy_score(labels_test, predictions)
     save_scores(s, score, cross_val_folder)
 
+def do_svm_on_train(s, all_train, all_test, labels_train, cross_val_folder):
+
+    normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
+
+    do_svm(s, normal_train, labels_train, normal_train, labels_train, cross_val_folder)
+
 
 
 def take_subset(s,all_train, labels_train, percentageofinstances):
@@ -359,6 +365,8 @@ def single_fold(s):
             do_luferandom(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
         if s.classifier == 'lufeshuffle':
             do_lufeshuffle(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
+        if s.classifier == 'svmtrain':
+            do_svm_on_train(s, all_train, all_test, labels_train, output_directory)
 ##################################################################################################
 
 
@@ -367,7 +375,7 @@ class Experiment_Setting:
     def __init__(self, classifier, datasetnum, lupimethod, featsel, stepsize=0.1, foldnum='all', topk=300, dataset='tech', skfseed=1, kernel='linear',
                  cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances=100, take_top_t='top'):
 
-        assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse','luferandom','lufeshuffle']
+        assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse','luferandom','lufeshuffle', 'svmtrain','lufetrain']
         assert lupimethod in ['nolufe','svmplus','dp','dsvm'], 'lupi method must be nolufe, svmplus or dp'
         assert featsel in ['nofeatsel','rfe','mi','anova','chi2','bahsic'], 'feat selection method not valid'
 
