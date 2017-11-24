@@ -182,6 +182,7 @@ for dataset in ['arcene','madelon','dexter','dorothea','gisette']:
             print('--foldnum {} --topk {} --dataset {} --datasetnum {} --skfseed {} --lupimethod {} --featsel {} --classifier {} --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 100 --taketopt top'
                 .format(foldnum, top_k, dataset, datasetnum, seed,'nolufe', 'rfe', 'featselector'))
             count+=1
+
 for dataset in ['arcene','madelon','dexter','dorothea','gisette']:
     for foldnum in range(10):
         for top_k in range(10,100,10):

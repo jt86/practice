@@ -12,7 +12,7 @@ def collate_single_dataset(s):
     # print(s.name)
     results=np.zeros(10)
     output_directory = get_full_path((
-        'Desktop/Privileged_Data/percentinstancesresults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
+        'Desktop/Privileged_Data/AllResults/{}/{}{}/').format(s.name,s.dataset, s.datasetnum))
     # print(output_directory)
     assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed))),'{} does not exist'.format(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
     with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
@@ -33,7 +33,9 @@ lupimethod = 'nolufe'
 featsel='rfe'
 # for featsel in ['rfe','anova','chi2']:#w,'bahsic']:#,'mi']:#
 
-def collate_diff_percent_instances(datasetnum):
+######### For given dataset, do learning curve
+
+def collate_learning_curve(datasetnum):
     means_featsel, means_lufe, mean_self_svm, mean_self_lufe = [],[],[],[]
     for instances in [10,20,30,40,50,60,70,80,90]:
         setting_featsel = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
@@ -70,9 +72,9 @@ def collate_diff_percent_instances(datasetnum):
     plt.savefig('learning curve')
     plt.show()
 
-collate_diff_percent_instances(5)
+# collate_learning_curve(5)
 
-
+##########################
 
 def collate_all_datasets(s,num_datasets=295):
     all_results = []
