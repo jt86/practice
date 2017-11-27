@@ -67,8 +67,10 @@ Y2_op = tf.train.AdamOptimizer().minimize(task2_loss)
 # open the session
 
 with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
-    Optimiser, loss_score, accuracy = sess.run([Optimiser, Joint_Loss, accuracy1],{X:x_tr, Y1:y_tr, Y2:y_tr})
+    # sess.run(tf.global_variables_initializer())
+    init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+    sess.run(init)
+    Optimiser, loss_score, train_accuracy = sess.run([Optimiser, Joint_Loss, accuracy1],{X:x_tr, Y1:y_tr, Y2:y_tr})
 
     tf.Print(task1_layer_output,[task1_layer_output])
 
@@ -77,8 +79,10 @@ with tf.Session() as sess:
     print('Y1')
     tf.Print(Y1,[Y1])
 
-    print(loss_score)
+    print('loss score',loss_score)
+    print('train_accuracy', train_accuracy)
     print(tf.trainable_variables())
+
     loss_score2 = sess.run(Joint_Loss, {X: x_te, Y1: y_te, Y2: y_te})#, shared_layer_weights: shared_layer_weights})
     print (loss_score2)
 
