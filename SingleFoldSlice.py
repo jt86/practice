@@ -203,8 +203,8 @@ def get_norm_priv(s,all_train,all_test):
     '''
     if s.featsel=='rfe' and s.dataset=='tech' and s.percentageofinstances==100:
         stepsize = str(s.stepsize).replace('.', '-')
-        ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}-step{}/{}{}-{}-{}.npy'.
-                              format(s.topk, s.featsel, stepsize,s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
+        ordered_indices = np.load(get_full_path('Desktop/Privileged_Data/SavedNormPrivIndices/top{}{}/{}{}-{}-{}.npy'.
+                              format(s.topk, s.featsel, s.dataset, s.datasetnum, s.skfseed, s.foldnum)))
     elif s.featsel == 'rfe' and s.dataset == 'tech' and s.percentageofinstances!=100:
         stepsize = str(s.stepsize).replace('.', '-')
         ordered_indices = np.load(

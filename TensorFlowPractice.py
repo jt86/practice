@@ -3,6 +3,11 @@ from SingleFoldSlice import Experiment_Setting
 import tensorflow as tf
 import numpy as np
 import sys
+
+
+
+
+
 s = Experiment_Setting(foldnum=9, topk=30, dataset='tech', datasetnum=0, kernel='linear',
          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=10, take_top_t='top', lupimethod='svmplus',
          featsel='rfe',classifier='lufe',stepsize=0.1)
@@ -111,6 +116,7 @@ with tf.Session() as sess:
     # sess.run(tf.global_variables_initializer())
     init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
     sess.run(init)
+
 
 
     test_accuracy = sess.run([accuracy1],{X:x_te, Y1:y_te, Y2:y_te})
