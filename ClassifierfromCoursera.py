@@ -39,6 +39,7 @@ x_tr, x_te, y_tr, y_te =  (get_train_and_test_this_fold(s))
 normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,x_tr,x_te)
 
 x_tr, x_te = normal_train, normal_test
+x_tr, x_te = normal_train[:,:400], normal_test[:,:400]
 #
 # x_tr = np.load('x_tr.npy')
 # x_te = np.load('x_te.npy')
@@ -178,7 +179,7 @@ with tf.Session() as sess:
 
 
 def model(X_train, Y_train, X_test, Y_test, learning_rate=0.0001,
-          num_epochs=1500, minibatch_size=32, print_cost=True):
+          num_epochs=50, minibatch_size=32, print_cost=True):
 
     ops.reset_default_graph()  # to be able to rerun the model without overwriting tf variables
     tf.set_random_seed(1)  # to keep consistent results

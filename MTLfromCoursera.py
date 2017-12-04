@@ -38,22 +38,29 @@ x_tr, x_te, y_tr, y_te =  (get_train_and_test_this_fold(s))
 
 normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,x_tr,x_te)
 
-x_tr, x_te = normal_train, normal_test
-#
-# x_tr = np.load('x_tr.npy')
-# x_te = np.load('x_te.npy')
-# y_tr = np.load('y_tr.npy')
-# y_te = np.load('y_te.npy')
-#
-# y_tr = y_tr.reshape((1,y_tr.shape[0]))
-# y_te = y_te.reshape((1,y_te.shape[0]))
+x_tr, x_te = normal_train[:,:400], normal_test[:,:400]
 
-print(y_tr.shape)
 
-y_tr = convert_to_one_hot(y_tr,2)
-y_te = convert_to_one_hot(y_te,2)
+# y_tr = convert_to_one_hot(y_tr,2)
+# y_te = convert_to_one_hot(y_te,2)
+# np.save('y_tr_onehot', y_tr)
+# np.save('y_te_onehot', y_te)
 
-print(y_tr.shape)
+y_tr1=np.load('y_tr_onehot.npy')
+y_te1=np.load('y_te_onehot.npy')
+
+num_unsel_feats = 10
+y_tr2=priv_train[:,:num_unsel_feats]
+y_te2=priv_test[:,:num_unsel_feats]
+
+y_tr2=y_tr2.reshape(num_unsel_feats,y_tr2.shape[0])
+y_te2=y_te2.reshape(num_unsel_feats,y_te2.shape[0])
+
+print('aaa')
+print(y_tr1.shape,y_tr2.shape)
+print(y_te1.shape,y_te2.shape)
+# sys.exit()
+
 
 x_tr = x_tr.T
 x_te = x_te.T
@@ -73,7 +80,7 @@ def random_mini_batches(X, Y1, Y2, mini_batch_size=64, seed=0):
     permutation = list(np.random.permutation(m))
     shuffled_X = X[:, permutation]
     shuffled_Y1 = Y1[:, permutation].reshape((Y1.shape[0], m))
-    shuffled_Y2 = Y1[:, permutation].reshape((Y2.shape[0], m))
+    shuffled_Y2 = Y2[:, permutation].reshape((Y2.shape[0], m))
 
     # Step 2: Partition (shuffled_X, shuffled_Y). Minus the end case.
     num_complete_minibatches = math.floor(
@@ -109,26 +116,22 @@ def initialize_parameters():
     b1 = tf.get_variable("b1", [25, 1], initializer=tf.zeros_initializer())
     W2 = tf.get_variable("W2", [12, 25], initializer=tf.contrib.layers.xavier_initializer(seed=1))
     b2 = tf.get_variable("b2", [12, 1], initializer=tf.zeros_initializer())
-    W3 = tf.get_variable("W3", [2, 12], initializer=tf.contrib.layers.xavier_initializer(seed=1))
-    b3 = tf.get_variable("b3", [2, 1], initializer=tf.zeros_initializer())
+    W3a = tf.get_variable("W3a", [2, 12], initializer=tf.contrib.layers.xavier_initializer(seed=1))
+    b3a = tf.get_variable("b3a", [2, 1], initializer=tf.zeros_initializer())
+    W3b = tf.get_variable("W3b", [num_unsel_feats, 12], initializer=tf.contrib.layers.xavier_initializer(seed=1))
+    b3b = tf.get_variable("b3b", [num_unsel_feats, 1], initializer=tf.zeros_initializer())
     ### END CODE HERE ###
 
     parameters = {"W1": W1,
                   "b1": b1,
                   "W2": W2,
                   "b2": b2,
-                  "W3": W3,
-                  "b3": b3}
+                  "W3a": W3a,
+                  "b3a": b3a,
+                  "W3b":W3b,
+                  "b3b":b3b}
 
     return parameters
-
-tf.reset_default_graph()
-with tf.Session() as sess:
-    parameters = initialize_parameters()
-    print("W1 = " + str(parameters["W1"]))
-    print("b1 = " + str(parameters["b1"]))
-    print("W2 = " + str(parameters["W2"]))
-    print("b2 = " + str(parameters["b2"]))
 
 
 # GRADED FUNCTION: forward_propagation
@@ -140,8 +143,10 @@ def forward_propagation(X, parameters):
     b1 = parameters['b1']
     W2 = parameters['W2']
     b2 = parameters['b2']
-    W3 = parameters['W3']
-    b3 = parameters['b3']
+    W3a = parameters['W3a']
+    b3a = parameters['b3a']
+    W3b = parameters['W3b']
+    b3b = parameters['b3b']
 
     print(W1.shape,X.shape)
     ### START CODE HERE ### (approx. 5 lines)                     # Numpy Equivalents:
@@ -149,28 +154,34 @@ def forward_propagation(X, parameters):
     A1 = tf.nn.relu(Z1)  # A1 = relu(Z1)
     Z2 = tf.add(tf.matmul(W2, A1), b2)  # Z2 = np.dot(W2, a1) + b2
     A2 = tf.nn.relu(Z2)  # A2 = relu(Z2)
-    Z3 = tf.add(tf.matmul(W3, A2), b3)  # Z3 = np.dot(W3,Z2) + b3
+    Z3a = tf.add(tf.matmul(W3a, A2), b3a)  # Z3 = np.dot(W3,Z2) + b3
+    Z3b = tf.add(tf.matmul(W3b, A2), b3b)  # Z3 = np.dot(W3,Z2) + b3
     ### END CODE HERE ###
 
-    return Z3
+    return Z3a, Z3b
 
 tf.reset_default_graph()
 
-with tf.Session() as sess:
-    X, Y1, Y2 = create_placeholders(dims, 2, 2)
-    parameters = initialize_parameters()
-    Z3 = forward_propagation(X, parameters)
-    print("Z3 = " + str(Z3))
+# with tf.Session() as sess:
+#     X, Y1, Y2 = create_placeholders(dims, 2, 2)
+#     parameters = initialize_parameters()
+#     Z3a, Z3b = forward_propagation(X, parameters)
+#     print("Z3a = " + str(Z3a),"Z3b = " + str(Z3b))
 
 
 # GRADED FUNCTION: compute_cost
 
-def compute_cost(Z3, Y1, Y2):
-    logits = tf.transpose(Z3)
+def compute_cost(Z3a, Z3b, Y1, Y2):
+    print(Z3a)
+    print(Z3b)
+    logitsa = tf.transpose(Z3a)
+    # logitsb = tf.transpose(Z3b)
     labels1 = tf.transpose(Y1)
     labels2 = tf.transpose(Y2)
-    cost1 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels1))
-    cost2 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels2))
+    cost1 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logitsa, labels=labels1))
+    # cost2 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logitsb, labels=labels2))
+    cost2 = tf.nn.l2_loss(Y2 - Z3b)
+    print('cost1',cost1,'cost2',cost2)
     cost = cost1+cost2
     return cost
 
@@ -185,7 +196,7 @@ tf.reset_default_graph()
 
 
 def model(X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2,  learning_rate=0.0001,
-          num_epochs=1500, minibatch_size=32, print_cost=True):
+          num_epochs=50, minibatch_size=32, print_cost=True):
 
     ops.reset_default_graph()  # to be able to rerun the model without overwriting tf variables
     tf.set_random_seed(1)  # to keep consistent results
@@ -196,8 +207,8 @@ def model(X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2,  learning_rate=
     costs = []  # To keep track of the cost
     X, Y1, Y2 = create_placeholders(n_x, n_y1, n_y2)
     parameters = initialize_parameters()
-    Z3 = forward_propagation(X, parameters) #fwd prop
-    cost = compute_cost(Z3, Y1, Y2)
+    Z3a, Z3b = forward_propagation(X, parameters) #fwd prop
+    cost = compute_cost(Z3a, Z3b, Y1, Y2)
     optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost) #bck prop
 
 
@@ -227,19 +238,19 @@ def model(X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2,  learning_rate=
                 costs.append(epoch_cost)
 
         # plot the cost
-        plt.plot(np.squeeze(costs))
-        plt.ylabel('cost')
-        plt.xlabel('iterations (per tens)')
-        plt.title("Learning rate =" + str(learning_rate))
-        plt.show()
+        # plt.plot(np.squeeze(costs))
+        # plt.ylabel('cost')
+        # plt.xlabel('iterations (per tens)')
+        # plt.title("Learning rate =" + str(learning_rate))
+        # plt.show()
 
         # lets save the parameters in a variable
         parameters = sess.run(parameters)
         print("Parameters have been trained!")
 
         # Calculate the correct predictions
-        correct_prediction1 = tf.equal(tf.argmax(Z3), tf.argmax(Y1))
-        correct_prediction2 = tf.equal(tf.argmax(Z3), tf.argmax(Y2))
+        correct_prediction1 = tf.equal(tf.argmax(Z3a), tf.argmax(Y1))
+        correct_prediction2 = tf.equal(tf.argmax(Z3b), tf.argmax(Y2))
         print(correct_prediction1,correct_prediction2)
 
         # Calculate accuracy on the test set
@@ -255,5 +266,6 @@ def model(X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2,  learning_rate=
 
 
 
-parameters = model(x_tr, y_tr, y_tr, x_te, y_te, y_te)
+parameters = model(x_tr, y_tr1, y_tr2, x_te, y_te1, y_te2)
+
 

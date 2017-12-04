@@ -95,8 +95,9 @@ task_2_predictions = tf.argmax(task2_layer_output, 1)
 # Calculate Loss
 task1_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels = Y1, logits=task1_layer_output)
 task2_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels = Y2, logits=task2_layer_output)
+# task2_loss = tf.nn.l2_loss(Y2-task2_layer_output)
 
-Joint_Loss = task1_loss# + task2_loss
+Joint_Loss = task1_loss + task2_loss
 
 # optimisers
 Optimiser = tf.train.AdamOptimizer().minimize(Joint_Loss)
