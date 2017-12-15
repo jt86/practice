@@ -8,8 +8,9 @@ import sys
 
 
 
-s = Experiment_Setting(foldnum=9, topk=30, dataset='tech', datasetnum=0, kernel='linear',
-         cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=10, take_top_t='top', lupimethod='svmplus',
+
+s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=1, kernel='linear',
+         cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='svmplus',
          featsel='rfe',classifier='lufe',stepsize=0.1)
 x_tr, x_te, y_tr, y_te =  (get_train_and_test_this_fold(s))
 
