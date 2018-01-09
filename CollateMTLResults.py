@@ -92,7 +92,7 @@ def collate_for_multiple_settings(weight,featsel):
 list_of_featnums4,list_of_results4 =collate_for_multiple_settings(weight=1,featsel='MI')
 list_of_featnums5,list_of_results5 =collate_for_multiple_settings(weight=1,featsel='RFE')
 list_of_featnums6,list_of_results6 =collate_for_multiple_settings(weight=1,featsel='ANOVA')
-list_of_featnums7,list_of_results7 =collate_for_multiple_settings(weight=1,featsel='CHI2')
+# list_of_featnums7,list_of_results7 =collate_for_multiple_settings(weight=1,featsel='CHI2')
 
 list_of_featnums=list_of_featnums5
 print(list_of_featnums)
@@ -130,7 +130,7 @@ zero_weight_results = np.mean(collate_nn_single_file('MTLresultsfile-3200units-w
 plt.plot(list_of_featnums,np.mean(list_of_results4,axis=1),label='NN MTL mutual info (normalised)', color='red')
 plt.plot(list_of_featnums,np.mean(list_of_results5,axis=1),label='NN MTL RFE (normalised)', color='blue')
 plt.plot(list_of_featnums,np.mean(list_of_results6,axis=1),label='NN MTL ANOVA (normalised)', color='green')
-plt.plot(list_of_featnums,np.mean(list_of_results6,axis=1),label='NN MTL CHI^2 (normalised)', color='pink')
+# plt.plot(list_of_featnums,np.mean(list_of_results6,axis=1),label='NN MTL CHI^2 (normalised)', color='pink')
 plt.plot(list_of_featnums, [np.mean(svm_results)]*len(list_of_featnums), '-.', label='SVM RFE', color='black')
 plt.plot(list_of_featnums, [np.mean(rfe_lufe_results)]*len(list_of_featnums), '-.', label='SVM+ RFE', color='blue')
 plt.plot(list_of_featnums, [np.mean(mi_lufe_results)]*len(list_of_featnums), '-.', label='SVM+ MI', color='red')

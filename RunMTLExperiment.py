@@ -1,7 +1,7 @@
 import argparse
 from pprint import pprint
 from MTLfromCoursera import run_mtl
-from SingleFoldSlice import Experiment_Setting
+# from SingleFoldSlice import Experiment_Setting
 #
 # num_hidden_units = 3200
 # rate = 0.0001

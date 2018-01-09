@@ -310,4 +310,4 @@ s1 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all
 s2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                   take_top_t='top', lupimethod='svmplus', featsel='rfe', classifier='lufe')
 
-plot_total_comparison(s1, s2, s_baseline)
+# plot_total_comparison(s1, s2, s_baseline)
