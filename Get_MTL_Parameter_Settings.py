@@ -2,7 +2,7 @@
 num_hidden_units = 3200
 rate = 0.0001
 weight = 1
-featsel='chi2'
+featsel='mi'
 
 count = 1
 
