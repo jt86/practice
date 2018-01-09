@@ -27,31 +27,19 @@ def convert_to_one_hot(y_tr,C):
     return y_new
 
 
-
-
-# sys.exit()
-
-
-
 def get_tech_data(s,num_unsel_feats=300):
-
-    x_train, x_test, y_train, y_test =  (get_train_and_test_this_fold(s))
-
+    print(s.datasetnum)
+    x_train, x_test, y_train, y_test =  get_train_and_test_this_fold(s)
     normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,x_train,x_test)
-
     # x_tr, x_te = normal_train[:,:400], normal_test[:,:400]
     y_tr1 = convert_to_one_hot(y_train,2)
     y_te1 = convert_to_one_hot(y_test,2)
-
     y_tr2=priv_train[:,:num_unsel_feats]
     y_te2=priv_test[:,:num_unsel_feats]
-
     y_tr2=y_tr2.reshape(num_unsel_feats,y_tr2.shape[0])
     y_te2=y_te2.reshape(num_unsel_feats,y_te2.shape[0])
-
     x_tr = normal_train.T
     x_te = normal_test.T
-
     return(x_tr,x_te,y_tr1,y_te1,y_tr2,y_te2)
 
 
@@ -95,49 +83,47 @@ def create_placeholders(n_x, n_y1, n_y2):
     return X, Y1, Y2
 
 
-def initialize_parameters(dims, num_unsel_feats, num_hidden_units):
+def initialize_parameters(dims, num_unsel_feats, num_hidden_units, num_shared_layers):
     tf.set_random_seed(1)
-    W1 = tf.get_variable("W1", [num_hidden_units, dims], initializer=tf.contrib.layers.xavier_initializer(seed=1))
-    b1 = tf.get_variable("b1", [num_hidden_units, 1], initializer=tf.zeros_initializer())
-    W2task1 = tf.get_variable("W2task1", [2, num_hidden_units], initializer=tf.contrib.layers.xavier_initializer(seed=1))
-    b2task1 = tf.get_variable("b2task1", [2, 1], initializer=tf.zeros_initializer())
-    W2task2 = tf.get_variable("W2task2", [num_unsel_feats, num_hidden_units], initializer=tf.contrib.layers.xavier_initializer(seed=1))
-    b2task2 = tf.get_variable("b2task2", [num_unsel_feats, 1], initializer=tf.zeros_initializer())
-    ### END CODE HERE ###
-
-    parameters = {"W1": W1,
-                  "b1": b1,
-                  "W2task1": W2task1,
-                  "b2task1": b2task1,
-                  "W2task2":W2task2,
-                  "b2task2":b2task2}
-
+    if num_shared_layers == 1:
+        W1 = tf.get_variable("W1", [num_hidden_units, dims], initializer=tf.contrib.layers.xavier_initializer(seed=1))
+        b1 = tf.get_variable("b1", [num_hidden_units, 1], initializer=tf.zeros_initializer())
+        W2task1 = tf.get_variable("W2task1", [2, num_hidden_units], initializer=tf.contrib.layers.xavier_initializer(seed=1))
+        b2task1 = tf.get_variable("b2task1", [2, 1], initializer=tf.zeros_initializer())
+        W2task2 = tf.get_variable("W2task2", [num_unsel_feats, num_hidden_units], initializer=tf.contrib.layers.xavier_initializer(seed=1))
+        b2task2 = tf.get_variable("b2task2", [num_unsel_feats, 1], initializer=tf.zeros_initializer())
+        parameters = {"W1": W1, "b1": b1, "W2task1": W2task1, "b2task1": b2task1, "W2task2":W2task2, "b2task2":b2task2}
+    if num_shared_layers == 2:
+        W1 = tf.get_variable("W1", [num_hidden_units, dims], initializer=tf.contrib.layers.xavier_initializer(seed=1))
+        b1 = tf.get_variable("b1", [num_hidden_units, 1], initializer=tf.zeros_initializer())
+        W2 = tf.get_variable("W2", [num_hidden_units, dims], initializer=tf.contrib.layers.xavier_initializer(seed=1))
+        b2 = tf.get_variable("b2", [num_hidden_units, 1], initializer=tf.zeros_initializer())
+        W2task1 = tf.get_variable("W3task1", [2, num_hidden_units], initializer=tf.contrib.layers.xavier_initializer(seed=1))
+        b2task1 = tf.get_variable("b3task1", [2, 1], initializer=tf.zeros_initializer())
+        W2task2 = tf.get_variable("W3task2", [num_unsel_feats, num_hidden_units], initializer=tf.contrib.layers.xavier_initializer(seed=1))
+        b2task2 = tf.get_variable("b3task2", [num_unsel_feats, 1], initializer=tf.zeros_initializer())
+        parameters = {"W1": W1, "b1": b1, "W2task1": W2task1, "b2task1": b2task1, "W2task2":W2task2, "b2task2":b2task2}
     return parameters
 
 
 def forward_propagation(X, parameters):
-    W1 = parameters['W1']
-    b1 = parameters['b1']
-    W2task1 = parameters['W2task1']
-    b2task1 = parameters['b2task1']
-    W2task2 = parameters['W2task2']
-    b2task2 = parameters['b2task2']
+    W1, b1 = parameters['W1'],parameters['b1']
+    W2task1, b2task1 = parameters['W2task1'], parameters['b2task1']
+    W2task2, b2task2 = parameters['W2task2'], parameters['b2task2']
     Z1 = tf.add(tf.matmul(W1, X), b1)
     A1 = tf.nn.relu(Z1)
-    Z3a = tf.add(tf.matmul(W2task1, A1), b2task1)
-    Z3b = tf.add(tf.matmul(W2task2, A1), b2task2)
-    ### END CODE HERE ###
-
-    return Z3a, Z3b
+    Z3task1 = tf.add(tf.matmul(W2task1, A1), b2task1)
+    Z3task2 = tf.add(tf.matmul(W2task2, A1), b2task2)
+    return Z3task1, Z3task2
 
 
-
-def compute_cost(Z3a, Z3b, Y1, Y2, task_2_weight=1):
+def compute_cost(Z3a, Z3b, Y1, Y2,num_unsel_feats, task_2_weight=1):
     logitsa = tf.transpose(Z3a)
     labels1 = tf.transpose(Y1)
     cost1 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logitsa, labels=labels1))
     cost2 = tf.nn.l2_loss(Y2 - Z3b)
-    cost = cost1+(task_2_weight*(cost2))
+    # tf.shape(logitsa)
+    cost = cost1+(task_2_weight*cost2/num_unsel_feats)
     return cost
 
 tf.reset_default_graph()
@@ -156,38 +142,26 @@ def model(setting, X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2, dims, 
     X, Y1, Y2 = create_placeholders(n_x, n_y1, n_y2)
     parameters = initialize_parameters(dims, num_unsel_feats, num_hidden_units)
     Z3a, Z3b = forward_propagation(X, parameters) #fwd prop
-    cost = compute_cost(Z3a, Z3b, Y1, Y2,task_2_weight)
+    cost = compute_cost(Z3a, Z3b, Y1, Y2,num_unsel_feats,task_2_weight)
     optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost) #bck prop
-
-
     init = tf.global_variables_initializer()
     with tf.Session() as sess:
-
-        # Run the initialization
         sess.run(init)
-
-        # Do the training loop
         for epoch in range(num_epochs):
-
-            epoch_cost = 0.  # Defines a cost related to an epoch
-            num_minibatches = int(m / minibatch_size)  # number of minibatches of size minibatch_size in the train set
+            epoch_cost = 0.
+            num_minibatches = int(m / minibatch_size)
             seed = seed + 1
             minibatches = random_mini_batches(X_train, Y_train1, Y_train2, minibatch_size, seed)
-
             for minibatch in minibatches:
-                # Select a minibatch
                 (minibatch_X, minibatch_Y1, minibatch_Y2) = minibatch
                 _, minibatch_cost = sess.run([optimizer, cost], feed_dict={X: minibatch_X, Y1: minibatch_Y1, Y2: minibatch_Y2})
                 epoch_cost += minibatch_cost / num_minibatches
-
             if print_cost == True and epoch % 100 == 0:
                 print("Cost after epoch %i: %f" % (epoch, epoch_cost))
             if print_cost == True and epoch % 5 == 0:
                 costs.append(epoch_cost)
-
         # lets save the parameters in a variable
         parameters = sess.run(parameters)
-
 
         # Calculate the correct predictions
         correct_prediction1 = tf.equal(tf.argmax(Z3a), tf.argmax(Y1))
@@ -204,25 +178,31 @@ def model(setting, X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2, dims, 
         # print("Test Accuracy task 2:", accuracy2.eval({X: X_test, Y2: Y_test2}))
 
 
-        results_file.write("\nDataset,{},Fold,{},Weight,{},Train,{}, Test,{}".format(setting.datasetnum,setting.foldnum,task_2_weight,
+        results_file.write("Dataset,{},Fold,{},Weight,{},Train,{}, Test,{}\n".format(setting.datasetnum,setting.foldnum,task_2_weight,
                                  accuracy1.eval({X: X_train, Y1: Y_train1}),accuracy1.eval({X: X_test, Y1: Y_test1})))
 
         return parameters
 
-weight=0
-num_hidden_units = 3200
-num_unsel_feats =300
 
-with open(get_full_path('Desktop/Privileged_Data/MTLresultsfile-{}units-.csv'.format(num_hidden_units)), 'a') as results_file:
-    for datasetnum in range(295):
-        print('\n')
-        s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-                               cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-                               take_top_t='top', lupimethod='svmplus',
-                               featsel='rfe', classifier='lufe', stepsize=0.1)
-        x_tr, x_te, y_tr1, y_te1, y_tr2, y_te2=get_tech_data(s,num_unsel_feats)
-        dims = x_tr.shape[0]
-        parameters = model(s, x_tr, y_tr1, y_tr2, x_te, y_te1, y_te2,  dims, num_unsel_feats,results_file,task_2_weight=weight,num_hidden_units=num_hidden_units, learning_rate=0.00001)
+num_hidden_units = 3200
+rate = 0.0001
+weight = 1
+
+
+for num_unsel_feats in [item for item in range (1000,2200,100)]:
+# for num_unsel_feats in [3]+[item for item in range(10,300,10)]:
+    print ('num unsel feats',num_unsel_feats)
+    with open(get_full_path('Desktop/Privileged_Data/MTL_MI_results/MTLresultsfile-{}units-weight{}-numfeats={}-learnrate{}.csv'
+                                    .format(num_hidden_units,weight,num_unsel_feats,rate)), 'a') as results_file:
+        for datasetnum in range(295):
+            print('\n')
+            s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+                                   cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+                                   take_top_t='top', lupimethod='svmplus',
+                                   featsel='mi', classifier='lufe', stepsize=0.1)
+            x_tr, x_te, y_tr1, y_te1, y_tr2, y_te2=get_tech_data(s,num_unsel_feats)
+            dims = x_tr.shape[0]
+            parameters = model(s, x_tr, y_tr1, y_tr2, x_te, y_te1, y_te2,  dims, num_unsel_feats,results_file,task_2_weight=weight,num_hidden_units=num_hidden_units, learning_rate=rate)
 
 
 

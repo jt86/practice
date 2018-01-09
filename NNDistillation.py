@@ -28,14 +28,8 @@ def convert_to_one_hot(y_tr,C):
 
 
 def get_tech_data(s,num_unsel_feats=300):
-
-    print(s.datasetnum)
     x_train, x_test, y_train, y_test =  get_train_and_test_this_fold(s)
     normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,x_train,x_test)
-    print(priv_train.shape[1])
-    if num_unsel_feats == 'all':
-        num_unsel_feats = priv_train.shape[1]
-    print(num_unsel_feats)
     # x_tr, x_te = normal_train[:,:400], normal_test[:,:400]
     y_tr1 = convert_to_one_hot(y_train,2)
     y_te1 = convert_to_one_hot(y_test,2)
@@ -111,13 +105,12 @@ def forward_propagation(X, parameters):
     return Z3task1, Z3task2
 
 
-def compute_cost(Z3a, Z3b, Y1, Y2,num_unsel_feats, task_2_weight=1):
+def compute_cost(Z3a, Z3b, Y1, Y2, task_2_weight=1):
     logitsa = tf.transpose(Z3a)
     labels1 = tf.transpose(Y1)
     cost1 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logitsa, labels=labels1))
     cost2 = tf.nn.l2_loss(Y2 - Z3b)
-    # tf.shape(logitsa)
-    cost = cost1+(task_2_weight*cost2/num_unsel_feats)
+    cost = cost1+(task_2_weight*(cost2))
     return cost
 
 tf.reset_default_graph()
@@ -132,12 +125,11 @@ def model(setting, X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2, dims, 
     (n_x, m) = X_train.shape  # (n_x: input size, m : number of examples in the train set)
     n_y1 = Y_train1.shape[0]  # n_y : output size
     n_y2 = Y_train2.shape[0]  # n_y : output size
-    print(n_y2)
     costs = []  # To keep track of the cost
     X, Y1, Y2 = create_placeholders(n_x, n_y1, n_y2)
-    parameters = initialize_parameters(dims, n_y2, num_hidden_units)
+    parameters = initialize_parameters(dims, num_unsel_feats, num_hidden_units)
     Z3a, Z3b = forward_propagation(X, parameters) #fwd prop
-    cost = compute_cost(Z3a, Z3b, Y1, Y2,n_y2,task_2_weight)
+    cost = compute_cost(Z3a, Z3b, Y1, Y2,task_2_weight)
     optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost) #bck prop
     init = tf.global_variables_initializer()
     with tf.Session() as sess:
@@ -178,37 +170,23 @@ def model(setting, X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2, dims, 
 
         return parameters
 
-# num_hidden_units = 3200
-# rate = 0.0001
-# weight = 1
-# featsel='chi2'
 
-# for num_unsel_feats in [item for item in range (1000,2200,100)]:
-# # for num_unsel_feats in [1,2,3]+[item for item in range(10,300,10)]:
-# # for num_unsel_feats in ['all']:
-#     print ('num unsel feats',num_unsel_feats)
-#     with open(get_full_path('Desktop/Privileged_Data/MTL_{}_results/MTLresultsfile-{}units-weight{}-numfeats={}-learnrate{}.csv'
-#                                     .format(featsel.upper(),num_hidden_units,weight,num_unsel_feats,rate)), 'a') as results_file:
-#         for datasetnum in range(295):
-#             print('\n')
-#             s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-#                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-#                                    take_top_t='top', lupimethod='svmplus',
-#                                    featsel=featsel, classifier='lufe', stepsize=0.1)
-#             x_tr, x_te, y_tr1, y_te1, y_tr2, y_te2=get_tech_data(s,num_unsel_feats)
-#             dims = x_tr.shape[0]
-#             parameters = model(s, x_tr, y_tr1, y_tr2, x_te, y_te1, y_te2,  dims, num_unsel_feats,results_file,task_2_weight=weight,num_hidden_units=num_hidden_units, learning_rate=rate)
+num_hidden_units = 3200
+num_unsel_feats =300
+rate = 0.0001
+weight = 0.0000001
 
-def run_mtl(num_hidden_units, rate, weight, featsel, num_unsel_feats, foldnum, num_datasets=295):
-    for datasetnum in range(num_datasets):
-        with open(get_full_path('Desktop/Privileged_Data/MTL_{}_results/MTLresultsfile-{}units-weight{}-numfeats={}-learnrate{}-fold{}.csv'
-                                        .format(featsel.upper(),num_hidden_units,weight,num_unsel_feats,rate,foldnum)), 'a') as results_file:
-            s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-                                   cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-                                   take_top_t='top', lupimethod='svmplus',
-                                   featsel=featsel, classifier='lufe', stepsize=0.1)
-            x_tr, x_te, y_tr1, y_te1, y_tr2, y_te2 = get_tech_data(s, num_unsel_feats)
-            dims = x_tr.shape[0]
-            parameters = model(s, x_tr, y_tr1, y_tr2, x_te, y_te1, y_te2, dims, num_unsel_feats, results_file,
-                               task_2_weight=weight, num_hidden_units=num_hidden_units, learning_rate=rate)
-run_mtl(3200, 0.0001, 1, 'chi2', 10, 1)
+with open(get_full_path('Desktop/Privileged_Data/MTLresults/MTLresultsfile-{}units-weight{}-numfeats={}-learnrate{}.csv'
+                                .format(num_hidden_units,weight,num_unsel_feats,rate)), 'a') as results_file:
+    for datasetnum in range(295):
+        print('\n')
+        s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+                               cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+                               take_top_t='top', lupimethod='svmplus',
+                               featsel='rfe', classifier='lufe', stepsize=0.1)
+        x_tr, x_te, y_tr1, y_te1, y_tr2, y_te2=get_tech_data(s,num_unsel_feats)
+        dims = x_tr.shape[0]
+        parameters = model(s, x_tr, y_tr1, y_tr2, x_te, y_te1, y_te2,  dims, num_unsel_feats,results_file,task_2_weight=weight,num_hidden_units=num_hidden_units, learning_rate=rate)
+
+
+

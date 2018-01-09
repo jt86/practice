@@ -39,6 +39,9 @@ def load_dataset_from_name(dataset,datasetnum):
     return class0_data,class1_data
 
 
+
+
+
 def get_train_and_test_this_fold(s):	#N,test_N per class
 
     class0_data, class1_data = load_dataset_from_name(s.dataset, s.datasetnum)
