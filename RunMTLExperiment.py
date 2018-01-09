@@ -1,12 +1,12 @@
 import argparse
 from pprint import pprint
-
-
-
-num_hidden_units = 3200
-rate = 0.0001
-weight = 1
-featsel='chi2'
+from MTLfromCoursera import run_mtl
+from SingleFoldSlice import Experiment_Setting
+#
+# num_hidden_units = 3200
+# rate = 0.0001
+# weight = 1
+# featsel='chi2'
 
 # for num_unsel_feats in [item for item in range (1000,2200,100)]:
 
@@ -30,13 +30,12 @@ if __name__ == '__main__':
     # parser.add_argument('--numdatasets', type=int, help = 'number of datasets')
 
     args = parser.parse_args()
-    print('input is', args.dataset)
     print(' all args',args)
 
+    #
+    # s = Experiment_Setting(foldnum=args.foldnum, topk=args.topk, dataset=args.dataset, datasetnum=args.datasetnum,
+    #                        kernel=args.kernel, cmin = args.cmin, cmax= args.cmax, numberofcs=args.numberofcs, skfseed=args.skfseed,
+    #                        percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances,
+    #                        take_top_t=args.taketopt, lupimethod=args.lupimethod, featsel=args.featsel, classifier=args.classifier, stepsize=args.stepsize)
 
-    s = Experiment_Setting(foldnum=args.foldnum, topk=args.topk, dataset=args.dataset, datasetnum=args.datasetnum,
-                           kernel=args.kernel, cmin = args.cmin, cmax= args.cmax, numberofcs=args.numberofcs, skfseed=args.skfseed,
-                           percent_of_priv=args.percentofpriv, percentageofinstances=args.percentageofinstances,
-                           take_top_t=args.taketopt, lupimethod=args.lupimethod, featsel=args.featsel, classifier=args.classifier, stepsize=args.stepsize)
-    single_fold(s)
-
+    run_mtl(args.numhiddenunits, args.rate, args.weight, args.featselector, args.numunselfeats, args.foldnum)
