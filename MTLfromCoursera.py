@@ -63,6 +63,7 @@ def random_mini_batches(X, Y1, Y2, mini_batch_size=64, seed=0):
     # Step 2: Partition (shuffled_X, shuffled_Y). Minus the end case.
     num_complete_minibatches = math.floor(
         m / mini_batch_size)  # number of mini batches of size mini_batch_size in your partitionning
+    print('mini_batch_size', mini_batch_size, 'num_complete_minibatches',num_complete_minibatches)
     for k in range(0, num_complete_minibatches):
         mini_batch_X = shuffled_X[:, k * mini_batch_size: k * mini_batch_size + mini_batch_size]
         mini_batch_Y1 = shuffled_Y1[:, k * mini_batch_size: k * mini_batch_size + mini_batch_size]
