@@ -146,6 +146,7 @@ def model(setting, X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2, dims, 
             epoch_cost = 0.
             num_minibatches = int(m / minibatch_size)
             seed = seed + 1
+            print(X_train, Y_train1, Y_train2, minibatch_size, seed)
             minibatches = random_mini_batches(X_train, Y_train1, Y_train2, minibatch_size, seed)
             for minibatch in minibatches:
                 (minibatch_X, minibatch_Y1, minibatch_Y2) = minibatch
