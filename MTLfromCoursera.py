@@ -62,7 +62,6 @@ def random_mini_batches(X, Y1, Y2, mini_batch_size=64, seed=0):
 
     # Step 2: Partition (shuffled_X, shuffled_Y). Minus the end case.
     num_complete_minibatches = int(m // mini_batch_size)
-    print('mini_batch_size', mini_batch_size, 'num_complete_minibatches',num_complete_minibatches)
     for k in range(0, num_complete_minibatches):
         mini_batch_X = shuffled_X[:, k * mini_batch_size: k * mini_batch_size + mini_batch_size]
         mini_batch_Y1 = shuffled_Y1[:, k * mini_batch_size: k * mini_batch_size + mini_batch_size]
@@ -146,7 +145,6 @@ def model(setting, X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2, dims, 
             epoch_cost = 0.
             num_minibatches = int(m / minibatch_size)
             seed = seed + 1
-            print(X_train, Y_train1, Y_train2, minibatch_size, seed)
             minibatches = random_mini_batches(X_train, Y_train1, Y_train2, minibatch_size, seed)
             for minibatch in minibatches:
                 (minibatch_X, minibatch_Y1, minibatch_Y2) = minibatch
