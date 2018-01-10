@@ -16,20 +16,26 @@ options['show_progress'] = False
 
 
 
-def svmplusQP(X,Y,Xstar,C,Cstar):
+def svmplusQP(X,Y,Xstar,C,Cstar, kernel):
     n = X.shape[0]
     Y.shape = n,1
-    # Compute kernel matrices
-    #dk = CRBFKernel();
-    #dkstar = CRBFKernel();
-    #dK = dk.Dot(X, X)
-    #dKstar = dkstar.Dot(Xstar, Xstar)
-    #omega_K = 1.0 / np.median(dK.flatten())
-    #omega_Kstar = 1.0 / np.median(dKstar.flatten())	
-    
-    kernel_K = CLinearKernel() #CGaussKernel(omega_K)
-    kernel_Kstar = CLinearKernel() #CGaussKernel(omega_Kstar)
-    
+
+    if kernel=='linear':
+        kernel_K = CLinearKernel() #CGaussKernel(omega_K)
+        kernel_Kstar = CLinearKernel() #CGaussKernel(omega_Kstar)
+
+    if kernel=='rbf':
+        # Compute kernel matrices
+        dk = CRBFKernel();
+        dkstar = CRBFKernel();
+        dK = dk.Dot(X, X)
+        dKstar = dkstar.Dot(Xstar, Xstar)
+        omega_K = 1.0 / np.median(dK.flatten())
+        omega_Kstar = 1.0 / np.median(dKstar.flatten())
+        kernel_K = CGaussKernel(omega_K)
+        kernel_Kstar = CGaussKernel(omega_Kstar)
+
+
     K = kernel_K.Dot(X,X) 
     Kstar = kernel_Kstar.Dot(Xstar,Xstar)
     #pdb.set_trace()

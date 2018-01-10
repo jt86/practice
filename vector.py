@@ -1269,7 +1269,7 @@ class CRBFKernel(CVectorKernel):
         # blocking
         lower_limit = 0
         upper_limit = 0
-        for i in range(nb):
+        for i in range(int(nb)):
             upper_limit = upper_limit + self._blocksize
             output[lower_limit:upper_limit,] = numpy.transpose(numpy.dot(x2, numpy.transpose(x1[lower_limit:upper_limit,])))
             self.KappaSqDis(output[lower_limit:upper_limit,], output[lower_limit:upper_limit,], dot_x1[lower_limit:upper_limit], dot_x2)

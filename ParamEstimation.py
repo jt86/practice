@@ -126,7 +126,7 @@ def get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_fold
         for Cstar_index, Cstar in enumerate(s.cvalues):
             for C_index, C in enumerate(s.cvalues):
                 # print('cstar', Cstar,'c index',C_index,'c',C)
-                duals,bias = svmplusQP(normal_train[train], labels_train[train].copy(), priv_train[train], C, Cstar)
+                duals,bias = svmplusQP(normal_train[train], labels_train[train].copy(), priv_train[train], C, Cstar, s.kernel)
                 predictions = svmplusQP_Predict(normal_train[train], normal_train[test], duals, bias).flatten()
                 ACC = np.sum(labels_train[test] == np.sign(predictions)) / (1. * len(labels_train[test]))
                 cv_scores[Cstar_index,C_index] += ACC
