@@ -212,4 +212,4 @@ def run_mtl(num_hidden_units, rate, weight, featsel, num_unsel_feats, foldnum, n
                                task_2_weight=weight, num_hidden_units=num_hidden_units, learning_rate=rate)
 
 
-# run_mtl(3200, 0.0001, 1, 'chi2', 10, 1)
+# run_mtl(3200, 0.0001, 1, 'bahsic', 10, 1)
