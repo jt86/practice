@@ -1,5 +1,5 @@
 from CollateResults import collate_all_datasets
-from SingleFoldSlice import Experiment_Setting
+from ExperimentSetting import Experiment_Setting
 import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns

@@ -9,7 +9,7 @@ from scipy import stats
 import matplotlib.cm as cm
 import csv
 import pandas
-
+from ExperimentSetting import Experiment_Setting
 num_repeats = 10
 num_folds = 10
 method = 'RFE'
@@ -17,6 +17,11 @@ dataset='tech'
 percentofinstances=100
 toporbottom='top'
 step=0.1
+
+########
+# Code from when I was saving in separate files, then re-saving into collated NP arrays
+########
+
 
 class Setting:
     def __init__(self,num_datasets,classifier_type,n_top_feats,c_value,percent_of_priv,featsel):

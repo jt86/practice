@@ -1,7 +1,7 @@
 import argparse
 from pprint import pprint
-from MTLfromCoursera import run_mtl
-# from SingleFoldSlice import Experiment_Setting
+from MultitaskLearning import run_mtl
+from ExperimentSetting import Experiment_Setting
 #
 # num_hidden_units = 3200
 # rate = 0.0001
@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--featselector', type=str,  help='feature selection method used')
 
-    parser.add_argument('--numunselfeats', type=int, help = 'the number of unselected features')
+    parser.add_argument('--numunselfeats', help = 'the number of unselected features')
 
     parser.add_argument('--foldnum', type=int)
 

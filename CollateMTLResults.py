@@ -4,8 +4,7 @@ import csv
 import pandas
 import numpy as np
 from CollateResults import collate_single_dataset,collate_all_datasets
-from SingleFoldSlice import Experiment_Setting
-from matplotlib import pyplot as plt
+from ExperimentSetting import Experiment_Setting
 from matplotlib import pyplot as plt
 import sys
 
@@ -86,6 +85,44 @@ def collate_for_multiple_settings(weight,featsel):
     return np.array(list_of_featnums),np.array(list_of_results)
 
 
+####################
+####################
+####################
+
+
+weight=1
+num_unsel_feats=300
+featsel = 'RFE'
+mtl_300_results =collate_nn_single_file('MTLresultsfile-3200units-weight{}-numfeats={}-learnrate0.0001'.format(weight, num_unsel_feats), featsel)
+# plt.plot(range(295),sorted_results)
+# plt.plot(range(295),rfe_lufe_results[indices])
+# print(sorted_results)
+
+# plt.plot(range(295),sorted_results-rfe_lufe_results)
+plt.show()
+improvements_list = mtl_300_results - rfe_lufe_results
+print(len(np.where(improvements_list>0)[0]))
+print(len(np.where(improvements_list<0)[0]))
+print(len(np.where(improvements_list==0)[0]))
+# plt.bar(range(295),improvements_list)
+plt.bar(range(295),mtl_300_results, color='blue')
+plt.bar(np.array(range(295))+0.5,rfe_lufe_results, color='red')
+
+ax = plt.subplot(111)
+ax.bar(x-0.2, y,width=0.2,color='b',align='center')
+ax.bar(x, z,width=0.2,color='g',align='center')
+ax.bar(x+0.2, k,width=0.2,color='r',align='center')
+ax.xaxis_date()
+
+
+plt.show()
+sys.exit()
+
+
+####################
+####################
+####################
+
 # list_of_featnums,list_of_results =collate_for_multiple_settings(weight=0.0001,featsel='RFE-notnormed')
 # list_of_featnums2,list_of_results2 =collate_for_multiple_settings(weight=0.001,featsel='RFE-notnormed')
 # list_of_featnums3,list_of_results3 =collate_for_multiple_settings(weight=0.01,featsel='RFE-notnormed')
@@ -145,3 +182,5 @@ plt.title('Effect of number of unselected features on MTL neural nets\n classifi
 plt.legend(loc='best')
 plt.savefig(get_full_path('Desktop/Privileged_Data/MTLresults/NNResults2'))
 plt.show()
+
+

@@ -116,7 +116,28 @@ def get_best_params_svmu(setting, normal_train, labels_train, priv_train, cross_
 #     print('cross valid scores:\n',cv_scores,'=> best C',best_C, 'best gamma',best_gamma,'best delta',best_delta)
 #     return best_C, best_gamma, best_delta
 
+def get_best_C_Cstar_omega_omegastar(s, normal_train, labels_train, priv_train, cross_val_folder2):
+    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=s.foldnum)
+    cv_scores = np.zeros((len(s.cvalues),len(s.cvalues),len(s.cvalues),len(s.cvalues)))	#join cross validation on X, X*
+    print ('cv scores shape',cv_scores.shape)
+    for i,(train, test) in enumerate(cv):
+        for Cstar_index, Cstar in enumerate(s.cvalues):
+            for C_index, C in enumerate(s.cvalues):
+                for omegastar_index, omegastar in enumerate(s.cvalues):
+                    for omega_index, omega in enumerate(s.cvalues):
+                        # print('cstar', Cstar,'c index',C_index,'c',C)
+                        duals,bias = svmplusQP(normal_train[train], labels_train[train].copy(), priv_train[train], C, Cstar, s.kernel, omega, omegastar)
+                        predictions = svmplusQP_Predict(normal_train[train], normal_train[test], duals, bias).flatten()
+                        ACC = np.sum(labels_train[test] == np.sign(predictions)) / (1. * len(labels_train[test]))
+                        cv_scores[Cstar_index,C_index,omegastar_index,omega_index] += ACC
+                        sys.stdout.flush()
+    cv_scores = cv_scores/cv.n_folds
 
+    best_C, best_Cstar, best_omega, best_omegastar = select_highest_score(s.cvalues, cv_scores)
+    with open(os.path.join(cross_val_folder2, 'Cstar-crossvalid-{}-{}.txt'.format(s.datasetnum, s.topk)), 'a') as cross_validation_doc:
+        cross_validation_doc.write("\n{} => bestC={},bestC*={}".format(cv_scores,best_C,best_Cstar))
+    print('cross valid scores:\n',cv_scores,'=> best C*=',best_Cstar, 'bestC=',best_C, 'best omega*=',best_omegastar, 'bestomega=',best_omega)
+    return best_C, best_Cstar, best_omega, best_omegastar
 
 def get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_folder2):
     cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=s.foldnum)
@@ -173,3 +194,5 @@ def select_highest_score(cvalues, scores):
         return cvalues[index_of_best]
     if len(scores.shape) == 2:
         return cvalues[index_of_best[1]], cvalues[index_of_best[0]]
+    if len(scores.shape) == 4:
+        return cvalues[index_of_best[1]], cvalues[index_of_best[0]],cvalues[index_of_best[3]], cvalues[index_of_best[2]]

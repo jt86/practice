@@ -11,10 +11,8 @@ import os
 
 # print os.environ['HOME']
 
-import numpy as np
-from sklearn.metrics import accuracy_score
 from SVMplus import svmplusQP, svmplusQP_Predict
-from ParamEstimation import get_best_params, get_best_CandCstar, get_best_params_dp2
+from ParamEstimation import get_best_params, get_best_CandCstar, get_best_params_dp2, get_best_C_Cstar_omega_omegastar
 from sklearn import svm
 from Get_Full_Path import get_full_path
 from sklearn.feature_selection import RFE
@@ -34,7 +32,7 @@ import socket
 sys.path.append('bahsic')
 # print(sys.path)
 from bahsic import CBAHSIC,vector
-
+from ExperimentSetting import Experiment_Setting
 
 # from sklearn.feature_selection import mutual_info_classif
 from pprint import pprint
@@ -103,6 +101,16 @@ def svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test
     lupi_predictions = svmplusQP_Predict(normal_train, normal_test, duals, bias).flatten()
     accuracy_lupi = np.sum(labels_test == np.sign(lupi_predictions)) / (1. * len(labels_test))
     save_scores(s, accuracy_lupi, cross_val_folder)
+
+
+def svm_plus_nonlin_crossval(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
+    c_svm_plus, c_star_svm_plus, omega, omegastar = get_best_C_Cstar_omega_omegastar(s, normal_train, labels_train, priv_train, cross_val_folder)
+    duals, bias = svmplusQP(normal_train, labels_train.copy(), priv_train, c_svm_plus, c_star_svm_plus, s.kernel, omega, omegastar)
+    lupi_predictions = svmplusQP_Predict(normal_train, normal_test, duals, bias).flatten()
+    accuracy_lupi = np.sum(labels_test == np.sign(lupi_predictions)) / (1. * len(labels_test))
+    save_scores(s, accuracy_lupi, cross_val_folder)
+
+
 
 def do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
     priv_train = get_priv_subset(priv_train, s.take_top_t, s.percent_of_priv)
@@ -331,15 +339,15 @@ def single_fold(s):
     pprint(vars(s))
     print('{}% of train instances; {}% of discarded feats used as priv'.format(s.percentageofinstances,s.percent_of_priv))
     np.random.seed(s.foldnum)
-    output_directory = get_full_path(('Desktop/Privileged_Data/AllResults/{}/{}/{}{}/').format(s.kernel, s.name,s.dataset, s.datasetnum))
-
+    output_directory = get_full_path(('Desktop/Privileged_Data/AllResults/{}/{}/{}/{}{}/')
+                                     .format(s.dataset,s.kernel, s.name,s.dataset, s.datasetnum))
     make_directory(output_directory)
 
     all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
     all_train, labels_train = take_subset(s, all_train, labels_train, s.percentageofinstances)
 
-    if s.dataset != 'tech':
-        s.topk = (all_train.shape[1]*s.topk)//100
+    # if s.dataset != 'tech':
+    #     s.topk = (all_train.shape[1]*s.topk)//100
     print('all train',all_train.shape[1])
     print('topk',s.topk)
     # sys.exit()
@@ -365,6 +373,8 @@ def single_fold(s):
         normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
         if s.classifier == 'lufe':
             do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
+        if s.classifier == 'lufenonlincrossval':
+            svm_plus_nonlin_crossval(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
         if s.classifier == 'lufereverse':
             do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, output_directory)
         if s.classifier == 'svmreverse':
@@ -380,110 +390,48 @@ def single_fold(s):
 ##################################################################################################
 
 
+# TEST
 
-class Experiment_Setting:
-    def __init__(self, classifier, datasetnum, lupimethod, featsel, stepsize=0.1, foldnum='all', topk=300, dataset='tech', skfseed=1, kernel='linear',
-                 cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances=100, take_top_t='top'):
-
-        assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse','luferandom','lufeshuffle', 'svmtrain','lufetrain']
-        assert lupimethod in ['nolufe','svmplus','dp','dsvm'], 'lupi method must be nolufe, svmplus or dp'
-        assert featsel in ['nofeatsel','rfe','mi','anova','chi2','bahsic'], 'feat selection method not valid'
-
-        self.foldnum = foldnum
-        self.topk = topk
-        self.dataset = dataset
-        self.datasetnum = datasetnum
-        self.kernel = kernel
-        # self.cvalues = np.logspace(*[int(item)for item in cvalues.split('a')])
-        self.cvalues = (np.logspace(cmin,cmax,numberofcs))
-        self.skfseed = skfseed
-        self.percent_of_priv = percent_of_priv
-        self.percentageofinstances = percentageofinstances
-        self.take_top_t = take_top_t
-        self.lupimethod =lupimethod
-        self.stepsize = stepsize
-        self.featsel = featsel
-        self.classifier = classifier
-
-
-        # if self.classifier == 'baseline':
-        #     self.lupimethod='nolufe'
-        #     self.featsel='nofeatsel'
-        #     self.topk='all'
-        # if self.classifier == 'featsel' or 'svmreverse':
-        #     self.lupimethod='nolufe'
-
-        if stepsize==0.1:
-            self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
-                                                          self.take_top_t, self.percent_of_priv)
-        elif percentageofinstances != 100:
-            self.name = '{}-{}-{}-{}selected-{}{}priv-{}instances'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
-                                                          self.take_top_t, self.percent_of_priv, self.percentageofinstances)
-        else:
-            self.name = '{}-{}-{}-{}selected-{}{}priv-{}'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
-                                                          self.take_top_t, self.percent_of_priv, self.stepsize)
-
-        if self.dataset!='tech':
-            self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
-                                                              self.take_top_t, self.percent_of_priv)
-    def print_all_settings(self):
-        pprint(vars(self))
-        # print(self.k,self.top)
-#
-
-# classifier = 'featselector'
-# for featsel in ['bahsic']:
-#     for foldnum in range(2):
-#         for dataset in ['arcene','madelon','gisette','dexter','dorothea']:
-#             setting = Experiment_Setting(classifier,0,'nolufe', featsel, foldnum=foldnum,dataset=dataset)
-#             single_fold(setting)
-
-
-# for datasetnum in range(280,295):
-#     for foldnum in range(10):
-#         setting = Experiment_Setting(foldnum, 300, 'tech', datasetnum, 'nolufe', 'bahsic', 1, 'featselector')
-#         single_fold(setting)
-
-#
-# for datasetnum in range(40):
-#     for i in range(10):
-#         setting = Experiment_Setting(foldnum=i, topk=10, dataset='tech', datasetnum=datasetnum, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
-#                                      percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod='dp', featsel='mi', classifier='lufe')
-#         setting.print_all_settings()
-#         single_fold(setting)
-
-# data = (np.load('/Volumes/LocalDataHD/j/jt/jt306/Desktop/SavedIndices/top300RFE/tech0-0-0.npy'))
-# # cvalues = '-3a3a7'
-# # print([int(item)for item in cvalues.split('a')])
-# seed = 1
-# dataset='tech'
-# top_k = 30
-# take_top_t ='top'
-# percentofpriv = 100
-#
-
-
+# for foldnum in range(9):
+    # for datasetnum in range(295):
+    #     s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='rbf',
+    #                            cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+    #                            take_top_t='top', lupimethod='svmplus',
+    #                            featsel='rfe', classifier='lufe', stepsize=0.1)
+    #
+    #     single_fold(s)
 
 #
 # for foldnum in range(10):
-#     for lupimethod in ['dp','svmplus']:
-#         for featsel in ['rfe']:
-#             for datasetnum in range (259,295): #5
-#                 setting = Experiment_Setting(k=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-#                          cmin=-3,cmax=3,numberofcs=7, skfseed=0, percent_of_priv=100, percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,
-#                          featsel=featsel)
-#                 break
-#                 # single_fold(setting)
-
-# TEST
-
-
-
-# s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=0, kernel='rbf',
-#          cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=10, take_top_t='top', lupimethod='svmplus',
-#          featsel='rfe',classifier='lufe',stepsize=0.1)
+#     s = Experiment_Setting(foldnum=foldnum, topk='all', dataset='bbc', datasetnum=0, kernel='linear',
+#                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+#                                    take_top_t='top', lupimethod='nolufe',
+#                                    featsel='nofeatsel', classifier='baseline', stepsize=0.1)
+#     single_fold(s)
 #
+#     s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='bbc', datasetnum=0, kernel='linear',
+#                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+#                                    take_top_t='top', lupimethod='nolufe',
+#                                    featsel='rfe', classifier='featselector', stepsize=0.1)
+#     single_fold(s)
+#
+#     s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='bbc', datasetnum=0, kernel='linear',
+#                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+#                                    take_top_t='top', lupimethod='svmplus',
+#                                    featsel='rfe', classifier='lufe', stepsize=0.1)
+#     single_fold(s)
+#
+
+# for datasetnum in range(295):
+#     for foldnum in range(9,10):
+#         s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='rbf',
+#                                        cmin=-3, cmax=3, numberofcs=3, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+#                                        take_top_t='top', lupimethod='svmplus',
+#                                        featsel='rfe', classifier='lufenonlincrossval', stepsize=0.1)
+#         single_fold(s)
+
+s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=74, kernel='rbf',
+                               cmin=-3, cmax=3, numberofcs=3, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+                               take_top_t='top', lupimethod='svmplus',
+                               featsel='rfe', classifier='lufenonlincrossval', stepsize=0.1)
 # single_fold(s)
-
-
-

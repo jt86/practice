@@ -16,7 +16,7 @@ options['show_progress'] = False
 
 
 
-def svmplusQP(X,Y,Xstar,C,Cstar, kernel):
+def svmplusQP(X,Y,Xstar,C,Cstar, kernel, omega_K=None, omega_Kstar=None):
     n = X.shape[0]
     Y.shape = n,1
 
@@ -30,8 +30,10 @@ def svmplusQP(X,Y,Xstar,C,Cstar, kernel):
         dkstar = CRBFKernel();
         dK = dk.Dot(X, X)
         dKstar = dkstar.Dot(Xstar, Xstar)
-        omega_K = 1.0 / np.median(dK.flatten())
-        omega_Kstar = 1.0 / np.median(dKstar.flatten())
+        if omega_K==None:
+            omega_K = 1.0 / np.median(dK.flatten())
+        if omega_Kstar == None:
+            omega_Kstar = 1.0 / np.median(dKstar.flatten())
         kernel_K = CGaussKernel(omega_K)
         kernel_Kstar = CGaussKernel(omega_Kstar)
 

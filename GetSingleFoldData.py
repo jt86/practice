@@ -18,13 +18,16 @@ import sklearn
 import os.path
 from os import mkdir
 from GetFeatSelectionData import get_arcene_data, get_madelon_data, get_gisette_data, get_dexter_data, get_dorothea_data
-
+from ReadInBBC import get_bbc_data
 print('The scikit-learn version is {}.'.format(sklearn.__version__))
 #
 def load_dataset_from_name(dataset,datasetnum):
     if dataset=='tech':
          class0_data = np.load(get_full_path("Desktop/Privileged_Data/SavedDatasets/{}/{}positive.npy".format(dataset,datasetnum)))
          class1_data = np.load(get_full_path("Desktop/Privileged_Data/SavedDatasets/{}/{}negative.npy".format(dataset,datasetnum)))
+
+    if dataset=='bbc':
+        class0_data, class1_data = get_bbc_data()
 
     if dataset == 'arcene':
         class0_data, class1_data = get_arcene_data()
@@ -213,3 +216,5 @@ def save_train_test_indices(dataset,datasetnum):
 
 # for dataset in ['arcene','madelon','gisette','dexter','dorothea']:
 #     save_train_test_indices(dataset, 0)
+
+# save_train_test_indices('bbc',0)

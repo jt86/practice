@@ -1,6 +1,7 @@
 import argparse
 # from SingleFoldSliceUnivariate import single_fold
-from SingleFoldSlice import single_fold, Experiment_Setting
+from SingleFoldSlice import single_fold
+from ExperimentSetting import Experiment_Setting
 # from GetMI import single_fold# from SingleFold_dSVM_normalised import single_fold
 # from SingleFoldUnivariate import single_fold
 # from SingleFoldSlice import save_instance_and_feature_indices_for_R, save_dataset_for_R

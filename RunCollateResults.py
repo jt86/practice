@@ -1,6 +1,6 @@
 import numpy as np
-from CollateResults import plot_bars, Experiment_Setting, collate_all_datasets,get_lufe_improvements_per_fold
-
+from CollateResults import plot_bars, collate_all_datasets,get_lufe_improvements_per_fold
+from ExperimentSetting import Experiment_Setting
 
 s1 = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1,
                                   take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
