@@ -224,6 +224,6 @@ def run_mtl(num_hidden_units, rate, weight, featsel, num_unsel_feats, foldnum, n
             dims = x_tr.shape[0]
             parameters = model(s, x_tr, y_tr1, y_tr2, x_te, y_te1, y_te2, dims, num_unsel_feats, results_file,
                                task_2_weight=weight, num_hidden_units=num_hidden_units, learning_rate=rate)
-
-for featsel in ['anova','bahsic','chi2','mi']:
-    run_mtl(3200, 0.0001, 1, featsel, 300, 9)
+#
+# for featsel in ['anova','bahsic','chi2','mi']:
+#     run_mtl(3200, 0.0001, 1, featsel, 300, 9)

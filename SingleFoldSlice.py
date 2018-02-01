@@ -430,8 +430,8 @@ def single_fold(s):
 #                                        featsel='rfe', classifier='lufenonlincrossval', stepsize=0.1)
 #         single_fold(s)
 
-s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=74, kernel='rbf',
-                               cmin=-3, cmax=3, numberofcs=3, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-                               take_top_t='top', lupimethod='svmplus',
-                               featsel='rfe', classifier='lufenonlincrossval', stepsize=0.1)
+# s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=74, kernel='rbf',
+#                                cmin=-3, cmax=3, numberofcs=3, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+#                                take_top_t='top', lupimethod='svmplus',
+#                                featsel='rfe', classifier='lufenonlincrossval', stepsize=0.1)
 # single_fold(s)
