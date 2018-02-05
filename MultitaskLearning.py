@@ -36,6 +36,8 @@ def get_tech_data(s,num_unsel_feats=300):
     print(priv_train.shape[1])
     if num_unsel_feats == 'all':
         num_unsel_feats = priv_train.shape[1]
+    else:
+        num_unsel_feats = int(num_unsel_feats)
     print(num_unsel_feats)
     # x_tr, x_te = normal_train[:,:400], normal_test[:,:400]
     y_tr1 = convert_to_one_hot(y_train,2)
