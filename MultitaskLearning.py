@@ -219,7 +219,7 @@ def run_mtl(num_hidden_units, rate, weight, featsel, num_unsel_feats, foldnum, n
         with open(get_full_path('Desktop/Privileged_Data/MTL_{}_results/MTLresultsfile-{}units-weight{}-numfeats={}-learnrate{}-fold{}.csv'
                                         .format(featsel.upper(),num_hidden_units,weight,num_unsel_feats,rate,foldnum)), 'a') as results_file:
             s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-                                   cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+                                   cmin=-2, cmax=2, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
                                    take_top_t='top', lupimethod='svmplus',
                                    featsel=featsel, classifier='lufe', stepsize=0.1)
             x_tr, x_te, y_tr1, y_te1, y_tr2, y_te2 = get_tech_data(s, num_unsel_feats)

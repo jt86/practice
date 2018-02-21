@@ -58,11 +58,10 @@ def svmplusQP(X,Y,Xstar,C,Cstar, kernel, omega_K=None, omega_Kstar=None):
     G[0:n,0:n] = np.eye(n)
     G[n:2*n,0:n] = np.diag(np.r_[[-1.0]*n])
     G[n:2*n,n:2*n] = np.eye(n)
-
     
     h = matrix(0.0, (2*n,1))
     h[n:2*n] = np.r_[[C]*n]
-    
+
     sol = qp(matrix(P), matrix(Q), matrix(-1.0*G), matrix(h), matrix(A), matrix(b))['x']
     sol = np.array(sol)
     

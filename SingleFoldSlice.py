@@ -103,7 +103,7 @@ def svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test
     save_scores(s, accuracy_lupi, cross_val_folder)
 
 
-def svm_plus_nonlin_crossval(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
+def svm_plus_rbfcv(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
     c_svm_plus, c_star_svm_plus, omega, omegastar = get_best_C_Cstar_omega_omegastar(s, normal_train, labels_train, priv_train, cross_val_folder)
     duals, bias = svmplusQP(normal_train, labels_train.copy(), priv_train, c_svm_plus, c_star_svm_plus, s.kernel, omega, omegastar)
     lupi_predictions = svmplusQP_Predict(normal_train, normal_test, duals, bias).flatten()
@@ -374,7 +374,7 @@ def single_fold(s):
         if s.classifier == 'lufe':
             do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
         if s.classifier == 'lufenonlincrossval':
-            svm_plus_nonlin_crossval(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
+            svm_plus_rbfcv(s, normal_train, labels_train, priv_train, normal_test, labels_test, output_directory)
         if s.classifier == 'lufereverse':
             do_lufe(s, priv_train, labels_train, normal_train, priv_test, labels_test, output_directory)
         if s.classifier == 'svmreverse':
@@ -403,7 +403,7 @@ def single_fold(s):
 
 #
 # for foldnum in range(10):
-#     s = Experiment_Setting(foldnum=foldnum, topk='all', dataset='bbc', datasetnum=0, kernel='linear',
+#     s = Expewriment_Setting(foldnum=foldnum, topk='all', dataset='bbc', datasetnum=0, kernel='linear',
 #                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
 #                                    take_top_t='top', lupimethod='nolufe',
 #                                    featsel='nofeatsel', classifier='baseline', stepsize=0.1)
@@ -423,15 +423,11 @@ def single_fold(s):
 #
 
 # for datasetnum in range(295):
-#     for foldnum in range(9,10):
+#     for foldnum in range(4):
 #         s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='rbf',
-#                                        cmin=-3, cmax=3, numberofcs=3, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+#                                        cmin=-2, cmax=2, numberofcs=3, skfseed=1, percent_of_priv=100, percentageofinstances=100,
 #                                        take_top_t='top', lupimethod='svmplus',
 #                                        featsel='rfe', classifier='lufenonlincrossval', stepsize=0.1)
 #         single_fold(s)
-
-# s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=74, kernel='rbf',
-#                                cmin=-3, cmax=3, numberofcs=3, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-#                                take_top_t='top', lupimethod='svmplus',
-#                                featsel='rfe', classifier='lufenonlincrossval', stepsize=0.1)
-# single_fold(s)
+#
+#

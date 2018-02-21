@@ -10,6 +10,8 @@ class Experiment_Setting:
         assert lupimethod in ['nolufe','svmplus','dp','dsvm'], 'lupi method must be nolufe, svmplus or dp'
         assert featsel in ['nofeatsel','rfe','mi','anova','chi2','bahsic'], 'feat selection method not valid'
 
+        self.cmin=cmin
+        self.cmax=cmax
         self.foldnum = foldnum
         self.topk = topk
         self.dataset = dataset
@@ -34,8 +36,13 @@ class Experiment_Setting:
         # if self.classifier == 'featsel' or 'svmreverse':
         #     self.lupimethod='nolufe'
 
+
         if stepsize==0.1:
-            self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
+            if self.classifier=='lufenonlincrossval':
+                self.name = '{}{}{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.cmin,self.cmax, self.lupimethod, self.featsel, self.topk,
+                                                          self.take_top_t, self.percent_of_priv)
+            else:
+                self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv)
         elif percentageofinstances != 100:
             self.name = '{}-{}-{}-{}selected-{}{}priv-{}instances'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
