@@ -1,0 +1,9 @@
+Dataset,0,Fold,2,Weight,1.0,Train,0.966804981232, Test,0.892857134342
+Dataset,1,Fold,2,Weight,1.0,Train,0.987341761589, Test,0.925925910473
+Dataset,2,Fold,2,Weight,1.0,Train,0.979757070541, Test,0.892857134342
+Dataset,3,Fold,2,Weight,1.0,Train,0.992307662964, Test,0.866666674614
+Dataset,4,Fold,2,Weight,1.0,Train,0.984615385532, Test,0.600000023842
+Dataset,5,Fold,2,Weight,1.0,Train,0.992957770824, Test,0.5625
+Dataset,6,Fold,2,Weight,1.0,Train,0.978102207184, Test,0.625
+Dataset,7,Fold,2,Weight,1.0,Train,0.984848499298, Test,0.733333349228
+Dataset,8,Fold,2,Weight,1.0,Train,0.950704216957, Test,0.647058844566
