@@ -30,7 +30,7 @@ def convert_to_one_hot(y_tr,C):
 
 def get_tech_data(s,num_unsel_feats=300):
 
-    print(s.datasetnum)
+    print(s.datasetnum, s.foldnum, s.featsel)
     x_train, x_test, y_train, y_test =  get_train_and_test_this_fold(s)
     normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,x_train,x_test)
     print(priv_train.shape[1])
@@ -38,7 +38,6 @@ def get_tech_data(s,num_unsel_feats=300):
         num_unsel_feats = priv_train.shape[1]
     else:
         num_unsel_feats = int(num_unsel_feats)
-    print(num_unsel_feats)
     # x_tr, x_te = normal_train[:,:400], normal_test[:,:400]
     y_tr1 = convert_to_one_hot(y_train,2)
     y_te1 = convert_to_one_hot(y_test,2)
@@ -216,7 +215,7 @@ def model(setting, X_train, Y_train1, Y_train2, X_test, Y_test1, Y_test2, dims, 
 
 def run_mtl(num_hidden_units, rate, weight, featsel, num_unsel_feats, foldnum, num_datasets=295):
     for datasetnum in range(num_datasets):
-        with open(get_full_path('Desktop/Privileged_Data/MTL_{}_results/MTLresultsfile-{}units-weight{}-numfeats={}-learnrate{}-fold{}.csv'
+        with open(get_full_path('Desktop/Privileged_Data/MTLResults/MTL_{}_results/MTLresultsfile-{}units-weight{}-numfeats={}-learnrate{}-fold{}.csv'
                                         .format(featsel.upper(),num_hidden_units,weight,num_unsel_feats,rate,foldnum)), 'a') as results_file:
             s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
                                    cmin=-2, cmax=2, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
@@ -227,5 +226,6 @@ def run_mtl(num_hidden_units, rate, weight, featsel, num_unsel_feats, foldnum, n
             parameters = model(s, x_tr, y_tr1, y_tr2, x_te, y_te1, y_te2, dims, num_unsel_feats, results_file,
                                task_2_weight=weight, num_hidden_units=num_hidden_units, learning_rate=rate)
 #
-# for featsel in ['anova','bahsic','chi2','mi']:
-#     run_mtl(3200, 0.0001, 1, featsel, 300, 9)
+for featsel in ['anova','bahsic','chi2','mi']:
+    for foldnum in range(10):
+        run_mtl(3200, 0.0001, 1, featsel, 300, foldnum)
