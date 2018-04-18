@@ -401,26 +401,26 @@ def single_fold(s):
     #
     #     single_fold(s)
 
-import time
-time0=time.time()
-for foldnum in range(10):
-#     s = Expewriment_Setting(foldnum=foldnum, topk='all', dataset='bbc', datasetnum=0, kernel='linear',
+# import time
+# time0=time.time()
+# for foldnum in range(10):
+# #     s = Expewriment_Setting(foldnum=foldnum, topk='all', dataset='bbc', datasetnum=0, kernel='linear',
+# #                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+# #                                    take_top_t='top', lupimethod='nolufe',
+# #                                    featsel='nofeatsel', classifier='baseline', stepsize=0.1)
+# #     single_fold(s)
+#     s = Experiment_Setting(foldnum=foldnum, topk=500, dataset='tech', datasetnum=0, kernel='linear',
 #                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
 #                                    take_top_t='top', lupimethod='nolufe',
-#                                    featsel='nofeatsel', classifier='baseline', stepsize=0.1)
+#                                    featsel='rfe', classifier='featselector', stepsize=0.1)
 #     single_fold(s)
-    s = Experiment_Setting(foldnum=foldnum, topk=500, dataset='tech', datasetnum=0, kernel='linear',
-                                   cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-                                   take_top_t='top', lupimethod='nolufe',
-                                   featsel='rfe', classifier='featselector', stepsize=0.1)
-    single_fold(s)
-    print(time.time()-time0)
-    s = Experiment_Setting(foldnum=foldnum, topk=500, dataset='tech', datasetnum=0, kernel='linear',
-                                   cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-                                   take_top_t='top', lupimethod='svmplus',
-                                   featsel='rfe', classifier='lufe', stepsize=0.1)
-    single_fold(s)
-    print(time.time()-time0)
+#     print(time.time()-time0)
+#     s = Experiment_Setting(foldnum=foldnum, topk=500, dataset='tech', datasetnum=0, kernel='linear',
+#                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+#                                    take_top_t='top', lupimethod='svmplus',
+#                                    featsel='rfe', classifier='lufe', stepsize=0.1)
+#     single_fold(s)
+#     print(time.time()-time0)
 
 # for datasetnum in range(295):
 #     for foldnum in range(4):

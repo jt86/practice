@@ -37,7 +37,7 @@ class Setting:
 
 def get_errors(setting):
     scores = get_scores(setting)
-    return (np.array([1-mean for mean in np.mean(scores,axis=1)])*100)
+    return (np.array([1-mean for mean in np.mean(scores,axis=1)]))
 
 
 def get_scores(setting):
@@ -103,7 +103,7 @@ def get_errors_single_fold(setting):
     if setting.featsel != '':
         featsel = '-{}'.format(setting.featsel)
     scores = np.load(get_full_path('Desktop/SavedNPArrayResults/{}/{}-{}-{}-{}-{}.npy'.format(dataset,setting.num_datasets,setting.classifier_type,setting.n_top_feats,setting.c_value,featsel)))
-    errors = np.array([1-score for score in scores])*100
+    errors = np.array([1-score for score in scores])
     return errors
 
 def compare_two_settings_ind_folds(setting_one, setting_two):

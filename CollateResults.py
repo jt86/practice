@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import pylab
 from sklearn.metrics import mutual_info_score
 from SingleFoldSlice import get_train_and_test_this_fold, get_norm_priv
+import seaborn
 
 def collate_single_dataset(s):
     '''
@@ -14,6 +15,7 @@ def collate_single_dataset(s):
     if there is a missing result, print the setting that is lacking
     '''
     results=np.zeros(10)
+    # print('kernel',s.kernel)
     output_directory = get_full_path(('Desktop/Privileged_Data/AllResults/{}/{}/{}/{}{}/').format(s.dataset,s.kernel,s.name,s.dataset, s.datasetnum))
     assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed))),'{} does not exist'.format(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
     with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
@@ -42,17 +44,21 @@ def collate_all_datasets(s,num_datasets=295):
         s.datasetnum=datasetnum
         all_results.append(collate_single_dataset(s))
     # print(s.name,1-np.mean(all_results))
-    return (np.array(all_results))
+    return (np.array(all_results)*100)
 
 
 
 def compare_two_settings(s1, s2):
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)*100
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)*100
+    setting_one = np.mean(collate_all_datasets(s1), axis=1)
+    setting_two = np.mean(collate_all_datasets(s2), axis=1)
     diffs_list = (setting_two-setting_one)
-    print(s1.name,np.mean(collate_all_datasets(s1)),s2.name,np.mean(collate_all_datasets(s2)))
-    print('{} : better {}; {} better: {}; equal: {}; mean improvement={}%'.format(s1.name,len(np.where(diffs_list > 0)[0]),
-          s2.name,len(np.where(diffs_list < 0)[0]),len(np.where(diffs_list==0)[0]),np.mean(diffs_list)))
+    worse = len(np.where(diffs_list < 0)[0])
+    better = len(np.where(diffs_list > 0)[0])
+    same = len(np.where(diffs_list == 0)[0])
+    mean = np.mean(diffs_list)
+    print(s1.name,s1.kernel,np.mean(collate_all_datasets(s1)),s2.name,s2.kernel,np.mean(collate_all_datasets(s2)))
+    print('{}{}: better {} ({:.1f}%); {}{} better: {}({:.1f}%); equal: {}({:.1f}%); mean improvement={:.1f}%'.format
+          (s2.classifier, s2.kernel,better,better/2.95, s1.classifier, s1.kernel, worse,worse/2.95, same, same/2.95,mean))
     print('& {} & {} & {}'.format(len(np.where(diffs_list< 0)[0]),len(np.where(diffs_list==0)[0]),len(np.where(diffs_list>0)[0])))
     return(diffs_list)
 
@@ -70,6 +76,8 @@ def get_graph_labels(s):
         name = 'LUFeReverse-{}-{}'.format(s.featsel.upper(), dict_of_settings[s.lupimethod])
     if s.classifier == 'svmreverse':
         name = '{}-SVMReverse'.format(s.featsel.upper())
+    if s.kernel=='rbf':
+        name+='rbf'
     return name
 
 
@@ -80,13 +88,13 @@ def plot_bars(s1, s2):
     name1, name2 = get_graph_labels(s1), get_graph_labels(s2)
     fig = plt.figure(figsize=(15, 10))
     plt.bar(range(len(improvements_list)),improvements_list[::-1], color='black')
-    # plt.title('{} VS {}\n Improvement by {} = {}%, {} of {} cases'.format(short1,short2,short1,round(np.mean(improvements_list)*100,2),len(np.where(improvements_list >= 0)[0]),len(improvements_list)))
+    # plt.title('{} VS {}\n Improvement by {} = {}%, {} of {} cases'.format(short1,short2,short1,round(np.mean(improvements_list),2),len(np.where(improvements_list >= 0)[0]),len(improvements_list)))
     plt.title('{} vs {}\n Improvement by {}: mean = {}%; {} of {} cases'.format(name1,name2,name2,round(np.mean(improvements_list),2),len(np.where(improvements_list > 0)[0]),len(improvements_list)))
     plt.ylabel('Difference in accuracy score (%)\n {} better <-----> {} better'.format(name1,name2))
     plt.xlabel('dataset index (sorted by improvement)')
     plt.ylim(-20,30)
-    plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/{}_VS_{}'.format(s2.featsel,name1,name2)))
-    plt.show()
+    plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/{}{}_VS_{}{}'.format(s2.featsel,name1,s1.topk,name2,s2.topk)))
+    # plt.show()
     #R
 
 # s1 = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1,
@@ -143,21 +151,22 @@ def get_mi_score(labels_train,data):
 
 
 def plot_total_comparison(s1, s2, s_baseline,num_datasets = 295):
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)*100
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)*100
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)*100
+    setting_one = np.mean(collate_all_datasets(s1), axis=1)
+    setting_two = np.mean(collate_all_datasets(s2), axis=1)
+    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)
     indices = np.argsort(baseline[:num_datasets])
     setting_one_scores=setting_one[indices]
     setting_two_scores = setting_two[indices]
     baseline_scores = baseline[indices]
-    plt.plot(range(num_datasets),setting_one_scores[:num_datasets],color='blue',label=get_graph_labels(s1))
-    plt.plot(range(num_datasets), setting_two_scores[:num_datasets],color='red',label=get_graph_labels(s2))
-    plt.plot(range(num_datasets), baseline_scores[:num_datasets], color='black', label=get_graph_labels(s_baseline))
+    fig = plt.figure(figsize=(8, 5.5))
+    plt.plot(range(num_datasets),setting_one_scores[:num_datasets],color='blue',label=get_graph_labels(s1),linewidth=1.)
+    plt.plot(range(num_datasets), setting_two_scores[:num_datasets],color='red',label=get_graph_labels(s2),linewidth=1.)
+    plt.plot(range(num_datasets), baseline_scores[:num_datasets], color='black', label=get_graph_labels(s_baseline),linewidth=1.)
     plt.ylabel('Accuracy score (%)')
     plt.xlabel('Dataset number (sorted by accuracy score of ALL setting)')
     plt.legend(loc='best')
-    plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/ALL_vs_{}_vs_{}'.format(s1.featsel, get_graph_labels(s1), get_graph_labels(s2))))
-    plt.show()
+    plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/ALL_vs_{}_vs_{}{}'.format(s1.featsel, get_graph_labels(s1), get_graph_labels(s2), s1.topk)))
+    # plt.show()
 
 
 
@@ -165,9 +174,9 @@ def plot_total_comparison2(s1, s2, s_baseline,num_datasets = 295):
     '''
     Plots settings 1 and 2, sorted by how much s1 improves over ALL
     '''
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)*100
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)*100
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)*100
+    setting_one = np.mean(collate_all_datasets(s1), axis=1)
+    setting_two = np.mean(collate_all_datasets(s2), axis=1)
+    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)
     improvements = setting_one-baseline
     indices = np.argsort(improvements[:num_datasets])
     setting_one_errors=setting_one[indices]-baseline[indices]
@@ -188,9 +197,9 @@ def plot_total_comparison3(s1, s2, s_baseline,num_datasets = 295):
     '''
     Plots the improvement of s2 over s1, sorted by how much s1 improves over ALL
     '''
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)*100
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)*100
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)*100
+    setting_one = np.mean(collate_all_datasets(s1), axis=1)
+    setting_two = np.mean(collate_all_datasets(s2), axis=1)
+    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)
     improvements = setting_one-baseline
     indices = np.argsort(improvements[:num_datasets])
 
@@ -211,9 +220,9 @@ def plot_total_comparison4(s1, s2, s_baseline,num_datasets = 295):
     '''
     Plots the improvement of s2 over s1, sorted by how much s1 improves over ALL
     '''
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)*100
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)*100
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)*100
+    setting_one = np.mean(collate_all_datasets(s1), axis=1)
+    setting_two = np.mean(collate_all_datasets(s2), axis=1)
+    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)
     s1_improvements_over_all = setting_one-baseline
     indices = np.argsort(s1_improvements_over_all[:num_datasets])
 
@@ -233,9 +242,9 @@ def plot_total_comparison5(s1, s2, s_baseline):
     '''
     Produces scatter plot: s1 improvement over ALL vs s2 improvement over s1
     '''
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)*100
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)*100
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)*100
+    setting_one = np.mean(collate_all_datasets(s1), axis=1)
+    setting_two = np.mean(collate_all_datasets(s2), axis=1)
+    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)
 
     s1_improvements_over_all = setting_one-baseline
     s2_improvements_over_s1 = setting_two-setting_one
@@ -320,7 +329,66 @@ classifier = 'featselector'
 lupimethod = 'nolufe'
 
 
-# for featsel in ['rfe','anova','bahsic','chi2','mi']:
+def threeway_comparison(s1,s2,s_baseline):
+    setting_one = np.mean(collate_all_datasets(s1), axis=1) * 100
+    setting_two = np.mean(collate_all_datasets(s2), axis=1) * 100
+    baseline = np.mean(collate_all_datasets(s_baseline), axis=1) * 100
+
+    results_array = np.array([list(a) for a  in zip(baseline,setting_one,setting_two)])
+    baseline_best = ([item[0] >= item[1] and item[0] >= item[2] for item in results_array]).count(True)
+    print('baseline best in {} ({:.1f}%)'.format(baseline_best,baseline_best/2.95))
+    featsel_best = ([item[1] >= item[0] and item[1] >= item[2] for item in results_array]).count(True)
+    print('featsel best in {} ({:.1f}%)'.format(featsel_best,featsel_best/2.95))
+    lufe_best = ([item[2] >= item[0] and item[2] >= item[1] for item in results_array]).count(True)
+    print('lufe best in {} ({:.1f}%)'.format(lufe_best,lufe_best/2.95))
+
+    baseline_single_best = ([item[0] > item[1] and item[0] > item[2] for item in results_array]).count(True)
+    print('baseline single best in {} ({:.1f}%)'.format(baseline_single_best, baseline_single_best / 2.95))
+    featsel_single_best = ([item[1] > item[0] and item[1] > item[2] for item in results_array]).count(True)
+    print('featsel single abs best in {} ({:.1f}%)'.format(featsel_single_best, featsel_single_best / 2.95))
+    lufe_single_best = ([item[2] > item[0] and item[2] > item[1] for item in results_array]).count(True)
+    print('lufe single best in {} ({:.1f}%)'.format(lufe_single_best, lufe_single_best / 2.95))
+
+    print('featsel improved, then lufe further improved ', ([item[1] >= item[0] and item[2] >= item[1] for item in results_array]).count(True))
+    print('featsel worsened, but lufe further improved rel to featsel',([item[1] < item[0] and item[2] >= item[1] for item in results_array]).count(True))
+    print('featsel worsened, but lufe further improved rel to baseline',([item[1] < item[0] and item[2] >= item[0] for item in results_array]).count(True))
+    # print('baseline best in ',([item[0] >= item[1] and item[0]>=item[2] for item in results_array]).count(True))
+    # print('featsel best in ', ([item[1] >= item[0] and item[1] >= item[2] for item in results_array]).count(True))
+    # print('lufe best in ', ([item[2] >= item[0] and item[2] > item[1] for item in results_array]).count(True))
+    #
+    # for item in results_array:
+    #     print (item[0]>item[1])
+#
+# for topk in [300]:#,500]:
+#     print('\n top k', topk)
+#     for featsel in ['rfe','anova','bahsic','chi2','mi']:
+#     # for featsel in ['anova']:  # ,'anova','bahsic','chi2','mi']:
+#         # s1 = Experiment_Setting(foldnum='all', topk=topk, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
+#         #                               take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
+#
+#         s1 = Experiment_Setting(foldnum='all', topk=topk, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
+#                                           take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
+#
+#         s2 = Experiment_Setting(foldnum='all', topk=topk, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
+#                                           take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='lufe')
+#
+#         baseline = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
+#                                           take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
+#         #
+#         # compare_two_settings(baseline, s1)
+#         # compare_two_settings(baseline, s2)
+#         # compare_two_settings(s1, s2)
+#         # # threeway_comparison(s1,s2,baseline)
+#         #
+#         # #
+#         plot_bars(baseline, s1)
+#         plot_bars(baseline, s2)
+#         plot_bars(s1, s2)
+#         # plt.clf()
+#         plot_total_comparison(s1, s2, baseline)
+
+
+        # for featsel in ['rfe','anova','bahsic','chi2','mi']:
 #
 #
 #     s1 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
