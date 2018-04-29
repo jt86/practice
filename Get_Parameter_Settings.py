@@ -22,13 +22,10 @@ count=1
 # print('--foldnum 2 --topk 300 --dataset tech --datasetnum 3 --skfseed 1 --lupimethod nolufe --featsel chi2 --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 10 --taketopt top')
 # print('--foldnum 2 --topk 300 --dataset tech --datasetnum 4 --skfseed 1 --lupimethod nolufe --featsel chi2 --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 10 --taketopt top')
 # print('--foldnum 2 --topk 300 --dataset tech --datasetnum 7 --skfseed 1 --lupimethod nolufe --featsel chi2 --classifier featselector --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 100 --percentageofinstances 10 --taketopt top')
-
-
 seed = 1
 dataset='tech'
 # top_k = 300
 datasetnum=0
-#
 classifier = 'lufe'
 lupimethod = 'svmplus'#:,'dp']:
 featsel = 'mi'
