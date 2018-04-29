@@ -17,7 +17,7 @@ def collate_single_dataset(s):
     results=np.zeros(10)
     # print('kernel',s.kernel)
     output_directory = get_full_path(('Desktop/Privileged_Data/AllResults/{}/{}/{}/{}{}/').format(s.dataset,s.kernel,s.name,s.dataset, s.datasetnum))
-    assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed))),'{} does not exist'.format(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
+    # assert os.path.exists(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed))),'{} does not exist'.format(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)))
     with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
         for item in csv.reader(cv_lupi_file):
             results[int(item[0])]=item[1]
@@ -28,7 +28,7 @@ def collate_single_dataset(s):
         # .format(np.where(results == 0)[0][0], 300, 'tech', s.datasetnum, 1,  s.lupimethod, s.featsel, s.classifier, s.stepsize, s.percentageofinstances))
 
         print('s = Experiment_Setting(foldnum={}, topk={}, dataset="{}", datasetnum={}, skfseed={}, lupimethod="{}", featsel="{}", classifier="{}", stepsize={},'
-              ' kernel="linear",  cmin=-2, cmax=2, numberofcs=3, percent_of_priv=100, percentageofinstances={}) \n single_fold(s)'
+              ' kernel="linear",  cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances={})'
             .format(np.where(results == 0)[0][0], 300, 'tech', s.datasetnum, 1, s.lupimethod, s.featsel, s.classifier,
                     s.stepsize, s.percentageofinstances))
 

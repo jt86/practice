@@ -10,12 +10,12 @@ Things to check before running: (1) values of C, (2) output directory and whethe
 import os
 
 # print os.environ['HOME']
-
+import time
 from SVMplus import svmplusQP, svmplusQP_Predict
 from ParamEstimation import get_best_params, get_best_CandCstar, get_best_params_dp2, get_best_C_Cstar_omega_omegastar
 from sklearn import svm
 from Get_Full_Path import get_full_path
-from sklearn.feature_selection import RFE
+from sklearn.feature_selection import RFE, mutual_info_classif
 from sklearn.svm import SVC
 from GetSingleFoldData import get_train_and_test_this_fold
 # from GetFeatSelectionData import get_train_and_test_this_fold
@@ -388,27 +388,55 @@ def single_fold(s):
         if s.classifier == 'lufetrain':
             do_lufetrain(s, normal_train, labels_train, priv_train, output_directory)
 ##################################################################################################
+# datasetnum=0
+# i=0
+# time0=time.time()
+# for foldnum in range(10):
+#     s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='bbc', datasetnum=datasetnum, kernel='linear',
+#                            cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+#                            take_top_t='top', lupimethod='svmplus',
+#                            featsel='mi', classifier='lufe', stepsize=0.1)
+#
+#     single_fold(s)
+#     i+=1
+#     print('\n iteration {}; time = {}'.format(i, time.time()-time0))
+
 
 
 # TEST
+# i=0
+# time0=time.time()
+# percent_of_priv = 75
+# for datasetnum in range(100):
+#     for foldnum in range(10):
+#         s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+#                                cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=percent_of_priv, percentageofinstances=100,
+#                                take_top_t='bottom', lupimethod='svmplus',
+#                                featsel='mi', classifier='lufe', stepsize=0.1)
+#
+#         single_fold(s)
+#         i+=1
+#         print('\n iteration {}; time = {}'.format(i, time.time()-time0))
 
-# for foldnum in range(9):
-    # for datasetnum in range(295):
-    #     s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='rbf',
-    #                            cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-    #                            take_top_t='top', lupimethod='svmplus',
-    #                            featsel='rfe', classifier='lufe', stepsize=0.1)
-    #
-    #     single_fold(s)
+# TEST
+# i=0
+# time0=time.time()
+# for percent_of_priv in [10,25,50,75]:
+#     for foldnum in range(10):
+#         for datasetnum in range(50):
+#             s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+#                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=percent_of_priv, percentageofinstances=100,
+#                                    take_top_t='bottom', lupimethod='svmplus',
+#                                    featsel='mi', classifier='lufe', stepsize=0.1)
+#
+#             single_fold(s)
+#             i+=1
+#             print('\n iteration {}; time = {}'.format(i, time.time()-time0))
 
-# import time
+#
 # time0=time.time()
 # for foldnum in range(10):
-# #     s = Expewriment_Setting(foldnum=foldnum, topk='all', dataset='bbc', datasetnum=0, kernel='linear',
-# #                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-# #                                    take_top_t='top', lupimethod='nolufe',
-# #                                    featsel='nofeatsel', classifier='baseline', stepsize=0.1)
-# #     single_fold(s)
+#
 #     s = Experiment_Setting(foldnum=foldnum, topk=500, dataset='tech', datasetnum=0, kernel='linear',
 #                                    cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
 #                                    take_top_t='top', lupimethod='nolufe',

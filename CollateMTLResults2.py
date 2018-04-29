@@ -17,7 +17,7 @@ def collate_mtl_results(featsel,num_unsel_feats,weight=1):
             for count, line in enumerate(reader):
                 nn_results[int(line[1]),foldnum]=(float(line[-1]))
     assert(0 not in nn_results)
-    return(nn_results)
+    return(nn_results*100)
 
 
 
@@ -31,13 +31,16 @@ def compare_lufe_mtl(featsel, lufe_setting, kernel):
 
 
     diffs_list = (np.mean(lufe_results,axis=1)-np.mean(mtl_results,axis=1))
-    print('lufe: {}, mtl: {}'.format(np.mean(lufe_results),np.mean(mtl_results)))
-    print('lufe better {}; mtl better: {}; equal: {}; mean improvement={}%'.format(len(np.where(diffs_list > 0)[0]),
-          len(np.where(diffs_list < 0)[0]),len(np.where(diffs_list==0)[0]),np.mean(diffs_list)))
-    print('{} & {} & {} & {} & {:.2f}\% \\\\'.format(featsel.upper(), len(np.where(diffs_list< 0)[0]),
-                            len(np.where(diffs_list==0)[0]),len(np.where(diffs_list>0)[0]),-np.mean(diffs_list)))
+    # print('lufe: {}, mtl: {}'.format(np.mean(lufe_results),np.mean(mtl_results)))
+    # print('lufe better {}; mtl better: {}; equal: {}; mean improvement={}%'.format(len(np.where(diffs_list > 0)[0]),
+    #       len(np.where(diffs_list < 0)[0]),len(np.where(diffs_list==0)[0]),np.mean(diffs_list)))
 
+    # print('{} & {} & {} & {} & {:.2f}\% \\\\'.format(featsel.upper(), len(np.where(diffs_list> 0)[0]),
+    #                         len(np.where(diffs_list==0)[0]),len(np.where(diffs_list<0)[0]),-np.mean(diffs_list)))
 
+    print('{} & {} & {} & {} & {:.2f}\% & {:.2f}\% & {:.2f}\% \\\\'.format(featsel.upper(), len(np.where(diffs_list> 0)[0]),
+                            len(np.where(diffs_list==0)[0]),len(np.where(diffs_list<0)[0]), np.mean(lufe_results),
+                                np.mean(mtl_results),-np.mean(diffs_list)))
 
 
 def plot_bars(mtl_results, lufe_results,featsel,kernel,classifier):
@@ -54,11 +57,11 @@ def plot_bars(mtl_results, lufe_results,featsel,kernel,classifier):
     plt.ylabel('Difference in accuracy score (%)\n {} better <-----> {} better'.format(name1,name2))
     plt.xlabel('dataset index (sorted by improvement)')
     plt.ylim(-20,30)
-    plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/{}{}_VS_{}'.format(featsel,name1,kernel,name2)))
-    plt.show()
+    # plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/{}{}_VS_{}'.format(featsel,name1,kernel,name2)))
+    # plt.show()
 
 for kernel in ['linear']:
-    for featsel in ['rfe']:#''anova','bahsic','chi2','mi','rfe']:
+    for featsel in ['rfe','anova','bahsic','chi2','mi','rfe']:
 
         mtl_results = ((collate_mtl_results(featsel.upper(), 300)))
         lufe_setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, kernel=kernel,
@@ -72,7 +75,7 @@ for kernel in ['linear']:
                                 featsel=featsel, classifier='featselector', stepsize=0.1)
 
         lufe_results = collate_all_datasets(lufe_setting)
-        svm_results = collate_all_datasets(svm_setting) * 100
+        svm_results = collate_all_datasets(svm_setting)
         plot_bars(mtl_results,svm_results,featsel,kernel,'featselector')
 
-        compare_lufe_mtl(featsel, svm_setting, kernel)
+        compare_lufe_mtl(featsel, lufe_setting, kernel)
