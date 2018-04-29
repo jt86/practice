@@ -29,7 +29,7 @@ datasetnum=0
 classifier = 'lufe'
 lupimethod = 'svmplus'#:,'dp']:
 featsel = 'mi'
-for datasetnum in list(range(6,100))+list(range(106,200))+list(range(209,295)):
+for datasetnum in list(range(10,100))+list(range(109,200))+list(range(211,295)):
     for foldnum in range(10):
         print('--foldnum {} --topk 300 --dataset tech --datasetnum {} --skfseed 1 --lupimethod svmplus --featsel mi --classifier lufe --stepsize 0.1 --kernel linear  --cmin -3 --cmax 3 --numberofcs 7 --percentofpriv 75 --percentageofinstances 100 --taketopt bottom'.format(foldnum,datasetnum))
         count+=1
