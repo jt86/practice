@@ -38,7 +38,7 @@ def collate_single_dataset(s):
 
 ##########################
 
-def collate_all_datasets(s,num_datasets=295):
+def collate_all(s, num_datasets=295):
     all_results = []
     for datasetnum in range(num_datasets):
         s.datasetnum=datasetnum
@@ -49,14 +49,14 @@ def collate_all_datasets(s,num_datasets=295):
 
 
 def compare_two_settings(s1, s2):
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)
+    setting_one = np.mean(collate_all(s1), axis=1)
+    setting_two = np.mean(collate_all(s2), axis=1)
     diffs_list = (setting_two-setting_one)
     worse = len(np.where(diffs_list < 0)[0])
     better = len(np.where(diffs_list > 0)[0])
     same = len(np.where(diffs_list == 0)[0])
     mean = np.mean(diffs_list)
-    print(s1.name,s1.kernel,np.mean(collate_all_datasets(s1)),s2.name,s2.kernel,np.mean(collate_all_datasets(s2)))
+    print(s1.name, s1.kernel, np.mean(collate_all(s1)), s2.name, s2.kernel, np.mean(collate_all(s2)))
     print('{}{}: better {} ({:.1f}%); {}{} better: {}({:.1f}%); equal: {}({:.1f}%); mean improvement={:.1f}%'.format
           (s2.classifier, s2.kernel,better,better/2.95, s1.classifier, s1.kernel, worse,worse/2.95, same, same/2.95,mean))
     print('& {} & {} & {}'.format(len(np.where(diffs_list< 0)[0]),len(np.where(diffs_list==0)[0]),len(np.where(diffs_list>0)[0])))
@@ -76,6 +76,10 @@ def get_graph_labels(s):
         name = 'LUFeReverse-{}-{}'.format(s.featsel.upper(), dict_of_settings[s.lupimethod])
     if s.classifier == 'svmreverse':
         name = '{}-SVMReverse'.format(s.featsel.upper())
+    if s.classifier == 'lufeshuffle':
+        name = '{}-LUFe-Shuffle'.format(s.featsel.upper())
+    if s.classifier == 'luferandom':
+        name = '{}-LUFe-Random'.format(s.featsel.upper())
     if s.kernel=='rbf':
         name+='rbf'
     return name
@@ -109,13 +113,13 @@ def plot_bars(s1, s2):
 # plot_bars(s1, s2)
 
 def get_lufe_improvements_per_fold(featselector, lufe):
-    lufe_improvements = collate_all_datasets(lufe)-collate_all_datasets(featselector)
+    lufe_improvements = collate_all(lufe) - collate_all(featselector)
     # print(featselector.featsel,'better',len(np.where(lufe_improvements > 0)[0]), 'same',(len(np.where(lufe_improvements==0)[0])),'worse',(len(np.where(lufe_improvements<0)[0])))
     return lufe_improvements
 
 def compare_performance_with_improvement(values_for_xaxis, setting_one, setting_two, ind_folds=False):
     if type(values_for_xaxis)==Experiment_Setting:
-        values_for_xaxis = collate_all_datasets(values_for_xaxis)
+        values_for_xaxis = collate_all(values_for_xaxis)
     else:
         values_for_xaxis = np.mean
     lufe_improvements = get_lufe_improvements_per_fold(setting_one, setting_two)
@@ -151,9 +155,9 @@ def get_mi_score(labels_train,data):
 
 
 def plot_total_comparison(s1, s2, s_baseline,num_datasets = 295):
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)
+    setting_one = np.mean(collate_all(s1), axis=1)
+    setting_two = np.mean(collate_all(s2), axis=1)
+    baseline = np.mean(collate_all(s_baseline), axis=1)
     indices = np.argsort(baseline[:num_datasets])
     setting_one_scores=setting_one[indices]
     setting_two_scores = setting_two[indices]
@@ -174,9 +178,9 @@ def plot_total_comparison2(s1, s2, s_baseline,num_datasets = 295):
     '''
     Plots settings 1 and 2, sorted by how much s1 improves over ALL
     '''
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)
+    setting_one = np.mean(collate_all(s1), axis=1)
+    setting_two = np.mean(collate_all(s2), axis=1)
+    baseline = np.mean(collate_all(s_baseline), axis=1)
     improvements = setting_one-baseline
     indices = np.argsort(improvements[:num_datasets])
     setting_one_errors=setting_one[indices]-baseline[indices]
@@ -197,9 +201,9 @@ def plot_total_comparison3(s1, s2, s_baseline,num_datasets = 295):
     '''
     Plots the improvement of s2 over s1, sorted by how much s1 improves over ALL
     '''
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)
+    setting_one = np.mean(collate_all(s1), axis=1)
+    setting_two = np.mean(collate_all(s2), axis=1)
+    baseline = np.mean(collate_all(s_baseline), axis=1)
     improvements = setting_one-baseline
     indices = np.argsort(improvements[:num_datasets])
 
@@ -220,9 +224,9 @@ def plot_total_comparison4(s1, s2, s_baseline,num_datasets = 295):
     '''
     Plots the improvement of s2 over s1, sorted by how much s1 improves over ALL
     '''
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)
+    setting_one = np.mean(collate_all(s1), axis=1)
+    setting_two = np.mean(collate_all(s2), axis=1)
+    baseline = np.mean(collate_all(s_baseline), axis=1)
     s1_improvements_over_all = setting_one-baseline
     indices = np.argsort(s1_improvements_over_all[:num_datasets])
 
@@ -242,9 +246,9 @@ def plot_total_comparison5(s1, s2, s_baseline):
     '''
     Produces scatter plot: s1 improvement over ALL vs s2 improvement over s1
     '''
-    setting_one = np.mean(collate_all_datasets(s1), axis=1)
-    setting_two = np.mean(collate_all_datasets(s2), axis=1)
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1)
+    setting_one = np.mean(collate_all(s1), axis=1)
+    setting_two = np.mean(collate_all(s2), axis=1)
+    baseline = np.mean(collate_all(s_baseline), axis=1)
 
     s1_improvements_over_all = setting_one-baseline
     s2_improvements_over_s1 = setting_two-setting_one
@@ -265,9 +269,9 @@ def plot_total_comparison6(s1, s2, s_baseline):
     '''
     Produces scatter plot: s1 improvement over ALL vs s2 improvement over ALL
     '''
-    setting_one = np.mean(collate_all_datasets(s1), axis=1) * 100
-    setting_two = np.mean(collate_all_datasets(s2), axis=1) * 100
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1) * 100
+    setting_one = np.mean(collate_all(s1), axis=1) * 100
+    setting_two = np.mean(collate_all(s2), axis=1) * 100
+    baseline = np.mean(collate_all(s_baseline), axis=1) * 100
 
     s1_improvements_over_all = setting_one - baseline
     s2_improvements_over_all = setting_two - baseline
@@ -290,9 +294,9 @@ def plot_reverse_comparison(s1, s2, s_baseline):
     '''
     Produces scatter plot: s1 improvement over ALL vs s2 improvement over s1
     '''
-    setting_one = np.mean(collate_all_datasets(s1), axis=1) * 100
-    setting_two = np.mean(collate_all_datasets(s2), axis=1) * 100
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1) * 100
+    setting_one = np.mean(collate_all(s1), axis=1) * 100
+    setting_two = np.mean(collate_all(s2), axis=1) * 100
+    baseline = np.mean(collate_all(s_baseline), axis=1) * 100
 
     s1_improvements_over_all = setting_one - baseline
     s2_improvements_over_all = setting_two - baseline
@@ -330,9 +334,9 @@ lupimethod = 'nolufe'
 
 
 def threeway_comparison(s1,s2,s_baseline):
-    setting_one = np.mean(collate_all_datasets(s1), axis=1) * 100
-    setting_two = np.mean(collate_all_datasets(s2), axis=1) * 100
-    baseline = np.mean(collate_all_datasets(s_baseline), axis=1) * 100
+    setting_one = np.mean(collate_all(s1), axis=1) * 100
+    setting_two = np.mean(collate_all(s2), axis=1) * 100
+    baseline = np.mean(collate_all(s_baseline), axis=1) * 100
 
     results_array = np.array([list(a) for a  in zip(baseline,setting_one,setting_two)])
     baseline_best = ([item[0] >= item[1] and item[0] >= item[2] for item in results_array]).count(True)

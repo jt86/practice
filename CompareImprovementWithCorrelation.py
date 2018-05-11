@@ -1,4 +1,4 @@
-from CollateResults import collate_all_datasets
+from CollateResults import collate_all
 from ExperimentSetting import Experiment_Setting
 import numpy as np
 from matplotlib import pyplot as plt
@@ -8,21 +8,21 @@ def get_scores(featsel, lupimethod):
 
     svm_reverse_setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                              take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='svmreverse')
-    svm_reverse_scores = collate_all_datasets(svm_reverse_setting)
+    svm_reverse_scores = collate_all(svm_reverse_setting)
 
 
     svm_setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                       take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
-    svm_scores = collate_all_datasets(svm_setting)
+    svm_scores = collate_all(svm_setting)
 
 
     lufe_setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                       take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufe')
-    lufe_scores = collate_all_datasets(lufe_setting)
+    lufe_scores = collate_all(lufe_setting)
 
     baseline_setting = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1,
                                       take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
-    baseline_scores = collate_all_datasets(baseline_setting)
+    baseline_scores = collate_all(baseline_setting)
 
     lufe_scores=np.mean(lufe_scores,axis=1)
     svm_scores = np.mean(svm_scores, axis=1)

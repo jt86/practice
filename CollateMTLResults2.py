@@ -3,7 +3,7 @@ from Get_Full_Path import get_full_path
 import csv
 import pandas
 import numpy as np
-from CollateResults import collate_single_dataset,collate_all_datasets
+from CollateResults import collate_single_dataset,collate_all
 from ExperimentSetting import Experiment_Setting
 from matplotlib import pyplot as plt
 import sys
@@ -27,7 +27,7 @@ def compare_lufe_mtl(featsel, lufe_setting, kernel):
     mtl_results = ((collate_mtl_results(featsel.upper(), 300)))
 
 
-    lufe_results = collate_all_datasets(lufe_setting)
+    lufe_results = collate_all(lufe_setting)
 
 
     diffs_list = (np.mean(lufe_results,axis=1)-np.mean(mtl_results,axis=1))
@@ -74,8 +74,8 @@ for kernel in ['linear']:
                                 take_top_t='top', lupimethod='nolufe',
                                 featsel=featsel, classifier='featselector', stepsize=0.1)
 
-        lufe_results = collate_all_datasets(lufe_setting)
-        svm_results = collate_all_datasets(svm_setting)
+        lufe_results = collate_all(lufe_setting)
+        svm_results = collate_all(svm_setting)
         plot_bars(mtl_results,svm_results,featsel,kernel,'featselector')
 
         compare_lufe_mtl(featsel, lufe_setting, kernel)

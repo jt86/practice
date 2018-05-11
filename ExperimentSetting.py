@@ -44,7 +44,8 @@ class Experiment_Setting:
             else:
                 self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv)
-        elif percentageofinstances != 100:
+        if percentageofinstances != 100:
+            print('\n percent not 100',self.name)
             self.name = '{}-{}-{}-{}selected-{}{}priv-{}instances'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv, self.percentageofinstances)
         else:

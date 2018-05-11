@@ -1,5 +1,5 @@
 from ExperimentSetting import Experiment_Setting
-from CollateResults import collate_all_datasets
+from CollateResults import collate_all
 import numpy as np
 from matplotlib import pyplot as plt
 from Get_Full_Path import get_full_path
@@ -13,7 +13,7 @@ for featsel in featsels:
                                       take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
     s2 = Experiment_Setting(foldnum='all', topk=topk, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
                                       take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='lufe')
-    univariate_results[featsel]=[np.mean(collate_all_datasets(s1)), np.mean(collate_all_datasets(s2))]
+    univariate_results[featsel]=[np.mean(collate_all(s1)), np.mean(collate_all(s2))]
 baseline = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
                                   take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
 
@@ -26,8 +26,8 @@ for count,item in enumerate(stepsizes):
                                       take_top_t='top', lupimethod='nolufe', featsel='rfe', classifier='featselector', stepsize=item)
     s2 = Experiment_Setting(foldnum='all', topk=topk, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
                                       take_top_t='top', lupimethod='svmplus', featsel='rfe', classifier='lufe', stepsize=item)
-    rfe_fs_results[count]=np.mean(collate_all_datasets(s1))
-    rfe_lufe_results[count]= np.mean(collate_all_datasets(s2))
+    rfe_fs_results[count]=np.mean(collate_all(s1))
+    rfe_lufe_results[count]= np.mean(collate_all(s2))
 
 
 print(rfe_lufe_results)

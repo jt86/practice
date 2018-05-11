@@ -1,5 +1,5 @@
 import numpy as np
-from CollateResults import plot_bars, collate_all_datasets,get_lufe_improvements_per_fold
+from CollateResults import plot_bars, collate_all,get_lufe_improvements_per_fold
 from ExperimentSetting import Experiment_Setting
 
 s1 = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1,
@@ -13,7 +13,7 @@ for featsel in ['rfe','bahsic','anova','chi2','mi']:
                                      take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='svmreverse')
         s2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                      take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufe')
-        print(featsel,'\t', lupimethod,'\t', round(np.mean(collate_all_datasets(s)),3),'\t',round(np.mean(collate_all_datasets(s2)),3),'\t',round(np.mean(collate_all_datasets(s2))-np.mean(collate_all_datasets(s))*10,3))
+        print(featsel,'\t', lupimethod,'\t', round(np.mean(collate_all(s)), 3), '\t', round(np.mean(collate_all(s2)), 3), '\t', round(np.mean(collate_all(s2)) - np.mean(collate_all(s)) * 10, 3))
 
 # for featsel in ['rfe','bahsic','anova','chi2','mi']:
 #     for lupimethod in ['svmplus','dsvm','dp']:

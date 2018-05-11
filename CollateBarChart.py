@@ -1,5 +1,5 @@
 from ExperimentSetting import Experiment_Setting
-from CollateResults import collate_all_datasets
+from CollateResults import collate_all
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
@@ -15,15 +15,15 @@ for featsel in featsels:
                                       take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
     s2 = Experiment_Setting(foldnum='all', topk=topk, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
                                       take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='lufe')
-    scores[featsel]=[np.mean(collate_all_datasets(s1)), np.mean(collate_all_datasets(s2))]
-    stdevs[featsel]=[np.std(np.mean(collate_all_datasets(s1),axis=1)), np.std(collate_all_datasets(s2))]
+    scores[featsel]=[np.mean(collate_all(s1)), np.mean(collate_all(s2))]
+    stdevs[featsel]=[np.std(np.mean(collate_all(s1), axis=1)), np.std(collate_all(s2))]
 
 print(stdevs['anova'])
-print(np.mean(collate_all_datasets(s1),axis=1))#.shape)
+print(np.mean(collate_all(s1), axis=1))#.shape)
 
 baseline = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
                                   take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
-baseline_score = np.mean(collate_all_datasets(baseline))
+baseline_score = np.mean(collate_all(baseline))
 # univariate_results['ALL'] = [np.mean(collate_all_datasets(baseline))]
 
 

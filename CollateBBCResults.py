@@ -1,5 +1,5 @@
 from ExperimentSetting import Experiment_Setting
-from CollateResults import collate_all_datasets,collate_single_dataset
+from CollateResults import collate_all,collate_single_dataset
 import numpy as np
 from matplotlib import pyplot as plt
 from Get_Full_Path import get_full_path

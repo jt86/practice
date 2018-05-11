@@ -21,13 +21,7 @@ def get_zero_results(s):
         with open(os.path.join(output_directory, '{}-{}.csv'.format(s.classifier, s.skfseed)), 'r') as cv_lupi_file:
             for item in csv.reader(cv_lupi_file):
                 results[int(item[0])]=item[1]
-    # assert 0 not in results
         if 0 in results:
-            # print('s = Experiment_Setting(foldnum={}, topk={}, dataset="{}", datasetnum={}, skfseed={}, lupimethod="{}", featsel="{}", classifier="{}", stepsize={},'
-            #       ' kernel="linear",  cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances={})'
-            #     .format(np.where(results == 0)[0][0], 300, 'tech', s.datasetnum, 1, s.lupimethod, s.featsel, s.classifier,
-            #             s.stepsize, s.percentageofinstances))
-            # print(results, np.where(results == 0)[0], datasetnum)
             print(np.where(results == 0)[0],datasetnum)
     else:
         print (s.datasetnum)
@@ -35,5 +29,5 @@ def get_zero_results(s):
 for datasetnum in range(295):
     s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=datasetnum, skfseed=1, kernel='linear',
                                       take_top_t='bottom', lupimethod='svmplus', featsel='mi', classifier='lufe',
-                            percent_of_priv=75)
+                            percent_of_priv=50)
     (get_zero_results(s))

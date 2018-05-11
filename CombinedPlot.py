@@ -12,15 +12,18 @@ import seaborn
 from ExperimentSetting import Experiment_Setting
 from CollateResults import compare_two_settings, get_graph_labels
 
-
-
-def all_plots(featsel):
+def get_settings(featsel):
     sb = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1,
-            take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
+                            take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
     s1 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                      take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
+                            take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
     s2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-                      take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='lufe')
+                            take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='lufe')
+
+    return(sb,s1,s2)
+
+def all_plots(sb,s1,s2,featsel,chapname):
+
     pair = [(s1, s2), (sb, s2), (sb, s1)]
 
     fig, ax = plt.subplots(figsize=(10, 15))
@@ -37,8 +40,9 @@ def all_plots(featsel):
         plt.ylabel('Difference in accuracy score (%)\n {} better <-----> {} better'.format(name1, name2))
         plt.xlabel('dataset index (sorted by improvement)')
         plt.ylim(-20, 30)
-        plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2a/allplots-{}'.format(featsel)))
+        plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/allplots-{}'.format(chapname,featsel)))
     plt.show()
 
-for featsel in ['rfe','anova','bahsic','chi2','mi','rfe']:
-    all_plots(featsel)
+# for featsel in ['rfe','anova','bahsic','chi2','mi','rfe']:
+#     settings = get_settings(featsel)
+#     all_plots(featsel)

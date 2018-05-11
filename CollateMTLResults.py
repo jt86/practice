@@ -3,7 +3,7 @@ from Get_Full_Path import get_full_path
 import csv
 import pandas
 import numpy as np
-from CollateResults import collate_single_dataset,collate_all_datasets
+from CollateResults import collate_single_dataset,collate_all
 from ExperimentSetting import Experiment_Setting
 from matplotlib import pyplot as plt
 import sys
@@ -14,7 +14,7 @@ s1 = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, ker
                        cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
                        take_top_t='top', lupimethod='nolufe',
                        featsel='rfe', classifier='featselector', stepsize=0.1)
-svm_results = collate_all_datasets(s1)
+svm_results = collate_all(s1)
 svm_results = svm_results[:,[-1]].flatten()
 indices = (np.argsort(svm_results))
 
@@ -26,7 +26,7 @@ s2 = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, ker
                        take_top_t='top', lupimethod='svmplus',
                        featsel='rfe', classifier='lufe', stepsize=0.1)
 
-rfe_lufe_results = collate_all_datasets(s2)
+rfe_lufe_results = collate_all(s2)
 rfe_lufe_results = rfe_lufe_results[:, [-1]].flatten()
 
 #### get mi-lufe baseline
@@ -36,7 +36,7 @@ s3 = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, ker
                        take_top_t='top', lupimethod='svmplus',
                        featsel='mi', classifier='lufe', stepsize=0.1)
 
-mi_lufe_results = collate_all_datasets(s3)
+mi_lufe_results = collate_all(s3)
 mi_lufe_results = mi_lufe_results[:, [-1]].flatten()
 
 
@@ -48,7 +48,7 @@ s4 = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, ker
                        take_top_t='top', lupimethod='svmplus',
                        featsel='anova', classifier='lufe', stepsize=0.1)
 
-anova_lufe_results = collate_all_datasets(s4)
+anova_lufe_results = collate_all(s4)
 anova_lufe_results = anova_lufe_results[:, [-1]].flatten()
 
 

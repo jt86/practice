@@ -3,7 +3,7 @@ from Get_Full_Path import get_full_path
 import csv
 import pandas
 import numpy as np
-from CollateResults import collate_single_dataset,collate_all_datasets
+from CollateResults import collate_single_dataset,collate_all
 from ExperimentSetting import Experiment_Setting
 from matplotlib import pyplot as plt
 import sys
@@ -14,7 +14,7 @@ s1 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=all,
                        cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
                        take_top_t='top', lupimethod='nolufe',
                        featsel='rfe', classifier='featselector', stepsize=0.1)
-svm_results = np.mean(collate_all_datasets(s1),axis=1)
+svm_results = np.mean(collate_all(s1), axis=1)
 # svm_results = svm_results[:,[-1]].flatten()
 
 indices = (np.argsort(svm_results))
@@ -28,7 +28,7 @@ s2 = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, ker
                        take_top_t='top', lupimethod='svmplus',
                        featsel='rfe', classifier='lufe', stepsize=0.1)
 
-rfe_lufe_results = np.mean(collate_all_datasets(s2),axis=1)[indices]
+rfe_lufe_results = np.mean(collate_all(s2), axis=1)[indices]
 
 
 
