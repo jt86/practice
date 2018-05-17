@@ -1,5 +1,7 @@
+'''
+Module for statistical significance testing of results
+'''
 from scipy.stats import friedmanchisquare, wilcoxon
-from CollateMTLResults2 import collate_mtl_results
 import CollateResults
 from SingleFoldSlice import Experiment_Setting
 from CollateResults import collate_all

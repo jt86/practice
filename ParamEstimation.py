@@ -163,17 +163,28 @@ def get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_fold
 
 
 def get_best_params(s, all_train, labels_train, folder, method):
-    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=s.foldnum)
+    # if list(labels_train).count(1)<2 or list(labels_train).count(-1)<2:
+    #     print('not enough - using default')
+    #     return 0.001
+    if all_train.shape[0]>=5:
+        n_folds=2
+    else:
+        n_folds=all_train.shape[0]
+    print('\n num folds = {}'.format(n_folds))
+    cv = StratifiedKFold(labels_train, n_folds=n_folds, shuffle=True, random_state=s.foldnum)
     scores = numpy.zeros(len(s.cvalues))
+    print('\n',labels_train)
     for i,(train, test) in enumerate(cv):
         for C_index, C in enumerate(s.cvalues):
             if method == 'rfe':
                 svc = SVC(C=C, kernel="linear", random_state=s.foldnum)
                 rfe = RFE(estimator=svc, n_features_to_select=s.topk, step=0.1)
+                print('\n', labels_train[train])
                 rfe.fit(all_train[train], labels_train[train])
                 scores[C_index] += rfe.score(all_train[test], labels_train[test])
                 sys.stdout.flush()
             if method == 'svm':
+                print('\n', labels_train[train])
                 svc = SVC(C=C, kernel="linear", random_state=s.foldnum)
                 svc.fit(all_train[train], labels_train[train])
                 scores[C_index] += svc.score(all_train[test], labels_train[test])

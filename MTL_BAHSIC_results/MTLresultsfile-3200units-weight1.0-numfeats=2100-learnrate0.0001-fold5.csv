@@ -1,6 +1,0 @@
-Dataset,0,Fold,5,Weight,1.0,Train,0.962962985039, Test,0.807692289352
-Dataset,1,Fold,5,Weight,1.0,Train,0.983193278313, Test,1.0
-Dataset,2,Fold,5,Weight,1.0,Train,0.983870983124, Test,1.0
-Dataset,3,Fold,5,Weight,1.0,Train,0.984615385532, Test,0.666666686535
-Dataset,4,Fold,5,Weight,1.0,Train,0.976923048496, Test,0.600000023842
-Dataset,5,Fold,5,Weight,1.0,Train,0.985915482044, Test,0.6875

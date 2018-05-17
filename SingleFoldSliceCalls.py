@@ -8,13 +8,13 @@ time0=time.time()
 
 
 i=0
-for percentageofinstances in range(20,100,10):
+for percentageofinstances in range(30,100,20):
     print(percentageofinstances)
     for datasetnum in range(295):
-        for foldnum in range(2):
+        for foldnum in range(8,10):
             s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, skfseed=1, kernel='linear',
                                     percent_of_priv=100, percentageofinstances=percentageofinstances, take_top_t='top',
-                                   lupimethod='svmplus', featsel='mi', classifier='lufetrain')
+                                   lupimethod='svmplus', featsel='mi', classifier='featselector')
             single_fold(s)
             i += 1
             print('\n iteration {}; time = {}'.format(i, time.time() - time0))
