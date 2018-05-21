@@ -8,7 +8,7 @@ time0=time.time()
 
 
 i=0
-for percentageofinstances in range(30,100,20):
+for percentageofinstances in range(10,51,20):
     print(percentageofinstances)
     for datasetnum in range(295):
         for foldnum in range(8,10):

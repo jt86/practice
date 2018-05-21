@@ -69,17 +69,27 @@ def get_train_and_test_this_fold(s):	#N,test_N per class
     test_data = preprocessing.scale(test_data)
     print(train_data.shape, train_labels.shape, test_data.shape, test_labels.shape)
 
+    # num_to_take = len(class0_labels)*s.percentageofinstances//100
+    # indices  = np.random.randint(len(class0_labels), size=num_to_take)
+    # train_data, train_labels = train_data[indices], train_labels[indices]
+    # print('\n shapes after:', train_data.shape, train_labels.shape, test_data.shape, test_labels.shape)
+    # sys.exit()
 
     # if using <100% training data, use a single fold of SKF to take balanced train/test subset
     if s.percentageofinstances != 100:
-        skf1 = StratifiedKFold(train_labels, n_folds=100//s.percentageofinstances, shuffle=True, random_state=s.skfseed)
+        skf1 = StratifiedKFold(train_labels, n_folds=10, shuffle=True, random_state=s.skfseed)
+        all_keep_indices = []
         for foldnum, (dont_use_index, keep_index) in enumerate(skf1):
-            if foldnum == 0:
-                print('yup')
-                train_data=train_data[keep_index,:]
-                train_labels=train_labels[keep_index]
+            if foldnum*10 < s.percentageofinstances:
+                print('yup',keep_index)
+                # np.append(all_keep_indices,keep_index)
+                all_keep_indices+=[item for item in keep_index]
+                print(len(all_keep_indices))
+        train_data=train_data[all_keep_indices,:]
+        train_labels=train_labels[all_keep_indices]
         print(train_labels)
     print('\n shapes after:', train_data.shape, train_labels.shape, test_data.shape, test_labels.shape)
+    # sys.exit()
     return np.asarray(train_data), np.asarray(test_data), np.asarray(train_labels), np.asarray(test_labels)#, train_indices, test_indices
 
 # def get_awa_data(dataset_index):
