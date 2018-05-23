@@ -141,7 +141,14 @@ def get_best_C_Cstar_omega_omegastar(s, normal_train, labels_train, priv_train, 
     return best_C, best_Cstar, best_omega, best_omegastar
 
 def get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_folder2):
-    cv = StratifiedKFold(labels_train, n_folds=5, shuffle=True, random_state=s.foldnum)
+    if list(labels_train).count(1)<2 or list(labels_train).count(-1)<2:
+        print('not enough - using default')
+        return 0.001, 0.001
+    if normal_train.shape[0]>=20:
+        n_folds=5
+    else:
+        n_folds=2
+    cv = StratifiedKFold(labels_train, n_folds=n_folds, shuffle=True, random_state=s.foldnum)
     cv_scores = np.zeros((len(s.cvalues),len(s.cvalues)))	#join cross validation on X, X*
     print ('cv scores shape',cv_scores.shape)
     for i,(train, test) in enumerate(cv):
@@ -163,13 +170,14 @@ def get_best_CandCstar(s, normal_train, labels_train, priv_train, cross_val_fold
 
 
 def get_best_params(s, all_train, labels_train, folder, method):
-    # if list(labels_train).count(1)<2 or list(labels_train).count(-1)<2:
-    #     print('not enough - using default')
-    #     return 0.001
-    if all_train.shape[0]>=5:
-        n_folds=2
+    # check
+    if list(labels_train).count(1)<2 or list(labels_train).count(-1)<2:
+        print('not enough - using default')
+        return 0.001
+    if all_train.shape[0]>=20:
+        n_folds=5
     else:
-        n_folds=all_train.shape[0]
+        n_folds=2
     print('\n num folds = {}'.format(n_folds))
     cv = StratifiedKFold(labels_train, n_folds=n_folds, shuffle=True, random_state=s.foldnum)
     scores = numpy.zeros(len(s.cvalues))

@@ -1,89 +1,60 @@
-# this file is a dumping ground for previous calls to CollateResults.py
+from ExperimentSetting import Experiment_Setting
+from CollateResults import plot_total_comparison, plot_bars
+from CollateMTLResults2 import collate_mtl_results, collate_all, plot_bars_for_mtl
+# from CollateResults2 import
+
+############ FOR CHAPTER 1
+
+featsel='rfe'
+############ Top 300
+
+s_baseline = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1,
+                                  take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
+s1 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                                  take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
+s2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                                  take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='lufe')
 
 
-# classifier = 'featselector'
-# lupimethod = 'nolufe'
-# for featsel in ['rfe','anova','chi2']:#w,'bahsic']:#,'mi']:#
-#     for instances in [10,20,30,40,50,60,70,80,90]:
-#         setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', kernel='linear',
-#                  cmin=-3,cmax=3,numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=instances, take_top_t='top', lupimethod=lupimethod,
-#                  featsel=featsel,classifier=classifier,stepsize=0.1)
-#         collate_all_datasets(setting, num_datasets=10)
-#
-# classifier = 'lufe'
-# lupimethod = 'svmplus'
-# for featsel in ['rfe', 'anova', 'chi2']:  # w,'bahsic']:#,'mi']:#
-#     for instances in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-#         setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', kernel='linear',
-#                                      cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100,
-#                                      percentageofinstances=instances, take_top_t='top', lupimethod=lupimethod,
-#                                      featsel=featsel, classifier=classifier, stepsize=0.1)
-#         collate_all_datasets(setting, num_datasets=10)
+plot_total_comparison(s1,s2,s_baseline)
+plot_bars(s_baseline,s1)
+plot_bars(s_baseline,s2)
+plot_bars(s1,s2)
 
 
-# dataset = 'dorothea'
-# for featsel in ['rfe', 'anova', 'chi2']:#, 'mi']:
-#     for lupimethod in ['dp','svmplus']:
-#         s = Experiment_Setting(foldnum='all', topk=300, dataset=dataset, datasetnum='all', skfseed=1,
-#                                take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufe',
-#                                stepsize=0.1)
-#         scores = collate_all_datasets(s, num_datasets=1)
-#         print(dataset, featsel, lupimethod,np.mean(scores))
+############ Top 500
 
+s3 = Experiment_Setting(foldnum='all', topk=500, dataset='tech', datasetnum='all', skfseed=1,
+                                  take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
+s4 = Experiment_Setting(foldnum='all', topk=500, dataset='tech', datasetnum='all', skfseed=1,
+                                  take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='lufe')
 
-# for top in ['top','bottom']:
-#     for percentofpriv in [10,25,50,75]:
-#         setting = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                                           take_top_t=top, lupimethod='svmplus', featsel='rfe', classifier='lufe',percent_of_priv=percentofpriv)
-#         print(top,percentofpriv,np.mean(collate_all_datasets(setting)))
+plot_total_comparison(s3,s4,s_baseline)
+plot_bars(s_baseline,s3)
+plot_bars(s_baseline,s4)
+plot_bars(s3,s4)
 
+############ For MTL comparison
 
-# for lupimethod in ['svmplus','dp','dsvm']:
-#     print('\n'+lupimethod)
-#     for featsel in ['rfe','anova','chi2','bahsic','mi']:
-#         s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                              take_top_t='top', lupimethod=lupimethod, featsel=featsel, classifier='lufereverse',
-#                       stepsize=0.1)
-#         scores = collate_all_datasets(s)
-#         print(featsel, np.mean(scores))
-#
-# print('\n svm reverse')
-# for featsel in ['rfe', 'anova', 'chi2', 'bahsic', 'mi']:
-#     s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
-#                            take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='svmreverse',
-#                            stepsize=0.1)
-#     scores = collate_all_datasets(s)
-#     print(featsel, np.mean(scores))
+featsel='rfe'
+for kernel in ['linear']:
+    # for featsel in ['rfe', 'anova', 'bahsic', 'chi2', 'mi', 'rfe']:
+        mtl_results = ((collate_mtl_results(featsel.upper(), 300)))
 
+        lufe_setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, kernel=kernel,
+                                          cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100,
+                                          percentageofinstances=100,
+                                          take_top_t='top', lupimethod='svmplus',
+                                          featsel=featsel, classifier='lufe', stepsize=0.1)
 
+        svm_setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, kernel=kernel,
+                                         cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100,
+                                         percentageofinstances=100,
+                                         take_top_t='top', lupimethod='nolufe',
+                                         featsel=featsel, classifier='featselector', stepsize=0.1)
 
+        lufe_results = collate_all(lufe_setting)
+        svm_results = collate_all(svm_setting)
+        plot_bars_for_mtl(mtl_results, svm_results, featsel, kernel, 'featselector')
 
-# for featsel in ['rfe','bahsic','anova','chi2','mi']:
-#     print(featsel)
-#     lufereverse = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel, classifier='lufereverse')
-#     svmreverse = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='nolufe', featsel=featsel, classifier='svmreverse')
-#     svm = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='nolufe', featsel=featsel, classifier='featselector')
-#     lufe = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel,classifier='lufe')
-#     svmplus = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel, classifier='lufe')
-#     deltaplus = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='dp', featsel=featsel, classifier='lufe')
-#     baseline = Experiment_Setting(foldnum='all', datasetnum='all', lupimethod='svmplus', featsel=featsel,classifier='lufe')
-    # compare_performance_with_improvement(svmreverse, deltaplus, svmplus)
-
-    # np.load(get_full_path('Desktop/Privileged_Data/MIScores/selected/{}/tech{}-1-{}'.format(s.featsel, s.datasetnum, s.foldnum)),get_mi_score(labels_train, normal_train))
-
-
-
-#
-# for datasetnum in range(295):
-#     for fold in range(10):
-#         s = Experiment_Setting(foldnum=fold, datasetnum=datasetnum, lupimethod='nolufe', featsel='mi', classifier='featselector')
-#         all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
-#         normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
-#
-#         np.save(get_full_path('Desktop/Privileged_Data/MIScores/selected/{}/tech{}-1-{}'.format(s.featsel,s.datasetnum,s.foldnum)),get_mi_score(labels_train,normal_train))
-#         np.save(get_full_path('Desktop/Privileged_Data/MIScores/unselected/{}/tech{}-1-{}'.format(s.featsel,s.datasetnum,s.foldnum)),get_mi_score(labels_train,priv_train))
-#         print(get_mi_score(labels_train, priv_train))
-
-
-# print(np.shape(np.load(get_full_path('Desktop/Privileged_Data/MIScores/selected/rfe/tech0-1-0.npy'))))
-# print(np.shape(np.load(get_full_path('Desktop/Privileged_Data/MIScores/unselected/rfe/tech0-1-0.npy'))))
+        # compare_lufe_mtl(featsel, lufe_setting, kernel)

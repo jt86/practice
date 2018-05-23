@@ -38,21 +38,24 @@ class Experiment_Setting:
 
 
         if stepsize==0.1:
+            print(1)
             if self.classifier=='lufenonlincrossval':
                 self.name = '{}{}{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.cmin,self.cmax, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv)
             else:
                 self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv)
-        if percentageofinstances != 100:
+        elif percentageofinstances != 100:
             print('\n percent not 100',self.name)
             self.name = '{}-{}-{}-{}selected-{}{}priv-{}instances'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv, self.percentageofinstances)
         else:
+            print(3)
             self.name = '{}-{}-{}-{}selected-{}{}priv-{}'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv, self.stepsize)
 
         if self.dataset!='tech':
+            print(4)
             self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                               self.take_top_t, self.percent_of_priv)
     def print_all_settings(self):

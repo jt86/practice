@@ -107,13 +107,13 @@ print(len(np.where(improvements_list==0)[0]))
 # plt.bar(range(295),improvements_list)
 plt.bar(range(295),mtl_300_results, color='blue')
 plt.bar(np.array(range(295))+0.5,rfe_lufe_results, color='red')
-
-ax = plt.subplot(111)
-ax.bar(x-0.2, y,width=0.2,color='b',align='center')
-ax.bar(x, z,width=0.2,color='g',align='center')
-ax.bar(x+0.2, k,width=0.2,color='r',align='center')
-ax.xaxis_date()
-
+#
+# ax = plt.subplot(111)
+# ax.bar(x-0.2, y,width=0.2,color='b',align='center')
+# ax.bar(x, z,width=0.2,color='g',align='center')
+# ax.bar(x+0.2, k,width=0.2,color='r',align='center')
+# ax.xaxis_date()
+#
 
 plt.show()
 sys.exit()

@@ -19,7 +19,8 @@ def collate_mtl_results(featsel,num_unsel_feats,weight=1):
     assert(0 not in nn_results)
     return(nn_results*100)
 
-
+# print(collate_mtl_results('rfe',300))
+# sys.exit()
 
 
 def compare_lufe_mtl(featsel, lufe_setting, kernel):
@@ -43,39 +44,50 @@ def compare_lufe_mtl(featsel, lufe_setting, kernel):
                                 np.mean(mtl_results),-np.mean(diffs_list)))
 
 
-def plot_bars(mtl_results, lufe_results,featsel,kernel,classifier):
-    improvements_list  = np.mean(mtl_results,axis=1)-(np.mean(lufe_results,axis=1))
+def plot_bars_for_mtl(results_1, results_2, name1, name2, featsel):
+    improvements_list  = np.mean(results_1, axis=1) - (np.mean(results_2, axis=1))
     improvements_list.sort()
-    if classifier == 'lufe':
-        name1, name2 = 'LUFe-SVM+','LUFe-MTL'
-    if classifier == 'featselector':
-        name1, name2 = 'FeatSel-SVM','LUFe-MTL'
     fig = plt.figure(figsize=(15, 10))
     plt.bar(range(len(improvements_list)),improvements_list[::-1], color='black')
     # plt.title('{} VS {}\n Improvement by {} = {}%, {} of {} cases'.format(short1,short2,short1,round(np.mean(improvements_list),2),len(np.where(improvements_list >= 0)[0]),len(improvements_list)))
     plt.title('{} vs {}\n Improvement by {}: mean = {}%; {} of {} cases'.format(name1,name2,name2,round(np.mean(improvements_list),2),len(np.where(improvements_list > 0)[0]),len(improvements_list)))
-    plt.ylabel('Difference in accuracy score (%)\n {} better <-----> {} better'.format(name1,name2))
+    plt.ylabel('Difference in accuracy score (%)\n {} better <-------------------> {} better {}'.format(name2,name1,' '*40))
     plt.xlabel('dataset index (sorted by improvement)')
     plt.ylim(-20,30)
-    # plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/{}{}_VS_{}'.format(featsel,name1,kernel,name2)))
-    # plt.show()
 
-for kernel in ['linear']:
-    for featsel in ['rfe','anova','bahsic','chi2','mi','rfe']:
+    plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/{}_VS_{}.pdf'.format(featsel,name1,name2)),format='pdf')
+    plt.show()
 
-        mtl_results = ((collate_mtl_results(featsel.upper(), 300)))
-        lufe_setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, kernel=kernel,
-                                cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-                                take_top_t='top', lupimethod='svmplus',
-                                featsel=featsel, classifier='lufe', stepsize=0.1)
 
-        svm_setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, kernel=kernel,
-                                cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-                                take_top_t='top', lupimethod='nolufe',
-                                featsel=featsel, classifier='featselector', stepsize=0.1)
+# MTL (top) vs LUFE-SVM+
+# LUFe-SVM+RBF vs LUFE-SVM+
+# MTL (top) v LUFe-SVM+RBF
 
-        lufe_results = collate_all(lufe_setting)
-        svm_results = collate_all(svm_setting)
-        plot_bars(mtl_results,svm_results,featsel,kernel,'featselector')
+featsel='rfe'
 
-        compare_lufe_mtl(featsel, lufe_setting, kernel)
+# for featsel in ['rfe', 'anova', 'bahsic', 'chi2', 'mi', 'rfe']:
+mtl_results = ((collate_mtl_results(featsel.upper(), 300)))
+
+lufe_setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100,
+                                  percentageofinstances=100,
+                                  take_top_t='top', lupimethod='svmplus',
+                                  featsel=featsel, classifier='lufe', stepsize=0.1)
+
+lufe_rbf_setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, kernel='rbf',
+                                      cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100,
+                                  percentageofinstances=100,
+                                  take_top_t='top', lupimethod='svmplus',
+                                  featsel=featsel, classifier='lufe', stepsize=0.1)
+
+
+
+
+all_results=dict()
+all_results['LUFe-RFE-SVM+'] = collate_all(lufe_setting)
+all_results['LUFe-RFE-RBF-SVM+'] = collate_all(lufe_rbf_setting)
+all_results['LUFe-MTL'] = mtl_results
+
+plot_bars_for_mtl(all_results['LUFe-MTL'] , all_results['LUFe-RFE-SVM+'], 'LUFe-MTL', 'LUFe-RFE-SVM+', featsel)
+plot_bars_for_mtl(all_results['LUFe-MTL'] , all_results['LUFe-RFE-RBF-SVM+'], 'LUFe-MTL', 'LUFe-RFE-RBF-SVM+', featsel)
+plot_bars_for_mtl(all_results['LUFe-RFE-RBF-SVM+'] , all_results['LUFe-RFE-SVM+'], 'LUFe-RFE-RBF-SVM+', 'LUFe-RFE-SVM+', featsel)
+        # compare_lufe_mtl(featsel, lufe_setting, kernel)
