@@ -51,9 +51,10 @@ def plot_bars_for_mtl(results_1, results_2, name1, name2, featsel):
     plt.bar(range(len(improvements_list)),improvements_list[::-1], color='black')
     # plt.title('{} VS {}\n Improvement by {} = {}%, {} of {} cases'.format(short1,short2,short1,round(np.mean(improvements_list),2),len(np.where(improvements_list >= 0)[0]),len(improvements_list)))
     plt.title('{} vs {}\n Improvement by {}: mean = {}%; {} of {} cases'.format(name1,name2,name2,round(np.mean(improvements_list),2),len(np.where(improvements_list > 0)[0]),len(improvements_list)))
-    plt.ylabel('Difference in accuracy score (%)\n {} better <-------------------> {} better {}'.format(name2,name1,' '*40))
+    # adding spaces to ensure y-axis arrow is centred on 0
+    plt.ylabel('Difference in accuracy score (%)\n {}{} better <----------> {} better{}'.format(' '*round(1.5*(len(name2))),name1,name2,' '*round(1.5*(len(name1)))))
     plt.xlabel('dataset index (sorted by improvement)')
-    plt.ylim(-20,30)
+    plt.ylim(-25,25)
 
     plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/{}_VS_{}.pdf'.format(featsel,name1,name2)),format='pdf')
     plt.show()
@@ -63,31 +64,3 @@ def plot_bars_for_mtl(results_1, results_2, name1, name2, featsel):
 # LUFe-SVM+RBF vs LUFE-SVM+
 # MTL (top) v LUFe-SVM+RBF
 
-featsel='rfe'
-
-# for featsel in ['rfe', 'anova', 'bahsic', 'chi2', 'mi', 'rfe']:
-mtl_results = ((collate_mtl_results(featsel.upper(), 300)))
-
-lufe_setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100,
-                                  percentageofinstances=100,
-                                  take_top_t='top', lupimethod='svmplus',
-                                  featsel=featsel, classifier='lufe', stepsize=0.1)
-
-lufe_rbf_setting = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=all, kernel='rbf',
-                                      cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100,
-                                  percentageofinstances=100,
-                                  take_top_t='top', lupimethod='svmplus',
-                                  featsel=featsel, classifier='lufe', stepsize=0.1)
-
-
-
-
-all_results=dict()
-all_results['LUFe-RFE-SVM+'] = collate_all(lufe_setting)
-all_results['LUFe-RFE-RBF-SVM+'] = collate_all(lufe_rbf_setting)
-all_results['LUFe-MTL'] = mtl_results
-
-plot_bars_for_mtl(all_results['LUFe-MTL'] , all_results['LUFe-RFE-SVM+'], 'LUFe-MTL', 'LUFe-RFE-SVM+', featsel)
-plot_bars_for_mtl(all_results['LUFe-MTL'] , all_results['LUFe-RFE-RBF-SVM+'], 'LUFe-MTL', 'LUFe-RFE-RBF-SVM+', featsel)
-plot_bars_for_mtl(all_results['LUFe-RFE-RBF-SVM+'] , all_results['LUFe-RFE-SVM+'], 'LUFe-RFE-RBF-SVM+', 'LUFe-RFE-SVM+', featsel)
-        # compare_lufe_mtl(featsel, lufe_setting, kernel)

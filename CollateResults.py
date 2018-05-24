@@ -92,14 +92,14 @@ def plot_bars(s1, s2):
     name1, name2 = get_graph_labels(s1), get_graph_labels(s2)
     fig = plt.figure(figsize=(15, 10))
     plt.bar(range(len(improvements_list)),improvements_list[::-1], color='black')
-    # plt.title('{} VS {}\n Improvement by {} = {}%, {} of {} cases'.format(short1,short2,short1,round(np.mean(improvements_list),2),len(np.where(improvements_list >= 0)[0]),len(improvements_list)))
     plt.title('{} vs {}\n Improvement by {}: mean = {}%; {} of {} cases'.format(name1,name2,name2,round(np.mean(improvements_list),2),len(np.where(improvements_list > 0)[0]),len(improvements_list)))
-    plt.ylabel('Difference in accuracy score (%)\n {} better <-----> {} better {}'.format(name1,name2,' '*(30+len(name1)-len(name2))))
+    # adding spaces to ensure y-axis arrow is centred on 0
+    plt.ylabel('Difference in accuracy score (%)\n {}{} better <----------> {} better{}'.format(' '*round(1.5*(len(name2))),name1,name2,' '*round(1.5*(len(name1)))))
     plt.xlabel('dataset index (sorted by improvement)')
-    plt.ylim(-20,30)
+    plt.ylim(-25,25)
     plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/{}{}_VS_{}{}.pdf'.format(s2.featsel,name1,s1.topk,name2,s2.topk)),format='pdf')
-    # plt.show()
-    #R
+    plt.show()
+
 
 # s1 = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum='all', skfseed=1,
 #                                   take_top_t='top', lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
