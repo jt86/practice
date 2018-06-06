@@ -55,5 +55,5 @@ plt.bar(indices+ bar_width / 2, [scores[key][1] - scores[key][0] for key in feat
 plt.xticks(indices + bar_width / 2, [i.upper() for i in featsels])
 plt.xlabel('Feature selection metric')
 plt.ylabel('Mean improvement by LUFe (%)')
-plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2a/improvementsbar'))
+plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2a/improvementsbar.pdf'),type='pdf')
 plt.show()

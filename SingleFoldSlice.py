@@ -310,6 +310,7 @@ def single_fold(s):
     np.random.seed(s.foldnum)
     output_directory = get_full_path(('Desktop/Privileged_Data/AllResults/{}/{}/{}/{}{}/')
                                      .format(s.dataset,s.kernel, s.name,s.dataset, s.datasetnum))
+    print(output_directory)
     make_directory(output_directory)
     all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
     if s.classifier == 'baseline':

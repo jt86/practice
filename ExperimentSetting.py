@@ -42,13 +42,15 @@ class Experiment_Setting:
             if self.classifier=='lufenonlincrossval':
                 self.name = '{}{}{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.cmin,self.cmax, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv)
+
+            elif percentageofinstances != 100:
+                print('\n percent not 100')
+                self.name = '{}-{}-{}-{}selected-{}{}priv-{}instances'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
+                                                              self.take_top_t, self.percent_of_priv, self.percentageofinstances)
+
             else:
                 self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv)
-        elif percentageofinstances != 100:
-            print('\n percent not 100',self.name)
-            self.name = '{}-{}-{}-{}selected-{}{}priv-{}instances'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
-                                                          self.take_top_t, self.percent_of_priv, self.percentageofinstances)
         else:
             print(3)
             self.name = '{}-{}-{}-{}selected-{}{}priv-{}'.format(self.classifier, self.lupimethod, self.featsel, self.topk,

@@ -3,7 +3,7 @@ from CollateResults import collate_all
 import numpy as np
 from matplotlib import pyplot as plt
 from Get_Full_Path import get_full_path
-from CombinedPlot import all_plots
+from CollateCombinedPlot import all_plots
 # from CollateResults import compare_two_settings, get_graph_labels
 
 topk = 300
@@ -41,22 +41,22 @@ num_settings = 4
 for i in (featsels):
     print('{} & {:.2f}\% & {:.2f}\% & {:.2f}\% \\\\'.format(i.upper(), *lufe_scores[i][:3]))
 
+
+num_settings = 4
+bar_width = 1/(num_settings+1)
+indices = np.array(range(len(featsels)))
+fig, ax = plt.subplots(figsize = (7,7))
+for i in range(num_settings):
+    plt.bar(indices + (i*bar_width), [lufe_scores[key][i] for key in featsels], bar_width, label=labels_list[i])
+baseline_line = plt.axhline(y=baseline_score,c='k',linestyle='--',label='ALL')
+# ax.set_xticklabels(['']+featsels)
+plt.xticks(indices + (bar_width*num_settings/2), [i.upper() for i in featsels])
+plt.xlabel('Feature selection metric')
+plt.ylabel('Mean accuracy score (%)')
+plt.ylim((80,87))
+plt.legend()
+plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3a/shufflerandombar.pdf'))
+plt.show()
+
 #
-# num_settings = 4
-# bar_width = 1/(num_settings+1)
-# indices = np.array(range(len(featsels)))
-# fig, ax = plt.subplots(figsize = (7,7))
-# for i in range(num_settings):
-#     plt.bar(indices + (i*bar_width), [lufe_scores[key][i] for key in featsels], bar_width, label=labels_list[i])
-# baseline_line = plt.axhline(y=baseline_score,c='k',linestyle='--',label='ALL')
-# # ax.set_xticklabels(['']+featsels)
-# plt.xticks(indices + (bar_width*num_settings/2), [i.upper() for i in featsels])
-# plt.xlabel('Feature selection metric')
-# plt.ylabel('Mean accuracy score (%)')
-# plt.ylim((80,87))
-# plt.legend()
-# plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3a/shufflerandombar'))
-# plt.show()
-
-
 # all_plots(s1,s2,s3,featsel='anova',chapname='chap3a')

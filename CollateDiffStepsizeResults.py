@@ -50,5 +50,5 @@ for i in range(2):
         plt.legend(loc='lower right')
     fig1.ylim=([81,87])
     plt.gca().set_ylim([81, 87])
-plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2a/stepsizeplot'))
+plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2a/stepsizeplot.pdf'),type='pdf')
 plt.show()

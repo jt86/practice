@@ -43,7 +43,7 @@ plt.xticks(indices + bar_width*1.5, [i.upper() for i in featsels])
 plt.legend()
 plt.xlabel('Feature Selection method')
 plt.ylabel('Accuracy score (%)')
-plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2b/methodandfeatselbar'))
+plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2b/methodandfeatselbar.pdf'),type='pdf')
 plt.show()
 
 

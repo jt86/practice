@@ -23,13 +23,13 @@ s2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all
 
 
 ############ Top 500
-
-s3 = Experiment_Setting(foldnum='all', topk=500, dataset='tech', datasetnum='all', skfseed=1,
-                                  take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
-s4 = Experiment_Setting(foldnum='all', topk=500, dataset='tech', datasetnum='all', skfseed=1,
-                                  take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='lufe')
-
-plot_total_comparison(s3,s4,s_baseline)
+#
+# s3 = Experiment_Setting(foldnum='all', topk=500, dataset='tech', datasetnum='all', skfseed=1,
+#                                   take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
+# s4 = Experiment_Setting(foldnum='all', topk=500, dataset='tech', datasetnum='all', skfseed=1,
+#                                   take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='lufe')
+#
+# plot_total_comparison(s3,s4,s_baseline)
 # plot_bars(s_baseline,s3)
 # plot_bars(s_baseline,s4)
 # plot_bars(s3,s4)
@@ -49,3 +49,17 @@ plot_total_comparison(s3,s4,s_baseline)
 # plot_bars_for_mtl(all_results['LUFe-MTL'] , all_results['LUFe-RFE-SVM+'], 'LUFe-MTL', 'LUFe-RFE-SVM+', featsel)
 # plot_bars_for_mtl(all_results['LUFe-MTL'] , all_results['LUFe-RFE-RBF-SVM+'], 'LUFe-MTL', 'LUFe-RFE-RBF-SVM+', featsel)
 # plot_bars_for_mtl(all_results['LUFe-RFE-RBF-SVM+'] , all_results['LUFe-RFE-SVM+'], 'LUFe-RFE-RBF-SVM+', 'LUFe-RFE-SVM+', featsel)
+
+
+############ FOR CHAPTER 1
+
+featsels=['anova','bahsic','chi2','mi']
+############ Top 300
+for fs in featsels:
+
+    s1 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                                      take_top_t='top', lupimethod='nolufe', featsel=fs, classifier='featselector')
+    s2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                                      take_top_t='top', lupimethod='svmplus', featsel=fs, classifier='lufe')
+
+    plot_total_comparison(s1,s2,s_baseline)

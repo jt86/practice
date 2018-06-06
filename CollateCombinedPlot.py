@@ -22,7 +22,7 @@ def get_settings(featsel):
 
     return(sb,s1,s2)
 
-def all_plots(sb,s1,s2,featsel,chapname):
+def all_plots(sb,s1,s2,featsel,chapname='chap2a'):
 
     pair = [(s1, s2), (sb, s2), (sb, s1)]
 
@@ -37,12 +37,12 @@ def all_plots(sb,s1,s2,featsel,chapname):
         num_imprs =  len(np.where(improvements_list > 0)[0])/len(improvements_list)*100
         plt.title('{} vs {}:  {}% higher accuracy (improved in {:.1f}% of cases)'.format(name2, name1,
                 round(np.mean(improvements_list),2),num_imprs))
-        plt.ylabel('Difference in accuracy score (%)\n {} better <-----> {} better'.format(name1, name2))
+        plt.ylabel('Difference in accuracy score (%)\n {}{} better <----------> {} better{}'.format(' '*round(1.5*(len(name2))),name1,name2,' '*round(1.5*(len(name1))+20)))
         plt.xlabel('dataset index (sorted by improvement)')
         plt.ylim(-20, 30)
-        plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/allplots-{}'.format(chapname,featsel)))
-    plt.show()
+        plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/allplots-{}.pdf'.format(chapname,featsel)),type='pdf')
+    # plt.show()
 
-# for featsel in ['rfe','anova','bahsic','chi2','mi','rfe']:
-#     settings = get_settings(featsel)
-#     all_plots(featsel)
+for featsel in ['rfe','anova','bahsic','chi2','mi','rfe']:
+    settings = get_settings(featsel)
+    all_plots(*settings,featsel)

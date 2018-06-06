@@ -154,7 +154,7 @@ def get_mi_score(labels_train,data):
 
 
 
-def plot_total_comparison(s1, s2, s_baseline,num_datasets = 295):
+def plot_total_comparison(s1, s2, s_baseline,num_datasets = 295, chapter='chap2a'):
     # changed to take arrays instead of 'setting' objects
     setting_one = np.mean(collate_all(s1), axis=1)
     setting_two = np.mean(collate_all(s2), axis=1)
@@ -173,7 +173,7 @@ def plot_total_comparison(s1, s2, s_baseline,num_datasets = 295):
     plt.ylabel('Accuracy score (%)')
     plt.xlabel('Dataset number (sorted by accuracy score of ALL-SVM setting)')
     plt.legend(loc='best')
-    plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/ALL_vs_{}_vs_{}{}.pdf'.format(s1.featsel, get_graph_labels(s1), get_graph_labels(s2), s1.topk)),format='pdf')
+    plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/{}/ALL_vs_{}_vs_{}{}.pdf'.format(chapter, get_graph_labels(s1), get_graph_labels(s2), s1.topk)),format='pdf')
     plt.show()
 
 

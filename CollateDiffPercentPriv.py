@@ -37,7 +37,7 @@ plt.axhline(y=featsel_scores['mi'], linestyle='--', label='FeatSel-MI-SVM', c='k
 plt.legend(loc='best')
 plt.xlabel('Percentage of privileged information used')
 plt.ylabel('Mean accuracy score (%)')
-plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2c/diffpercentpriv'))
+plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2c/diffpercentpriv.pdf'),type='pdf')
 # plt.show()
 
 for p in percentages:
