@@ -39,7 +39,7 @@ labels_list = ['LUFe', 'LUFe-Shuffle', 'LUFe-Random', 'FeatSel']
 ##### This part to iterate over feat selection methods and produce LaTeX code for table
 num_settings = 4
 for i in (featsels):
-    print('{} & {:.2f}\% & {:.2f}\% & {:.2f}\% \\\\'.format(i.upper(), *lufe_scores[i][:3]))
+    print('{} & {:.1f}\% & {:.1f}\% & {:.1f}\% \\\\'.format(i.upper(), *lufe_scores[i][:3]))
 
 
 num_settings = 4

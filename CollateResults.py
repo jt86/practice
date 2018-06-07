@@ -47,6 +47,10 @@ def collate_all(s, num_datasets=295):
     return (np.array(all_results)*100)
 
 
+def collate_specified_datasets(s, list_of_indices):
+    all_results = collate_all(s)
+    return all_results[list_of_indices]
+
 
 def compare_two_settings(s1, s2):
     setting_one = np.mean(collate_all(s1), axis=1)
