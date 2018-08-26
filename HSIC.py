@@ -42,34 +42,43 @@ def quadratic_time_HSIC(data_first, data_second, sigma):
 # print(data_first)
 # print(quadratic_time_HSIC(data_first,data_second,1))
 
-# featsel, classifier, lupimethod = 'rfe', 'featselector', 'nolufe'
-# with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC.csv'), 'a') as results_file:
-#     results_writer = csv.writer(results_file)
-#     for datasetnum in range(295):
-#         for foldnum in range(10):
-#             s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-#                                            cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-#                                            take_top_t='top', lupimethod=lupimethod,
-#                                            featsel=featsel, classifier=classifier, stepsize=0.1)
-#             all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
-#             normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
-#
-#             results_writer.writerow([datasetnum,foldnum,(quadratic_time_HSIC(normal_train, priv_train, sigma=1))])
 
-def compare_hsic_w_improvement(s):
-    accuracy = collate_single_dataset(s)[s.foldnum]
-    with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC.csv'), 'r') as results_file:
-        results_reader = csv.reader(results_file)
-        for line in results_reader:
-            if int(line[0])==s.datasetnum and int(line[1])==s.foldnum:
-                return(accuracy,float(line[-1]))
+
+###### THIS PART WRITES THE HSIC RESULTS
+#
+featsel, classifier, lupimethod = 'rfe', 'featselector', 'nolufe'
+with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC-privtop10withnorm.csv'), 'a') as results_file:
+    results_writer = csv.writer(results_file)
+    for datasetnum in range(295):
+        for foldnum in range(10):
+            s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
+                                           cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=10, percentageofinstances=100,
+                                           take_top_t='top', lupimethod=lupimethod,
+                                           featsel=featsel, classifier=classifier, stepsize=0.1)
+            all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
+            normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
+            labels_train2=labels_train.reshape(len(labels_train),1)
+            print('aaaa \n',normal_train.shape,priv_train.shape, labels_train2.shape)
+            results_writer.writerow([datasetnum,foldnum,(quadratic_time_HSIC(labels_train2, normal_train, sigma=1))])
+
+
+
+###### THIS PART READS AND PLOTS THE HSIC RESULTS
+
+# def compare_hsic_w_improvement(s):
+#     accuracy = collate_single_dataset(s)[s.foldnum]
+#     with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC.csv'), 'r') as results_file:
+#         results_reader = csv.reader(results_file)
+#         for line in results_reader:
+#             if int(line[0])==s.datasetnum and int(line[1])==s.foldnum:
+#                 return(accuracy,float(line[-1]))
 
 
 
 def compare_hsic_w_improvement2(s):
     list_of_hsics=np.zeros(10)
     accuracy = collate_single_dataset(s)
-    with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC.csv'), 'r') as results_file:
+    with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC-privtop10withnorm.csv'), 'r') as results_file:
         results_reader = csv.reader(results_file)
         for line in results_reader:
             if int(line[0])==s.datasetnum:
@@ -82,34 +91,24 @@ def compare_hsic_w_improvement2(s):
 
 
 featsel, classifier, lupimethod = 'mi', 'featselector', 'nolufe'
-foldnum=None
-datasetnum = 1
-s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-                       cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
-                       take_top_t='top', lupimethod=lupimethod,
-                       featsel=featsel, classifier=classifier, stepsize=0.1)
-
-accuracy, hsic = (compare_hsic_w_improvement2(s))
-print(accuracy)
-print(hsic)
-
-
-
 accuracies, hsics = [],[]
 for datasetnum in range(295):
     for foldnum in range(10):
         s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-                                       cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=100, percentageofinstances=100,
+                                       cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=10, percentageofinstances=100,
                                        take_top_t='top', lupimethod=lupimethod,
                                        featsel=featsel, classifier=classifier, stepsize=0.1)
+    accuracy,hsic=(compare_hsic_w_improvement2(s))
+    accuracies.append(np.mean(accuracy))
+    hsics.append(np.mean(hsic))
 
-        accuracy,hsic=(compare_hsic_w_improvement2(s))
-        accuracies.append(np.mean(accuracy))
-        hsics.append(np.mean(hsic))
-
-print(accuracies)
-print(hsics)
-plt.scatter(hsics,accuracies)
+print(len(accuracies))
+print(len(hsics))
+fig,ax=plt.subplots()
+plt.scatter(hsics,accuracies, alpha=0.5)
+plt.xlabel('hsics')
+plt.ylabel('accuracies')
+ax.set_xlim(0,0.02)
 plt.show()
 
 print(np.corrcoef(hsics,accuracies))

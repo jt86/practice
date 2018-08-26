@@ -8,16 +8,31 @@ time0=time.time()
 
 
 i=0
-for percentageofinstances in [100]:
-    print(percentageofinstances)
-    for datasetnum in range(178):
-        for foldnum in range(6,8):
+
+for featsel in ['mi','rfe','anova','bahsic','chi2']:
+    for datasetnum in range(295):
+        for foldnum in range(8,10):
             s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, skfseed=1, kernel='linear',
-                                    percent_of_priv=100, percentageofinstances=percentageofinstances, take_top_t='top',
-                                   lupimethod='svmplus', featsel='mi', classifier='lufetrain')
+                                    percent_of_priv=100, percentageofinstances=100, take_top_t='top',
+                                   lupimethod='svmplus', featsel=featsel, classifier='lufeauto')
             single_fold(s)
             i += 1
             print('\n iteration {}; time = {}'.format(i, time.time() - time0))
+
+
+
+# i=0
+# for percentageofinstances in range(20,101,20):
+#     print(percentageofinstances)
+#     print(percentageofinstances)
+#     for datasetnum in range(295):
+#         for foldnum in range(6,8):
+#             s = Experiment_Setting(foldnum=foldnum, topk='nofeatsel', dataset='tech', datasetnum=datasetnum, skfseed=1, kernel='linear',
+#                                     percent_of_priv=100, percentageofinstances=percentageofinstances, take_top_t='top',
+#                                    lupimethod='nolufe', featsel='nofeatsel', classifier='baselinetrain')
+#             single_fold(s)
+#             i += 1
+#             print('\n iteration {}; time = {}'.format(i, time.time() - time0))
 
 # s = Experiment_Setting(foldnum=9, topk=300, dataset='tech', datasetnum=9, kernel='linear',
 #                        cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=75, percentageofinstances=100,

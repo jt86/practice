@@ -134,6 +134,10 @@ def do_lufetrain(s, normal_train, labels_train, priv_train, cross_val_folder):
     if s.lupimethod == 'svmplus':
         svm_plus(s, normal_train, labels_train, priv_train, normal_train, labels_train, cross_val_folder)
 
+def do_lufeauto(s, normal_train, labels_train, normal_test, labels_test, cross_val_folder):
+    """"Does auto-encoder LUFe, using SVM+ with selected features as both the primary AND secondary feature sets"""
+    svm_plus(s, normal_train, labels_train, normal_train, normal_test, labels_test, cross_val_folder)
+
 ############## FUNCTIONS TO GET SUBSETS OF FEATURES AND SUBSETS OF INSTANCES
 
 def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
@@ -315,6 +319,8 @@ def single_fold(s):
     all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
     if s.classifier == 'baseline':
         do_svm(s, all_train, labels_train, all_test, labels_test, output_directory)
+    elif s.classifier == 'baselinetrain':
+        do_svm(s, all_train, labels_train, all_train, labels_train, output_directory)
     elif s.classifier == 'featselector':
         if s.featsel == 'rfe':
             print('doing rfe')
@@ -345,4 +351,6 @@ def single_fold(s):
             do_svm_on_train(s, all_train, all_test, labels_train, output_directory)
         if s.classifier == 'lufetrain':
             do_lufetrain(s, normal_train, labels_train, priv_train, output_directory)
+        if s.classifier == 'lufeauto':
+            do_lufeauto(s, normal_train, labels_train, normal_test, labels_test, output_directory)
 ##################################################################################################

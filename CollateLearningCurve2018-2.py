@@ -43,6 +43,15 @@ for percentageofinstances in pc_range:
                                 kernel='linear', percent_of_priv=100, percentageofinstances=percentageofinstances, take_top_t='top',
                                 lupimethod='svmplus', featsel='mi', classifier='lufetrain')
 
+    s_baseline = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                                kernel='linear', percent_of_priv=100, percentageofinstances=percentageofinstances, take_top_t='top',
+                                lupimethod='nolufe', featsel='nofeatsel', classifier='baseline')
+
+    s_baseline_train = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+                                    kernel='linear', percent_of_priv=100, percentageofinstances=percentageofinstances,
+                                    take_top_t='top',
+                                    lupimethod='nolufe', featsel='nofeatsel', classifier='baselinetrain')
+
     # print(np.mean(collate_all(s_featsel)), np.mean(collate_all(s_lufe)))
     # means_featsel.append(np.mean(collate_all(s_featsel)))
     # means_lufe.append(np.mean(collate_all(s_lufe)))

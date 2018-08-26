@@ -14,6 +14,8 @@ baseline_score = np.mean(collate_all(Experiment_Setting(foldnum='all', topk='all
                                                                  featsel='nofeatsel', classifier='baseline')))
 # print(baseline_score)
 
+
+# featsels = ['mi','rfe']
 featsels = ['anova','bahsic','chi2','mi','rfe']
 for featsel in featsels:
     s1 = Experiment_Setting(foldnum='all', topk=topk, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
@@ -23,9 +25,11 @@ for featsel in featsels:
     s3 = Experiment_Setting(foldnum='all', topk=topk, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
                                       take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='luferandom')
     s4 = Experiment_Setting(foldnum='all', topk=topk, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
+                                      take_top_t='top', lupimethod='svmplus', featsel=featsel, classifier='lufeauto')
+    s5 = Experiment_Setting(foldnum='all', topk=topk, dataset='tech', datasetnum='all', skfseed=1, kernel='linear',
                             take_top_t='top', lupimethod='nolufe', featsel=featsel, classifier='featselector')
 
-    lufe_scores[featsel]=([np.mean(collate_all(item))for item in (s1,s2,s3,s4)])
+    lufe_scores[featsel]=([np.mean(collate_all(item))for item in (s1,s2,s3,s4,s5)])
 #     print('\n')
 #     print([np.mean(collate_all(item))for item in (s1,s2,s3)])
 #     # print([np.mean(collate_all(s4) - baseline_score)] * 3)
@@ -33,7 +37,7 @@ for featsel in featsels:
 #
 # plt.show()
 
-labels_list = ['LUFe', 'LUFe-Shuffle', 'LUFe-Random', 'FeatSel']
+labels_list = ['LUFe', 'LUFe-Shuffle', 'LUFe-Random', 'LUFe-Auto','FeatSel']
 
 
 ##### This part to iterate over feat selection methods and produce LaTeX code for table
@@ -55,7 +59,7 @@ plt.xlabel('Feature selection metric')
 plt.ylabel('Mean accuracy score (%)')
 plt.ylim((80,87))
 plt.legend()
-plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3a/shufflerandombar.pdf'))
+# plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3a/shufflerandombar.pdf'))
 plt.show()
 
 #

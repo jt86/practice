@@ -6,7 +6,7 @@ class Experiment_Setting:
                  cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances=100, take_top_t='top'):
 
         assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse','luferandom','lufeshuffle',
-                              'svmtrain','lufetrain','lufenonlincrossval']
+                              'svmtrain','lufetrain','baselinetrain','lufenonlincrossval', 'lufeauto']
         assert lupimethod in ['nolufe','svmplus','dp','dsvm'], 'lupi method must be nolufe, svmplus or dp'
         assert featsel in ['nofeatsel','rfe','mi','anova','chi2','bahsic'], 'feat selection method not valid'
 
@@ -38,7 +38,6 @@ class Experiment_Setting:
 
 
         if stepsize==0.1:
-            print(1)
             if self.classifier=='lufenonlincrossval':
                 self.name = '{}{}{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.cmin,self.cmax, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv)
@@ -52,7 +51,6 @@ class Experiment_Setting:
                 self.name = '{}-{}-{}-{}selected-{}{}priv'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv)
         else:
-            print(3)
             self.name = '{}-{}-{}-{}selected-{}{}priv-{}'.format(self.classifier, self.lupimethod, self.featsel, self.topk,
                                                           self.take_top_t, self.percent_of_priv, self.stepsize)
 
