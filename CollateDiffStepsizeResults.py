@@ -34,11 +34,11 @@ print(rfe_lufe_results)
 print(rfe_fs_results)
 
 # plotting UNIVARIATE feature selection and LUFe results
-fig = plt.figure(figsize=(10, 4))
+fig = plt.figure(figsize=(6, 9))
 rfe_settings = [rfe_fs_results,rfe_lufe_results]
 titles = ['Standard Feature Selection','LUFe']
 for i in range(2):
-    fig1 = plt.subplot(1, 2, i+1)
+    fig1 = plt.subplot(2, 1, i+1)
     for item in featsels:
         fig1.plot(stepsizes, [univariate_results[item][i]] * len(stepsizes), '-', label=item.upper())
     fig1.plot(stepsizes,rfe_settings[i],'ko--', label='RFE')
@@ -48,7 +48,8 @@ for i in range(2):
     plt.title(titles[i])
     if i==1:
         plt.legend(loc='lower right')
-    fig1.ylim=([81,87])
+    # fig1.ylim=([81,87])
     plt.gca().set_ylim([81, 87])
+fig.subplots_adjust(hspace=0.3, top=0.95, bottom=0.05)
 plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2a/stepsizeplot.pdf'),type='pdf')
 plt.show()

@@ -41,7 +41,7 @@ def get_scores(featsel, lupimethod,ax):
 
     # x,y = svm_improvs_vs_all,lufe_improvs_vs_svm
     # ax.scatter(x,y,alpha =0.5)
-    # ax.set_title(featsel.upper())
+    # ax.set_title('{}: r={:.3f}'.format(featsel.upper(), np.corrcoef(x, y)[0, 1]))
     # ax.set_xlabel('FeatSel vs ALL improvement (%)')
     # ax.set_ylabel('LUFe vs FeatSel improvement (%)')
     # ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x), color='k')
@@ -53,20 +53,27 @@ def get_scores(featsel, lupimethod,ax):
 
     # x,y = svm_reverse_scores,lufe_improvs_vs_svm
     # ax.scatter(x,y,alpha =0.5)
-    # ax.set_title(featsel.upper())
-    # ax.set_xlabel('SVM reverse score (%)')
-    # ax.set_ylabel('LUFe vs FeatSel improvement (%)')
+    # ax.set_title('{}: r={:.3f}'.format(featsel.upper(), np.corrcoef(x, y)[0, 1]))
+    # ax.set_xlabel('SVM-Reverse score (%)')
+    # ax.set_ylabel('LUFe improvement vs FeatSel (%)')
     # ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x), color='k')
     # ax.axhline(y=0, clip_on=False, linestyle='dashed', color='k', lw=0.5)
-    # ax.axvline(x=0, clip_on=False, linestyle='dashed', color='k', lw=0.5)
-    # plt.show()
 
+    ########### SVM-REVERSE 'IMPROVEMENT' over FeatSel VS LUFE IMPROVEMENT
+
+    # x,y = svm_reverse_scores-svm_scores,lufe_improvs_vs_svm
+    # ax.scatter(x,y,alpha =0.5)
+    # ax.set_title('{}: r={:.3f}'.format(featsel.upper(), np.corrcoef(x, y)[0, 1]))
+    # ax.set_xlabel('SVM-Reverse improvement vs FeatSel (%)')
+    # ax.set_ylabel('LUFe improvement vs FeatSel (%)')
+    # ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x), color='k')
+    # ax.axhline(y=0, clip_on=False, linestyle='dashed', color='k', lw=0.5)
 
     ########### SVM SCORE VS LUFE IMPROVEMENT
 
     # x,y = svm_scores,lufe_improvs_vs_svm
     # ax.scatter(x,y,alpha =0.5)
-    # ax.set_title(featsel.upper())
+    # ax.set_title('{}: r={:.3f}'.format(featsel.upper(), np.corrcoef(x, y)[0, 1]))
     # ax.set_xlabel('FeatSel accuracy score (%)')
     # ax.set_ylabel('LUFe vs FeatSel improvement (%)')
     # ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x), color='k')
@@ -76,24 +83,24 @@ def get_scores(featsel, lupimethod,ax):
 
     # x,y = svm_reverse_improvs_vs_all,lufe_improvs_vs_svm
     # ax.scatter(x,y,alpha =0.5)
-    # ax.set_title(featsel.upper())
+    # ax.set_title('{}: r={:.3f}'.format(featsel.upper(), np.corrcoef(x, y)[0, 1]))
     # ax.set_xlabel('SVM-Reverse improvement vs ALL (%)')
     # ax.set_ylabel('LUFe vs FeatSel improvement (%)')
     # ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x), color='k')
     # ax.axhline(y=0, clip_on=False, linestyle='dashed', color='k', lw=0.5)
     # ax.axvline(x=0, clip_on=False, linestyle='dashed', color='k', lw=0.5)
-    # # plt.show()
+    # plt.show()
 
     #####
 
 
-    x,y = svm_reverse_scores,improv_diff
-    ax.scatter(x,y,alpha =0.5)
-    ax.set_title(featsel.upper())
-    ax.set_xlabel('SVM reverse score (%)')
-    ax.set_ylabel('J score')
-    ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x), color='k')
-    ax.axhline(y=0, clip_on=False, linestyle='dashed', color='k', lw=0.5)
+    # x,y = svm_reverse_scores,improv_diff
+    # ax.scatter(x,y,alpha =0.5)
+    # ax.set_title('{}: r={:.3f}'.format(featsel.upper(), np.corrcoef(x, y)[0, 1]))
+    # ax.set_xlabel('SVM reverse score (%)')
+    # ax.set_ylabel('J score')
+    # ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x), color='k')
+    # ax.axhline(y=0, clip_on=False, linestyle='dashed', color='k', lw=0.5)
     # ax.axvline(x=0, clip_on=False, linestyle='dashed', color='k', lw=0.5)
     # plt.show()
 
@@ -112,7 +119,7 @@ def get_scores(featsel, lupimethod,ax):
 
 #     # np.corrcoef()
 
-
+plt.clf()
 fig = plt.figure(figsize=[7,9])
 for lupimethod in ['svmplus']:#,'dp']:
     print('\n LUPI method',lupimethod)
@@ -120,9 +127,10 @@ for lupimethod in ['svmplus']:#,'dp']:
     for i, featsel in enumerate(['anova','bahsic','chi2','mi','rfe']):
         print('\n Feature selection method', featsel, i)
         get_scores(featsel, lupimethod, ax=fig.add_subplot(3,2,i+1))
+
 plt.subplots_adjust(top=0.95, bottom=0.05,hspace=0.35,wspace=0.35)
-# plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3b/featsel_improv_vs_lufe_improv.pdf'),format='pdf')
-plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3b/svm_reverse_vs_j_score2.pdf'),format='pdf')
-# plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3b/svmreverse_score_vs_lufe_improv.pdf'),format='pdf')
+# plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3b/svmreverse_improv_vs_lufe_improv.pdf'),format='pdf')
+# plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3b/svm_reverse_vs_j_score2.pdf'),format='pdf')
+plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3b/svmreverse_improv_over_featsel_vs_lufe_improv.pdf'),format='pdf')
 # plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3b/svm_score_vs_lufe_improv.pdf'),format='pdf')
 plt.show()

@@ -26,7 +26,7 @@ sys.path.append('bahsic')
 from bahsic import CBAHSIC,vector
 # from sklearn.feature_selection import mutual_info_classif
 from pprint import pprint
-
+import time
 
 
 ############## HELPER FUNCTIONS
@@ -234,7 +234,9 @@ def get_norm_priv(s,all_train,all_test):
 def do_mutinfo(s, all_train, labels_train, all_test,labels_test,cross_val_folder):
     scores = mutual_info_classif(all_train, labels_train)
     ordered_indices = np.array(np.argsort(scores)[::-1])  # ordered feats is np array of indices from biggest to smallest
+    t0 = time.time()
     save_indices_do_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder, ordered_indices)
+    print('\n ------',time.time()-t0)
 
 def do_anova(s, all_train, all_test, labels_train, labels_test, output_directory):
     # get array of scores in the same order as original features
@@ -312,7 +314,7 @@ def do_svm_on_train(s, all_train, all_test, labels_train, cross_val_folder):
 def single_fold(s):
     pprint(vars(s))
     np.random.seed(s.foldnum)
-    output_directory = get_full_path(('Desktop/Privileged_Data/AllResults/{}/{}/{}/{}{}/')
+    output_directory = get_full_path(('Desktop/Privileged_Data/Test/{}/{}/{}/{}{}/')
                                      .format(s.dataset,s.kernel, s.name,s.dataset, s.datasetnum))
     print(output_directory)
     make_directory(output_directory)
@@ -333,6 +335,8 @@ def single_fold(s):
             do_chi2(s, all_train, all_test, labels_train, labels_test, output_directory)
         if s.featsel == 'bahsic':
             do_bahsic(s, all_train, all_test, labels_train, labels_test, output_directory)
+
+
     else:
         normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
         if s.classifier == 'lufe':

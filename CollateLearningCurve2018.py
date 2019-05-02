@@ -84,17 +84,24 @@ print(np.mean(collate_all(s_baseline).shape))
 
     ### This part to produce the learning curve plot
 
-plt.plot(pc_range,[100-item for item in means_baseline], label='ALL-SVM+ on test set', color='k')
-plt.plot(pc_range,[100-item for item in means_training_baseline], label='ALL-SVM+ on train set', color='k',linestyle=':')
-plt.plot(pc_range,[100-item for item in means_featsel], label='FeatSel-MI-SVM on test set', color='b')
-plt.plot(pc_range,[100-item for item in means_training_featsel], label='FeatSel-MI-SVM on train set', color='b', linestyle=':')
-plt.plot(pc_range,[100-item for item in means_lufe], label='LUFe-MI-SVM+ on test set', color='r')
-plt.plot(pc_range,[100-item for item in means_training_lufe], label='LUFe-MI-SVM+ on train set', color='r',linestyle=':')
+fig, axes = plt.subplots(2,1, figsize=[6,10])
+plt.subplots_adjust(hspace=0.5)
+ax2, ax1 = axes.flat[0], axes.flat[1]
+ax1.plot(pc_range,[100-item for item in means_baseline], label='ALL-SVM', color='k', marker='o')
+ax2.plot(pc_range,[100-item for item in means_training_baseline], label='ALL-SVM', color='k', marker='o')
+ax1.plot(pc_range,[100-item for item in means_featsel], label='FeatSel-MI-SVM', color='b', marker='o')
+ax2.plot(pc_range,[100-item for item in means_training_featsel], label='FeatSel-MI-SVM', color='b', marker='o')
+ax1.plot(pc_range,[100-item for item in means_lufe], label='LUFe-MI-SVM+', color='r', marker='o')
+ax2.plot(pc_range,[100-item for item in means_training_lufe], label='LUFe-MI-SVM+', color='r', marker='o')
+
+ax2.set_title('Train error')
+ax1.set_title('Test error')
+ax2.legend(loc=[0.72, -0.4])
 
 
-plt.legend(loc='best')
-plt.xlabel('Percent of training data used')
-plt.ylabel('Mean error (%)')
+for ax in [ax1,ax2]:
+    ax.set_xlabel('Percent of training data used')
+    ax.set_ylabel('Mean error (%)')
 # plt.ylim(0,30)
 plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3c/learningcurve-dataset_new.pdf'),format='pdf')
 # plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3b/learningcurve-dataset{}.pdf'.format(datasetnum)),format='pdf')

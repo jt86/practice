@@ -1,8 +1,8 @@
 from ExperimentSetting import Experiment_Setting
-from CollateResults import plot_total_comparison, plot_bars
+from CollateResults import plot_total_comparison, plot_bars, compare_two_settings
 from CollateMTLResults2 import collate_mtl_results, collate_all, plot_bars_for_mtl
 # from CollateResults2 import
-
+import numpy as np
 ############ FOR CHAPTER 1
 
 featsel='rfe'
@@ -55,11 +55,23 @@ s2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all
 
 featsels=['anova','bahsic','chi2','mi']
 ############ Top 300
-for fs in featsels:
+# for fs in featsels:
+#
+#     s1 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+#                                       take_top_t='top', lupimethod='nolufe', featsel=fs, classifier='featselector')
+#     s2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
+#                                       take_top_t='top', lupimethod='svmplus', featsel=fs, classifier='lufe')
+#
+#     plot_total_comparison(s1,s2,s_baseline)
+
+
+######## CORRECTIONS - SEEING WHICH DATASAETS ARE THE BIGGEST DIFFERENCES
+
+for fs in featsels[:1]:
 
     s1 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                       take_top_t='top', lupimethod='nolufe', featsel=fs, classifier='featselector')
     s2 = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum='all', skfseed=1,
                                       take_top_t='top', lupimethod='svmplus', featsel=fs, classifier='lufe')
 
-    plot_total_comparison(s1,s2,s_baseline)
+    print(np.argsort(compare_two_settings(s1, s2)))

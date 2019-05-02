@@ -46,69 +46,115 @@ def quadratic_time_HSIC(data_first, data_second, sigma):
 
 ###### THIS PART WRITES THE HSIC RESULTS
 #
-featsel, classifier, lupimethod = 'rfe', 'featselector', 'nolufe'
-with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC-privtop10withnorm.csv'), 'a') as results_file:
-    results_writer = csv.writer(results_file)
-    for datasetnum in range(295):
-        for foldnum in range(10):
-            s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-                                           cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=10, percentageofinstances=100,
-                                           take_top_t='top', lupimethod=lupimethod,
-                                           featsel=featsel, classifier=classifier, stepsize=0.1)
-            all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
-            normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
-            labels_train2=labels_train.reshape(len(labels_train),1)
-            print('aaaa \n',normal_train.shape,priv_train.shape, labels_train2.shape)
-            results_writer.writerow([datasetnum,foldnum,(quadratic_time_HSIC(labels_train2, normal_train, sigma=1))])
 
 
+def write_hsic_results(name, featsel='mi', percent_of_priv=100, classifier='lufe', lupimethod='svmplus'):
+    assert name in ['normal-with-labels','priv-with-labels', 'normal-with-priv']
+    with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC-{}-{}-{}.csv'.format(name,featsel,percent_of_priv)), 'a') as results_file:
+        results_writer = csv.writer(results_file)
+        for datasetnum in range(295):
+            for foldnum in range(10):
+                s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum,
+                                       kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=percent_of_priv,
+                                       percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,
+                                       featsel=featsel, classifier=classifier, stepsize=0.1)
+                all_train, all_test, labels_train, labels_test = get_train_and_test_this_fold(s)
+                normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
+                labels_train2 = labels_train.reshape(len(labels_train), 1)
+                if name == 'normal-with-labels':
+                    results_writer.writerow([datasetnum, foldnum, (quadratic_time_HSIC(normal_train, labels_train2, sigma=1))])
+                if name == 'priv-with-labels':
+                    results_writer.writerow([datasetnum, foldnum, (quadratic_time_HSIC(priv_train, labels_train2, sigma=1))])
+                if name == 'normal-with-priv':
+                    results_writer.writerow([datasetnum, foldnum, (quadratic_time_HSIC(normal_train, priv_train, sigma=1))])
 
-###### THIS PART READS AND PLOTS THE HSIC RESULTS
-
-# def compare_hsic_w_improvement(s):
-#     accuracy = collate_single_dataset(s)[s.foldnum]
-#     with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC.csv'), 'r') as results_file:
-#         results_reader = csv.reader(results_file)
-#         for line in results_reader:
-#             if int(line[0])==s.datasetnum and int(line[1])==s.foldnum:
-#                 return(accuracy,float(line[-1]))
+# write_hsic_results('normal-with-priv','mi')
 
 
-
-def compare_hsic_w_improvement2(s):
+def get_hsic(s,name):
     list_of_hsics=np.zeros(10)
-    accuracy = collate_single_dataset(s)
-    with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC-privtop10withnorm.csv'), 'r') as results_file:
+    with open(get_full_path('Desktop/Privileged_Data/HSICdependencies/HSIC-{}-{}-{}.csv'.format(name,s.featsel,s.percent_of_priv)), 'r') as results_file:
         results_reader = csv.reader(results_file)
         for line in results_reader:
+            #10 folds - use index to put fold result in the right place
             if int(line[0])==s.datasetnum:
                 list_of_hsics[int(line[1])]=line[2]
-                # print(line[1])
             if 0 not in list_of_hsics:
-                return(accuracy,list_of_hsics)
+                return(list_of_hsics)
+
+
+def compare_hsic_w_improvement(name, ax, featsel='mi', percent_of_priv=100, classifier='lufe', lupimethod='svmplus'):
+
+    improvements, hsics  = [], []
+
+    for datasetnum in range(295):
+
+        s_baseline = Experiment_Setting(foldnum='all', topk='all', dataset='tech', datasetnum=datasetnum,
+                               kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
+                               percent_of_priv=percent_of_priv,
+                               percentageofinstances=100, take_top_t='top', lupimethod='nolufe',
+                               featsel='nofeatsel', classifier='baseline', stepsize=0.1)
+
+        s = Experiment_Setting(foldnum='all', topk=300, dataset='tech', datasetnum=datasetnum,
+                               kernel='linear', cmin=-3, cmax=3, numberofcs=7, skfseed=1,
+                               percent_of_priv=percent_of_priv,
+                               percentageofinstances=100, take_top_t='top', lupimethod=lupimethod,
+                               featsel=featsel, classifier=classifier, stepsize=0.1)
+
+        hsic_list = get_hsic(s, name)
+        accuracy_list = collate_single_dataset(s)
+        baseline_accuracy_list = collate_single_dataset(s_baseline)
+        hsic = np.mean(hsic_list)
+        improvement = (np.mean(accuracy_list)-np.mean(baseline_accuracy_list))*100
+        improvements.append(improvement)
+        hsics.append(hsic)
+        print('improvement', improvement)
+        print(datasetnum)
+    x,y = hsics, improvements
+
+    plt.xscale('log')
+    ax.scatter(x,y,alpha=0.2)
+    # ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x), color='k')
+    ax.set_title('{}: r={:.3f}'.format(featsel.upper(),np.corrcoef(hsics,improvements)[0,1]))
+    xlabel_dict = {'normal-with-labels':'HSIC between $\mathcal{\widehat{S}}$ and $\it{y}$',
+                   'priv-with-labels':'HSIC between $\mathcal{\widehat{U}}$ and $\it{y}$',
+                   'normal-with-priv':'HSIC between $\mathcal{\widehat{S}}$ and $\mathcal{\widehat{U}}$'}
+    ax.set_ylabel('LUFe improvement vs FeatSel (%)')
+    ax.set_xlabel(xlabel_dict[name])
+    ax.set_xticks([10**-3, 10**-2, 10**-1])
+    ax.axhline(y=0, clip_on=False, linestyle='dashed', color='k', lw=0.5)
+    # ax.axvline(x=0, clip_on=False, linestyle='dashed', color='k', lw=0.5)
+    return(np.corrcoef(hsics,improvements)[0,1])
+
+# for featsel in ['anova','bahsic','chi2','rfe']:
+#     write_hsic_results('normal-with-labels',featsel)
+#     write_hsic_results('priv-with-labels', featsel)
+#     write_hsic_results('normal-with-priv', featsel)
+
+# for featsel in ['anova', 'bahsic', 'chi2', 'rfe']:
+#     compare_hsic_w_improvement('normal-with-labels', featsel='mi', percent_of_priv=100, classifier='lufe', lupimethod='svmplus')
+#     compare_hsic_w_improvement('normal-with-labels', featsel='mi', percent_of_priv=100, classifier='lufe',
+#                                lupimethod='svmplus')
+#     compare_hsic_w_improvement('normal-with-labels', featsel='mi', percent_of_priv=100, classifier='lufe',
+#                                lupimethod='svmplus')
 
 
 
 
-featsel, classifier, lupimethod = 'mi', 'featselector', 'nolufe'
-accuracies, hsics = [],[]
-for datasetnum in range(295):
-    for foldnum in range(10):
-        s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, kernel='linear',
-                                       cmin=-3, cmax=3, numberofcs=7, skfseed=1, percent_of_priv=10, percentageofinstances=100,
-                                       take_top_t='top', lupimethod=lupimethod,
-                                       featsel=featsel, classifier=classifier, stepsize=0.1)
-    accuracy,hsic=(compare_hsic_w_improvement2(s))
-    accuracies.append(np.mean(accuracy))
-    hsics.append(np.mean(hsic))
+percent_of_priv = 100
+name = 'normal-with-labels'
 
-print(len(accuracies))
-print(len(hsics))
-fig,ax=plt.subplots()
-plt.scatter(hsics,accuracies, alpha=0.5)
-plt.xlabel('hsics')
-plt.ylabel('accuracies')
-ax.set_xlim(0,0.02)
-plt.show()
+all_hsics = np.zeros([5,3])
 
-print(np.corrcoef(hsics,accuracies))
+
+for j, name in enumerate(['normal-with-labels','priv-with-labels','normal-with-priv']):
+    fig = plt.figure(figsize=[7, 9])
+    for i, featsel in enumerate(['anova', 'bahsic', 'chi2', 'mi', 'rfe']):
+        all_hsics[i, j] = compare_hsic_w_improvement(name, ax=fig.add_subplot(3,2,i+1), featsel=featsel, percent_of_priv=100, classifier='lufe', lupimethod='svmplus')
+        plt.subplots_adjust(top=0.95, bottom=0.05, hspace=0.35, wspace=0.35)
+        plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap3b/HSIC-correlations/HSIC-{}-{}.pdf'.format(name, percent_of_priv)),format='pdf')
+#
+# for item in all_hsics:
+#     print(' '.join(['& {:.2f}'.format(a) for a in item]))
+
+        # plt.show()
