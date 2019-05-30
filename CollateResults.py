@@ -163,9 +163,6 @@ def plot_total_comparison(s1, s2, s_baseline,num_datasets = 295, chapter='chap2a
     setting_one = np.mean(collate_all(s1), axis=1)
     setting_two = np.mean(collate_all(s2), axis=1)
     baseline = np.mean(collate_all(s_baseline), axis=1)
-    # setting_one = np.mean(s1, axis=1)
-    # setting_two = np.mean(s2, axis=1)
-    # baseline = np.mean(s_baseline, axis=1)
     indices = np.argsort(baseline[:num_datasets])
     setting_one_scores=setting_one[indices]
     setting_two_scores = setting_two[indices]

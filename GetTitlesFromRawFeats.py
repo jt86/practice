@@ -20,6 +20,8 @@ info_df['name2'] = [a for i,a in enumerate(all_links) if i%2!=0]
 
 info_df.to_csv('techtc_info.csv')
 
-for i, a in enumerate(soup.find_all('td')):
-  if '<td align="center"><a href="' in str(a) and 'dmoz' in str(a):
-    print(i, str(a))
+print(info_df.head())
+
+# for i, a in enumerate(soup.find_all('td')):
+#   if '<td align="center"><a href="' in str(a) and 'dmoz' in str(a):
+#     print(i, str(a))

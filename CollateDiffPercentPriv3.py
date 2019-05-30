@@ -2,7 +2,7 @@ from ExperimentSetting import Experiment_Setting
 from CollateResults import collate_all
 import numpy as np
 from matplotlib import pyplot as plt
-# from Get_Full_Path import get_full_path
+from Get_Full_Path import get_full_path
 import pickle
 
 
@@ -11,7 +11,7 @@ topk = 300
 
 percentages= [10,25,50,100]
 percentages= [10,25,50,75,100]
-featsels = ['rfe','mi'] #''anova','bahsic','chi2','mi','rfe']
+featsels = ['rfe','mi']
 
 lufe_scores = dict()
 featsel_scores = dict()
@@ -34,45 +34,54 @@ baseline_score = np.mean(collate_all(Experiment_Setting(foldnum='all', topk='all
                                                         featsel='nofeatsel', classifier='baseline')))
 
 
-with open("lufe_scores.pkl","wb") as f:
-    pickle.dump(lufe_scores,f)
+# print(len(lufe_scores), [len(lufe_scores[i]) for i in lufe_scores])
+# #
+# for key in lufe_scores:
+#     lufe_scores[key] = np.mean(lufe_scores[key])
+#
+# for key in featsel_scores:
+#     featsel_scores[key] = np.mean(featsel_scores[key])
+#
+#
+# with open("lufe_scores.pkl","wb") as f:
+#     pickle.dump(lufe_scores,f)
+#
+# with open("featsel_scores.pkl","wb") as f:
+#     pickle.dump(featsel_scores,f)
+#
+# with open("baseline_score.pkl","wb") as f:
+#     pickle.dump(baseline_score,f)
+#
+avg_lufe_scores, avg_featsel_scores = dict(), dict()
 
-with open("featsel_scores.pkl","wb") as f:
-    pickle.dump(featsel_scores,f)
+for key in lufe_scores:
+    avg_lufe_scores[key] = np.mean(lufe_scores[key])
 
-with open("baseline_score.pkl","wb") as f:
-    pickle.dump(baseline_score,f)
-
-
+for key in featsel_scores:
+    avg_featsel_scores[key] = np.mean(featsel_scores[key])
 
 
-with open("lufe_scores.pkl", 'rb') as f:
-    lufe_scores = pickle.load(f)
-
-with open("featsel_scores.pkl", 'rb') as f:
-    featsel_scores = pickle.load(f)
-
-with open("baseline_score.pkl", 'rb') as f:
-    baseline_score = pickle.load(f)
-
-
-
-print(type(lufe_scores), type(baseline_score))
-fig, axes = plt.subplots(2,1)
+    # print(type(lufe_scores), type(baseline_score))
+fig, axes = plt.subplots(2,1, figsize=[6,10])
 for i, featsel in enumerate(featsels):
     ax = axes.flat[i]
-    for take_top_t in ['top','bottom']:
-        # ax.plot(percentages, [lufe_scores['{}-{}-{}-lufe'.format(featsel,take_top_t,p)] for p in percentages],
-        #          marker='o',label='LUFe-{}-SVM+ ({})'.format(featsel.upper(),take_top_t))
-        # ax.boxplot(percentages, [lufe_scores['{}-{}-{}-lufe'.format(featsel, take_top_t, p)] for p in percentages])
-        ax.bar(percentages, [lufe_scores['{}-{}-{}-lufe'.format(featsel, take_top_t, p)] for p in percentages])#,
-               # label='LUFe-{}-SVM+ ({})'.format(featsel.upper(),take_top_t))
-    ax.axhline(y=featsel_scores[featsel], linestyle='--', label='FeatSel-{}-SVM'.format(featsel.upper()), c='k')
-    ax.legend(loc='best')
+    x_values = np.array(range(5))
+    for j, take_top_t in enumerate(['top','bottom']):
+        x_values2 = (x_values-0.2 if take_top_t=='top' else x_values+0.2)
+        print(x_values2)
+        scores = [avg_lufe_scores['{}-{}-{}-lufe'.format(featsel, take_top_t, p)] for p in percentages]
+        yerr = [np.std(lufe_scores['{}-{}-{}-lufe'.format(featsel, take_top_t, p)]) for p in percentages]
+        print('yerr', yerr)
+        ax.bar(x_values2, scores, label='LUFe-{}-SVM+ ({})'.format(featsel.upper(),take_top_t), width=0.4, yerr = yerr)
+    ax.axhline(y=avg_featsel_scores[featsel], linestyle='--', label='FeatSel-{}-SVM'.format(featsel.upper()), c='k')
+    ax.legend(loc='upper right')
+    ax.set_xticklabels([0]+percentages)
     ax.set_xlabel('Percentage of privileged information used')
     ax.set_ylabel('Mean accuracy score (%)')
+    ax.set_ylim(bottom=80, top=89)
     ax.set_title(featsel.upper())
-    # plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2c/diffpercentpriv.pdf'),type='pdf')
+plt.subplots_adjust(hspace=0.3)
+plt.savefig(get_full_path('Desktop/Privileged_Data/Graphs/chap2c/diffpercentpriv.pdf'),type='pdf')
 plt.show()
 
 for p in percentages:

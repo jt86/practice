@@ -117,16 +117,13 @@ def do_luferandom(s, normal_train, labels_train, priv_train, normal_test, labels
     num_instances,num_feats = priv_train.shape
     np.random.seed(s.foldnum)
     random_array = np.random.rand(num_instances, num_feats)
-    print('random \n',random_array)
     random_priv_train = preprocessing.scale(random_array)
     do_lufe(s, normal_train, labels_train, random_priv_train, normal_test, labels_test, cross_val_folder)
 
 def do_lufeshuffle(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder):
     """Shuffles the secondary dataset, then uses in LUFe classiifer, based on setting"""
     np.random.seed(s.foldnum)
-    print('\n',priv_train)
     np.random.shuffle(priv_train)
-    print('\n', priv_train)
     do_lufe(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
 
 def do_lufetrain(s, normal_train, labels_train, priv_train, cross_val_folder):
@@ -155,6 +152,9 @@ def do_rfe(s, all_train, all_test, labels_train, labels_test,cross_val_folder):
     do_svm_for_rfe(s, all_train, all_test, labels_train, labels_test, cross_val_folder, best_rfe_param)
 
 
+
+
+
 def do_svm_for_rfe(s,all_train,all_test,labels_train,labels_test,cross_val_folder, best_rfe_param):
     """Load feature subsets saved by RFE, train & deploy classifier, and save scores"""
     normal_train, normal_test, priv_train, priv_test = get_norm_priv(s,all_train,all_test)
@@ -170,7 +170,6 @@ def do_dsvm(s, normal_train, labels_train,  priv_train, normal_test, labels_test
     svc = SVC(C=c, kernel=s.kernel, random_state=s.foldnum)
     svc.fit(priv_train, labels_train)
     d_i = np.array([1 - (labels_train[i] * svc.decision_function(priv_train)[i]) for i in range(len(labels_train))])
-    print(d_i.shape)
     d_i = np.reshape(d_i, (d_i.shape[0], 1))
     np.save(os.path.join(folder,'dvalues/{}{}-{}-{}'.format(s.dataset, s.datasetnum, s.skfseed, s.foldnum)),d_i)
     svm_plus(s, normal_train, labels_train, d_i, normal_test, labels_test, folder)
@@ -276,7 +275,7 @@ def do_chi2(s, all_train, all_test, labels_train, labels_test, output_directory)
     # sort the scores (small to big)
     ordered_indices = np.argsort(scores)[::-1]
     print(scores[ordered_indices])
-    print(ordered_indices)
+
     save_indices_do_svm(s, all_train, all_test, labels_train, labels_test, output_directory, ordered_indices)
 
 
@@ -285,18 +284,19 @@ def do_bahsic(s, all_train, all_test, labels_train, labels_test, output_director
     # output2 =((cbahsic.BAHSICOpt(x=x, y=y, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=50, flg4=0.5)))
     labels_train=(labels_train.reshape(len(labels_train),1))
     ordered_indices = cbahsic.BAHSICOpt(x=all_train, y=labels_train, kernelx=vector.CLinearKernel(), kernely=vector.CLinearKernel(), flg3=s.topk, flg4=s.stepsize)
-    print(ordered_indices)
+
     ordered_indices=ordered_indices[::-1]
-    print(ordered_indices)
+
     labels_train = np.ndarray.flatten(labels_train)
     save_indices_do_svm(s, all_train, all_test, labels_train, labels_test, output_directory, ordered_indices)
+
+
 
 def do_svm(s, train_data, labels_train, test_data, labels_test, cross_val_folder):
     print ('train',train_data.shape,'labels',labels_train.shape,'test',test_data.shape,'labels',labels_test.shape)
     best_C = get_best_params(s, train_data, labels_train, cross_val_folder, 'svm')
     clf = svm.SVC(C=best_C, kernel=s.kernel, random_state=s.foldnum)
-    print('labels data', labels_train.shape)
-    print(labels_train)
+
     clf.fit(train_data, labels_train)
     predictions = clf.predict(test_data)
     score = accuracy_score(labels_test, predictions)
@@ -309,12 +309,39 @@ def do_svm_on_train(s, all_train, all_test, labels_train, cross_val_folder):
     do_svm(s, normal_train, labels_train, normal_train, labels_train, cross_val_folder)
 
 
+# STEPS
+# each fold:
+# choose 300 random indices as selected
+# select those
+
+
+def do_random_featsel_svm(s, all_train, all_test, labels_train, labels_test, cross_val_folder):
+    np.random.seed(s.foldnum)
+    all_feat_indices = range(all_train.shape[1])
+    sel_feats_idx = np.random.choice(all_feat_indices, 10, replace=False)
+    normal_train = all_train[:,sel_feats_idx]
+    normal_test = all_test[:, sel_feats_idx]
+    do_svm(s, normal_train, labels_train, normal_test, labels_test, cross_val_folder)
+
+#
+def do_random_featsel_svmplus(s, all_train, all_test, labels_train, labels_test, cross_val_folder):
+    np.random.seed(s.foldnum)
+    all_feat_indices = range(all_train.shape[1])
+    sel_feats_idx = np.random.choice(all_feat_indices, 10, replace=False)
+    unsel_feats_idx = [i for i in all_feat_indices if i not in sel_feats_idx]
+    normal_train = all_train[:, sel_feats_idx]
+    priv_train = all_train[:, unsel_feats_idx]
+    normal_test = all_test[:, sel_feats_idx]
+    priv_train = all_train[:, unsel_feats_idx]
+    svm_plus(s, normal_train, labels_train, priv_train, normal_test, labels_test, cross_val_folder)
+
+
 ##################################################################################################
 
 def single_fold(s):
     pprint(vars(s))
     np.random.seed(s.foldnum)
-    output_directory = get_full_path(('Desktop/Privileged_Data/Test/{}/{}/{}/{}{}/')
+    output_directory = get_full_path(('Desktop/Privileged_Data/AllResults/{}/{}/{}/{}{}/')
                                      .format(s.dataset,s.kernel, s.name,s.dataset, s.datasetnum))
     print(output_directory)
     make_directory(output_directory)
@@ -325,7 +352,6 @@ def single_fold(s):
         do_svm(s, all_train, labels_train, all_train, labels_train, output_directory)
     elif s.classifier == 'featselector':
         if s.featsel == 'rfe':
-            print('doing rfe')
             do_rfe(s,all_train,all_test,labels_train,labels_test,output_directory)
         if s.featsel == 'mi':
             do_mutinfo(s, all_train, labels_train, all_test,labels_test, output_directory)
@@ -335,8 +361,10 @@ def single_fold(s):
             do_chi2(s, all_train, all_test, labels_train, labels_test, output_directory)
         if s.featsel == 'bahsic':
             do_bahsic(s, all_train, all_test, labels_train, labels_test, output_directory)
-
-
+    elif s.classifier =='random_featsel_svm':
+            do_random_featsel_svm(s, all_train, all_test, labels_train, labels_test, output_directory)
+    elif s.classifier == 'random_featsel_svmplus':
+            do_random_featsel_svmplus(s, all_train, all_test, labels_train, labels_test, output_directory)
     else:
         normal_train, normal_test, priv_train, priv_test = get_norm_priv(s, all_train, all_test)
         if s.classifier == 'lufe':
@@ -357,4 +385,6 @@ def single_fold(s):
             do_lufetrain(s, normal_train, labels_train, priv_train, output_directory)
         if s.classifier == 'lufeauto':
             do_lufeauto(s, normal_train, labels_train, normal_test, labels_test, output_directory)
-##################################################################################################
+
+#################################################################################################
+

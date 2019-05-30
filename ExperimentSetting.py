@@ -6,9 +6,10 @@ class Experiment_Setting:
                  cmin=-3, cmax=3, numberofcs=7, percent_of_priv=100, percentageofinstances=100, take_top_t='top'):
 
         assert classifier in ['baseline','featselector','lufe','lufereverse','svmreverse','luferandom','lufeshuffle',
-                              'svmtrain','lufetrain','baselinetrain','lufenonlincrossval', 'lufeauto']
+                              'svmtrain','lufetrain','baselinetrain','lufenonlincrossval', 'lufeauto',
+                              'random_featsel_svm', 'random_featsel_svmplus']
         assert lupimethod in ['nolufe','svmplus','dp','dsvm'], 'lupi method must be nolufe, svmplus or dp'
-        assert featsel in ['nofeatsel','rfe','mi','anova','chi2','bahsic'], 'feat selection method not valid'
+        assert featsel in ['nofeatsel','rfe','mi','anova','chi2','bahsic', 'random'], 'feat selection method not valid'
 
         self.cmin=cmin
         self.cmax=cmax

@@ -18,13 +18,13 @@ i=0
 #             single_fold(s)
 #             i += 1
 #             print('\n iteration {}; time = {}'.format(i, time.time() - time0))
-featsel='mi'
-for datasetnum in range(10):
-    s = Experiment_Setting(foldnum=0, topk=300, dataset='tech', datasetnum=datasetnum, skfseed=1, kernel='linear',
-                            percent_of_priv=100, percentageofinstances=100, take_top_t='top',
-                           lupimethod='nolufe', featsel=featsel, classifier='featselector')
-    single_fold(s)
-    print(time.time()-time0)
+# featsel='mi'
+# for datasetnum in range(10):
+#     s = Experiment_Setting(foldnum=0, topk=300, dataset='tech', datasetnum=datasetnum, skfseed=1, kernel='linear',
+#                             percent_of_priv=100, percentageofinstances=100, take_top_t='top',
+#                            lupimethod='nolufe', featsel=featsel, classifier='featselector')
+#     single_fold(s)
+#     print(time.time()-time0)
 
 # i=0
 # for percentageofinstances in range(20,101,20):
@@ -118,3 +118,31 @@ for datasetnum in range(10):
 #         single_fold(s)
 #
 #
+
+
+# featsel='rfe'
+# for datasetnum in range(250,295):
+#     for topk in range(320,500,20):
+#         for foldnum in range(10):
+#             s = Experiment_Setting(foldnum=foldnum, topk=topk, dataset='tech', datasetnum=datasetnum, skfseed=1, kernel='linear',
+#                                     percent_of_priv=100, percentageofinstances=100, take_top_t='top',
+#                                    lupimethod='nolufe', featsel=featsel, classifier='featselector')
+#             single_fold(s)
+#             i += 1
+#             print('\n iteration {}; time = {}'.format(i, time.time() - time0))
+
+
+
+
+featsel='rfe'
+for datasetnum in range(275,295):
+    for foldnum in range(10):
+        s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, skfseed=1, kernel='linear',
+                                percent_of_priv=100, percentageofinstances=100, take_top_t='top',
+                               lupimethod='nolufe', featsel='random', classifier='random_featsel_svm')
+        single_fold(s)
+
+        s = Experiment_Setting(foldnum=foldnum, topk=300, dataset='tech', datasetnum=datasetnum, skfseed=1, kernel='linear',
+                                percent_of_priv=100, percentageofinstances=100, take_top_t='top',
+                               lupimethod='svmplus', featsel='random', classifier='random_featsel_svmplus')
+        single_fold(s)
